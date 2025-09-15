@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         /* U.Psy Brand Button Variants */
         primary: "bg-u-orange text-u-white rounded-u-sm hover:bg-u-orange/90 font-medium text-base px-6 py-3 min-h-[48px]",
-        secondary: "border-2 border-u-indigo text-u-indigo bg-transparent rounded-u-sm hover:bg-u-indigo hover:text-u-white font-medium text-base px-6 py-3 min-h-[48px]",
+        secondary: "bg-u-white text-u-bg border-2 border-u-white rounded-u-sm hover:bg-u-white/90 hover:text-u-bg font-medium text-base px-6 py-3 min-h-[48px]",
         tertiary: "text-u-white hover:underline bg-transparent border-none p-0 h-auto font-medium",
         
         /* Standard variants for compatibility */
