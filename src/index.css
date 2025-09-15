@@ -8,90 +8,65 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
+    /* U.Psy Brand Colors - Dark Theme Design System */
+    --bg: 222 47% 11%;          /* #0F172A - Dark ink background */
+    --surface: 215 25% 17%;     /* #1E293B - Slightly lighter panels */
+    --indigo: 240 44% 42%;      /* #3B3B98 - Brand indigo */
+    --orange: 29 100% 50%;      /* #FF7A00 - Brand orange */
+    --white: 0 0% 100%;         /* #FFFFFF - Primary text */
+    --gray-300: 214 32% 83%;    /* #CBD5E1 - Secondary text */
+    --gray-500: 215 16% 47%;    /* #64748B - Muted text */
+    
+    /* Semantic Color Mapping */
+    --background: var(--bg);
+    --foreground: var(--white);
+    --card: var(--surface);
+    --card-foreground: var(--white);
+    --popover: var(--surface);
+    --popover-foreground: var(--white);
+    --primary: var(--orange);
+    --primary-foreground: var(--white);
+    --secondary: var(--indigo);
+    --secondary-foreground: var(--white);
+    --muted: var(--surface);
+    --muted-foreground: var(--gray-300);
+    --accent: var(--surface);
+    --accent-foreground: var(--white);
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: var(--white);
+    --border: var(--gray-500);
+    --input: var(--surface);
+    --ring: var(--orange);
+    
+    /* Design System Tokens */
+    --radius-sm: 16px;          /* Buttons, cards */
+    --radius-lg: 24px;          /* Hero, media blocks */
+    --max-width: 1200px;        /* Layout max-width */
+    --gutter: 24px;             /* Side gutters */
+    --section-spacing: 72px;    /* Vertical section spacing */
+    --section-spacing-mobile: 48px; /* Mobile vertical spacing */
+    
+    /* Typography Scale */
+    --text-h1: 44px;            /* Desktop H1 */
+    --text-h1-mobile: 32px;     /* Mobile H1 */
+    --text-h2: 36px;            /* Desktop H2 */
+    --text-h2-mobile: 28px;     /* Mobile H2 */
+    --text-h3: 28px;            /* Desktop H3 */
+    --text-h3-mobile: 22px;     /* Mobile H3 */
+    --text-body: 18px;          /* Desktop body */
+    --text-body-mobile: 16px;   /* Mobile body */
+    --text-small: 14px;         /* Small text */
+    
+    /* Shadows */
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.6);
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--bg)), hsl(var(--surface)));
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+}
 }
 
 @layer base {
@@ -100,6 +75,70 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-outfit;
+    font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  
+  /* Typography Classes */
+  .text-h1 {
+    font-size: var(--text-h1);
+    line-height: 1.45;
+    font-weight: 700;
+  }
+  
+  .text-h2 {
+    font-size: var(--text-h2);
+    line-height: 1.45;
+    font-weight: 600;
+  }
+  
+  .text-h3 {
+    font-size: var(--text-h3);
+    line-height: 1.45;
+    font-weight: 600;
+  }
+  
+  .text-body {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  
+  .text-small {
+    font-size: var(--text-small);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+  
+  /* Mobile Typography */
+  @media (max-width: 768px) {
+    .text-h1 { font-size: var(--text-h1-mobile); }
+    .text-h2 { font-size: var(--text-h2-mobile); }
+    .text-h3 { font-size: var(--text-h3-mobile); }
+    .text-body { font-size: var(--text-body-mobile); }
+  }
+  
+  /* Layout Classes */
+  .container-custom {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  
+  .section-spacing {
+    padding: var(--section-spacing) 0;
+  }
+  
+  @media (max-width: 768px) {
+    .section-spacing {
+      padding: var(--section-spacing-mobile) 0;
+    }
+  }
+  
+  /* Focus States for Accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--orange));
+    outline-offset: 2px;
   }
 }

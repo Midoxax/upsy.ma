@@ -1,0 +1,107 @@
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+
+const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "Services", href: "/services" },
+    { name: "Resources", href: "/resources" },
+    { name: "Skool", href: "/skool" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+    { name: "Talent & Innovation Hub", href: "/talent-innovation-hub" },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === "/" && location.pathname === "/") return true;
+    if (href !== "/" && location.pathname.startsWith(href)) return true;
+    return false;
+  };
+
+  return (
+    <header className="sticky top-0 z-50 bg-u-surface shadow-u-card">
+      <div className="container-custom">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex flex-col">
+            <span className="text-u-white font-bold text-xl">U.Psy</span>
+            <span className="text-u-gray-300 text-xs leading-none">by Mehdi Felji</span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`text-sm font-medium transition-colors hover:text-u-white ${
+                  isActive(item.href) ? "text-u-white" : "text-u-gray-300"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Desktop CTAs */}
+          <div className="hidden lg:flex items-center space-x-4">
+            <Button variant="primary" size="sm" asChild>
+              <Link to="/book-a-call">Start Free</Link>
+            </Button>
+            <Button variant="secondary" size="sm" asChild>
+              <Link to="/book-a-call">Book a Call</Link>
+            </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 text-u-white hover:text-u-gray-300 transition-colors"
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden py-4 border-t border-u-gray-500">
+            <nav className="flex flex-col space-y-4">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`text-sm font-medium transition-colors hover:text-u-white ${
+                    isActive(item.href) ? "text-u-white" : "text-u-gray-300"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              <div className="flex flex-col space-y-3 pt-4">
+                <Button variant="primary" size="sm" asChild>
+                  <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
+                    Start Free
+                  </Link>
+                </Button>
+                <Button variant="secondary" size="sm" asChild>
+                  <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
+                    Book a Call
+                  </Link>
+                </Button>
+              </div>
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
+
+export default Header;

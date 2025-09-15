@@ -13,7 +13,20 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        outfit: ['Outfit', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
       colors: {
+        /* U.Psy Brand Colors */
+        'u-bg': "hsl(var(--bg))",
+        'u-surface': "hsl(var(--surface))",
+        'u-indigo': "hsl(var(--indigo))",
+        'u-orange': "hsl(var(--orange))",
+        'u-white': "hsl(var(--white))",
+        'u-gray-300': "hsl(var(--gray-300))",
+        'u-gray-500': "hsl(var(--gray-500))",
+        
+        /* Semantic Colors */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -47,21 +60,30 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
+      },
+      maxWidth: {
+        'container': 'var(--max-width)',
+      },
+      spacing: {
+        'gutter': 'var(--gutter)',
+        'section': 'var(--section-spacing)',
+        'section-mobile': 'var(--section-spacing-mobile)',
       },
       borderRadius: {
+        'u-sm': 'var(--radius-sm)',      /* 16px - buttons, cards */
+        'u-lg': 'var(--radius-lg)',      /* 24px - hero, media */
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        'u-card': 'var(--shadow-card)',
+      },
+      backgroundImage: {
+        'u-hero': 'var(--gradient-hero)',
+      },
+      transitionTimingFunction: {
+        'u-smooth': 'var(--transition-smooth)',
       },
       keyframes: {
         "accordion-down": {
