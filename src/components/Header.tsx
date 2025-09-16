@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import logo from "@/assets/logo.webp";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,9 +29,12 @@ const Header = () => {
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex flex-col">
-            <span className="text-u-white font-bold text-xl">U.Psy</span>
-            <span className="text-u-gray-300 text-xs leading-none">by Mehdi Felji</span>
+          <Link to="/" className="flex items-center">
+            <img 
+              src={logo} 
+              alt="U.Psy Logo" 
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
