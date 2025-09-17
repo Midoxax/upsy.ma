@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import neuralNetworkBg from "@/assets/neural-network-bg.jpg";
+import neuralNetworkBg from "@/assets/neural-network-bg.webp";
 
 const Index = () => {
   return (
