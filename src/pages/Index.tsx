@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Brain, Building2, Award, Activity } from "lucide-react";
 import neuralNetworkBg from "@/assets/neural-network-bg.webp";
 
 const Index = () => {
@@ -86,7 +86,125 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Future sections will be added in subsequent prompts */}
+      {/* Feature Section */}
+      <section className="section-spacing bg-u-bg">
+        <div className="container-custom">
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Individual Guidance */}
+            <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300">
+              <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30">
+                <Brain className="w-8 h-8 text-u-teal" />
+              </div>
+              <h3 className="text-h3 text-u-white mb-4">Individual Guidance</h3>
+              <p className="text-body text-u-gray-300">
+                Therapy, performance, personality & serenity assessments.
+              </p>
+            </div>
+
+            {/* Institutional Solutions */}
+            <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300">
+              <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-gold/30">
+                <Building2 className="w-8 h-8 text-u-gold" />
+              </div>
+              <h3 className="text-h3 text-u-white mb-4">Institutional Solutions</h3>
+              <p className="text-body text-u-gray-300">
+                Programs for federations, companies, and universities.
+              </p>
+            </div>
+
+            {/* U.Psy Accreditation */}
+            <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300">
+              <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30">
+                <Award className="w-8 h-8 text-u-teal" />
+              </div>
+              <h3 className="text-h3 text-u-white mb-4">U.Psy Accreditation</h3>
+              <p className="text-body text-u-gray-300">
+                Get certified, listed, and matched with clients.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="section-spacing bg-gradient-to-br from-u-maroon/20 to-u-bg">
+        <div className="container-custom">
+          <h2 className="text-h2 text-u-white text-center mb-12">What Our Clients Say</h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
+                  <Activity className="w-8 h-8 text-u-gold" />
+                </div>
+                <div>
+                  <p className="text-u-white font-semibold">National Sprinter</p>
+                </div>
+              </div>
+              <p className="text-u-gray-300 italic">
+                "I finally compete calm and focused. My pre-race anxiety is under control."
+              </p>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
+                  <Building2 className="w-8 h-8 text-u-gold" />
+                </div>
+                <div>
+                  <p className="text-u-white font-semibold">Marketing Director</p>
+                </div>
+              </div>
+              <p className="text-u-gray-300 italic">
+                "Burnout down, clarity up. Practical tools I still use every day."
+              </p>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
+                  <Brain className="w-8 h-8 text-u-gold" />
+                </div>
+                <div>
+                  <p className="text-u-white font-semibold">Recovery Client</p>
+                </div>
+              </div>
+              <p className="text-u-gray-300 italic">
+                "I felt seen without judgment. The structure helped me rebuild."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Closing CTA Banner */}
+      <section className="section-spacing bg-u-surface/60 backdrop-blur-sm">
+        <div className="container-custom">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-h2 text-u-white mb-8">Ready to strengthen your mind?</h2>
+            <Button variant="primary" size="hero" asChild>
+              <Link to="/book-a-call">Book a Call</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Page Transition to Services */}
+      <section className="section-spacing bg-u-bg">
+        <div className="container-custom">
+          <div className="text-center max-w-3xl mx-auto">
+            <p className="text-body text-u-gray-300 mb-8">
+              Discover how our personalized guidance can help you perform, heal, and grow.
+            </p>
+            <Button variant="secondary" size="hero" asChild>
+              <Link to="/services">Explore Services</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
     </main>
   );
 };
