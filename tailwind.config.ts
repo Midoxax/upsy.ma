@@ -20,9 +20,11 @@ export default {
         /* U.Psy Brand Colors */
         'u-bg': "hsl(var(--bg))",
         'u-surface': "hsl(var(--surface))",
-        'u-indigo': "hsl(var(--indigo))",
-        'u-orange': "hsl(var(--orange))",
+        'u-maroon': "hsl(var(--maroon))",
+        'u-gold': "hsl(var(--gold))",
+        'u-teal': "hsl(var(--teal))",
         'u-white': "hsl(var(--white))",
+        'u-black': "hsl(var(--black))",
         'u-gray-300': "hsl(var(--gray-300))",
         'u-gray-500': "hsl(var(--gray-500))",
         

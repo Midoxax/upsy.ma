@@ -9,11 +9,13 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* U.Psy Brand Colors - Dark Theme Design System */
-    --bg: 222 47% 11%;          /* #0F172A - Dark ink background */
-    --surface: 215 25% 17%;     /* #1E293B - Slightly lighter panels */
-    --indigo: 240 44% 42%;      /* #3B3B98 - Brand indigo */
-    --orange: 29 100% 50%;      /* #FF7A00 - Brand orange */
+    --bg: 0 0% 15%;             /* Charcoal black background */
+    --surface: 343 63% 33%;     /* #8B1E3F - Deep maroon surface */
+    --maroon: 343 63% 33%;      /* #8B1E3F - Primary deep maroon */
+    --gold: 46 100% 50%;        /* #FFC300 - Accent golden yellow */
+    --teal: 180 100% 27%;       /* #008B8B - Secondary teal blue */
     --white: 0 0% 100%;         /* #FFFFFF - Primary text */
+    --black: 0 0% 0%;           /* #000000 - Structure */
     --gray-300: 214 32% 83%;    /* #CBD5E1 - Secondary text */
     --gray-500: 215 16% 47%;    /* #64748B - Muted text */
     
@@ -24,19 +26,19 @@ All colors MUST be HSL.
     --card-foreground: var(--white);
     --popover: var(--surface);
     --popover-foreground: var(--white);
-    --primary: var(--orange);
-    --primary-foreground: var(--white);
-    --secondary: var(--indigo);
+    --primary: var(--gold);
+    --primary-foreground: var(--black);
+    --secondary: var(--teal);
     --secondary-foreground: var(--white);
     --muted: var(--surface);
     --muted-foreground: var(--gray-300);
-    --accent: var(--surface);
+    --accent: var(--maroon);
     --accent-foreground: var(--white);
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: var(--white);
     --border: var(--gray-500);
     --input: var(--surface);
-    --ring: var(--orange);
+    --ring: var(--gold);
     
     /* Design System Tokens */
     --radius-sm: 16px;          /* Buttons, cards */
@@ -61,7 +63,7 @@ All colors MUST be HSL.
     --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.6);
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--bg)), hsl(var(--surface)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--maroon)), hsl(var(--bg)));
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -135,7 +137,7 @@ All colors MUST be HSL.
   
   /* Focus States for Accessibility */
   *:focus-visible {
-    outline: 2px solid hsl(var(--orange));
+    outline: 2px solid hsl(var(--gold));
     outline-offset: 2px;
   }
 }

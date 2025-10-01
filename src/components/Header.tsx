@@ -11,6 +11,8 @@ const Header = () => {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
+    { name: "Accreditation", href: "/accreditation" },
+    { name: "Tech & R&D", href: "/tech-rd" },
     { name: "Resources", href: "/resources" },
     { name: "Skool", href: "/skool" },
     { name: "About", href: "/about" },
@@ -55,7 +57,7 @@ const Header = () => {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
             <Button variant="primary" size="sm" asChild>
-              <Link to="/book-a-call">Start Free</Link>
+              <Link to="/book-a-call">Get Started</Link>
             </Button>
             <Button variant="secondary" size="sm" asChild>
               <Link to="/book-a-call">Book a Call</Link>
@@ -91,7 +93,7 @@ const Header = () => {
               <div className="flex flex-col space-y-3 pt-4">
                 <Button variant="primary" size="sm" asChild>
                   <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
-                    Start Free
+                    Get Started
                   </Link>
                 </Button>
                 <Button variant="secondary" size="sm" asChild>

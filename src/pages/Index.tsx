@@ -23,16 +23,16 @@ const Index = () => {
             {/* Left Column - Content */}
             <div className="text-center lg:text-left">
               <h1 className="text-h1 text-u-white mb-6 leading-tight">
-                U.Psy — Your Trusted Psychologist & Mental Performance Coach
+                U.Psy — Your Personal & Trusted Psychologist.
               </h1>
               
               <p className="text-body text-u-gray-300 mb-8 max-w-2xl">
-                Evidence-based tools to reduce anxiety, build discipline, and perform under pressure — in clinic, online, and on the field.
+                Evidence-based psychology to unlock resilience, elevate performance, and foster healing — in clinic, online, and on the field.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button variant="primary" size="hero" asChild>
-                  <Link to="/book-a-call">Start Free</Link>
+                  <Link to="/book-a-call">Get Started</Link>
                 </Button>
                 <Button variant="secondary" size="hero" asChild>
                   <Link to="/book-a-call">Book a Call</Link>
@@ -40,19 +40,19 @@ const Index = () => {
               </div>
               
               {/* Trust Strip */}
-              <div className="mt-12 pt-8 border-t border-u-gray-500">
-                <p className="text-small text-u-gray-300 mb-4">Trusted by professionals and organizations</p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 opacity-60">
-                  {/* Placeholder for trust logos - will be replaced with actual logos */}
-                  <div className="bg-u-gray-300 rounded px-4 py-2 text-u-bg text-xs font-medium">
-                    Organization 1
-                  </div>
-                  <div className="bg-u-gray-300 rounded px-4 py-2 text-u-bg text-xs font-medium">
-                    Organization 2
-                  </div>
-                  <div className="bg-u-gray-300 rounded px-4 py-2 text-u-bg text-xs font-medium">
-                    Organization 3
-                  </div>
+              <div className="mt-12 pt-8 border-t border-u-gold/20">
+                <p className="text-small text-u-gray-300 mb-6">Trusted by professionals and organizations</p>
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8">
+                  {/* Space for partner logos */}
+                  {["UFC Gym Morocco", "UIC", "LSSPM"].map((org) => (
+                    <div 
+                      key={org}
+                      className="bg-u-white/5 backdrop-blur-sm rounded-lg px-6 py-4 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300"
+                    >
+                      <p className="text-u-gray-300 text-sm font-medium">{org}</p>
+                      <p className="text-u-gray-500 text-xs mt-1">Logo Coming Soon</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -61,15 +61,15 @@ const Index = () => {
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-md">
                 <div 
-                  className="aspect-[4/5] bg-u-surface rounded-u-lg shadow-u-card border border-u-gray-500 flex items-center justify-center"
+                  className="aspect-[4/5] bg-gradient-to-br from-u-maroon/20 to-u-bg/40 backdrop-blur-sm rounded-u-lg shadow-u-card border border-u-gold/20 flex items-center justify-center"
                 >
-                  {/* Placeholder for portrait/video - will be replaced with actual media */}
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-u-indigo rounded-full flex items-center justify-center mb-4 mx-auto">
-                      <span className="text-u-white text-2xl font-bold">MF</span>
+                  {/* Placeholder for professional photo or video intro */}
+                  <div className="text-center px-8">
+                    <div className="w-20 h-20 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 mx-auto border-2 border-u-gold/30">
+                      <span className="text-u-gold text-3xl font-bold">MF</span>
                     </div>
-                    <p className="text-u-gray-300 text-sm">Dr. Mehdi Felji</p>
-                    <p className="text-u-gray-300 text-xs">Portrait/Video Coming Soon</p>
+                    <p className="text-u-white text-xl font-semibold mb-2">Dr. Mehdi Felji</p>
+                    <p className="text-u-gray-300 text-base font-light">Professional Photo Coming Soon</p>
                   </div>
                 </div>
               </div>
