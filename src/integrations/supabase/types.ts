@@ -14,7 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      languages: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      psychologist_languages: {
+        Row: {
+          language_id: string
+          psychologist_id: string
+        }
+        Insert: {
+          language_id: string
+          psychologist_id: string
+        }
+        Update: {
+          language_id?: string
+          psychologist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "psychologist_languages_language_id_fkey"
+            columns: ["language_id"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "psychologist_languages_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      psychologist_profiles: {
+        Row: {
+          bio: string | null
+          calendly_url: string | null
+          city: string | null
+          created_at: string | null
+          full_name: string
+          hourly_rate_mad: number | null
+          id: string
+          is_accredited: boolean | null
+          is_published: boolean | null
+          offers_in_person: boolean | null
+          offers_online: boolean | null
+          photo_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          calendly_url?: string | null
+          city?: string | null
+          created_at?: string | null
+          full_name: string
+          hourly_rate_mad?: number | null
+          id: string
+          is_accredited?: boolean | null
+          is_published?: boolean | null
+          offers_in_person?: boolean | null
+          offers_online?: boolean | null
+          photo_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          calendly_url?: string | null
+          city?: string | null
+          created_at?: string | null
+          full_name?: string
+          hourly_rate_mad?: number | null
+          id?: string
+          is_accredited?: boolean | null
+          is_published?: boolean | null
+          offers_in_person?: boolean | null
+          offers_online?: boolean | null
+          photo_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      psychologist_specialties: {
+        Row: {
+          psychologist_id: string
+          specialty_id: string
+        }
+        Insert: {
+          psychologist_id: string
+          specialty_id: string
+        }
+        Update: {
+          psychologist_id?: string
+          specialty_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "psychologist_specialties_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "psychologist_specialties_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      specialties: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
