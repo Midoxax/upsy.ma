@@ -24,6 +24,8 @@ import Psychologists from "./pages/Psychologists";
 import PsychologistProfile from "./pages/PsychologistProfile";
 import Auth from "./pages/Auth";
 import MySpace from "./pages/MySpace";
+import Apply from "./pages/Apply";
+import Applications from "./pages/admin/Applications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,11 +56,20 @@ const App = () => (
               <Route path="/psychologists" element={<Psychologists />} />
               <Route path="/psychologists/:id" element={<PsychologistProfile />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/apply" element={<Apply />} />
               <Route
                 path="/my-space"
                 element={
                   <ProtectedRoute>
                     <MySpace />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/applications"
+                element={
+                  <ProtectedRoute>
+                    <Applications />
                   </ProtectedRoute>
                 }
               />

@@ -79,6 +79,54 @@ export type Database = {
           },
         ]
       }
+      psychologist_applications: {
+        Row: {
+          accreditation_number: string | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          qualifications: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accreditation_number?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          qualifications?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accreditation_number?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          qualifications?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       psychologist_languages: {
         Row: {
           language_id: string

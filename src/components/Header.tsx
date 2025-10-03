@@ -71,6 +71,9 @@ const Header = () => {
                 <Button variant="primary" size="sm" asChild>
                   <Link to="/book-a-call">Get Started</Link>
                 </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/apply">Join Network</Link>
+                </Button>
                 <Button variant="secondary" size="sm" asChild>
                   <Link to="/auth">Psychologist Login</Link>
                 </Button>
@@ -117,6 +120,11 @@ const Header = () => {
                     <Button variant="primary" size="sm" asChild>
                       <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
                         Get Started
+                      </Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/apply" onClick={() => setIsMobileMenuOpen(false)}>
+                        Join Network
                       </Link>
                     </Button>
                     <Button variant="secondary" size="sm" asChild>
