@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.webp";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -57,12 +59,23 @@ const Header = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Button variant="primary" size="sm" asChild>
-              <Link to="/book-a-call">Get Started</Link>
-            </Button>
-            <Button variant="secondary" size="sm" asChild>
-              <Link to="/book-a-call">Book a Call</Link>
-            </Button>
+            {user ? (
+              <Button variant="primary" size="sm" asChild>
+                <Link to="/my-space">
+                  <User className="mr-2 h-4 w-4" />
+                  My Space
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="primary" size="sm" asChild>
+                  <Link to="/book-a-call">Get Started</Link>
+                </Button>
+                <Button variant="secondary" size="sm" asChild>
+                  <Link to="/auth">Psychologist Login</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -92,16 +105,27 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-3 pt-4">
-                <Button variant="primary" size="sm" asChild>
-                  <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
-                    Get Started
-                  </Link>
-                </Button>
-                <Button variant="secondary" size="sm" asChild>
-                  <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
-                    Book a Call
-                  </Link>
-                </Button>
+                {user ? (
+                  <Button variant="primary" size="sm" asChild>
+                    <Link to="/my-space" onClick={() => setIsMobileMenuOpen(false)}>
+                      <User className="mr-2 h-4 w-4" />
+                      My Space
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="primary" size="sm" asChild>
+                      <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
+                        Get Started
+                      </Link>
+                    </Button>
+                    <Button variant="secondary" size="sm" asChild>
+                      <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                        Psychologist Login
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

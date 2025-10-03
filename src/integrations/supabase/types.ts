@@ -32,6 +32,53 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          concerns: string
+          created_at: string | null
+          id: string
+          preferences: string | null
+          psychologist_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          concerns: string
+          created_at?: string | null
+          id?: string
+          preferences?: string | null
+          psychologist_id: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          concerns?: string
+          created_at?: string | null
+          id?: string
+          preferences?: string | null
+          psychologist_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       psychologist_languages: {
         Row: {
           language_id: string
@@ -157,6 +204,47 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          ends_at: string | null
+          id: string
+          plan_type: string
+          psychologist_id: string
+          starts_at: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          plan_type?: string
+          psychologist_id: string
+          starts_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          plan_type?: string
+          psychologist_id?: string
+          starts_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: true
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
