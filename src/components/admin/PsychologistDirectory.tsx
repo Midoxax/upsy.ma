@@ -5,6 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Users } from "lucide-react";
 
 const PsychologistDirectory = () => {
   const { toast } = useToast();
@@ -71,7 +73,14 @@ const PsychologistDirectory = () => {
         <CardDescription>Manage psychologist profiles and visibility</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
+        {psychologists?.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No Psychologists"
+            description="There are no psychologist profiles in the directory yet."
+          />
+        ) : (
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -106,6 +115,7 @@ const PsychologistDirectory = () => {
             ))}
           </TableBody>
         </Table>
+        )}
       </CardContent>
     </Card>
   );

@@ -139,5 +139,47 @@ All colors MUST be HSL.
   *:focus-visible {
     outline: 2px solid hsl(var(--gold));
     outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid hsl(var(--gold));
+    outline-offset: 2px;
+  }
+  
+  /* Hero Neural Background */
+  .hero-neural-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-neural-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/src/assets/neural-network-bg.webp');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    z-index: 0;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .hero-neural-bg::before {
+      animation: none;
+      background-attachment: scroll;
+    }
+  }
+  
+  .hero-neural-bg > * {
+    position: relative;
+    z-index: 1;
   }
 }

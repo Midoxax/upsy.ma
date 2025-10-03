@@ -8,13 +8,7 @@ const Index = () => {
     <main className="flex-1">
       {/* Hero Section */}
       <section 
-        className="relative min-h-screen flex items-center bg-u-hero"
-        style={{
-          backgroundImage: `url(${neuralNetworkBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundBlendMode: 'overlay',
-        }}
+        className="hero-neural-bg relative min-h-screen flex items-center bg-u-hero"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-u-bg/90 to-u-surface/80"></div>
         

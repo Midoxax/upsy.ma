@@ -62,11 +62,12 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
           value={filters.city}
           onChange={(e) => onFiltersChange({ ...filters, city: e.target.value })}
           className="bg-background"
+          aria-label="Filter psychologists by city"
         />
       </div>
 
       {/* Online/In-Person Filters */}
-      <div className="space-y-3">
+      <div className="space-y-3" role="group" aria-label="Session type filters">
         <Label>Session Type</Label>
         <div className="flex items-center justify-between">
           <Label htmlFor="online" className="text-sm font-normal">
@@ -76,6 +77,7 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
             id="online"
             checked={filters.online}
             onCheckedChange={(checked) => onFiltersChange({ ...filters, online: checked })}
+            aria-label="Filter for online sessions"
           />
         </div>
         <div className="flex items-center justify-between">
@@ -86,12 +88,13 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
             id="inPerson"
             checked={filters.inPerson}
             onCheckedChange={(checked) => onFiltersChange({ ...filters, inPerson: checked })}
+            aria-label="Filter for in-person sessions"
           />
         </div>
       </div>
 
       {/* Price Range Filter */}
-      <div className="space-y-3">
+      <div className="space-y-3" role="group" aria-label="Price range filter">
         <Label>Price Range (MAD/hour)</Label>
         <div className="px-2">
           <Slider
@@ -103,16 +106,17 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
               onFiltersChange({ ...filters, minPrice: min, maxPrice: max })
             }
             className="w-full"
+            aria-label={`Price range from ${filters.minPrice} to ${filters.maxPrice} MAD per hour`}
           />
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{filters.minPrice} MAD</span>
-          <span>{filters.maxPrice} MAD</span>
+          <span aria-label="Minimum price">{filters.minPrice} MAD</span>
+          <span aria-label="Maximum price">{filters.maxPrice} MAD</span>
         </div>
       </div>
 
       {/* Specialties Filter */}
-      <div className="space-y-3">
+      <div className="space-y-3" role="group" aria-label="Specialty filters">
         <Label>Specialties</Label>
         <div className="space-y-2 max-h-48 overflow-y-auto">
           {specialties.map((specialty) => (
@@ -121,6 +125,7 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
                 id={`specialty-${specialty.id}`}
                 checked={filters.specialties.includes(specialty.id)}
                 onCheckedChange={() => handleSpecialtyToggle(specialty.id)}
+                aria-label={`Filter by ${specialty.name}`}
               />
               <label
                 htmlFor={`specialty-${specialty.id}`}
@@ -134,7 +139,7 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
       </div>
 
       {/* Languages Filter */}
-      <div className="space-y-3">
+      <div className="space-y-3" role="group" aria-label="Language filters">
         <Label>Languages</Label>
         <div className="space-y-2">
           {languages.map((language) => (
@@ -143,6 +148,7 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
                 id={`language-${language.id}`}
                 checked={filters.languages.includes(language.id)}
                 onCheckedChange={() => handleLanguageToggle(language.id)}
+                aria-label={`Filter by ${language.name}`}
               />
               <label
                 htmlFor={`language-${language.id}`}

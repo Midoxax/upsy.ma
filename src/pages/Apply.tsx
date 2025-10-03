@@ -1,38 +1,52 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const formSchema = z.object({
+  full_name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
+  email: z.string().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  phone: z.string().optional(),
+  qualifications: z.string().max(1000, "Qualifications must be less than 1000 characters").optional(),
+  accreditation_number: z.string().max(100, "Accreditation number must be less than 100 characters").optional(),
+});
 
 const Apply = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    full_name: "",
-    email: "",
-    phone: "",
-    qualifications: "",
-    accreditation_number: "",
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      full_name: "",
+      email: "",
+      phone: "",
+      qualifications: "",
+      accreditation_number: "",
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
 
     try {
       const { error } = await supabase.from("psychologist_applications").insert({
-        full_name: formData.full_name,
-        email: formData.email,
-        phone: formData.phone || null,
-        qualifications: formData.qualifications || null,
-        accreditation_number: formData.accreditation_number || null,
+        full_name: values.full_name,
+        email: values.email,
+        phone: values.phone || null,
+        qualifications: values.qualifications || null,
+        accreditation_number: values.accreditation_number || null,
         status: "pending",
       });
 
@@ -45,7 +59,6 @@ const Apply = () => {
 
       navigate("/");
     } catch (error: any) {
-      console.error("Error submitting application:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to submit application. Please try again.",
@@ -54,13 +67,6 @@ const Apply = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
   };
 
   return (
@@ -76,79 +82,97 @@ const Apply = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="full_name">
-                  Full Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="full_name"
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
                   name="full_name"
-                  value={formData.full_name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Dr. John Doe"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Full Name <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Dr. John Doe" {...field} aria-label="Full name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  Email <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="email"
+                <FormField
+                  control={form.control}
                   name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="john.doe@example.com"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Email <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="your@email.com" {...field} aria-label="Email address" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
+                <FormField
+                  control={form.control}
                   name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+212 6XX XXX XXX"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone (Optional)</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="+212 6XX XXX XXX" {...field} aria-label="Phone number" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="accreditation_number">Accreditation Number (U.Psy ID)</Label>
-                <Input
-                  id="accreditation_number"
-                  name="accreditation_number"
-                  value={formData.accreditation_number}
-                  onChange={handleChange}
-                  placeholder="U.Psy XXXXX"
-                />
-                <p className="text-sm text-muted-foreground">Optional - If you're accredited by U.Psy Morocco</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="qualifications">
-                  Qualifications & Experience <span className="text-destructive">*</span>
-                </Label>
-                <Textarea
-                  id="qualifications"
+                <FormField
+                  control={form.control}
                   name="qualifications"
-                  value={formData.qualifications}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  placeholder="Tell us about your education, certifications, specialties, and professional experience..."
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Qualifications (Optional)</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Your degrees, certifications, and professional experience..."
+                          rows={4}
+                          {...field}
+                          aria-label="Qualifications and experience"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Submitting..." : "Submit Application"}
-              </Button>
-            </form>
+                <FormField
+                  control={form.control}
+                  name="accreditation_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Accreditation Number (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your professional accreditation number" {...field} aria-label="Accreditation number" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex gap-4">
+                  <Button type="button" variant="outline" onClick={() => navigate("/")} className="flex-1">
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={loading} className="flex-1">
+                    {loading ? "Submitting..." : "Submit Application"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </CardContent>
         </Card>
       </main>

@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 
 const MatchingRequestsManager = () => {
@@ -46,7 +48,14 @@ const MatchingRequestsManager = () => {
         <CardDescription>Review and manually assign client requests</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
+        {requests?.length === 0 ? (
+          <EmptyState
+            icon={MessageSquare}
+            title="No Matching Requests"
+            description="There are no client matching requests at this time."
+          />
+        ) : (
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -85,6 +94,7 @@ const MatchingRequestsManager = () => {
             ))}
           </TableBody>
         </Table>
+        )}
       </CardContent>
     </Card>
   );

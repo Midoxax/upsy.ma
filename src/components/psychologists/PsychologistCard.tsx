@@ -19,17 +19,27 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
             {psychologist.photo_url ? (
               <img
                 src={psychologist.photo_url}
-                alt={psychologist.full_name}
+                alt={`${psychologist.full_name} - Psychologist profile photo`}
                 className="w-16 h-16 rounded-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <User className="w-8 h-8 text-primary" />
+              <div 
+                className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+                role="img"
+                aria-label={`${psychologist.full_name} - No photo available`}
+              >
+                <User className="w-8 h-8 text-primary" aria-hidden="true" />
               </div>
             )}
             {psychologist.is_accredited && (
-              <div className="absolute -top-1 -right-1 bg-primary rounded-full p-1">
-                <Award className="w-4 h-4 text-background" />
+              <div 
+                className="absolute -top-1 -right-1 bg-primary rounded-full p-1"
+                role="img"
+                aria-label="Accredited psychologist"
+              >
+                <Award className="w-4 h-4 text-background" aria-hidden="true" />
               </div>
             )}
           </div>

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Application } from "@/hooks/useApplications";
-import { useAuth } from "@/contexts/AuthContext";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { FileX } from "lucide-react";
+import { format } from "date-fns";
 import ApprovalModal from "./ApprovalModal";
 import RejectionModal from "./RejectionModal";
-import { format } from "date-fns";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface ApplicationsTableProps {
   applications: Application[];
@@ -15,7 +17,7 @@ interface ApplicationsTableProps {
 }
 
 const ApplicationsTable = ({ applications, onApprove, onReject }: ApplicationsTableProps) => {
-  const { user } = useAuth();
+  const { user } = useAdminAuth();
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
@@ -73,8 +75,12 @@ const ApplicationsTable = ({ applications, onApprove, onReject }: ApplicationsTa
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No applications found
+                <TableCell colSpan={7} className="p-0">
+                  <EmptyState
+                    icon={FileX}
+                    title="No Applications"
+                    description="There are no psychologist applications to review at this time."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

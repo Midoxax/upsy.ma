@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CreditCard } from "lucide-react";
 import { format } from "date-fns";
 
 const SubscriptionsOverview = () => {
@@ -57,7 +59,14 @@ const SubscriptionsOverview = () => {
         <CardDescription>Monitor subscription status and revenue</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
+        {subscriptions?.length === 0 ? (
+          <EmptyState
+            icon={CreditCard}
+            title="No Subscriptions"
+            description="There are no active subscriptions at this time."
+          />
+        ) : (
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Psychologist</TableHead>
@@ -93,6 +102,7 @@ const SubscriptionsOverview = () => {
             ))}
           </TableBody>
         </Table>
+        )}
       </CardContent>
     </Card>
   );

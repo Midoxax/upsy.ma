@@ -3,6 +3,7 @@ import { FilterState } from "@/types/psychologist";
 import { usePsychologists } from "@/hooks/usePsychologists";
 import { PsychologistFilters } from "@/components/psychologists/PsychologistFilters";
 import { PsychologistCard } from "@/components/psychologists/PsychologistCard";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Pagination,
   PaginationContent,
@@ -77,11 +78,11 @@ const Psychologists = () => {
 
               {/* Empty State */}
               {!isLoading && data?.profiles.length === 0 && (
-                <div className="text-center py-12 bg-surface rounded-lg border border-border">
-                  <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-h3 font-semibold mb-2">No psychologists found</h3>
-                  <p className="text-muted-foreground">Try adjusting your filters to see more results.</p>
-                </div>
+                <EmptyState
+                  icon={Users}
+                  title="No psychologists found"
+                  description="Try adjusting your filters to see more results."
+                />
               )}
 
               {/* Cards Grid */}
