@@ -25,6 +25,7 @@ import PsychologistProfile from "./pages/PsychologistProfile";
 import Auth from "./pages/Auth";
 import MySpace from "./pages/MySpace";
 import Apply from "./pages/Apply";
+import GetMatched from "./pages/GetMatched";
 import Applications from "./pages/admin/Applications";
 import NotFound from "./pages/NotFound";
 
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/psychologists/:id" element={<PsychologistProfile />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/apply" element={<Apply />} />
+              <Route path="/get-matched" element={<GetMatched />} />
               <Route
                 path="/my-space"
                 element={

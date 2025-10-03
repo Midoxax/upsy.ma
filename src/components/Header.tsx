@@ -14,6 +14,7 @@ const Header = () => {
     { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
     { name: "Find a Psychologist", href: "/psychologists" },
+    { name: "Get Matched", href: "/get-matched" },
     { name: "Accreditation", href: "/accreditation" },
     { name: "Tech & R&D", href: "/tech-rd" },
     { name: "Resources", href: "/resources" },

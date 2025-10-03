@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_matching_requests: {
+        Row: {
+          budget_max: number | null
+          created_at: string | null
+          email: string
+          id: string
+          languages_preferred: string[]
+          location_city: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          prefers_online: boolean | null
+          specialty_needed: string
+          updated_at: string | null
+        }
+        Insert: {
+          budget_max?: number | null
+          created_at?: string | null
+          email: string
+          id?: string
+          languages_preferred?: string[]
+          location_city?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          prefers_online?: boolean | null
+          specialty_needed: string
+          updated_at?: string | null
+        }
+        Update: {
+          budget_max?: number | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          languages_preferred?: string[]
+          location_city?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          prefers_online?: boolean | null
+          specialty_needed?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_matching_requests_specialty_needed_fkey"
+            columns: ["specialty_needed"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       languages: {
         Row: {
           created_at: string | null
