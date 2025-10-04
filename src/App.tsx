@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -32,8 +33,25 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Theme mapper based on route patterns
+const getThemeForRoute = (pathname: string): string => {
+  if (pathname === '/services/sport-psychology') return 'performance';
+  if (pathname === '/services/consulting-for-organizations') return 'institutions';
+  if (pathname === '/talent-innovation-hub') return 'innovation';
+  if (pathname === '/skool') return 'skool';
+  if (['/apply', '/my-space'].includes(pathname)) return 'accreditation';
+  if (['/services', '/psychologists', '/get-matched'].some(route => pathname.startsWith(route))) return 'clinic';
+  return 'default';
+};
+
 const AnimatedRoutes = () => {
   const location = useLocation();
+
+  // Update body data-theme attribute based on current route
+  useEffect(() => {
+    const theme = getThemeForRoute(location.pathname);
+    document.body.setAttribute('data-theme', theme);
+  }, [location.pathname]);
 
   return (
     <AnimatePresence mode="wait">

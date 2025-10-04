@@ -100,6 +100,88 @@ All colors MUST be HSL.
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Route-Based Theme Tokens */
+  body[data-theme="clinic"] {
+    --theme-accent: 180 100% 27%;      /* #008B8B - teal */
+    --theme-halo: 0 0 8px hsl(180 100% 27% / 0.5);
+    --theme-motion: subtle;
+  }
+
+  body[data-theme="performance"] {
+    --theme-accent: 45 100% 50%;       /* #FFC300 - gold */
+    --theme-halo: 0 0 6px hsl(45 100% 50% / 0.6);
+    --theme-motion: kinetic;
+  }
+
+  body[data-theme="institutions"] {
+    --theme-accent: 343 63% 33%;       /* #8B1E3F - maroon */
+    --theme-halo: none;
+    --theme-chart-primary: 343 63% 33%;
+    --theme-chart-secondary: 180 100% 27%;
+    --theme-motion: none;
+  }
+
+  body[data-theme="accreditation"] {
+    --theme-accent: 45 100% 50%;       /* #FFC300 - gold */
+    --theme-halo: 0 0 8px hsl(45 100% 50% / 0.4);
+    --theme-badge-glow: 0 0 16px hsl(45 100% 50% / 0.3);
+    --theme-motion: subtle;
+  }
+
+  body[data-theme="innovation"] {
+    --theme-accent: 180 100% 27%;      /* #008B8B - teal */
+    --theme-halo: 0 0 10px hsl(180 100% 27% / 0.6);
+    --theme-gradient: linear-gradient(135deg, hsl(180 100% 27%) 0%, hsl(215 25% 11%) 100%);
+    --theme-particle-density: high;
+    --theme-motion: subtle;
+  }
+
+  body[data-theme="skool"] {
+    --theme-accent: 45 100% 50%;       /* #FFC300 - gold */
+    --theme-halo: 0 0 6px hsl(45 100% 50% / 0.4);
+    --theme-card-radius: 20px;
+    --theme-card-padding: 24px;
+    --theme-motion: subtle;
+  }
+
+  body[data-theme="default"] {
+    --theme-accent: 45 100% 50%;       /* #FFC300 - gold (base) */
+    --theme-halo: 0 0 6px hsl(45 100% 50% / 0.3);
+    --theme-motion: subtle;
+  }
+
+  /* Theme-aware utility classes */
+  .theme-accent {
+    color: hsl(var(--theme-accent));
+  }
+
+  .theme-halo {
+    box-shadow: var(--theme-halo);
+  }
+
+  .theme-gradient-bg {
+    background: var(--theme-gradient, var(--gradient-hero));
+  }
+
+  /* Motion respects theme + user preference */
+  @media (prefers-reduced-motion: no-preference) {
+    body[data-theme="performance"] .kinetic-underline {
+      animation: kinetic-slide 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+  }
+
+  @keyframes kinetic-slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(0); }
+  }
+
+  /* Disable motion for institutions theme or reduced-motion preference */
+  body[data-theme="institutions"] *,
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
   
   /* Bold Modern Typography - Athletic Energy + Clinical Credibility */
   .text-display {
