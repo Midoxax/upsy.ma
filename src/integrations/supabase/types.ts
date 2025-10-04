@@ -224,6 +224,7 @@ export type Database = {
           offers_in_person: boolean | null
           offers_online: boolean | null
           photo_url: string | null
+          slug: string
           updated_at: string | null
         }
         Insert: {
@@ -239,6 +240,7 @@ export type Database = {
           offers_in_person?: boolean | null
           offers_online?: boolean | null
           photo_url?: string | null
+          slug: string
           updated_at?: string | null
         }
         Update: {
@@ -254,6 +256,7 @@ export type Database = {
           offers_in_person?: boolean | null
           offers_online?: boolean | null
           photo_url?: string | null
+          slug?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -376,6 +379,10 @@ export type Database = {
       create_admin_user: {
         Args: { _email: string; _password: string }
         Returns: Json
+      }
+      generate_slug: {
+        Args: { id: string; name: string }
+        Returns: string
       }
       has_role: {
         Args: {
