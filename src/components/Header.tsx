@@ -60,7 +60,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-u-surface shadow-u-card">
+    <header className="sticky top-0 z-50 bg-u-surface/95 backdrop-blur-lg border-b border-u-gray-700/50 shadow-u-card">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -68,9 +68,9 @@ const Header = () => {
             <img 
               src={logo} 
               alt="U.Psy Logo - Navigate to homepage" 
-              className="h-10 w-auto filter drop-shadow-[0_0_8px_rgba(255,195,0,0.6)] hover:drop-shadow-[0_0_12px_rgba(255,195,0,0.8)] transition-all duration-300"
+              className="h-10 w-auto transition-all duration-300"
               style={{ 
-                filter: 'drop-shadow(0 0 8px rgba(255, 195, 0, 0.6)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8))',
+                filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 12px rgba(255, 195, 0, 0.5)) brightness(1.1)',
               }}
             />
           </Link>
@@ -81,17 +81,17 @@ const Header = () => {
               {navigation.map((item) =>
                 item.dropdown ? (
                   <NavigationMenuItem key={item.name}>
-                    <NavigationMenuTrigger className="bg-transparent text-u-gray-300 hover:text-u-white data-[state=open]:text-u-white">
+                    <NavigationMenuTrigger className="bg-transparent text-u-gray-300 hover:text-u-gray-100 data-[state=open]:text-u-gold font-semibold">
                       {item.name}
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-u-surface border-u-gold/20 z-[var(--z-dropdown)]">
+                    <NavigationMenuContent className="bg-u-surface/95 backdrop-blur-xl border border-u-gray-700/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-[var(--z-dropdown)]">
                       <ul className="grid w-[200px] gap-1 p-2">
                         {item.dropdown.map((subItem) => (
                           <li key={subItem.name}>
                             <NavigationMenuLink asChild>
                               <Link
                                 to={subItem.href}
-                                className="block select-none rounded-md p-3 text-sm leading-none text-u-gray-300 hover:text-u-white hover:bg-u-maroon/20 transition-colors"
+                                className="block select-none rounded-md p-3 text-sm leading-none text-u-gray-300 hover:text-u-gray-100 hover:bg-u-gray-700/50 transition-colors font-medium"
                               >
                                 {subItem.name}
                               </Link>
@@ -105,8 +105,8 @@ const Header = () => {
                   <NavigationMenuItem key={item.name}>
                     <Link
                       to={item.href}
-                      className={`inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-u-white ${
-                        isActive(item.href) ? "text-u-white" : "text-u-gray-300"
+                      className={`inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition-colors hover:text-u-gray-100 ${
+                        isActive(item.href) ? "text-u-gold" : "text-u-gray-300"
                       }`}
                     >
                       {item.name}

@@ -17,7 +17,7 @@ export default {
         outfit: ['Outfit', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
-        /* U.Psy Brand Colors */
+        /* U.Psy Brand Colors - Bold Modern Psychology */
         'u-bg': "hsl(var(--bg))",
         'u-surface': "hsl(var(--surface))",
         'u-maroon': "hsl(var(--maroon))",
@@ -25,8 +25,10 @@ export default {
         'u-teal': "hsl(var(--teal))",
         'u-white': "hsl(var(--white))",
         'u-black': "hsl(var(--black))",
+        'u-gray-100': "hsl(var(--gray-100))",
         'u-gray-300': "hsl(var(--gray-300))",
         'u-gray-500': "hsl(var(--gray-500))",
+        'u-gray-700': "hsl(var(--gray-700))",
         
         /* Semantic Colors */
         border: "hsl(var(--border))",
