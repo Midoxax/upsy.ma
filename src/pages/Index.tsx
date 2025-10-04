@@ -15,7 +15,7 @@ const Index = () => {
         <div className="container-custom relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Content */}
-            <div className="text-center lg:text-left">
+            <div className="text-center lg:text-left pt-10">
               <h1 className="text-h1 text-u-white mb-6 leading-tight">
                 U.Psy — Your Personal & Trusted Psychologist.
               </h1>
@@ -24,7 +24,7 @@ const Index = () => {
                 Evidence-based psychology to unlock resilience, elevate performance, and foster healing — in clinic, online, and on the field.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-[60px]">
                 <Button variant="primary" size="hero" asChild>
                   <Link to="/book-a-call">Get Started</Link>
                 </Button>
@@ -33,18 +33,17 @@ const Index = () => {
                 </Button>
               </div>
               
-              {/* Trust Strip */}
+              {/* Trust Strip - Partner Logos */}
               <div className="mt-12 pt-8 border-t border-u-gold/20">
                 <p className="text-small text-u-gray-300 mb-6">Trusted by professionals and organizations</p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8">
-                  {/* Space for partner logos */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
                   {["UFC Gym Morocco", "UIC", "LSSPM"].map((org) => (
                     <div 
                       key={org}
-                      className="bg-u-white/5 backdrop-blur-sm rounded-lg px-6 py-4 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300"
+                      className="h-[60px] px-8 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0"
+                      style={{ filter: 'invert(1) grayscale(1)' }}
                     >
-                      <p className="text-u-gray-300 text-sm font-medium">{org}</p>
-                      <p className="text-u-gray-500 text-xs mt-1">Logo Coming Soon</p>
+                      <span className="text-u-white text-sm font-medium tracking-wide">{org}</span>
                     </div>
                   ))}
                 </div>
@@ -59,8 +58,12 @@ const Index = () => {
                 >
                   {/* Placeholder for professional photo or video intro */}
                   <div className="text-center px-8">
-                    <div className="w-20 h-20 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 mx-auto border-2 border-u-gold/30">
-                      <span className="text-u-gold text-3xl font-bold">MF</span>
+                    <div className="relative w-32 h-32 mb-6 mx-auto">
+                      {/* Gold circular frame with teal glow */}
+                      <div className="absolute inset-0 rounded-full border-4 border-u-gold/80 shadow-[0_0_30px_rgba(0,139,139,0.5)]"></div>
+                      <div className="absolute inset-0 rounded-full bg-u-gold/5 backdrop-blur-sm flex items-center justify-center">
+                        <span className="text-u-gold text-6xl font-light" style={{ fontFamily: 'Georgia, serif' }}>Ψ</span>
+                      </div>
                     </div>
                     <p className="text-u-white text-xl font-semibold mb-2">Dr. Mehdi Felji</p>
                     <p className="text-u-gray-300 text-base font-light">Professional Photo Coming Soon</p>

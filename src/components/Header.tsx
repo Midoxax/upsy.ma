@@ -39,7 +39,10 @@ const Header = () => {
             <img 
               src={logo} 
               alt="U.Psy Logo - Navigate to homepage" 
-              className="h-10 w-auto filter drop-shadow-[0_0_8px_rgba(212,175,55,0.5)] hover:drop-shadow-[0_0_12px_rgba(212,175,55,0.7)] transition-all duration-300"
+              className="h-10 w-auto filter drop-shadow-[0_0_8px_rgba(255,195,0,0.6)] hover:drop-shadow-[0_0_12px_rgba(255,195,0,0.8)] transition-all duration-300"
+              style={{ 
+                filter: 'drop-shadow(0 0 8px rgba(255, 195, 0, 0.6)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8))',
+              }}
             />
           </Link>
 
