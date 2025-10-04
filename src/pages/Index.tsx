@@ -4,6 +4,7 @@ import { ChevronDown, Brain, Building2, Award, Activity } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import MaroonDivider from "@/components/ui/maroon-divider";
+import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 
 const Index = () => {
   return (
@@ -144,6 +145,9 @@ const Index = () => {
           </StaggerContainer>
         </div>
       </section>
+
+      {/* Methods & Metrics Band */}
+      <MethodsMetricsBand />
 
       <MaroonDivider />
 

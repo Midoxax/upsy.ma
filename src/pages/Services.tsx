@@ -2,6 +2,7 @@ import { Brain, Clock, Flower2, TrendingUp, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 
 const Services = () => {
   const navigate = useNavigate();
@@ -54,6 +55,9 @@ const Services = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      {/* Methods & Metrics Band */}
+      <MethodsMetricsBand />
+
       {/* Intro Section */}
       <section className="container-custom section-spacing">
         <div className="text-center max-w-4xl mx-auto mb-16">

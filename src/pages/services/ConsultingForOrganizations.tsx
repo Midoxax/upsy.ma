@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 
 const ConsultingForOrganizations = () => {
   const valueProps = [
@@ -293,6 +294,9 @@ const ConsultingForOrganizations = () => {
           </div>
         </div>
       </section>
+
+      {/* Methods & Metrics Band */}
+      <MethodsMetricsBand />
 
       {/* CTA Row */}
       <section className="section-spacing">
