@@ -3,14 +3,18 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
 import logo from "@/assets/logo.webp";
 import { MegaMenu } from "@/components/MegaMenu";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
+  const { locale, t } = useLocale();
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -79,7 +83,7 @@ const Header = () => {
               aria-haspopup="true"
               aria-label="Open main menu"
             >
-              Explore U.Psy
+              {t('nav.explore')}
               <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`} />
             </Button>
             <MegaMenu isOpen={megaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
@@ -87,20 +91,21 @@ const Header = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
+            <LanguageSwitcher className="mr-2" />
             {user ? (
               <Button variant="primary" size="sm" asChild>
-                <Link to="/my-space">
+                <Link to={addLocalePrefix('/my-space', locale)}>
                   <User className="mr-2 h-4 w-4" />
-                  My Space
+                  {t('nav.mySpace')}
                 </Link>
               </Button>
             ) : (
               <>
                 <Button variant="primary" size="sm" asChild className="hover-glow">
-                  <Link to="/contact">Get Started</Link>
+                  <Link to={addLocalePrefix('/contact', locale)}>{t('cta.getStarted')}</Link>
                 </Button>
                 <Button variant="secondary" size="sm" asChild>
-                  <Link to="/auth">Login</Link>
+                  <Link to={addLocalePrefix('/auth', locale)}>{t('cta.login')}</Link>
                 </Button>
               </>
             )}
@@ -149,23 +154,24 @@ const Header = () => {
                 </div>
               ))}
               <div className="flex flex-col space-y-3 pt-4 mt-4 border-t border-u-gray-500">
+                <LanguageSwitcher className="pb-3" />
                 {user ? (
                   <Button variant="primary" size="sm" asChild>
-                    <Link to="/my-space" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link to={addLocalePrefix('/my-space', locale)} onClick={() => setIsMobileMenuOpen(false)}>
                       <User className="mr-2 h-4 w-4" />
-                      My Space
+                      {t('nav.mySpace')}
                     </Link>
                   </Button>
                 ) : (
                   <>
                     <Button variant="primary" size="sm" asChild>
-                      <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                        Get Started
+                      <Link to={addLocalePrefix('/contact', locale)} onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('cta.getStarted')}
                       </Link>
                     </Button>
                     <Button variant="secondary" size="sm" asChild>
-                      <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                        Login
+                      <Link to={addLocalePrefix('/auth', locale)} onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('cta.login')}
                       </Link>
                     </Button>
                   </>

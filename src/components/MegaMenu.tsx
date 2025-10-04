@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { 
   Users, Sparkles, Briefcase, Building, Award, 
   Lightbulb, MessageCircle, BookOpen, ChevronRight 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
 
 const megaMenuItems = [
   {
@@ -83,6 +85,14 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
   const menuRef = useRef<HTMLDivElement>(null);
+  const { locale, t } = useLocale();
+
+  const localizedMenuItems = megaMenuItems.map(item => ({
+    ...item,
+    title: t(`nav.${item.href.split('/').pop()?.replace(/-/g, '') || item.title.toLowerCase().replace(/\s+/g, '')}`),
+    value: t(`nav.${item.href.split('/').pop()?.replace(/-/g, '') || item.title.toLowerCase().replace(/\s+/g, '')}Value`),
+    cta: t(`cta.${item.cta.toLowerCase().replace(/\s+/g, '')}`),
+  }));
 
   // Close on route change
   useEffect(() => {
@@ -126,16 +136,17 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
         aria-label="Mobile navigation menu"
       >
         <div className="container-custom py-6 space-y-2">
-          {megaMenuItems.map((item) => {
-            const Icon = item.icon;
+          {localizedMenuItems.map((item, idx) => {
+            const Icon = megaMenuItems[idx].icon;
+            const originalHref = megaMenuItems[idx].href;
             return (
               <Link
-                key={item.href}
-                to={item.href}
+                key={originalHref}
+                to={addLocalePrefix(originalHref, locale)}
                 className="flex items-start gap-4 p-4 rounded-lg bg-u-gray-700/20 hover:bg-u-gray-700/40 transition-colors"
                 onClick={onClose}
               >
-                <Icon className={cn("w-6 h-6 flex-shrink-0 mt-0.5", item.color)} strokeWidth={2} />
+                <Icon className={cn("w-6 h-6 flex-shrink-0 mt-0.5", megaMenuItems[idx].color)} strokeWidth={2} />
                 <div className="flex-1 min-w-0">
                   <div className="text-u-gray-100 font-semibold mb-1">{item.title}</div>
                   <div className="text-u-gray-400 text-sm mb-3">{item.value}</div>
@@ -160,12 +171,13 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
     >
       <div className="container-custom">
         <div className="grid grid-cols-4 divide-x divide-u-gray-700/30">
-          {megaMenuItems.map((item, index) => {
-            const Icon = item.icon;
+          {localizedMenuItems.map((item, index) => {
+            const Icon = megaMenuItems[index].icon;
+            const originalHref = megaMenuItems[index].href;
             return (
               <Link
-                key={item.href}
-                to={item.href}
+                key={originalHref}
+                to={addLocalePrefix(originalHref, locale)}
                 className={cn(
                   "mega-menu-column px-6 py-8 transition-all duration-200",
                   "hover:bg-u-gray-700/20",
@@ -173,7 +185,7 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
                 )}
                 onClick={onClose}
               >
-                <Icon className={cn("w-6 h-6 mb-4", item.color)} strokeWidth={2} />
+                <Icon className={cn("w-6 h-6 mb-4", megaMenuItems[index].color)} strokeWidth={2} />
                 <div className="text-u-gray-100 font-semibold text-base mb-2">
                   {item.title}
                 </div>

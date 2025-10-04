@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { Youtube, Linkedin, Instagram } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Footer = () => {
+  const { locale, t } = useLocale();
+  
   return (
     <footer className="bg-u-surface border-t border-u-gray-500">
       <div className="container-custom py-12">
@@ -11,6 +16,9 @@ const Footer = () => {
             <div className="flex flex-col mb-4">
               <span className="text-u-white font-bold text-xl">U.Psy</span>
               <span className="text-u-gray-300 text-xs">by Mehdi Felji</span>
+              <span className="text-u-gray-300 text-sm mt-1.5 leading-[1.4]">
+                {t('footer.strapline')}
+              </span>
             </div>
             <p className="text-u-gray-300 text-sm mb-6">
               Evidence-based psychology & sport performance.
@@ -19,12 +27,12 @@ const Footer = () => {
             {/* Contact Info */}
             <div className="space-y-2 text-sm">
               <p className="text-u-gray-300">
-                <span className="text-u-white">Email:</span> contact@upsy.com
+                <span className="text-u-white">{t('footer.email')}:</span> contact@upsy.com
               </p>
               <p className="text-u-gray-300">
-                <span className="text-u-white">WhatsApp:</span>{" "}
+                <span className="text-u-white">{t('footer.whatsapp')}:</span>{" "}
                 <a href="#" className="text-u-orange hover:underline">
-                  Available upon request
+                  {t('footer.availableOnRequest')}
                 </a>
               </p>
             </div>
@@ -32,7 +40,7 @@ const Footer = () => {
 
           {/* Social Media */}
           <div>
-            <h3 className="text-u-white font-semibold mb-4">Follow Us</h3>
+            <h3 className="text-u-white font-semibold mb-4">{t('footer.followUs')}</h3>
             <div className="flex space-x-4">
               <a 
                 href="#" 
@@ -70,12 +78,13 @@ const Footer = () => {
           {/* Legal & Language */}
           <div>
             <h3 className="text-u-white font-semibold mb-4">Legal</h3>
-            <div className="space-y-2">
-              <Link to="/legal" className="text-u-gray-300 hover:text-u-white text-sm block transition-colors">
-                Terms & Privacy
+            <div className="space-y-3">
+              <Link to={addLocalePrefix('/legal', locale)} className="text-u-gray-300 hover:text-u-white text-sm block transition-colors">
+                {t('footer.legal')}
               </Link>
-              <div className="text-u-gray-300 text-sm">
-                <span className="text-u-white">Language:</span> EN · FR · AR
+              <div>
+                <div className="text-u-white text-sm mb-2">{t('footer.language')}:</div>
+                <LanguageSwitcher compact />
               </div>
             </div>
           </div>
@@ -84,8 +93,7 @@ const Footer = () => {
         {/* Crisis Notice */}
         <div className="border-t border-u-gray-500 pt-8 mt-8">
           <p className="text-u-gray-300 text-xs text-center">
-            <strong className="text-u-orange">Important:</strong> This is not a crisis service. 
-            In an emergency, contact your local emergency services immediately.
+            <strong className="text-u-orange">Important:</strong> {t('footer.crisis')}
           </p>
         </div>
 

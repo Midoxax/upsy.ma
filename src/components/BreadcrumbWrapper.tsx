@@ -10,45 +10,61 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/contexts/LocaleContext";
+import { stripLocalePrefix, addLocalePrefix } from "@/lib/i18n/utils";
 
-const breadcrumbMap: Record<string, { label: string; icon: any; color: string }> = {
-  '/': { label: 'Home', icon: Home, color: 'text-u-gray-400' },
-  '/about': { label: 'About Us', icon: Info, color: 'text-u-gold' },
-  '/services': { label: 'Services', icon: Briefcase, color: 'text-u-teal' },
-  '/services/consulting-for-organizations': { label: 'For Organizations', icon: Building, color: 'text-u-maroon' },
-  '/psychologists': { label: 'Find Psychologist', icon: Users, color: 'text-u-gold' },
-  '/get-matched': { label: 'Get Matched', icon: Sparkles, color: 'text-u-gold' },
-  '/apply': { label: 'Accreditation', icon: Award, color: 'text-u-teal' },
-  '/contact': { label: 'Contact', icon: Mail, color: 'text-u-gold' },
-  '/skool': { label: 'Community', icon: MessageCircle, color: 'text-u-teal' },
-  '/talent-innovation-hub': { label: 'Innovation Hub', icon: Lightbulb, color: 'text-u-maroon' },
-  '/resources': { label: 'Resources', icon: BookOpen, color: 'text-u-gold' },
-  '/legal': { label: 'Legal', icon: FileText, color: 'text-u-gray-400' },
-  '/auth': { label: 'Login', icon: LogIn, color: 'text-u-gray-400' },
-  '/my-space': { label: 'My Space', icon: LayoutDashboard, color: 'text-u-gold' },
+const breadcrumbConfig: Record<string, { key: string; icon: any; color: string }> = {
+  '/': { key: 'home', icon: Home, color: 'text-u-gray-400' },
+  '/about': { key: 'about', icon: Info, color: 'text-u-gold' },
+  '/services': { key: 'services', icon: Briefcase, color: 'text-u-teal' },
+  '/services/consulting-for-organizations': { key: 'forOrganizations', icon: Building, color: 'text-u-maroon' },
+  '/psychologists': { key: 'findPsychologist', icon: Users, color: 'text-u-gold' },
+  '/get-matched': { key: 'getMatched', icon: Sparkles, color: 'text-u-gold' },
+  '/apply': { key: 'accreditation', icon: Award, color: 'text-u-teal' },
+  '/contact': { key: 'contact', icon: Mail, color: 'text-u-gold' },
+  '/skool': { key: 'skool', icon: MessageCircle, color: 'text-u-teal' },
+  '/talent-innovation-hub': { key: 'innovationHub', icon: Lightbulb, color: 'text-u-maroon' },
+  '/resources': { key: 'resources', icon: BookOpen, color: 'text-u-gold' },
+  '/legal': { key: 'legal', icon: FileText, color: 'text-u-gray-400' },
+  '/auth': { key: 'login', icon: LogIn, color: 'text-u-gray-400' },
+  '/my-space': { key: 'mySpace', icon: LayoutDashboard, color: 'text-u-gold' },
 };
 
 export function BreadcrumbWrapper() {
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { locale, t } = useLocale();
+  
+  const cleanPath = stripLocalePrefix(location.pathname);
   
   // Don't show breadcrumbs on home page or 404
-  if (location.pathname === '/' || location.pathname === '/404') {
+  if (cleanPath === '/' || cleanPath === '/404') {
     return null;
   }
 
   const getBreadcrumbs = () => {
-    const segments = location.pathname.split('/').filter(Boolean);
-    const crumbs = [{ label: 'Home', href: '/', icon: Home, color: 'text-u-gray-400' }];
+    const segments = cleanPath.split('/').filter(Boolean);
+    const crumbs = [{ label: t('nav.home'), href: addLocalePrefix('/', locale), icon: Home, color: 'text-u-gray-400' }];
     
     segments.forEach((segment, index) => {
       const path = '/' + segments.slice(0, index + 1).join('/');
-      const config = breadcrumbMap[path] || { 
-        label: segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' '), 
-        icon: FileText,
-        color: 'text-u-gray-400'
-      };
-      crumbs.push({ ...config, href: path });
+      const config = breadcrumbConfig[path];
+      
+      if (config) {
+        crumbs.push({ 
+          label: t(`nav.${config.key}`),
+          href: addLocalePrefix(path, locale),
+          icon: config.icon,
+          color: config.color
+        });
+      } else {
+        crumbs.push({ 
+          label: segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' '), 
+          href: addLocalePrefix(path, locale),
+          icon: FileText,
+          color: 'text-u-gray-400'
+        });
+      }
     });
     
     return crumbs;

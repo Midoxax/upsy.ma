@@ -9,9 +9,12 @@ import PageTransition from "@/components/PageTransition";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { LocaleProvider } from "@/contexts/LocaleContext";
+import { stripLocalePrefix } from "@/lib/i18n/utils";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BreadcrumbWrapper } from "@/components/BreadcrumbWrapper";
+import SEOHead from "@/components/SEOHead";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -35,12 +38,13 @@ const queryClient = new QueryClient();
 
 // Theme mapper based on route patterns
 const getThemeForRoute = (pathname: string): string => {
-  if (pathname === '/services/sport-psychology') return 'performance';
-  if (pathname === '/services/consulting-for-organizations') return 'institutions';
-  if (pathname === '/talent-innovation-hub') return 'innovation';
-  if (pathname === '/skool') return 'skool';
-  if (['/apply', '/my-space'].includes(pathname)) return 'accreditation';
-  if (['/services', '/psychologists', '/get-matched'].some(route => pathname.startsWith(route))) return 'clinic';
+  const cleanPath = stripLocalePrefix(pathname);
+  if (cleanPath === '/services/sport-psychology') return 'performance';
+  if (cleanPath === '/services/consulting-for-organizations') return 'institutions';
+  if (cleanPath === '/talent-innovation-hub') return 'innovation';
+  if (cleanPath === '/skool') return 'skool';
+  if (['/apply', '/my-space'].includes(cleanPath)) return 'accreditation';
+  if (['/services', '/psychologists', '/get-matched'].some(route => cleanPath.startsWith(route))) return 'clinic';
   return 'default';
 };
 
@@ -54,28 +58,52 @@ const AnimatedRoutes = () => {
   }, [location.pathname]);
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-        <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-        <Route path="/services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
-        <Route path="/skool" element={<PageTransition><Skool /></PageTransition>} />
-        <Route path="/resources" element={<PageTransition><Resources /></PageTransition>} />
-        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-        <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
-        <Route path="/talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
-        <Route path="/psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
-        <Route path="/psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
-        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-        <Route path="/apply" element={<PageTransition><Apply /></PageTransition>} />
-        <Route path="/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
-        <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
-        <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-      </Routes>
-    </AnimatePresence>
+    <>
+      <SEOHead path={location.pathname} />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* EN routes (x-default) */}
+          <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+          <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+          <Route path="/services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
+          <Route path="/skool" element={<PageTransition><Skool /></PageTransition>} />
+          <Route path="/resources" element={<PageTransition><Resources /></PageTransition>} />
+          <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+          <Route path="/talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
+          <Route path="/psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
+          <Route path="/psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
+          <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+          <Route path="/apply" element={<PageTransition><Apply /></PageTransition>} />
+          <Route path="/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+          <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          
+          {/* FR routes */}
+          <Route path="/fr" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/fr/about" element={<PageTransition><About /></PageTransition>} />
+          <Route path="/fr/services" element={<PageTransition><Services /></PageTransition>} />
+          <Route path="/fr/services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
+          <Route path="/fr/skool" element={<PageTransition><Skool /></PageTransition>} />
+          <Route path="/fr/resources" element={<PageTransition><Resources /></PageTransition>} />
+          <Route path="/fr/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="/fr/legal" element={<PageTransition><Legal /></PageTransition>} />
+          <Route path="/fr/talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
+          <Route path="/fr/psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
+          <Route path="/fr/psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
+          <Route path="/fr/auth" element={<PageTransition><Auth /></PageTransition>} />
+          <Route path="/fr/apply" element={<PageTransition><Apply /></PageTransition>} />
+          <Route path="/fr/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+          <Route path="/fr/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
+          <Route path="/fr/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/fr/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          
+          <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -86,14 +114,16 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ErrorBoundary>
-            <div className="min-h-screen flex flex-col bg-background">
-              <Header />
-              <BreadcrumbWrapper />
-              <AnimatedRoutes />
-              <Footer />
-            </div>
-          </ErrorBoundary>
+          <LocaleProvider>
+            <ErrorBoundary>
+              <div className="min-h-screen flex flex-col bg-background">
+                <Header />
+                <BreadcrumbWrapper />
+                <AnimatedRoutes />
+                <Footer />
+              </div>
+            </ErrorBoundary>
+          </LocaleProvider>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
