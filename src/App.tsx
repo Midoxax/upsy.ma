@@ -2,7 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -33,6 +35,39 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+        <Route path="/services/clinical-psychology" element={<PageTransition><ClinicalPsychology /></PageTransition>} />
+        <Route path="/services/sport-psychology" element={<PageTransition><SportPsychology /></PageTransition>} />
+        <Route path="/services/training-and-talks" element={<PageTransition><TrainingAndTalks /></PageTransition>} />
+        <Route path="/services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
+        <Route path="/skool" element={<PageTransition><Skool /></PageTransition>} />
+        <Route path="/resources" element={<PageTransition><Resources /></PageTransition>} />
+        <Route path="/book-a-call" element={<PageTransition><BookACall /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+        <Route path="/talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
+        <Route path="/psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
+        <Route path="/psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/apply" element={<PageTransition><Apply /></PageTransition>} />
+        <Route path="/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+        <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
+        <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -43,52 +78,7 @@ const App = () => (
           <ErrorBoundary>
             <div className="min-h-screen flex flex-col bg-background">
               <Header />
-              <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/services/clinical-psychology" element={<ClinicalPsychology />} />
-              <Route path="/services/sport-psychology" element={<SportPsychology />} />
-              <Route path="/services/training-and-talks" element={<TrainingAndTalks />} />
-              <Route path="/services/consulting-for-organizations" element={<ConsultingForOrganizations />} />
-              <Route path="/skool" element={<Skool />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/book-a-call" element={<BookACall />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/legal" element={<Legal />} />
-              <Route path="/talent-innovation-hub" element={<TalentInnovationHub />} />
-              <Route path="/psychologists" element={<Psychologists />} />
-              <Route path="/psychologists/:id" element={<PsychologistProfile />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/apply" element={<Apply />} />
-              <Route path="/get-matched" element={<GetMatched />} />
-              <Route
-                path="/my-space"
-                element={
-                  <ProtectedRoute>
-                    <MySpace />
-                  </ProtectedRoute>
-                }
-              />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/applications"
-            element={
-              <ProtectedRoute>
-                <Applications />
-              </ProtectedRoute>
-            }
-          />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AnimatedRoutes />
               <Footer />
             </div>
           </ErrorBoundary>

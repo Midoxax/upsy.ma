@@ -5,6 +5,7 @@ import { PsychologistFilters } from "@/components/psychologists/PsychologistFilt
 import { PsychologistCard } from "@/components/psychologists/PsychologistCard";
 import { PsychologistCardSkeleton } from "@/components/psychologists/PsychologistCardSkeleton";
 import { EmptyState } from "@/components/ui/empty-state";
+import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import {
   Pagination,
   PaginationContent,
@@ -90,11 +91,15 @@ const Psychologists = () => {
               {/* Cards Grid */}
               {!isLoading && data && data.profiles.length > 0 && (
                 <>
-                  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {data.profiles.map((psychologist) => (
-                      <PsychologistCard key={psychologist.id} psychologist={psychologist} />
-                    ))}
-                  </div>
+                  <StaggerContainer staggerDelay={0.1}>
+                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {data.profiles.map((psychologist) => (
+                        <StaggerItem key={psychologist.id}>
+                          <PsychologistCard psychologist={psychologist} />
+                        </StaggerItem>
+                      ))}
+                    </div>
+                  </StaggerContainer>
 
                   {/* Pagination */}
                   {totalPages > 1 && (

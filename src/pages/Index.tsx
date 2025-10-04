@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ChevronDown, Brain, Building2, Award, Activity } from "lucide-react";
-import neuralNetworkBg from "@/assets/neural-network-bg.webp";
+import ScrollReveal from "@/components/ScrollReveal";
+import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 
 const Index = () => {
   return (
@@ -95,94 +96,112 @@ const Index = () => {
       {/* Feature Section */}
       <section className="section-spacing bg-u-bg">
         <div className="container-custom">
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Individual Guidance */}
-            <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300">
-              <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30">
-                <Brain className="w-8 h-8 text-u-teal" />
-              </div>
-              <h3 className="text-h3 text-u-white mb-4">Individual Guidance</h3>
-              <p className="text-body text-u-gray-300">
-                Therapy, performance, personality & serenity assessments.
-              </p>
-            </div>
+          <StaggerContainer>
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Individual Guidance */}
+              <StaggerItem>
+                <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300 hover-lift">
+                  <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30">
+                    <Brain className="w-8 h-8 text-u-teal" />
+                  </div>
+                  <h3 className="text-h3 text-u-white mb-4">Individual Guidance</h3>
+                  <p className="text-body text-u-gray-300">
+                    Therapy, performance, personality & serenity assessments.
+                  </p>
+                </div>
+              </StaggerItem>
 
-            {/* Institutional Solutions */}
-            <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300">
-              <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-gold/30">
-                <Building2 className="w-8 h-8 text-u-gold" />
-              </div>
-              <h3 className="text-h3 text-u-white mb-4">Institutional Solutions</h3>
-              <p className="text-body text-u-gray-300">
-                Programs for federations, companies, and universities.
-              </p>
-            </div>
+              {/* Institutional Solutions */}
+              <StaggerItem>
+                <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300 hover-lift">
+                  <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-gold/30">
+                    <Building2 className="w-8 h-8 text-u-gold" />
+                  </div>
+                  <h3 className="text-h3 text-u-white mb-4">Institutional Solutions</h3>
+                  <p className="text-body text-u-gray-300">
+                    Programs for federations, companies, and universities.
+                  </p>
+                </div>
+              </StaggerItem>
 
-            {/* U.Psy Accreditation */}
-            <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300">
-              <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30">
-                <Award className="w-8 h-8 text-u-teal" />
-              </div>
-              <h3 className="text-h3 text-u-white mb-4">U.Psy Accreditation</h3>
-              <p className="text-body text-u-gray-300">
-                Get certified, listed, and matched with clients.
-              </p>
+              {/* U.Psy Accreditation */}
+              <StaggerItem>
+                <div className="bg-u-surface/40 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover:border-u-gold/40 transition-all duration-300 hover-lift">
+                  <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30">
+                    <Award className="w-8 h-8 text-u-teal" />
+                  </div>
+                  <h3 className="text-h3 text-u-white mb-4">U.Psy Accreditation</h3>
+                  <p className="text-body text-u-gray-300">
+                    Get certified, listed, and matched with clients.
+                  </p>
+                </div>
+              </StaggerItem>
             </div>
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* Testimonials Section */}
       <section className="section-spacing bg-gradient-to-br from-u-maroon/20 to-u-bg">
         <div className="container-custom">
-          <h2 className="text-h2 text-u-white text-center mb-12">What Our Clients Say</h2>
+          <ScrollReveal>
+            <h2 className="text-h2 text-u-white text-center mb-12">What Our Clients Say</h2>
+          </ScrollReveal>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Testimonial 1 */}
-            <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
-                  <Activity className="w-8 h-8 text-u-gold" />
+          <StaggerContainer staggerDelay={0.15}>
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Testimonial 1 */}
+              <StaggerItem>
+                <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover-lift">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
+                      <Activity className="w-8 h-8 text-u-gold" />
+                    </div>
+                    <div>
+                      <p className="text-u-white font-semibold">National Sprinter</p>
+                    </div>
+                  </div>
+                  <p className="text-u-gray-300 italic">
+                    "I finally compete calm and focused. My pre-race anxiety is under control."
+                  </p>
                 </div>
-                <div>
-                  <p className="text-u-white font-semibold">National Sprinter</p>
-                </div>
-              </div>
-              <p className="text-u-gray-300 italic">
-                "I finally compete calm and focused. My pre-race anxiety is under control."
-              </p>
-            </div>
+              </StaggerItem>
 
-            {/* Testimonial 2 */}
-            <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
-                  <Building2 className="w-8 h-8 text-u-gold" />
+              {/* Testimonial 2 */}
+              <StaggerItem>
+                <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover-lift">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
+                      <Building2 className="w-8 h-8 text-u-gold" />
+                    </div>
+                    <div>
+                      <p className="text-u-white font-semibold">Marketing Director</p>
+                    </div>
+                  </div>
+                  <p className="text-u-gray-300 italic">
+                    "Burnout down, clarity up. Practical tools I still use every day."
+                  </p>
                 </div>
-                <div>
-                  <p className="text-u-white font-semibold">Marketing Director</p>
-                </div>
-              </div>
-              <p className="text-u-gray-300 italic">
-                "Burnout down, clarity up. Practical tools I still use every day."
-              </p>
-            </div>
+              </StaggerItem>
 
-            {/* Testimonial 3 */}
-            <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
-                  <Brain className="w-8 h-8 text-u-gold" />
+              {/* Testimonial 3 */}
+              <StaggerItem>
+                <div className="bg-u-white/5 backdrop-blur-sm rounded-u-lg p-8 border border-u-gold/20 hover-lift">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center border-2 border-u-gold/30">
+                      <Brain className="w-8 h-8 text-u-gold" />
+                    </div>
+                    <div>
+                      <p className="text-u-white font-semibold">Recovery Client</p>
+                    </div>
+                  </div>
+                  <p className="text-u-gray-300 italic">
+                    "I felt seen without judgment. The structure helped me rebuild."
+                  </p>
                 </div>
-                <div>
-                  <p className="text-u-white font-semibold">Recovery Client</p>
-                </div>
-              </div>
-              <p className="text-u-gray-300 italic">
-                "I felt seen without judgment. The structure helped me rebuild."
-              </p>
+              </StaggerItem>
             </div>
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
