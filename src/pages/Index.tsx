@@ -37,13 +37,22 @@ const Index = () => {
               <div className="mt-12 pt-8 border-t border-u-gold/20">
                 <p className="text-small text-u-gray-300 mb-6">Trusted by professionals and organizations</p>
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
-                  {["UFC Gym Morocco", "UIC", "LSSPM"].map((org) => (
-                    <div 
-                      key={org}
-                      className="h-[60px] px-8 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0"
-                      style={{ filter: 'invert(1) grayscale(1)' }}
+                  {[
+                    { name: "UFC Gym Morocco", width: "w-40" },
+                    { name: "UIC", width: "w-24" },
+                    { name: "LSSPM", width: "w-32" },
+                  ].map((partner) => (
+                    <div
+                      key={partner.name}
+                      className={`${partner.width} h-[60px] rounded-lg bg-gradient-to-br from-u-gold/10 to-u-teal/5 
+                        backdrop-blur-sm border border-u-gold/20 flex items-center justify-center
+                        transition-all duration-300 hover:opacity-100 hover:border-u-gold/50 hover:shadow-lg
+                        opacity-60 group`}
+                      style={{ filter: 'grayscale(0.8)' }}
                     >
-                      <span className="text-u-white text-sm font-medium tracking-wide">{org}</span>
+                      <span className="text-xs text-center text-u-white/80 group-hover:text-u-gold transition-colors px-3">
+                        {partner.name}
+                      </span>
                     </div>
                   ))}
                 </div>

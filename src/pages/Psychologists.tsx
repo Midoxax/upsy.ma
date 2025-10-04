@@ -3,6 +3,7 @@ import { FilterState } from "@/types/psychologist";
 import { usePsychologists } from "@/hooks/usePsychologists";
 import { PsychologistFilters } from "@/components/psychologists/PsychologistFilters";
 import { PsychologistCard } from "@/components/psychologists/PsychologistCard";
+import { PsychologistCardSkeleton } from "@/components/psychologists/PsychologistCardSkeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   Pagination,
@@ -70,9 +71,10 @@ const Psychologists = () => {
 
               {/* Loading State */}
               {isLoading && (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                  <p className="mt-4 text-muted-foreground">Loading psychologists...</p>
+                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <PsychologistCardSkeleton key={i} />
+                  ))}
                 </div>
               )}
 

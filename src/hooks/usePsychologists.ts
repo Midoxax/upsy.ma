@@ -12,71 +12,87 @@ export const usePsychologists = ({ filters, page = 1, pageSize = 12 }: UsePsycho
   return useQuery({
     queryKey: ["psychologists", filters, page],
     queryFn: async () => {
-      // Start with base query
-      let query = supabase
-        .from("psychologist_profiles")
-        .select(`
-          *,
-          psychologist_specialties(
-            specialty:specialties(id, name)
-          ),
-          psychologist_languages(
-            language:languages(id, name)
-          )
-        `)
-        .eq("is_published", true);
-
-      // Apply city filter
-      if (filters.city) {
-        query = query.ilike("city", `%${filters.city}%`);
-      }
-
-      // Apply online/in-person filters
-      if (filters.online && !filters.inPerson) {
-        query = query.eq("offers_online", true);
-      } else if (filters.inPerson && !filters.online) {
-        query = query.eq("offers_in_person", true);
-      }
-
-      // Apply price range filter
-      if (filters.minPrice > 0 || filters.maxPrice < 2000) {
-        query = query
-          .gte("hourly_rate_mad", filters.minPrice)
-          .lte("hourly_rate_mad", filters.maxPrice);
-      }
-
-      // Execute query with pagination
-      const { data, error, count } = await query
-        .order("created_at", { ascending: false })
-        .range((page - 1) * pageSize, page * pageSize - 1);
+      // Use database function for server-side filtering
+      const { data, error } = await supabase.rpc("search_psychologists", {
+        p_specialties: filters.specialties.length > 0 ? filters.specialties : [],
+        p_languages: filters.languages.length > 0 ? filters.languages : [],
+        p_city: filters.city || null,
+        p_online: filters.online || null,
+        p_in_person: filters.inPerson || null,
+        p_min_price: filters.minPrice,
+        p_max_price: filters.maxPrice,
+        p_page: page,
+        p_page_size: pageSize,
+      });
 
       if (error) throw error;
 
+      // Get total count from first row (all rows have same count)
+      const total = data && data.length > 0 ? Number(data[0].total_count) : 0;
+
+      // Now fetch specialties and languages for each profile
+      const profileIds = data?.map((p: any) => p.id) || [];
+      
+      if (profileIds.length === 0) {
+        return {
+          profiles: [],
+          total: 0,
+          page,
+          pageSize,
+        };
+      }
+
+      // Fetch junction table data
+      const [specialtiesData, languagesData] = await Promise.all([
+        supabase
+          .from("psychologist_specialties")
+          .select(`
+            psychologist_id,
+            specialty:specialties(id, name)
+          `)
+          .in("psychologist_id", profileIds),
+        supabase
+          .from("psychologist_languages")
+          .select(`
+            psychologist_id,
+            language:languages(id, name)
+          `)
+          .in("psychologist_id", profileIds),
+      ]);
+
+      if (specialtiesData.error) throw specialtiesData.error;
+      if (languagesData.error) throw languagesData.error;
+
+      // Build lookup maps
+      const specialtiesMap = new Map<string, any[]>();
+      specialtiesData.data?.forEach((item: any) => {
+        if (!specialtiesMap.has(item.psychologist_id)) {
+          specialtiesMap.set(item.psychologist_id, []);
+        }
+        specialtiesMap.get(item.psychologist_id)!.push(item.specialty);
+      });
+
+      const languagesMap = new Map<string, any[]>();
+      languagesData.data?.forEach((item: any) => {
+        if (!languagesMap.has(item.psychologist_id)) {
+          languagesMap.set(item.psychologist_id, []);
+        }
+        languagesMap.get(item.psychologist_id)!.push(item.language);
+      });
+
       // Transform data to match PsychologistProfile interface
-      const profiles: PsychologistProfile[] = (data || []).map((profile: any) => ({
-        ...profile,
-        specialties: profile.psychologist_specialties?.map((ps: any) => ps.specialty) || [],
-        languages: profile.psychologist_languages?.map((pl: any) => pl.language) || [],
-      }));
-
-      // Filter by specialties and languages on client side (due to junction tables)
-      let filteredProfiles = profiles;
-
-      if (filters.specialties.length > 0) {
-        filteredProfiles = filteredProfiles.filter((profile) =>
-          profile.specialties.some((spec) => filters.specialties.includes(spec.id))
-        );
-      }
-
-      if (filters.languages.length > 0) {
-        filteredProfiles = filteredProfiles.filter((profile) =>
-          profile.languages.some((lang) => filters.languages.includes(lang.id))
-        );
-      }
+      const profiles: PsychologistProfile[] = (data || []).map((profile: any) => {
+        const { total_count, ...profileData } = profile;
+        return {
+          ...profileData,
+          specialties: specialtiesMap.get(profile.id) || [],
+          languages: languagesMap.get(profile.id) || [],
+        };
+      });
 
       return {
-        profiles: filteredProfiles,
-        total: filteredProfiles.length,
+        profiles,
+        total,
         page,
         pageSize,
       };

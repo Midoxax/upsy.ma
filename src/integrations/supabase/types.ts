@@ -391,6 +391,36 @@ export type Database = {
         }
         Returns: boolean
       }
+      search_psychologists: {
+        Args: {
+          p_city?: string
+          p_in_person?: boolean
+          p_languages?: string[]
+          p_max_price?: number
+          p_min_price?: number
+          p_online?: boolean
+          p_page?: number
+          p_page_size?: number
+          p_specialties?: string[]
+        }
+        Returns: {
+          bio: string
+          calendly_url: string
+          city: string
+          created_at: string
+          full_name: string
+          hourly_rate_mad: number
+          id: string
+          is_accredited: boolean
+          is_published: boolean
+          offers_in_person: boolean
+          offers_online: boolean
+          photo_url: string
+          slug: string
+          total_count: number
+          updated_at: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "psychologist" | "user"
