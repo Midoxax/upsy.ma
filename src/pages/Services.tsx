@@ -72,7 +72,7 @@ const Services = () => {
             return (
               <Card key={index} className="border-2 hover:border-accent transition-all duration-300 hover:shadow-elegant">
                 <CardHeader>
-                  <Icon className={`w-12 h-12 mb-4 ${service.color}`} strokeWidth={1.5} />
+                  <Icon className={`w-12 h-12 mb-4 ${service.color}`} strokeWidth={1.5} aria-hidden="true" />
                   <CardTitle className="text-h3">{service.title}</CardTitle>
                   <CardDescription className="text-body mt-2">
                     {service.description}

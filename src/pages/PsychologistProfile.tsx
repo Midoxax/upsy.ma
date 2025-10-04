@@ -68,17 +68,27 @@ const PsychologistProfile = () => {
               {psychologist.photo_url ? (
                 <img
                   src={psychologist.photo_url}
-                  alt={psychologist.full_name}
+                  alt={`${psychologist.full_name} - Professional psychologist headshot photo`}
                   className="w-32 h-32 rounded-full object-cover border-4 border-primary/20"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
-                <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20">
-                  <User className="w-16 h-16 text-primary" />
+                <div 
+                  className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20"
+                  role="img"
+                  aria-label={`${psychologist.full_name} - No photo available`}
+                >
+                  <User className="w-16 h-16 text-primary" aria-hidden="true" />
                 </div>
               )}
               {psychologist.is_accredited && (
-                <div className="absolute -bottom-2 -right-2 bg-primary rounded-full p-3 shadow-glow">
-                  <Award className="w-6 h-6 text-background" />
+                <div 
+                  className="absolute -bottom-2 -right-2 bg-primary rounded-full p-3 shadow-glow"
+                  role="img"
+                  aria-label="Accredited by U.Psy"
+                >
+                  <Award className="w-6 h-6 text-background" aria-hidden="true" />
                 </div>
               )}
             </div>

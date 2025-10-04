@@ -35,11 +35,11 @@ const Header = () => {
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center focus:outline-none focus:ring-2 focus:ring-accent rounded-md">
             <img 
               src={logo} 
-              alt="U.Psy Logo" 
-              className="h-10 w-auto"
+              alt="U.Psy Logo - Navigate to homepage" 
+              className="h-10 w-auto filter drop-shadow-[0_0_8px_rgba(212,175,55,0.5)] hover:drop-shadow-[0_0_12px_rgba(212,175,55,0.7)] transition-all duration-300"
             />
           </Link>
 

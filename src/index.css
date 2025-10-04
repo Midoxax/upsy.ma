@@ -135,11 +135,13 @@ All colors MUST be HSL.
     }
   }
   
-  /* Focus States for Accessibility */
+  /* Focus States for Accessibility - Enhanced for Visibility */
   *:focus-visible {
-    outline: 2px solid hsl(var(--gold));
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: 3px solid hsl(var(--gold));
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px hsl(var(--gold) / 0.2);
+    transition: outline-offset 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 6px;
   }
   
   button:focus-visible,
@@ -149,9 +151,10 @@ All colors MUST be HSL.
   select:focus-visible {
     outline: 2px solid hsl(var(--gold));
     outline-offset: 2px;
+    box-shadow: 0 0 0 4px hsl(var(--gold) / 0.15);
   }
   
-  /* Hero Neural Background */
+  /* Hero Neural Background - Teal brainwave motif with reduced motion support */
   .hero-neural-bg {
     position: relative;
     overflow: hidden;
@@ -164,15 +167,56 @@ All colors MUST be HSL.
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/src/assets/neural-network-bg.webp');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.15;
+    background: 
+      linear-gradient(135deg, 
+        transparent 0%, 
+        hsl(var(--teal) / 0.05) 30%, 
+        hsl(var(--teal) / 0.08) 50%,
+        hsl(var(--teal) / 0.05) 70%,
+        transparent 100%
+      );
+    background-size: 200% 200%;
     z-index: 0;
+    pointer-events: none;
   }
   
+  /* Animated neural pattern - respects reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-neural-bg::before {
+      background-image: 
+        url('/src/assets/neural-network-bg.webp'),
+        linear-gradient(135deg, 
+          transparent 0%, 
+          hsl(var(--teal) / 0.06) 30%, 
+          hsl(var(--teal) / 0.1) 50%,
+          hsl(var(--teal) / 0.06) 70%,
+          transparent 100%
+        );
+      background-size: cover, 200% 200%;
+      background-position: center, 0% 0%;
+      opacity: 0.15;
+      animation: neural-glow 20s ease-in-out infinite;
+    }
+  }
+  
+  @keyframes neural-glow {
+    0%, 100% { 
+      background-position: center, 0% 50%; 
+      opacity: 0.12;
+    }
+    50% { 
+      background-position: center, 100% 50%; 
+      opacity: 0.18;
+    }
+  }
+  
+  /* Static version for reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
     .hero-neural-bg::before {
+      background-image: url('/src/assets/neural-network-bg.webp');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.08;
       animation: none;
       background-attachment: scroll;
     }
