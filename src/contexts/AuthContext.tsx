@@ -62,12 +62,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Create psychologist profile after signup
     if (data.user && !error) {
+      // Generate slug from full name
+      const slug = fullName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-') + '-' + data.user.id.substring(0, 8);
+
       const { error: profileError } = await supabase
         .from("psychologist_profiles")
-        .insert({
+        .insert([{
           id: data.user.id,
           full_name: fullName,
-        });
+          slug: slug,
+        }]);
 
       if (profileError) {
         return { error: profileError };

@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PsychologistProfile } from "@/types/psychologist";
 
-export const usePsychologistProfile = (id: string) => {
+export const usePsychologistProfile = (slugOrId: string) => {
   return useQuery({
-    queryKey: ["psychologist", id],
+    queryKey: ["psychologist", slugOrId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Try to fetch by slug first, then by ID as fallback
+      let query = supabase
         .from("psychologist_profiles")
         .select(`
           *,
@@ -17,9 +18,18 @@ export const usePsychologistProfile = (id: string) => {
             language:languages(id, name)
           )
         `)
-        .eq("id", id)
-        .eq("is_published", true)
-        .single();
+        .eq("is_published", true);
+
+      // Check if it looks like a UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+      
+      if (isUUID) {
+        query = query.eq("id", slugOrId);
+      } else {
+        query = query.eq("slug", slugOrId);
+      }
+
+      const { data, error } = await query.single();
 
       if (error) throw error;
       if (!data) throw new Error("Psychologist not found");

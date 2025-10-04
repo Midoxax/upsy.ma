@@ -227,15 +227,15 @@ const PsychologistProfile = () => {
                 <CardTitle>Book Your Session</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="w-full h-[600px] rounded-lg overflow-hidden bg-background">
-                  <iframe
-                    src={psychologist.calendly_url}
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    title="Book a session"
-                  />
-                </div>
+                <div 
+                  className="calendly-inline-widget w-full h-[600px] rounded-lg overflow-hidden bg-background"
+                  data-url={psychologist.calendly_url}
+                />
+                <script
+                  type="text/javascript"
+                  src="https://assets.calendly.com/assets/external/widget.js"
+                  async
+                />
               </CardContent>
             </Card>
           )}

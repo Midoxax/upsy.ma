@@ -20,8 +20,11 @@ export interface PsychologistProfile {
   hourly_rate_mad: number | null;
   calendly_url: string | null;
   is_published: boolean;
+  slug: string;
   specialties: Specialty[];
   languages: Language[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface FilterState {

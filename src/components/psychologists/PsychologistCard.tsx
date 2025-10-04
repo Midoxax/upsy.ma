@@ -104,7 +104,7 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
           variant="primary"
           className="w-full group-hover:shadow-glow transition-all"
         >
-          <Link to={`/psychologists/${psychologist.id}`}>View Profile →</Link>
+          <Link to={`/psychologists/${psychologist.slug}`}>View Profile →</Link>
         </Button>
       </CardFooter>
     </Card>

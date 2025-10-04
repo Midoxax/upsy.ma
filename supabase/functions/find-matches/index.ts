@@ -30,7 +30,7 @@ serve(async (req) => {
 
     console.log("Finding matches for:", { specialtyNeeded, languagesPreferred, budgetMax, locationCity, prefersOnline });
 
-    // Build the query to find matching psychologists
+    // Try strict matching first
     let query = supabaseClient
       .from("psychologist_profiles")
       .select(`
@@ -44,13 +44,12 @@ serve(async (req) => {
         offers_in_person,
         hourly_rate_mad,
         calendly_url,
+        slug,
         psychologist_specialties!inner(specialty_id),
         psychologist_languages!inner(language_id)
       `)
-      .eq("is_published", true);
-
-    // Filter by specialty
-    query = query.eq("psychologist_specialties.specialty_id", specialtyNeeded);
+      .eq("is_published", true)
+      .eq("psychologist_specialties.specialty_id", specialtyNeeded);
 
     // Filter by online/in-person preference
     if (prefersOnline) {
@@ -64,14 +63,49 @@ serve(async (req) => {
       query = query.lte("hourly_rate_mad", budgetMax);
     }
 
-    const { data: profiles, error } = await query;
+    let { data: profiles, error } = await query;
 
     if (error) {
       console.error("Error fetching profiles:", error);
       throw error;
     }
 
-    console.log("Found profiles:", profiles?.length);
+    console.log("Found strict matches:", profiles?.length);
+
+    // Fallback: If no matches, relax specialty requirement
+    if (!profiles || profiles.length === 0) {
+      console.log("No strict matches, trying fallback without specialty filter...");
+      
+      let fallbackQuery = supabaseClient
+        .from("psychologist_profiles")
+        .select(`
+          id,
+          full_name,
+          bio,
+          photo_url,
+          city,
+          is_accredited,
+          offers_online,
+          offers_in_person,
+          hourly_rate_mad,
+          calendly_url,
+          slug,
+          psychologist_specialties(specialty_id),
+          psychologist_languages(language_id)
+        `)
+        .eq("is_published", true);
+
+      if (prefersOnline) {
+        fallbackQuery = fallbackQuery.eq("offers_online", true);
+      } else {
+        fallbackQuery = fallbackQuery.eq("offers_in_person", true);
+      }
+
+      const fallbackResult = await fallbackQuery;
+      profiles = fallbackResult.data;
+      
+      console.log("Fallback found profiles:", profiles?.length);
+    }
 
     // Score and rank matches
     const scoredMatches = (profiles || []).map((profile: any) => {
@@ -82,9 +116,20 @@ serve(async (req) => {
       const languageMatch = languagesPreferred.some((lang) => profileLanguageIds.includes(lang));
       if (languageMatch) score += 3;
 
-      // Check city match
-      if (locationCity && profile.city?.toLowerCase() === locationCity.toLowerCase()) {
-        score += 2;
+      // Check city match (exact or nearby)
+      if (locationCity && profile.city) {
+        const cityLower = profile.city.toLowerCase();
+        const searchCityLower = locationCity.toLowerCase();
+        if (cityLower === searchCityLower) {
+          score += 2;
+        } else if (cityLower.includes(searchCityLower) || searchCityLower.includes(cityLower)) {
+          score += 1; // Partial city match
+        }
+      }
+      
+      // Bonus for online if no city preference
+      if (!locationCity && profile.offers_online) {
+        score += 1;
       }
 
       // Bonus for accreditation
