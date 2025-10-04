@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { BreadcrumbWrapper } from "@/components/BreadcrumbWrapper";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -70,6 +71,7 @@ const App = () => (
           <ErrorBoundary>
             <div className="min-h-screen flex flex-col bg-background">
               <Header />
+              <BreadcrumbWrapper />
               <AnimatedRoutes />
               <Footer />
             </div>

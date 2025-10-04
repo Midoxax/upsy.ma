@@ -4,17 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, User, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.webp";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { MegaMenu } from "@/components/MegaMenu";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
 
@@ -76,46 +70,20 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <NavigationMenu className="hidden lg:flex">
-            <NavigationMenuList className="space-x-2">
-              {navigation.map((item) =>
-                item.dropdown ? (
-                  <NavigationMenuItem key={item.name}>
-                    <NavigationMenuTrigger className="bg-transparent text-u-gray-300 hover:text-u-gray-100 data-[state=open]:text-u-gold font-semibold">
-                      {item.name}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-u-surface/95 backdrop-blur-xl border border-u-gray-700/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-[var(--z-dropdown)]">
-                      <ul className="grid w-[200px] gap-1 p-2">
-                        {item.dropdown.map((subItem) => (
-                          <li key={subItem.name}>
-                            <NavigationMenuLink asChild>
-                              <Link
-                                to={subItem.href}
-                                className="block select-none rounded-md p-3 text-sm leading-none text-u-gray-300 hover:text-u-gray-100 hover:bg-u-gray-700/50 transition-colors font-medium"
-                              >
-                                {subItem.name}
-                              </Link>
-                            </NavigationMenuLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                ) : (
-                  <NavigationMenuItem key={item.name}>
-                    <Link
-                      to={item.href}
-                      className={`inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition-colors hover:text-u-gray-100 ${
-                        isActive(item.href) ? "text-u-gold" : "text-u-gray-300"
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
-                  </NavigationMenuItem>
-                )
-              )}
-            </NavigationMenuList>
-          </NavigationMenu>
+          <div className="hidden lg:flex items-center relative">
+            <Button
+              variant="ghost"
+              onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+              className="text-u-gray-100 hover:text-u-gold hover:bg-u-gray-700/50 transition-colors font-semibold"
+              aria-expanded={megaMenuOpen}
+              aria-haspopup="true"
+              aria-label="Open main menu"
+            >
+              Explore U.Psy
+              <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`} />
+            </Button>
+            <MegaMenu isOpen={megaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
+          </div>
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
