@@ -1,9 +1,17 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.webp";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,16 +20,37 @@ const Header = () => {
 
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Services", href: "/services" },
-    { name: "Find a Psychologist", href: "/psychologists" },
+    {
+      name: "Services",
+      href: "/services",
+      dropdown: [
+        { name: "Individual Guidance", href: "/services#individual" },
+        { name: "Sport Psychology", href: "/services#sport" },
+        { name: "Clinical Psychology", href: "/services#clinical" },
+        { name: "Organizational Consulting", href: "/services#organizations" },
+        { name: "Training & Talks", href: "/services#training" },
+      ],
+    },
+    { name: "Find Psychologist", href: "/psychologists" },
     { name: "Get Matched", href: "/get-matched" },
-    { name: "Accreditation", href: "/accreditation" },
-    { name: "Tech & R&D", href: "/tech-rd" },
-    { name: "Resources", href: "/resources" },
-    { name: "Skool", href: "/skool" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    { name: "Talent & Innovation Hub", href: "/talent-innovation-hub" },
+    {
+      name: "About",
+      href: "/about",
+      dropdown: [
+        { name: "Our Story", href: "/about" },
+        { name: "Apply for Accreditation", href: "/apply" },
+        { name: "Contact Us", href: "/contact" },
+      ],
+    },
+    {
+      name: "Resources",
+      href: "/resources",
+      dropdown: [
+        { name: "Skool Community", href: "/skool" },
+        { name: "Innovation Hub", href: "/talent-innovation-hub" },
+        { name: "Legal", href: "/legal" },
+      ],
+    },
   ];
 
   const isActive = (href: string) => {
@@ -47,19 +76,46 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`text-sm font-medium transition-colors hover:text-u-white ${
-                  isActive(item.href) ? "text-u-white" : "text-u-gray-300"
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+          <NavigationMenu className="hidden lg:flex">
+            <NavigationMenuList className="space-x-2">
+              {navigation.map((item) =>
+                item.dropdown ? (
+                  <NavigationMenuItem key={item.name}>
+                    <NavigationMenuTrigger className="bg-transparent text-u-gray-300 hover:text-u-white data-[state=open]:text-u-white">
+                      {item.name}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="bg-u-surface border-u-gold/20 z-[var(--z-dropdown)]">
+                      <ul className="grid w-[200px] gap-1 p-2">
+                        {item.dropdown.map((subItem) => (
+                          <li key={subItem.name}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                to={subItem.href}
+                                className="block select-none rounded-md p-3 text-sm leading-none text-u-gray-300 hover:text-u-white hover:bg-u-maroon/20 transition-colors"
+                              >
+                                {subItem.name}
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ) : (
+                  <NavigationMenuItem key={item.name}>
+                    <Link
+                      to={item.href}
+                      className={`inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-u-white ${
+                        isActive(item.href) ? "text-u-white" : "text-u-gray-300"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  </NavigationMenuItem>
+                )
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
@@ -72,14 +128,11 @@ const Header = () => {
               </Button>
             ) : (
               <>
-                <Button variant="primary" size="sm" asChild>
-                  <Link to="/book-a-call">Get Started</Link>
-                </Button>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/apply">Join Network</Link>
+                <Button variant="primary" size="sm" asChild className="hover-glow">
+                  <Link to="/contact">Get Started</Link>
                 </Button>
                 <Button variant="secondary" size="sm" asChild>
-                  <Link to="/auth">Psychologist Login</Link>
+                  <Link to="/auth">Login</Link>
                 </Button>
               </>
             )}
@@ -98,20 +151,36 @@ const Header = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-u-gray-500">
-            <nav className="flex flex-col space-y-4">
+            <nav className="flex flex-col space-y-2">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-sm font-medium transition-colors hover:text-u-white ${
-                    isActive(item.href) ? "text-u-white" : "text-u-gray-300"
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name}>
+                  <Link
+                    to={item.href}
+                    onClick={() => !item.dropdown && setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-between text-sm font-medium transition-colors hover:text-u-white py-2 ${
+                      isActive(item.href) ? "text-u-white" : "text-u-gray-300"
+                    }`}
+                  >
+                    {item.name}
+                    {item.dropdown && <ChevronDown className="w-4 h-4" />}
+                  </Link>
+                  {item.dropdown && (
+                    <div className="pl-4 space-y-2 mt-2">
+                      {item.dropdown.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          to={subItem.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="block text-sm text-u-gray-300 hover:text-u-white py-1.5"
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
-              <div className="flex flex-col space-y-3 pt-4">
+              <div className="flex flex-col space-y-3 pt-4 mt-4 border-t border-u-gray-500">
                 {user ? (
                   <Button variant="primary" size="sm" asChild>
                     <Link to="/my-space" onClick={() => setIsMobileMenuOpen(false)}>
@@ -122,18 +191,13 @@ const Header = () => {
                 ) : (
                   <>
                     <Button variant="primary" size="sm" asChild>
-                      <Link to="/book-a-call" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
                         Get Started
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to="/apply" onClick={() => setIsMobileMenuOpen(false)}>
-                        Join Network
                       </Link>
                     </Button>
                     <Button variant="secondary" size="sm" asChild>
                       <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                        Psychologist Login
+                        Login
                       </Link>
                     </Button>
                   </>

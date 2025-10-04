@@ -13,13 +13,9 @@ import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
-import ClinicalPsychology from "./pages/services/ClinicalPsychology";
-import SportPsychology from "./pages/services/SportPsychology";
-import TrainingAndTalks from "./pages/services/TrainingAndTalks";
 import ConsultingForOrganizations from "./pages/services/ConsultingForOrganizations";
 import Skool from "./pages/Skool";
 import Resources from "./pages/Resources";
-import BookACall from "./pages/BookACall";
 import Contact from "./pages/Contact";
 import Legal from "./pages/Legal";
 import TalentInnovationHub from "./pages/TalentInnovationHub";
@@ -44,13 +40,9 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-        <Route path="/services/clinical-psychology" element={<PageTransition><ClinicalPsychology /></PageTransition>} />
-        <Route path="/services/sport-psychology" element={<PageTransition><SportPsychology /></PageTransition>} />
-        <Route path="/services/training-and-talks" element={<PageTransition><TrainingAndTalks /></PageTransition>} />
         <Route path="/services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
         <Route path="/skool" element={<PageTransition><Skool /></PageTransition>} />
         <Route path="/resources" element={<PageTransition><Resources /></PageTransition>} />
-        <Route path="/book-a-call" element={<PageTransition><BookACall /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
         <Route path="/talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />

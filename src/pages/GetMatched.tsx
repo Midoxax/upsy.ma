@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import MatchingFormModal from "@/components/matching/MatchingFormModal";
@@ -37,9 +35,7 @@ const GetMatched = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="flex-1">
+    <main className="min-h-screen bg-background"  >
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-b from-primary/5 to-background">
           <div className="container mx-auto px-4 text-center">
@@ -136,8 +132,6 @@ const GetMatched = () => {
             </div>
           </div>
         </section>
-      </main>
-      <Footer />
 
       <MatchingFormModal
         open={showModal}
@@ -145,7 +139,7 @@ const GetMatched = () => {
         specialties={specialties}
         languages={languages}
       />
-    </div>
+    </main>
   );
 };
 

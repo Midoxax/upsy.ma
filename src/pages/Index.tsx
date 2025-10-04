@@ -26,11 +26,11 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-[60px]">
-                <Button variant="primary" size="hero" asChild>
-                  <Link to="/book-a-call">Get Started</Link>
+                <Button variant="primary" size="hero" asChild className="hover-glow">
+                  <Link to="/contact">Get Started</Link>
                 </Button>
                 <Button variant="secondary" size="hero" asChild>
-                  <Link to="/book-a-call">Book a Call</Link>
+                  <Link to="/get-matched">Get Matched</Link>
                 </Button>
               </div>
               
@@ -210,8 +210,8 @@ const Index = () => {
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-h2 text-u-white mb-8">Ready to strengthen your mind?</h2>
-            <Button variant="primary" size="hero" asChild>
-              <Link to="/book-a-call">Book a Call</Link>
+            <Button variant="primary" size="hero" asChild className="hover-glow">
+              <Link to="/contact">Get Started</Link>
             </Button>
           </div>
         </div>

@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* U.Psy Brand Colors - Dark Theme Design System */
-    --bg: 0 0% 15%;             /* Charcoal black background */
+    --bg: 0 0% 12%;             /* Deeper charcoal black background */
     --surface: 343 63% 33%;     /* #8B1E3F - Deep maroon surface */
     --maroon: 343 63% 33%;      /* #8B1E3F - Primary deep maroon */
     --gold: 46 100% 50%;        /* #FFC300 - Accent golden yellow */
@@ -45,28 +45,42 @@ All colors MUST be HSL.
     --radius-lg: 24px;          /* Hero, media blocks */
     --max-width: 1200px;        /* Layout max-width */
     --gutter: 24px;             /* Side gutters */
-    --section-spacing: 72px;    /* Vertical section spacing */
-    --section-spacing-mobile: 48px; /* Mobile vertical spacing */
+    --section-spacing: 80px;    /* Vertical section spacing */
+    --section-spacing-mobile: 56px; /* Mobile vertical spacing */
     
-    /* Typography Scale */
-    --text-h1: 44px;            /* Desktop H1 */
-    --text-h1-mobile: 32px;     /* Mobile H1 */
-    --text-h2: 36px;            /* Desktop H2 */
-    --text-h2-mobile: 28px;     /* Mobile H2 */
-    --text-h3: 28px;            /* Desktop H3 */
-    --text-h3-mobile: 22px;     /* Mobile H3 */
+    /* Enhanced Typography Scale - Modular Scale (1.333 - Perfect Fourth) */
+    --text-display: 80px;       /* Display - Hero headlines */
+    --text-h1: 60px;            /* Desktop H1 */
+    --text-h1-mobile: 40px;     /* Mobile H1 */
+    --text-h2: 45px;            /* Desktop H2 */
+    --text-h2-mobile: 32px;     /* Mobile H2 */
+    --text-h3: 34px;            /* Desktop H3 */
+    --text-h3-mobile: 24px;     /* Mobile H3 */
     --text-body: 18px;          /* Desktop body */
     --text-body-mobile: 16px;   /* Mobile body */
     --text-small: 14px;         /* Small text */
     
-    /* Shadows */
-    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.6);
+    /* Enhanced Shadows for Depth */
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.8);
+    --shadow-card-hover: 0 20px 60px rgba(0, 139, 139, 0.3);
+    --shadow-neural: 0 0 40px rgba(255, 195, 0, 0.2);
+    --shadow-deep: 0 30px 80px rgba(0, 0, 0, 0.9);
     
-    /* Gradients */
+    /* Enhanced Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(var(--maroon)), hsl(var(--bg)));
+    --gradient-neural: linear-gradient(135deg, hsl(var(--teal)) 0%, hsl(var(--gold)) 100%);
+    --gradient-glow: radial-gradient(circle at center, hsl(var(--gold) / 0.3), transparent 70%);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Z-Index Layers */
+    --z-background: 0;
+    --z-midground: 10;
+    --z-foreground: 20;
+    --z-dropdown: 1000;
+    --z-modal: 2000;
   }
   
   * {
@@ -79,29 +93,43 @@ All colors MUST be HSL.
     line-height: 1.5;
   }
   
-  /* Typography Classes */
+  /* Enhanced Typography Classes */
+  .text-display {
+    font-size: var(--text-display);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, hsl(var(--white)), hsl(var(--gold)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   .text-h1 {
     font-size: var(--text-h1);
-    line-height: 1.45;
+    line-height: 1.2;
     font-weight: 700;
+    letter-spacing: -0.01em;
   }
   
   .text-h2 {
     font-size: var(--text-h2);
-    line-height: 1.45;
+    line-height: 1.3;
     font-weight: 600;
+    letter-spacing: -0.01em;
   }
   
   .text-h3 {
     font-size: var(--text-h3);
-    line-height: 1.45;
+    line-height: 1.4;
     font-weight: 600;
   }
   
   .text-body {
     font-size: var(--text-body);
-    line-height: 1.6;
+    line-height: 1.7;
     font-weight: 400;
+    letter-spacing: 0.01em;
   }
   
   .text-small {
@@ -109,9 +137,16 @@ All colors MUST be HSL.
     line-height: 1.5;
     font-weight: 400;
   }
+
+  /* Neural Glow Text Effect */
+  .text-neural-glow {
+    color: hsl(var(--gold));
+    text-shadow: 0 0 20px hsl(var(--teal) / 0.5), 0 0 40px hsl(var(--gold) / 0.3);
+  }
   
   /* Mobile Typography */
   @media (max-width: 768px) {
+    .text-display { font-size: 56px; }
     .text-h1 { font-size: var(--text-h1-mobile); }
     .text-h2 { font-size: var(--text-h2-mobile); }
     .text-h3 { font-size: var(--text-h3-mobile); }
@@ -237,7 +272,7 @@ All colors MUST be HSL.
     }
   }
   
-  /* Hero Neural Background - Teal brainwave motif with reduced motion support */
+  /* Enhanced Hero Neural Background with Depth */
   .hero-neural-bg {
     position: relative;
     overflow: hidden;
@@ -253,14 +288,14 @@ All colors MUST be HSL.
     background: 
       linear-gradient(135deg, 
         hsl(var(--maroon)) 0%, 
-        hsl(var(--maroon) / 0.95) 20%,
+        hsl(var(--maroon) / 0.9) 30%,
         hsl(var(--bg)) 100%
       );
-    z-index: 0;
+    z-index: var(--z-background);
     pointer-events: none;
   }
   
-  /* Teal neural network overlay */
+  /* Enhanced Teal neural network overlay - increased opacity */
   .hero-neural-bg::after {
     content: '';
     position: absolute;
@@ -271,35 +306,35 @@ All colors MUST be HSL.
     background-image: url('/src/assets/neural-network-bg.webp');
     background-size: cover;
     background-position: center;
-    opacity: 0.08;
-    z-index: 1;
+    opacity: 0.18;
+    z-index: calc(var(--z-background) + 1);
     pointer-events: none;
     mix-blend-mode: screen;
+    filter: brightness(1.2) contrast(1.1);
   }
   
-  /* Animated neural pattern with parallax - respects reduced motion */
+  /* Animated neural pattern with parallax */
   @media (prefers-reduced-motion: no-preference) {
     .hero-neural-bg::after {
-      opacity: 0.1;
-      animation: neural-parallax 30s ease-in-out infinite;
+      animation: neural-parallax 40s ease-in-out infinite;
     }
   }
   
   @keyframes neural-parallax {
     0%, 100% { 
       transform: translateY(0) scale(1.05);
-      opacity: 0.08;
+      opacity: 0.18;
     }
     50% { 
-      transform: translateY(-20px) scale(1.08);
-      opacity: 0.12;
+      transform: translateY(-30px) scale(1.1);
+      opacity: 0.25;
     }
   }
   
   /* Static version for reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
     .hero-neural-bg::after {
-      opacity: 0.06;
+      opacity: 0.15;
       animation: none;
       transform: none;
     }
@@ -307,6 +342,68 @@ All colors MUST be HSL.
   
   .hero-neural-bg > * {
     position: relative;
-    z-index: 2;
+    z-index: var(--z-midground);
+  }
+
+  /* Depth & Layering System */
+  .layer-background {
+    position: relative;
+    z-index: var(--z-background);
+  }
+
+  .layer-midground {
+    position: relative;
+    z-index: var(--z-midground);
+  }
+
+  .layer-foreground {
+    position: relative;
+    z-index: var(--z-foreground);
+    transform: translateZ(20px);
+  }
+
+  /* Glassmorphism with depth */
+  .glass-effect {
+    background: hsl(var(--surface) / 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid hsl(var(--gold) / 0.2);
+    box-shadow: var(--shadow-card),
+                inset 0 1px 0 hsl(var(--white) / 0.1);
+  }
+
+  /* Floating card variant with 3D depth */
+  .card-float {
+    transform: translateZ(10px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .card-float:hover {
+    transform: translateZ(30px) translateY(-8px) scale(1.03);
+    box-shadow: var(--shadow-card-hover), var(--shadow-neural);
+  }
+
+  /* Neural-themed decorative borders */
+  .dendrite-border {
+    position: relative;
+    border-image: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--gold))) 1;
+  }
+
+  .dendrite-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, hsl(var(--teal) / 0.5), hsl(var(--gold) / 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .dendrite-border:hover::before {
+    opacity: 1;
   }
 }

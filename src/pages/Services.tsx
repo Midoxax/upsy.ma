@@ -105,10 +105,10 @@ const Services = () => {
         <div className="text-center mb-20">
           <Button 
             size="lg" 
-            onClick={() => navigate('/book-a-call')}
-            className="hover:scale-105 transition-transform"
+            onClick={() => navigate('/contact')}
+            className="hover-glow hover:scale-105 transition-transform"
           >
-            Book a Call
+            Get Started
           </Button>
         </div>
       </section>
