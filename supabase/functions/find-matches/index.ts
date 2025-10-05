@@ -1,10 +1,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schema
+const MatchRequestSchema = z.object({
+  specialtyNeeded: z.string().uuid("Invalid specialty ID format"),
+  languagesPreferred: z.array(z.string().uuid("Invalid language ID format"))
+    .min(1, "At least one language is required")
+    .max(10, "Maximum 10 languages allowed"),
+  budgetMax: z.number().positive("Budget must be positive").max(10000, "Budget exceeds maximum").optional(),
+  locationCity: z.string().max(100, "City name too long").optional(),
+  prefersOnline: z.boolean()
+});
 
 interface MatchRequest {
   specialtyNeeded: string;
@@ -14,19 +26,97 @@ interface MatchRequest {
   prefersOnline: boolean;
 }
 
+// Rate limiting storage (in-memory for simplicity)
+const rateLimiter = new Map<string, { count: number; resetTime: number }>();
+
+// Error sanitization utility
+function sanitizeError(error: any): string {
+  const errorMap: Record<string, string> = {
+    'duplicate key': 'A record with this information already exists',
+    'foreign key': 'Referenced resource not found',
+    'not null': 'Required field is missing',
+    'invalid input': 'Invalid data provided',
+    'connection': 'Service temporarily unavailable',
+    'timeout': 'Request timed out, please try again',
+  };
+  
+  const errorMsg = error.message?.toLowerCase() || '';
+  for (const [key, message] of Object.entries(errorMap)) {
+    if (errorMsg.includes(key)) {
+      return message;
+    }
+  }
+  
+  return 'An error occurred while finding matches';
+}
+
+// Rate limiting check
+function checkRateLimit(ip: string, maxRequests: number, windowMs: number): boolean {
+  const now = Date.now();
+  const record = rateLimiter.get(ip);
+  
+  if (!record || now > record.resetTime) {
+    rateLimiter.set(ip, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  
+  if (record.count >= maxRequests) {
+    return false;
+  }
+  
+  record.count++;
+  return true;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Rate limiting: 10 requests per minute per IP
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                     req.headers.get('x-real-ip') || 
+                     'unknown';
+    
+    if (!checkRateLimit(clientIp, 10, 60000)) {
+      console.warn(`Rate limit exceeded for IP: ${clientIp}`);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Too many requests. Please try again in a minute.' 
+        }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    const { specialtyNeeded, languagesPreferred, budgetMax, locationCity, prefersOnline }: MatchRequest =
-      await req.json();
+    // Validate input
+    const rawBody = await req.json();
+    let validatedInput: MatchRequest;
+    
+    try {
+      validatedInput = MatchRequestSchema.parse(rawBody);
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        console.warn("Validation error:", validationError.errors);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Invalid request data',
+            details: validationError.errors.map(e => e.message)
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw validationError;
+    }
+
+    const { specialtyNeeded, languagesPreferred, budgetMax, locationCity, prefersOnline } = validatedInput;
 
     console.log("Finding matches for:", { specialtyNeeded, languagesPreferred, budgetMax, locationCity, prefersOnline });
 
@@ -187,11 +277,19 @@ serve(async (req) => {
       }
     );
   } catch (error: any) {
-    console.error("Error in find-matches:", error);
+    // Log full error details server-side for debugging
+    console.error("Error in find-matches:", {
+      timestamp: new Date().toISOString(),
+      error: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Return sanitized error to client
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: sanitizeError(error),
       }),
       {
         status: 500,

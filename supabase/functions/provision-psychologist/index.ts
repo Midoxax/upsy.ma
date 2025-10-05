@@ -1,15 +1,44 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Input validation schema
+const ProvisionRequestSchema = z.object({
+  applicationId: z.string().uuid("Invalid application ID format"),
+  adminUserId: z.string().uuid("Invalid admin user ID format")
+});
+
 interface ProvisionRequest {
   applicationId: string;
   adminUserId: string;
+}
+
+// Error sanitization utility
+function sanitizeError(error: any): string {
+  const errorMap: Record<string, string> = {
+    'duplicate key': 'A record with this information already exists',
+    'email already exists': 'Email address is already registered',
+    'foreign key': 'Referenced resource not found',
+    'not null': 'Required field is missing',
+    'invalid input': 'Invalid data provided',
+    'connection': 'Service temporarily unavailable',
+    'unauthorized': 'Authentication required',
+  };
+  
+  const errorMsg = error.message?.toLowerCase() || '';
+  for (const [key, message] of Object.entries(errorMap)) {
+    if (errorMsg.includes(key)) {
+      return message;
+    }
+  }
+  
+  return 'Failed to provision psychologist account';
 }
 
 serve(async (req) => {
@@ -25,7 +54,28 @@ serve(async (req) => {
 
     const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-    const { applicationId, adminUserId }: ProvisionRequest = await req.json();
+    // Validate input
+    const rawBody = await req.json();
+    let validatedInput: ProvisionRequest;
+    
+    try {
+      validatedInput = ProvisionRequestSchema.parse(rawBody);
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        console.warn("Validation error:", validationError.errors);
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Invalid request data',
+            details: validationError.errors.map(e => e.message)
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw validationError;
+    }
+
+    const { applicationId, adminUserId } = validatedInput;
 
     console.log("Starting provisioning for application:", applicationId);
 
@@ -70,8 +120,12 @@ serve(async (req) => {
     });
 
     if (authError || !authUser.user) {
-      console.error("Auth user creation error:", authError);
-      throw new Error(`Failed to create auth user: ${authError?.message}`);
+      console.error("Auth user creation failed:", {
+        timestamp: new Date().toISOString(),
+        error: authError?.message,
+        email: application.email
+      });
+      throw new Error("Failed to create user account");
     }
 
     console.log("Auth user created:", authUser.user.id);
@@ -185,11 +239,19 @@ serve(async (req) => {
       throw provisionError;
     }
   } catch (error: any) {
-    console.error("Error in provision-psychologist:", error);
+    // Log full error details server-side for debugging
+    console.error("Error in provision-psychologist:", {
+      timestamp: new Date().toISOString(),
+      error: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Return sanitized error to client
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: sanitizeError(error),
       }),
       {
         status: 500,
