@@ -66,9 +66,9 @@ const Header = () => {
             <img 
               src={logo} 
               alt="U.Psy Logo - Navigate to homepage" 
-              className="h-10 w-auto transition-all duration-300"
+              className="h-14 w-auto transition-all duration-300"
               style={{ 
-                filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 12px rgba(255, 195, 0, 0.5)) brightness(1.1)',
+                filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)) brightness(1.05)',
               }}
             />
           </Link>
