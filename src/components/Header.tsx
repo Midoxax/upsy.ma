@@ -6,47 +6,41 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix } from "@/lib/i18n/utils";
 import logo from "@/assets/logo.webp";
-import { MegaMenu } from "@/components/MegaMenu";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
   const { locale, t } = useLocale();
 
   const navigation = [
-    { name: "Home", href: "/" },
-    {
-      name: "Services",
+    { 
+      name: t('nav.services'),
       href: "/services",
       dropdown: [
-        { name: "Individual Guidance", href: "/services#individual" },
-        { name: "Sport Psychology", href: "/services#sport" },
-        { name: "Clinical Psychology", href: "/services#clinical" },
-        { name: "Organizational Consulting", href: "/services#organizations" },
-        { name: "Training & Talks", href: "/services#training" },
+        { name: t('nav.findPsychologist'), href: "/psychologists" },
+        { name: t('nav.getMatched'), href: "/get-matched" },
+        { name: t('nav.individualServices'), href: "/services" },
+        { name: t('nav.forOrganizations'), href: "/services/consulting-for-organizations" },
       ],
     },
-    { name: "Find Psychologist", href: "/psychologists" },
-    { name: "Get Matched", href: "/get-matched" },
     {
-      name: "About",
+      name: t('nav.about'),
       href: "/about",
       dropdown: [
-        { name: "Our Story", href: "/about" },
-        { name: "Apply for Accreditation", href: "/apply" },
-        { name: "Contact Us", href: "/contact" },
+        { name: t('nav.ourStory'), href: "/about" },
+        { name: t('nav.contact'), href: "/contact" },
+        { name: t('nav.applyAccreditation'), href: "/apply" },
       ],
     },
     {
-      name: "Resources",
+      name: t('nav.community'),
       href: "/resources",
       dropdown: [
-        { name: "Skool Community", href: "/skool" },
-        { name: "Innovation Hub", href: "/talent-innovation-hub" },
-        { name: "Legal", href: "/legal" },
+        { name: t('nav.resources'), href: "/resources" },
+        { name: t('nav.skoolCommunity'), href: "/skool" },
+        { name: t('nav.innovationHub'), href: "/talent-innovation-hub" },
       ],
     },
   ];
@@ -74,20 +68,38 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center relative">
-            <Button
-              variant="ghost"
-              onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-              className="text-u-gray-100 hover:text-u-gold hover:bg-u-gray-700/50 transition-colors font-semibold"
-              aria-expanded={megaMenuOpen}
-              aria-haspopup="true"
-              aria-label="Open main menu"
-            >
-              {t('nav.explore')}
-              <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`} />
-            </Button>
-            <MegaMenu isOpen={megaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
-          </div>
+          <nav className="hidden lg:flex items-center space-x-1">
+            {navigation.map((item) => (
+              <div key={item.name} className="relative group">
+                <Link
+                  to={addLocalePrefix(item.href, locale)}
+                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    isActive(item.href)
+                      ? "text-u-gold bg-u-gray-700/50"
+                      : "text-u-gray-100 hover:text-u-gold hover:bg-u-gray-700/30"
+                  }`}
+                >
+                  {item.name}
+                  {item.dropdown && <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />}
+                </Link>
+                {item.dropdown && (
+                  <div className="absolute top-full left-0 mt-1 w-64 bg-u-surface/98 backdrop-blur-xl border border-u-gray-700/50 rounded-lg shadow-[0_8px_32px_rgba(0,0,0,0.6)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-2">
+                      {item.dropdown.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          to={addLocalePrefix(subItem.href, locale)}
+                          className="block px-4 py-2.5 text-sm text-u-gray-200 hover:text-u-gold hover:bg-u-gray-700/40 transition-colors"
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
