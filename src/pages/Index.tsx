@@ -6,16 +6,13 @@ import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import MaroonDivider from "@/components/ui/maroon-divider";
 import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 import { useLocale } from "@/contexts/LocaleContext";
-
 const Index = () => {
-  const { t } = useLocale();
-  
-  return (
-    <main className="flex-1">
+  const {
+    t
+  } = useLocale();
+  return <main className="flex-1">
       {/* Hero Section */}
-      <section 
-        className="hero-neural-bg relative min-h-screen flex items-center bg-u-hero"
-      >
+      <section className="hero-neural-bg relative min-h-screen flex items-center bg-u-hero">
         <div className="absolute inset-0 bg-gradient-to-br from-u-bg/90 to-u-surface/80"></div>
         
         <div className="container-custom relative z-10">
@@ -43,25 +40,25 @@ const Index = () => {
               <div className="mt-12 pt-8 border-t border-u-gray-700/50">
                 <p className="text-small text-u-gray-300 mb-6 font-medium">{t('home.hero.trustStrip')}</p>
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
-                  {[
-                    { name: "UFC Gym Morocco", width: "w-40" },
-                    { name: "UIC", width: "w-24" },
-                    { name: "LSSPM", width: "w-32" },
-                  ].map((partner) => (
-                    <div
-                      key={partner.name}
-                      className={`${partner.width} h-[60px] rounded-lg 
+                  {[{
+                  name: "UFC Gym Morocco",
+                  width: "w-40"
+                }, {
+                  name: "UIC",
+                  width: "w-24"
+                }, {
+                  name: "LSSPM",
+                  width: "w-32"
+                }].map(partner => <div key={partner.name} className={`${partner.width} h-[60px] rounded-lg 
                         bg-gradient-to-br from-u-surface to-u-gray-700/30
                         backdrop-blur-sm border border-u-gray-700/50 flex items-center justify-center
                         transition-all duration-300 hover:border-u-teal/40 hover:shadow-[0_0_20px_rgba(0,139,139,0.2)]
-                        group relative overflow-hidden`}
-                    >
+                        group relative overflow-hidden`}>
                       <div className="absolute inset-0 bg-gradient-to-br from-u-teal/5 to-u-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-xs text-center text-u-gray-300 group-hover:text-u-gray-100 transition-colors px-3 relative z-10 font-semibold">
                         {partner.name}
                       </span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
             </div>
@@ -69,22 +66,7 @@ const Index = () => {
             {/* Right Column - Media */}
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-md">
-                <div 
-                  className="aspect-[4/5] bg-gradient-to-br from-u-surface/80 to-u-gray-700/40 backdrop-blur-sm rounded-u-lg shadow-u-card border border-u-gray-700 flex items-center justify-center hover-lift"
-                >
-                  {/* Placeholder for professional photo or video intro */}
-                  <div className="text-center px-8">
-                    <div className="relative w-32 h-32 mb-6 mx-auto">
-                      {/* Premium gold circular frame with teal neural glow */}
-                      <div className="absolute inset-0 rounded-full border-4 border-u-gold shadow-[0_0_40px_rgba(0,139,139,0.4),0_0_20px_rgba(255,195,0,0.3)]"></div>
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-u-gold/10 to-u-teal/5 backdrop-blur-sm flex items-center justify-center">
-                        <span className="text-gold-glow text-6xl font-light" style={{ fontFamily: 'Georgia, serif' }}>Ψ</span>
-                      </div>
-                    </div>
-                    <p className="text-u-gray-100 text-xl font-bold mb-2">{t('home.hero.drName')}</p>
-                    <p className="text-u-gray-300 text-base">{t('home.hero.photoComingSoon')}</p>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -239,8 +221,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-    </main>
-  );
+    </main>;
 };
-
 export default Index;
