@@ -62,6 +62,43 @@ export const translations = {
     languageSwitcher: {
       arabicComingSoon: "Arabic coming soon",
     },
+    home: {
+      hero: {
+        title: "U.Psy — Your Personal & Trusted Psychologist.",
+        subtitle: "Evidence-based psychology to unlock resilience, elevate performance, and foster healing — in clinic, online, and on the field.",
+        getStarted: "Get Started",
+        getMatched: "Get Matched",
+        trustStrip: "Trusted by professionals and organizations",
+        drName: "Dr. Mehdi Felji",
+        photoComingSoon: "Professional Photo Coming Soon",
+        scrollHint: "Scroll to explore",
+      },
+      features: {
+        individualTitle: "Individual Guidance",
+        individualDesc: "Therapy, performance, personality & serenity assessments.",
+        institutionalTitle: "Institutional Solutions",
+        institutionalDesc: "Programs for federations, companies, and universities.",
+        accreditationTitle: "U.Psy Accreditation",
+        accreditationDesc: "Get certified, listed, and matched with clients.",
+      },
+      testimonials: {
+        sectionTitle: "What Our Clients Say",
+        testimonial1Role: "National Sprinter",
+        testimonial1Quote: "I finally compete calm and focused. My pre-race anxiety is under control.",
+        testimonial2Role: "Marketing Director",
+        testimonial2Quote: "Burnout down, clarity up. Practical tools I still use every day.",
+        testimonial3Role: "Recovery Client",
+        testimonial3Quote: "I felt seen without judgment. The structure helped me rebuild.",
+      },
+      cta: {
+        title: "Ready to strengthen your mind?",
+        button: "Get Started",
+      },
+      transition: {
+        text: "Discover how our personalized guidance can help you perform, heal, and grow.",
+        button: "Explore Services",
+      },
+    },
   },
   fr: {
     nav: {
@@ -125,6 +162,43 @@ export const translations = {
     },
     languageSwitcher: {
       arabicComingSoon: "Arabe bientôt disponible",
+    },
+    home: {
+      hero: {
+        title: "U.Psy — Votre Psychologue Personnel et de Confiance.",
+        subtitle: "Psychologie fondée sur les preuves pour renforcer la résilience, améliorer les performances et favoriser la guérison — en clinique, en ligne et sur le terrain.",
+        getStarted: "Commencer",
+        getMatched: "Trouver un match",
+        trustStrip: "Approuvé par des professionnels et des organisations",
+        drName: "Dr. Mehdi Felji",
+        photoComingSoon: "Photo professionnelle à venir",
+        scrollHint: "Défiler pour explorer",
+      },
+      features: {
+        individualTitle: "Accompagnement Individuel",
+        individualDesc: "Thérapie, performance, évaluations de personnalité et de sérénité.",
+        institutionalTitle: "Solutions Institutionnelles",
+        institutionalDesc: "Programmes pour fédérations, entreprises et universités.",
+        accreditationTitle: "Accréditation U.Psy",
+        accreditationDesc: "Obtenez votre certification, référencement et clients.",
+      },
+      testimonials: {
+        sectionTitle: "Ce que disent nos clients",
+        testimonial1Role: "Sprinteur National",
+        testimonial1Quote: "Je concours enfin sereinement et concentré. Mon anxiété pré-compétition est maîtrisée.",
+        testimonial2Role: "Directeur Marketing",
+        testimonial2Quote: "Burnout réduit, clarté accrue. Des outils pratiques que j'utilise encore quotidiennement.",
+        testimonial3Role: "Client en Rétablissement",
+        testimonial3Quote: "Je me suis senti écouté sans jugement. La structure m'a aidé à me reconstruire.",
+      },
+      cta: {
+        title: "Prêt à renforcer votre esprit ?",
+        button: "Commencer",
+      },
+      transition: {
+        text: "Découvrez comment notre accompagnement personnalisé peut vous aider à performer, guérir et grandir.",
+        button: "Explorer les services",
+      },
     },
   },
 };
