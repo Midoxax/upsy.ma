@@ -8,9 +8,11 @@ import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
 import NeuralConnector from "@/components/ui/neural-connector";
 import { useLocale } from "@/contexts/LocaleContext";
+import { translations } from "@/lib/i18n/translations";
 
 const Contact = () => {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const faqQuestions = translations[locale].contact.faq.questions;
   
   return (
     <main className="min-h-screen bg-background">
@@ -178,7 +180,7 @@ const Contact = () => {
           </ScrollReveal>
           
           <div className="max-w-3xl mx-auto space-y-4">
-            {(t('contact.faq.questions') as unknown as any[]).map((faq: any, index: number) => (
+            {faqQuestions.map((faq, index) => (
               <ScrollReveal key={index} delay={0.1 * (index + 1)}>
                 <Card>
                   <CardHeader>
