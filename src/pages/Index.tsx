@@ -6,6 +6,7 @@ import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import MaroonDivider from "@/components/ui/maroon-divider";
 import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 import { useLocale } from "@/contexts/LocaleContext";
+import mehdiFeljiPhoto from "@/assets/mehdi-felji.png";
 
 const Index = () => {
   const { t } = useLocale();
@@ -70,20 +71,13 @@ const Index = () => {
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-md">
                 <div 
-                  className="aspect-[4/5] bg-gradient-to-br from-u-surface/80 to-u-gray-700/40 backdrop-blur-sm rounded-u-lg shadow-u-card border border-u-gray-700 flex items-center justify-center hover-lift"
+                  className="aspect-[4/5] bg-gradient-to-br from-u-surface/80 to-u-gray-700/40 backdrop-blur-sm rounded-u-lg shadow-u-card border border-u-gray-700 overflow-hidden hover-lift"
                 >
-                  {/* Placeholder for professional photo or video intro */}
-                  <div className="text-center px-8">
-                    <div className="relative w-32 h-32 mb-6 mx-auto">
-                      {/* Premium gold circular frame with teal neural glow */}
-                      <div className="absolute inset-0 rounded-full border-4 border-u-gold shadow-[0_0_40px_rgba(0,139,139,0.4),0_0_20px_rgba(255,195,0,0.3)]"></div>
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-u-gold/10 to-u-teal/5 backdrop-blur-sm flex items-center justify-center">
-                        <span className="text-gold-glow text-6xl font-light" style={{ fontFamily: 'Georgia, serif' }}>Ψ</span>
-                      </div>
-                    </div>
-                    <p className="text-u-gray-100 text-xl font-bold mb-2">{t('home.hero.drName')}</p>
-                    <p className="text-u-gray-300 text-base">{t('home.hero.photoComingSoon')}</p>
-                  </div>
+                  <img 
+                    src={mehdiFeljiPhoto} 
+                    alt={t('home.hero.drName')}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
