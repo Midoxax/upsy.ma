@@ -165,11 +165,11 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
   return (
     <div 
       ref={menuRef}
-      className="absolute top-full left-0 right-0 bg-u-surface/98 backdrop-blur-2xl border-t border-u-gray-700/50 shadow-[0_12px_48px_rgba(0,0,0,0.6)] z-50 mega-menu"
+      className="absolute top-full left-0 right-0 bg-u-surface/98 backdrop-blur-2xl border-t border-u-gray-700/50 shadow-[0_12px_48px_rgba(0,0,0,0.6)] z-50 mega-menu max-h-[80vh] overflow-y-auto"
       role="menu"
       aria-label="Main navigation mega menu"
     >
-      <div className="container-custom max-h-[80vh] overflow-y-auto">
+      <div className="container-custom">
         <div className="grid grid-cols-4 divide-x divide-u-gray-700/30">
           {localizedMenuItems.map((item, index) => {
             const Icon = megaMenuItems[index].icon;
