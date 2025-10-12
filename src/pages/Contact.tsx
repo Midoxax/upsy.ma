@@ -178,7 +178,7 @@ const Contact = () => {
           </ScrollReveal>
           
           <div className="max-w-3xl mx-auto space-y-4">
-            {(t('contact.faq.questions') as any[]).map((faq: any, index: number) => (
+            {(t('contact.faq.questions') as unknown as any[]).map((faq: any, index: number) => (
               <ScrollReveal key={index} delay={0.1 * (index + 1)}>
                 <Card>
                   <CardHeader>

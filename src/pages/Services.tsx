@@ -73,7 +73,7 @@ const Services = () => {
 
         {/* Service Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {(t('services.items') as any[]).map((service: any, index: number) => {
+          {(t('services.items') as unknown as any[]).map((service: any, index: number) => {
             const icons = [Brain, TrendingUp, Flower2, Brain, Clock];
             const colors = ["text-accent", "text-secondary", "text-accent", "text-secondary", "text-accent"];
             const Icon = icons[index];
@@ -100,7 +100,7 @@ const Services = () => {
         <div className="max-w-3xl mx-auto mb-20">
           <h2 className="text-h2 text-foreground mb-8 text-center">{t('services.expectations.title')}</h2>
           <div className="space-y-4">
-            {(t('services.expectations.list') as string[]).map((item: string, index: number) => (
+            {(t('services.expectations.list') as unknown as string[]).map((item: string, index: number) => (
               <div key={index} className="flex items-start gap-4 p-4 rounded-lg bg-card border border-border">
                 <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
                 <p className="text-body text-foreground">{item}</p>

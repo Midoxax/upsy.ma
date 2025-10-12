@@ -39,7 +39,7 @@ const About = () => {
             <div className="glass-card p-8">
               <h2 className="text-h2 text-foreground mb-6">{t('about.credentials.title')}</h2>
               <div className="space-y-3">
-                {(t('about.credentials.list') as string[]).map((credential: string, index: number) => (
+                {(t('about.credentials.list') as unknown as string[]).map((credential: string, index: number) => (
                   <div key={index} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-u-gold flex-shrink-0 mt-0.5" />
                     <span className="text-body text-muted-foreground">{credential}</span>
@@ -59,7 +59,7 @@ const About = () => {
                   {t('about.philosophy.paragraph2')}
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
-                  {(t('about.philosophy.list') as string[]).map((item: string, index: number) => (
+                  {(t('about.philosophy.list') as unknown as string[]).map((item: string, index: number) => (
                     <li key={index}>{item}</li>
                   ))}
                 </ul>
@@ -73,7 +73,7 @@ const About = () => {
                 <div>
                   <h3 className="text-h3 text-foreground mb-3">{t('about.specializations.individual.title')}</h3>
                   <ul className="space-y-2 text-body text-muted-foreground">
-                    {(t('about.specializations.individual.list') as string[]).map((item: string, index: number) => (
+                    {(t('about.specializations.individual.list') as unknown as string[]).map((item: string, index: number) => (
                       <li key={index}>• {item}</li>
                     ))}
                   </ul>
@@ -81,7 +81,7 @@ const About = () => {
                 <div>
                   <h3 className="text-h3 text-foreground mb-3">{t('about.specializations.organizational.title')}</h3>
                   <ul className="space-y-2 text-body text-muted-foreground">
-                    {(t('about.specializations.organizational.list') as string[]).map((item: string, index: number) => (
+                    {(t('about.specializations.organizational.list') as unknown as string[]).map((item: string, index: number) => (
                       <li key={index}>• {item}</li>
                     ))}
                   </ul>
