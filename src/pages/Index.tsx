@@ -104,48 +104,40 @@ const Index = () => {
       {/* Feature Section */}
       <section className="section-spacing bg-u-bg">
         <div className="container-custom">
-          <StaggerContainer>
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Individual Guidance */}
-              <StaggerItem>
-                <div className="bg-gradient-to-br from-u-surface to-u-gray-700/30 backdrop-blur-sm rounded-u-lg p-8 border border-u-gray-700 hover:border-u-teal/40 transition-all duration-300 hover-lift">
-                  <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30 shadow-[0_0_20px_rgba(0,139,139,0.2)]">
-                    <Brain className="w-8 h-8 text-u-teal" />
-                  </div>
-                  <h3 className="text-h3 text-u-gray-100 mb-4">{t('home.features.individualTitle')}</h3>
-                  <p className="text-body text-u-gray-300">
-                    {t('home.features.individualDesc')}
-                  </p>
-                </div>
-              </StaggerItem>
-
-              {/* Institutional Solutions */}
-              <StaggerItem>
-                <div className="bg-gradient-to-br from-u-surface to-u-gray-700/30 backdrop-blur-sm rounded-u-lg p-8 border border-u-gray-700 hover:border-u-gold/40 transition-all duration-300 hover-lift">
-                  <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-gold/30 shadow-[0_0_20px_rgba(255,195,0,0.2)]">
-                    <Building2 className="w-8 h-8 text-u-gold" />
-                  </div>
-                  <h3 className="text-h3 text-u-gray-100 mb-4">{t('home.features.institutionalTitle')}</h3>
-                  <p className="text-body text-u-gray-300">
-                    {t('home.features.institutionalDesc')}
-                  </p>
-                </div>
-              </StaggerItem>
-
-              {/* U.Psy Accreditation */}
-              <StaggerItem>
-                <div className="bg-gradient-to-br from-u-surface to-u-gray-700/30 backdrop-blur-sm rounded-u-lg p-8 border border-u-gray-700 hover:border-u-teal/40 transition-all duration-300 hover-lift">
-                  <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30 shadow-[0_0_20px_rgba(0,139,139,0.2)]">
-                    <Award className="w-8 h-8 text-u-teal" />
-                  </div>
-                  <h3 className="text-h3 text-u-gray-100 mb-4">{t('home.features.accreditationTitle')}</h3>
-                  <p className="text-body text-u-gray-300">
-                    {t('home.features.accreditationDesc')}
-                  </p>
-                </div>
-              </StaggerItem>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Individual Guidance */}
+            <div className="bg-gradient-to-br from-u-surface to-u-gray-700/30 backdrop-blur-sm rounded-u-lg p-8 border border-u-gray-700 hover:border-u-teal/40 transition-all duration-300 hover-lift">
+              <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30 shadow-[0_0_20px_rgba(0,139,139,0.2)]">
+                <Brain className="w-8 h-8 text-u-teal" />
+              </div>
+              <h3 className="text-h3 text-u-gray-100 mb-4">{t('home.features.individualTitle')}</h3>
+              <p className="text-body text-u-gray-300">
+                {t('home.features.individualDesc')}
+              </p>
             </div>
-          </StaggerContainer>
+
+            {/* Institutional Solutions */}
+            <div className="bg-gradient-to-br from-u-surface to-u-gray-700/30 backdrop-blur-sm rounded-u-lg p-8 border border-u-gray-700 hover:border-u-gold/40 transition-all duration-300 hover-lift">
+              <div className="w-16 h-16 bg-u-gold/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-gold/30 shadow-[0_0_20px_rgba(255,195,0,0.2)]">
+                <Building2 className="w-8 h-8 text-u-gold" />
+              </div>
+              <h3 className="text-h3 text-u-gray-100 mb-4">{t('home.features.institutionalTitle')}</h3>
+              <p className="text-body text-u-gray-300">
+                {t('home.features.institutionalDesc')}
+              </p>
+            </div>
+
+            {/* U.Psy Accreditation */}
+            <div className="bg-gradient-to-br from-u-surface to-u-gray-700/30 backdrop-blur-sm rounded-u-lg p-8 border border-u-gray-700 hover:border-u-teal/40 transition-all duration-300 hover-lift">
+              <div className="w-16 h-16 bg-u-teal/10 rounded-full flex items-center justify-center mb-6 border-2 border-u-teal/30 shadow-[0_0_20px_rgba(0,139,139,0.2)]">
+                <Award className="w-8 h-8 text-u-teal" />
+              </div>
+              <h3 className="text-h3 text-u-gray-100 mb-4">{t('home.features.accreditationTitle')}</h3>
+              <p className="text-body text-u-gray-300">
+                {t('home.features.accreditationDesc')}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
