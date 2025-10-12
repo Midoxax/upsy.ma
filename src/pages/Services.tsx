@@ -4,10 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useNavigate } from "react-router-dom";
 import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 import { useLocale } from "@/contexts/LocaleContext";
+import { translations } from "@/lib/i18n/translations";
 
 const Services = () => {
   const navigate = useNavigate();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  
+  const serviceItems = translations[locale].services.items;
+  const expectationsList = translations[locale].services.expectations.list;
 
   const services = [
     {
@@ -73,7 +77,7 @@ const Services = () => {
 
         {/* Service Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {(t('services.items') as unknown as any[]).map((service: any, index: number) => {
+          {serviceItems.map((service, index) => {
             const icons = [Brain, TrendingUp, Flower2, Brain, Clock];
             const colors = ["text-accent", "text-secondary", "text-accent", "text-secondary", "text-accent"];
             const Icon = icons[index];
@@ -100,7 +104,7 @@ const Services = () => {
         <div className="max-w-3xl mx-auto mb-20">
           <h2 className="text-h2 text-foreground mb-8 text-center">{t('services.expectations.title')}</h2>
           <div className="space-y-4">
-            {(t('services.expectations.list') as unknown as string[]).map((item: string, index: number) => (
+            {expectationsList.map((item, index) => (
               <div key={index} className="flex items-start gap-4 p-4 rounded-lg bg-card border border-border">
                 <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
                 <p className="text-body text-foreground">{item}</p>
