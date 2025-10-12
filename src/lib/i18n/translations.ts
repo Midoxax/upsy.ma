@@ -99,6 +99,192 @@ export const translations = {
         button: "Explore Services",
       },
     },
+    about: {
+      hero: {
+        title: "About Dr. Mehdi Felji",
+        subtitle: "Clinical Psychologist & Mental Performance Coach",
+      },
+      background: {
+        title: "Professional Background",
+        paragraph1: "Dr. Mehdi Felji is a licensed clinical psychologist specializing in mental performance, sport psychology, and evidence-based therapeutic interventions. With extensive experience working with athletes, professionals, and organizations, Dr. Felji combines rigorous scientific methodology with practical, results-oriented coaching.",
+        paragraph2: "His approach integrates cognitive-behavioral techniques, performance psychology principles, and mindfulness-based interventions to help clients overcome anxiety, build mental resilience, and perform at their highest level under pressure.",
+      },
+      credentials: {
+        title: "Qualifications & Credentials",
+        list: [
+          "Licensed Clinical Psychologist",
+          "Certified Sport & Performance Psychology Consultant",
+          "Ph.D. in Clinical Psychology",
+          "Master's in Applied Sport Psychology",
+          "Registered with National Psychology Board",
+          "Member of International Society of Sport Psychology (ISSP)",
+        ],
+      },
+      philosophy: {
+        title: "Philosophy & Approach",
+        paragraph1: "Dr. Felji's philosophy centers on practical, evidence-based solutions tailored to each individual's unique challenges and goals. He believes that peak performance—whether in sports, business, or daily life—emerges from a foundation of mental clarity, emotional regulation, and disciplined habits.",
+        paragraph2: "His work emphasizes:",
+        list: [
+          "Building sustainable mental health practices",
+          "Developing resilience under stress and pressure",
+          "Cultivating self-awareness and emotional intelligence",
+          "Implementing actionable strategies for immediate impact",
+          "Creating long-term behavioral change through consistent practice",
+        ],
+      },
+      specializations: {
+        title: "Areas of Specialization",
+        individual: {
+          title: "Individual Work",
+          list: [
+            "Anxiety & Stress Management",
+            "Performance Enhancement",
+            "Mental Skills Training",
+            "Confidence Building",
+            "Career Transitions",
+          ],
+        },
+        organizational: {
+          title: "Organizational Consulting",
+          list: [
+            "Leadership Development",
+            "Team Performance",
+            "Workplace Mental Health",
+            "Executive Coaching",
+            "Organizational Training",
+          ],
+        },
+      },
+      experience: {
+        title: "Professional Experience",
+        paragraph1: "Dr. Felji has worked with a diverse range of clients including national-level athletes, corporate executives, performing artists, and individuals seeking personal growth. He has served as a consultant for sports federations, multinational corporations, and educational institutions.",
+        paragraph2: "His training programs and workshops have been delivered across multiple countries, helping hundreds of professionals develop the mental skills necessary for sustained excellence in their respective fields.",
+      },
+    },
+    services: {
+      intro: {
+        title: "Personalized Guidance that blends clinical depth and performance science.",
+        subtitle: "Every journey is unique — we tailor therapy and performance strategies to help you thrive.",
+      },
+      items: [
+        {
+          title: "Initial Diagnostic",
+          description: "90-min comprehensive assessment, goal setting, and personalized plan.",
+          price: "700 MAD",
+        },
+        {
+          title: "Performance & Resilience Pack",
+          description: "6×60-min sessions: visualization, pre-event routines, stress mastery.",
+          price: "3,600 MAD",
+        },
+        {
+          title: "Therapy & Recovery Pack",
+          description: "10×60-min CBT/Schema for anxiety, trauma, addiction.",
+          price: "5,500 MAD",
+        },
+        {
+          title: "Personality & Serenity Tests",
+          description: "Psychometric tools + 2×60-min feedback sessions.",
+          price: "1,800 MAD",
+        },
+        {
+          title: "Express Online Follow-up",
+          description: "30-min tune-up session (returning clients only).",
+          price: "300 MAD",
+        },
+      ],
+      expectations: {
+        title: "What to Expect",
+        list: [
+          "Clear structure and measurable goals",
+          "Evidence-based therapeutic approaches",
+          "Bilingual sessions (English/French/Arabic)",
+          "Complete confidentiality & ethics",
+          "Flexible online and in-clinic options",
+        ],
+      },
+      cta: "Get Started",
+      transition: {
+        title: "Performance doesn't stop with individuals — see how U.Psy transforms organizations.",
+        button: "Explore Institutional Solutions",
+      },
+    },
+    contact: {
+      hero: {
+        title: "Get in Touch",
+        subtitle: "Ready to start your journey? Reach out to book your first session or ask any questions.",
+      },
+      form: {
+        title: "Send us a message",
+        description: "Fill out the form below and we'll get back to you within 24 hours.",
+        nameLabel: "Full Name",
+        namePlaceholder: "Dr. Mehdi Felji",
+        emailLabel: "Email",
+        emailPlaceholder: "your@email.com",
+        phoneLabel: "Phone (optional)",
+        phonePlaceholder: "+212 6XX XX XX XX",
+        messageLabel: "Message",
+        messagePlaceholder: "Tell us what you're looking for...",
+        submitButton: "Send Message",
+        required: "*",
+      },
+      info: {
+        title: "Contact Information",
+        description: "Reach out through any of these channels",
+        email: "Email",
+        emailValue: "contact@upsy.ma",
+        phone: "Phone",
+        phoneValue: "+212 6XX XX XX XX",
+        location: "Location",
+        locationValue: "Casablanca & Rabat, Morocco",
+        locationExtra: "+ Online Sessions Available",
+      },
+      booking: {
+        title: "Book Directly",
+        description: "Schedule your session with Dr. Mehdi Felji",
+        button: "View Calendar",
+      },
+      matching: {
+        title: "Not sure where to start?",
+        description: "Try our matching service to find the perfect psychologist for your needs",
+        button: "Get Matched with a Psychologist",
+      },
+      faq: {
+        title: "Common Questions",
+        questions: [
+          {
+            question: "How quickly will I get a response?",
+            answer: "We aim to respond to all inquiries within 24 hours during business days. For urgent matters, please call us directly.",
+          },
+          {
+            question: "Do you offer online sessions?",
+            answer: "Yes! We offer both in-person sessions in Casablanca and Rabat, as well as online sessions via secure video conferencing for clients anywhere in Morocco or internationally.",
+          },
+          {
+            question: "What languages do you speak?",
+            answer: "Our psychologists are fluent in English, French, and Arabic (Darija & Modern Standard). Sessions can be conducted in any of these languages.",
+          },
+        ],
+      },
+    },
+    placeholder: {
+      skool: {
+        title: "Skool Community",
+        content: "Content coming soon...",
+      },
+      resources: {
+        title: "Resources",
+        content: "Content coming soon...",
+      },
+      legal: {
+        title: "Legal Information",
+        content: "Content coming soon...",
+      },
+      talentHub: {
+        title: "Talent & Innovation Hub",
+        content: "Content coming soon...",
+      },
+    },
   },
   fr: {
     nav: {
@@ -198,6 +384,192 @@ export const translations = {
       transition: {
         text: "Découvrez comment notre accompagnement personnalisé peut vous aider à performer, guérir et grandir.",
         button: "Explorer les services",
+      },
+    },
+    about: {
+      hero: {
+        title: "À propos du Dr. Mehdi Felji",
+        subtitle: "Psychologue Clinicien & Coach en Performance Mentale",
+      },
+      background: {
+        title: "Parcours Professionnel",
+        paragraph1: "Le Dr. Mehdi Felji est un psychologue clinicien agréé spécialisé en performance mentale, psychologie du sport et interventions thérapeutiques fondées sur des preuves. Fort d'une vaste expérience avec des athlètes, des professionnels et des organisations, le Dr. Felji combine une méthodologie scientifique rigoureuse avec un coaching pratique et axé sur les résultats.",
+        paragraph2: "Son approche intègre des techniques cognitivo-comportementales, des principes de psychologie de la performance et des interventions basées sur la pleine conscience pour aider les clients à surmonter l'anxiété, développer leur résilience mentale et performer à leur plus haut niveau sous pression.",
+      },
+      credentials: {
+        title: "Qualifications et Accréditations",
+        list: [
+          "Psychologue Clinicien Agréé",
+          "Consultant Certifié en Psychologie du Sport & de la Performance",
+          "Doctorat en Psychologie Clinique",
+          "Master en Psychologie du Sport Appliquée",
+          "Inscrit à l'Ordre National des Psychologues",
+          "Membre de la Société Internationale de Psychologie du Sport (ISSP)",
+        ],
+      },
+      philosophy: {
+        title: "Philosophie et Approche",
+        paragraph1: "La philosophie du Dr. Felji repose sur des solutions pratiques et fondées sur des preuves, adaptées aux défis et objectifs uniques de chaque individu. Il croit que la performance optimale—que ce soit dans le sport, les affaires ou la vie quotidienne—émerge d'une base de clarté mentale, de régulation émotionnelle et d'habitudes disciplinées.",
+        paragraph2: "Son travail met l'accent sur :",
+        list: [
+          "Construire des pratiques de santé mentale durables",
+          "Développer la résilience face au stress et à la pression",
+          "Cultiver la conscience de soi et l'intelligence émotionnelle",
+          "Mettre en œuvre des stratégies actionnables pour un impact immédiat",
+          "Créer un changement comportemental à long terme par une pratique cohérente",
+        ],
+      },
+      specializations: {
+        title: "Domaines de Spécialisation",
+        individual: {
+          title: "Travail Individuel",
+          list: [
+            "Gestion de l'Anxiété et du Stress",
+            "Amélioration de la Performance",
+            "Entraînement aux Compétences Mentales",
+            "Développement de la Confiance",
+            "Transitions de Carrière",
+          ],
+        },
+        organizational: {
+          title: "Conseil aux Organisations",
+          list: [
+            "Développement du Leadership",
+            "Performance d'Équipe",
+            "Santé Mentale au Travail",
+            "Coaching de Cadres",
+            "Formation Organisationnelle",
+          ],
+        },
+      },
+      experience: {
+        title: "Expérience Professionnelle",
+        paragraph1: "Le Dr. Felji a travaillé avec une gamme diversifiée de clients, notamment des athlètes de niveau national, des cadres d'entreprise, des artistes de scène et des personnes en quête de croissance personnelle. Il a été consultant pour des fédérations sportives, des multinationales et des établissements d'enseignement.",
+        paragraph2: "Ses programmes de formation et ateliers ont été dispensés dans plusieurs pays, aidant des centaines de professionnels à développer les compétences mentales nécessaires à l'excellence durable dans leurs domaines respectifs.",
+      },
+    },
+    services: {
+      intro: {
+        title: "Accompagnement Personnalisé alliant profondeur clinique et science de la performance.",
+        subtitle: "Chaque parcours est unique — nous adaptons la thérapie et les stratégies de performance pour vous aider à prospérer.",
+      },
+      items: [
+        {
+          title: "Diagnostic Initial",
+          description: "Évaluation complète de 90 min, définition d'objectifs et plan personnalisé.",
+          price: "700 MAD",
+        },
+        {
+          title: "Pack Performance & Résilience",
+          description: "6 séances de 60 min : visualisation, routines pré-événement, maîtrise du stress.",
+          price: "3 600 MAD",
+        },
+        {
+          title: "Pack Thérapie & Rétablissement",
+          description: "10 séances de 60 min TCC/Schémas pour anxiété, traumatisme, addiction.",
+          price: "5 500 MAD",
+        },
+        {
+          title: "Tests de Personnalité & Sérénité",
+          description: "Outils psychométriques + 2 séances de retour de 60 min.",
+          price: "1 800 MAD",
+        },
+        {
+          title: "Suivi Express en Ligne",
+          description: "Séance de mise au point de 30 min (clients réguliers uniquement).",
+          price: "300 MAD",
+        },
+      ],
+      expectations: {
+        title: "À Quoi S'attendre",
+        list: [
+          "Structure claire et objectifs mesurables",
+          "Approches thérapeutiques fondées sur des preuves",
+          "Séances bilingues (Anglais/Français/Arabe)",
+          "Confidentialité et éthique totales",
+          "Options flexibles en ligne et en clinique",
+        ],
+      },
+      cta: "Commencer",
+      transition: {
+        title: "La performance ne s'arrête pas aux individus — découvrez comment U.Psy transforme les organisations.",
+        button: "Explorer les Solutions Institutionnelles",
+      },
+    },
+    contact: {
+      hero: {
+        title: "Entrer en Contact",
+        subtitle: "Prêt à commencer votre parcours ? Contactez-nous pour réserver votre première séance ou poser vos questions.",
+      },
+      form: {
+        title: "Envoyez-nous un message",
+        description: "Remplissez le formulaire ci-dessous et nous vous répondrons dans les 24 heures.",
+        nameLabel: "Nom Complet",
+        namePlaceholder: "Dr. Mehdi Felji",
+        emailLabel: "E-mail",
+        emailPlaceholder: "votre@email.com",
+        phoneLabel: "Téléphone (optionnel)",
+        phonePlaceholder: "+212 6XX XX XX XX",
+        messageLabel: "Message",
+        messagePlaceholder: "Dites-nous ce que vous recherchez...",
+        submitButton: "Envoyer le Message",
+        required: "*",
+      },
+      info: {
+        title: "Coordonnées",
+        description: "Contactez-nous par l'un de ces canaux",
+        email: "E-mail",
+        emailValue: "contact@upsy.ma",
+        phone: "Téléphone",
+        phoneValue: "+212 6XX XX XX XX",
+        location: "Localisation",
+        locationValue: "Casablanca et Rabat, Maroc",
+        locationExtra: "+ Séances en ligne disponibles",
+      },
+      booking: {
+        title: "Réserver Directement",
+        description: "Planifiez votre séance avec le Dr. Mehdi Felji",
+        button: "Voir le Calendrier",
+      },
+      matching: {
+        title: "Vous ne savez pas par où commencer ?",
+        description: "Essayez notre service de correspondance pour trouver le psychologue parfait pour vos besoins",
+        button: "Obtenir une Correspondance avec un Psychologue",
+      },
+      faq: {
+        title: "Questions Fréquentes",
+        questions: [
+          {
+            question: "Quelle est la rapidité de votre réponse ?",
+            answer: "Nous visons à répondre à toutes les demandes dans les 24 heures pendant les jours ouvrables. Pour les questions urgentes, veuillez nous appeler directement.",
+          },
+          {
+            question: "Proposez-vous des séances en ligne ?",
+            answer: "Oui ! Nous proposons à la fois des séances en personne à Casablanca et Rabat, ainsi que des séances en ligne via vidéoconférence sécurisée pour les clients au Maroc ou à l'international.",
+          },
+          {
+            question: "Quelles langues parlez-vous ?",
+            answer: "Nos psychologues parlent couramment l'anglais, le français et l'arabe (darija et standard moderne). Les séances peuvent être menées dans l'une de ces langues.",
+          },
+        ],
+      },
+    },
+    placeholder: {
+      skool: {
+        title: "Communauté Skool",
+        content: "Contenu à venir...",
+      },
+      resources: {
+        title: "Ressources",
+        content: "Contenu à venir...",
+      },
+      legal: {
+        title: "Informations Légales",
+        content: "Contenu à venir...",
+      },
+      talentHub: {
+        title: "Pôle Talents & Innovation",
+        content: "Contenu à venir...",
       },
     },
   },

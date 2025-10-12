@@ -7,17 +7,20 @@ import { Mail, Phone, MapPin, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
 import NeuralConnector from "@/components/ui/neural-connector";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const Contact = () => {
+  const { t } = useLocale();
+  
   return (
     <main className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container-custom text-center">
           <ScrollReveal>
-            <h1 className="text-h1 text-foreground mb-6">Get in Touch</h1>
+            <h1 className="text-h1 text-foreground mb-6">{t('contact.hero.title')}</h1>
             <p className="text-body text-muted-foreground max-w-2xl mx-auto">
-              Ready to start your journey? Reach out to book your first session or ask any questions.
+              {t('contact.hero.subtitle')}
             </p>
           </ScrollReveal>
         </div>
@@ -33,40 +36,40 @@ const Contact = () => {
             <ScrollReveal direction="left">
               <Card className="hover-lift">
                 <CardHeader>
-                  <CardTitle>Send us a message</CardTitle>
+                  <CardTitle>{t('contact.form.title')}</CardTitle>
                   <CardDescription>
-                    Fill out the form below and we'll get back to you within 24 hours.
+                    {t('contact.form.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
-                      <Input id="name" placeholder="Dr. Mehdi Felji" required />
+                      <Label htmlFor="name">{t('contact.form.nameLabel')} {t('contact.form.required')}</Label>
+                      <Input id="name" placeholder={t('contact.form.namePlaceholder')} required />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email *</Label>
-                      <Input id="email" type="email" placeholder="your@email.com" required />
+                      <Label htmlFor="email">{t('contact.form.emailLabel')} {t('contact.form.required')}</Label>
+                      <Input id="email" type="email" placeholder={t('contact.form.emailPlaceholder')} required />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone (optional)</Label>
-                      <Input id="phone" type="tel" placeholder="+212 6XX XX XX XX" />
+                      <Label htmlFor="phone">{t('contact.form.phoneLabel')}</Label>
+                      <Input id="phone" type="tel" placeholder={t('contact.form.phonePlaceholder')} />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="message">Message *</Label>
+                      <Label htmlFor="message">{t('contact.form.messageLabel')} {t('contact.form.required')}</Label>
                       <Textarea 
                         id="message" 
-                        placeholder="Tell us what you're looking for..."
+                        placeholder={t('contact.form.messagePlaceholder')}
                         className="min-h-[150px]"
                         required
                       />
                     </div>
                     
                     <Button type="submit" size="lg" className="w-full hover-glow">
-                      Send Message
+                      {t('contact.form.submitButton')}
                     </Button>
                   </form>
                 </CardContent>
@@ -78,9 +81,9 @@ const Contact = () => {
               <ScrollReveal direction="right" delay={0.2}>
                 <Card className="hover-lift">
                   <CardHeader>
-                    <CardTitle>Contact Information</CardTitle>
+                    <CardTitle>{t('contact.info.title')}</CardTitle>
                     <CardDescription>
-                      Reach out through any of these channels
+                      {t('contact.info.description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -89,9 +92,9 @@ const Contact = () => {
                         <Mail className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold">Email</p>
+                        <p className="font-semibold">{t('contact.info.email')}</p>
                         <a href="mailto:contact@upsy.ma" className="text-muted-foreground hover:text-primary transition-colors link-underline">
-                          contact@upsy.ma
+                          {t('contact.info.emailValue')}
                         </a>
                       </div>
                     </div>
@@ -101,9 +104,9 @@ const Contact = () => {
                         <Phone className="w-5 h-5 text-secondary" />
                       </div>
                       <div>
-                        <p className="font-semibold">Phone</p>
+                        <p className="font-semibold">{t('contact.info.phone')}</p>
                         <a href="tel:+212600000000" className="text-muted-foreground hover:text-secondary transition-colors link-underline">
-                          +212 6XX XX XX XX
+                          {t('contact.info.phoneValue')}
                         </a>
                       </div>
                     </div>
@@ -113,10 +116,10 @@ const Contact = () => {
                         <MapPin className="w-5 h-5 text-accent" />
                       </div>
                       <div>
-                        <p className="font-semibold">Location</p>
+                        <p className="font-semibold">{t('contact.info.location')}</p>
                         <p className="text-muted-foreground">
-                          Casablanca & Rabat, Morocco<br />
-                          <span className="text-sm">+ Online Sessions Available</span>
+                          {t('contact.info.locationValue')}<br />
+                          <span className="text-sm">{t('contact.info.locationExtra')}</span>
                         </p>
                       </div>
                     </div>
@@ -128,15 +131,15 @@ const Contact = () => {
                 <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20 hover-lift">
                   <CardHeader>
                     <Calendar className="w-10 h-10 text-primary mb-2" />
-                    <CardTitle>Book Directly</CardTitle>
+                    <CardTitle>{t('contact.booking.title')}</CardTitle>
                     <CardDescription>
-                      Schedule your session with Dr. Mehdi Felji
+                      {t('contact.booking.description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button asChild size="lg" className="w-full hover-glow">
                       <a href="https://calendly.com/dr-mehdi-felji" target="_blank" rel="noopener noreferrer">
-                        View Calendar
+                        {t('contact.booking.button')}
                       </a>
                     </Button>
                   </CardContent>
@@ -146,15 +149,15 @@ const Contact = () => {
               <ScrollReveal direction="right" delay={0.6}>
                 <Card className="hover-lift">
                   <CardHeader>
-                    <CardTitle>Not sure where to start?</CardTitle>
+                    <CardTitle>{t('contact.matching.title')}</CardTitle>
                     <CardDescription>
-                      Try our matching service to find the perfect psychologist for your needs
+                      {t('contact.matching.description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button asChild variant="secondary" size="lg" className="w-full">
                       <Link to="/get-matched">
-                        Get Matched with a Psychologist
+                        {t('contact.matching.button')}
                       </Link>
                     </Button>
                   </CardContent>
@@ -171,48 +174,24 @@ const Contact = () => {
       <section className="section-spacing bg-muted/30">
         <div className="container-custom">
           <ScrollReveal>
-            <h2 className="text-h2 text-center mb-12">Common Questions</h2>
+            <h2 className="text-h2 text-center mb-12">{t('contact.faq.title')}</h2>
           </ScrollReveal>
           
           <div className="max-w-3xl mx-auto space-y-4">
-            <ScrollReveal delay={0.1}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-h3">How quickly will I get a response?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    We aim to respond to all inquiries within 24 hours during business days. For urgent matters, please call us directly.
-                  </p>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.2}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-h3">Do you offer online sessions?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Yes! We offer both in-person sessions in Casablanca and Rabat, as well as online sessions via secure video conferencing for clients anywhere in Morocco or internationally.
-                  </p>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.3}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-h3">What languages do you speak?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Our psychologists are fluent in English, French, and Arabic (Darija & Modern Standard). Sessions can be conducted in any of these languages.
-                  </p>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
+            {(t('contact.faq.questions') as any[]).map((faq: any, index: number) => (
+              <ScrollReveal key={index} delay={0.1 * (index + 1)}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-h3">{faq.question}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      {faq.answer}
+                    </p>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
