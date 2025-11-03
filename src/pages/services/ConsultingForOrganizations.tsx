@@ -96,7 +96,7 @@ const ConsultingForOrganizations = () => {
       <section className="hero-neural-bg py-24 md:py-32">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-6 bg-accent/10 text-accent border-accent/20 hover:bg-accent/20">
+            <Badge className="mb-6 bg-accent/10 text-accent border-accent/20 hover:bg-accent/20 text-lg px-6 py-2">
               Institutional Solutions
             </Badge>
             <h1 className="text-display mb-6">
