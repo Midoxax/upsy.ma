@@ -27,12 +27,12 @@ const Footer = () => {
             {/* Contact Info */}
             <div className="space-y-2 text-sm">
               <p className="text-u-gray-300">
-                <span className="text-u-white">{t('footer.email')}:</span> contact@upsy.com
+                <span className="text-u-white">{t('footer.email')}:</span> mypersonalpsychologist212@gmail.com
               </p>
               <p className="text-u-gray-300">
                 <span className="text-u-white">{t('footer.whatsapp')}:</span>{" "}
-                <a href="#" className="text-u-orange hover:underline">
-                  {t('footer.availableOnRequest')}
+                <a href="https://wa.me/212668594699" className="text-u-orange hover:underline" target="_blank" rel="noopener noreferrer">
+                  +212 668-594699
                 </a>
               </p>
             </div>
