@@ -100,6 +100,25 @@ const AnimatedRoutes = () => {
           <Route path="/fr/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="/fr/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
           
+          {/* AR routes */}
+          <Route path="/ar" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/ar/about" element={<PageTransition><About /></PageTransition>} />
+          <Route path="/ar/services" element={<PageTransition><Services /></PageTransition>} />
+          <Route path="/ar/services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
+          <Route path="/ar/skool" element={<PageTransition><Skool /></PageTransition>} />
+          <Route path="/ar/resources" element={<PageTransition><Resources /></PageTransition>} />
+          <Route path="/ar/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="/ar/legal" element={<PageTransition><Legal /></PageTransition>} />
+          <Route path="/ar/talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
+          <Route path="/ar/psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
+          <Route path="/ar/psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
+          <Route path="/ar/auth" element={<PageTransition><Auth /></PageTransition>} />
+          <Route path="/ar/apply" element={<PageTransition><Apply /></PageTransition>} />
+          <Route path="/ar/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+          <Route path="/ar/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
+          <Route path="/ar/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/ar/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          
           <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
         </Routes>
       </AnimatePresence>

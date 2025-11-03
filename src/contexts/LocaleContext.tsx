@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { translations } from '@/lib/i18n/translations';
 import { getCookie, setCookie, getLocaleFromPath, stripLocalePrefix, addLocalePrefix } from '@/lib/i18n/utils';
 
-type Locale = 'en' | 'fr';
+type Locale = 'en' | 'fr' | 'ar';
 
 interface LocaleContextType {
   locale: Locale;
@@ -18,7 +18,7 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [locale, setLocaleState] = useState<Locale>(() => {
     const cookieLocale = getCookie('lng');
-    if (cookieLocale === 'fr' || cookieLocale === 'en') return cookieLocale;
+    if (cookieLocale === 'fr' || cookieLocale === 'en' || cookieLocale === 'ar') return cookieLocale;
     return getLocaleFromPath(location.pathname);
   });
 
@@ -27,13 +27,18 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     const hasVisited = getCookie('lng');
     const currentPath = location.pathname;
     
-    if (!hasVisited && !currentPath.startsWith('/fr')) {
+    if (!hasVisited && !currentPath.startsWith('/fr') && !currentPath.startsWith('/ar')) {
       const browserLang = navigator.language.toLowerCase();
       if (browserLang.includes('fr')) {
         setCookie('lng', 'fr', 180);
         const newPath = '/fr' + currentPath + location.search + location.hash;
         navigate(newPath, { replace: true });
         setLocaleState('fr');
+      } else if (browserLang.includes('ar')) {
+        setCookie('lng', 'ar', 180);
+        const newPath = '/ar' + currentPath + location.search + location.hash;
+        navigate(newPath, { replace: true });
+        setLocaleState('ar');
       } else {
         setCookie('lng', 'en', 180);
         setLocaleState('en');
@@ -48,6 +53,12 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
       setLocaleState(urlLocale);
     }
   }, [location.pathname]);
+
+  // Set text direction for RTL languages
+  useEffect(() => {
+    document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const setLocale = (newLocale: Locale) => {
     setCookie('lng', newLocale, 180);

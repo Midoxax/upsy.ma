@@ -22,7 +22,7 @@ const SEOHead = ({ path }: SEOHeadProps) => {
     // Add canonical
     const canonical = document.createElement('link');
     canonical.rel = 'canonical';
-    canonical.href = locale === 'fr' ? `${baseUrl}/fr${basePath}` : `${baseUrl}${basePath}`;
+    canonical.href = locale === 'fr' ? `${baseUrl}/fr${basePath}` : locale === 'ar' ? `${baseUrl}/ar${basePath}` : `${baseUrl}${basePath}`;
     document.head.appendChild(canonical);
 
     // Add hreflang alternates
@@ -38,6 +38,12 @@ const SEOHead = ({ path }: SEOHeadProps) => {
     hreflangFr.href = `${baseUrl}/fr${basePath}`;
     document.head.appendChild(hreflangFr);
 
+    const hreflangAr = document.createElement('link');
+    hreflangAr.rel = 'alternate';
+    hreflangAr.hreflang = 'ar';
+    hreflangAr.href = `${baseUrl}/ar${basePath}`;
+    document.head.appendChild(hreflangAr);
+
     const hreflangDefault = document.createElement('link');
     hreflangDefault.rel = 'alternate';
     hreflangDefault.hreflang = 'x-default';
@@ -51,14 +57,19 @@ const SEOHead = ({ path }: SEOHeadProps) => {
       ogLocale.setAttribute('property', 'og:locale');
       document.head.appendChild(ogLocale);
     }
-    ogLocale.setAttribute('content', locale === 'fr' ? 'fr_FR' : 'en_US');
+    const ogLocaleContent = locale === 'fr' ? 'fr_FR' : locale === 'ar' ? 'ar_AR' : 'en_US';
+    ogLocale.setAttribute('content', ogLocaleContent);
 
     // Add og:locale:alternate
     document.querySelectorAll('meta[property="og:locale:alternate"]').forEach(el => el.remove());
-    const ogLocaleAlt = document.createElement('meta');
-    ogLocaleAlt.setAttribute('property', 'og:locale:alternate');
-    ogLocaleAlt.setAttribute('content', locale === 'fr' ? 'en_US' : 'fr_FR');
-    document.head.appendChild(ogLocaleAlt);
+    
+    const alternateLocales = locale === 'en' ? ['fr_FR', 'ar_AR'] : locale === 'fr' ? ['en_US', 'ar_AR'] : ['en_US', 'fr_FR'];
+    alternateLocales.forEach(altLocale => {
+      const ogLocaleAlt = document.createElement('meta');
+      ogLocaleAlt.setAttribute('property', 'og:locale:alternate');
+      ogLocaleAlt.setAttribute('content', altLocale);
+      document.head.appendChild(ogLocaleAlt);
+    });
 
   }, [locale, basePath]);
 

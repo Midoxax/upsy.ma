@@ -1,5 +1,6 @@
-export const getLocaleFromPath = (pathname: string): 'en' | 'fr' => {
+export const getLocaleFromPath = (pathname: string): 'en' | 'fr' | 'ar' => {
   if (pathname.startsWith('/fr')) return 'fr';
+  if (pathname.startsWith('/ar')) return 'ar';
   return 'en';
 };
 
@@ -7,12 +8,18 @@ export const stripLocalePrefix = (pathname: string): string => {
   if (pathname.startsWith('/fr')) {
     return pathname.slice(3) || '/';
   }
+  if (pathname.startsWith('/ar')) {
+    return pathname.slice(3) || '/';
+  }
   return pathname;
 };
 
-export const addLocalePrefix = (pathname: string, locale: 'en' | 'fr'): string => {
+export const addLocalePrefix = (pathname: string, locale: 'en' | 'fr' | 'ar'): string => {
   if (locale === 'fr') {
     return '/fr' + pathname;
+  }
+  if (locale === 'ar') {
+    return '/ar' + pathname;
   }
   return pathname;
 };
