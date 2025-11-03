@@ -132,6 +132,48 @@ export type Database = {
           },
         ]
       }
+      proposal_requests: {
+        Row: {
+          contact_name: string
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          organization_name: string
+          organization_size: string | null
+          phone: string | null
+          service_interest: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contact_name: string
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          organization_name: string
+          organization_size?: string | null
+          phone?: string | null
+          service_interest: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contact_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          organization_name?: string
+          organization_size?: string | null
+          phone?: string | null
+          service_interest?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       psychologist_applications: {
         Row: {
           accreditation_number: string | null
@@ -380,10 +422,7 @@ export type Database = {
         Args: { _email: string; _password: string }
         Returns: Json
       }
-      generate_slug: {
-        Args: { id: string; name: string }
-        Returns: string
-      }
+      generate_slug: { Args: { id: string; name: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

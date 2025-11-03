@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Building2, TrendingUp, Users, Heart, Trophy, Target, FileText, Download, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
+import { ProposalRequestModal } from "@/components/services/ProposalRequestModal";
 
 const ConsultingForOrganizations = () => {
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const valueProps = [
     {
       icon: Heart,
@@ -103,7 +106,7 @@ const ConsultingForOrganizations = () => {
               Outcomes-driven, evidence-based psychological interventions for organizations that demand excellence
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="gap-2" onClick={() => setIsProposalModalOpen(true)}>
                 <FileText className="w-5 h-5" />
                 Request a Proposal
               </Button>
@@ -308,7 +311,7 @@ const ConsultingForOrganizations = () => {
                 Get a customized proposal with clear deliverables, timelines, and ROI projections tailored to your institutional needs.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" className="gap-2">
+                <Button size="lg" className="gap-2" onClick={() => setIsProposalModalOpen(true)}>
                   <FileText className="w-5 h-5" />
                   Request a Proposal
                 </Button>
@@ -346,6 +349,11 @@ const ConsultingForOrganizations = () => {
           </Accordion>
         </div>
       </section>
+
+      <ProposalRequestModal 
+        open={isProposalModalOpen}
+        onOpenChange={setIsProposalModalOpen}
+      />
     </main>
   );
 };
