@@ -7,10 +7,76 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Input validation schema
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 interface RejectionRequest {
   applicationId: string;
   adminUserId: string;
   reason?: string;
+}
+
+// Validate and sanitize inputs
+function validateRequest(body: unknown): RejectionRequest {
+  if (!body || typeof body !== 'object') {
+    throw new Error("Invalid request body");
+  }
+
+  const { applicationId, adminUserId, reason } = body as Record<string, unknown>;
+
+  // Validate applicationId
+  if (!applicationId || typeof applicationId !== 'string' || !UUID_REGEX.test(applicationId)) {
+    throw new Error("Invalid application ID format");
+  }
+
+  // Validate adminUserId
+  if (!adminUserId || typeof adminUserId !== 'string' || !UUID_REGEX.test(adminUserId)) {
+    throw new Error("Invalid admin user ID format");
+  }
+
+  // Validate and sanitize reason (optional)
+  let sanitizedReason: string | undefined;
+  if (reason !== undefined && reason !== null) {
+    if (typeof reason !== 'string') {
+      throw new Error("Reason must be a string");
+    }
+    // Trim and limit length
+    sanitizedReason = reason.trim().slice(0, 500);
+    // Remove potentially dangerous characters for HTML context
+    sanitizedReason = sanitizedReason
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  return {
+    applicationId: applicationId.trim(),
+    adminUserId: adminUserId.trim(),
+    reason: sanitizedReason,
+  };
+}
+
+// Sanitize error messages for client responses
+function sanitizeError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  
+  // Map known error types to safe messages
+  if (message.includes("Unauthorized") || message.includes("Admin role required")) {
+    return "Unauthorized: Admin access required";
+  }
+  if (message.includes("Application not found")) {
+    return "Application not found";
+  }
+  if (message.includes("Application already")) {
+    return "Application has already been processed";
+  }
+  if (message.includes("Invalid")) {
+    return "Invalid request data";
+  }
+  
+  // Generic fallback for unknown errors
+  return "Failed to process rejection request";
 }
 
 serve(async (req) => {
@@ -26,7 +92,9 @@ serve(async (req) => {
 
     const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-    const { applicationId, adminUserId, reason }: RejectionRequest = await req.json();
+    // Validate and sanitize input
+    const rawBody = await req.json();
+    const { applicationId, adminUserId, reason } = validateRequest(rawBody);
 
     console.log("Processing rejection for application:", applicationId);
 
@@ -70,10 +138,10 @@ serve(async (req) => {
 
     if (updateError) {
       console.error("Application update error:", updateError);
-      throw updateError;
+      throw new Error("Failed to update application");
     }
 
-    // 4. Send rejection email
+    // 4. Send rejection email (reason is already HTML-escaped)
     const { error: emailError } = await resend.emails.send({
       from: "Psychologie <onboarding@resend.dev>",
       to: [application.email],
@@ -105,12 +173,12 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in send-rejection-email:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: sanitizeError(error),
       }),
       {
         status: 500,
