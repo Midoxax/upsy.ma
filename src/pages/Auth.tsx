@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Brain } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.string().email("Invalid email address");
 const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
@@ -157,6 +158,26 @@ const Auth = () => {
                     "Login"
                   )}
                 </Button>
+                <button
+                  type="button"
+                  className="w-full text-sm text-muted-foreground hover:text-primary transition-colors mt-2"
+                  onClick={async () => {
+                    if (!loginData.email) {
+                      toast({ title: "Enter your email", description: "Please enter your email address first.", variant: "destructive" });
+                      return;
+                    }
+                    try {
+                      await supabase.auth.resetPasswordForEmail(loginData.email, {
+                        redirectTo: `${window.location.origin}/auth`,
+                      });
+                      toast({ title: "Check your email", description: "A password reset link has been sent to your email." });
+                    } catch {
+                      toast({ title: "Error", description: "Failed to send reset email.", variant: "destructive" });
+                    }
+                  }}
+                >
+                  Forgot Password?
+                </button>
               </form>
             </TabsContent>
 

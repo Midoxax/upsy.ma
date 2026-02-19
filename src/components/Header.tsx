@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, User, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { addLocalePrefix } from "@/lib/i18n/utils";
+import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
 import logo from "@/assets/logo.webp";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
@@ -46,8 +46,9 @@ const Header = () => {
   ];
 
   const isActive = (href: string) => {
-    if (href === "/" && location.pathname === "/") return true;
-    if (href !== "/" && location.pathname.startsWith(href)) return true;
+    const strippedPath = stripLocalePrefix(location.pathname);
+    if (href === "/" && strippedPath === "/") return true;
+    if (href !== "/" && strippedPath.startsWith(href)) return true;
     return false;
   };
 
@@ -140,7 +141,7 @@ const Header = () => {
               {navigation.map((item) => (
                 <div key={item.name}>
                   <Link
-                    to={item.href}
+                    to={addLocalePrefix(item.href, locale)}
                     onClick={() => !item.dropdown && setIsMobileMenuOpen(false)}
                     className={`flex items-center justify-between text-sm font-medium transition-colors hover:text-u-white py-2 ${
                       isActive(item.href) ? "text-u-white" : "text-u-gray-300"
@@ -154,7 +155,7 @@ const Header = () => {
                       {item.dropdown.map((subItem) => (
                         <Link
                           key={subItem.name}
-                          to={subItem.href}
+                          to={addLocalePrefix(subItem.href, locale)}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="block text-sm text-u-gray-300 hover:text-u-white py-1.5"
                         >

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { usePsychologistProfile } from "@/hooks/usePsychologistProfile";
-import { MatchingFormModal } from "@/components/psychologists/MatchingFormModal";
+import MatchingFormModal from "@/components/matching/MatchingFormModal";
 import { BookingWidget } from "@/components/psychologists/BookingWidget";
 import { PoliciesDrawer } from "@/components/psychologists/PoliciesDrawer";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +28,20 @@ const PsychologistProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: psychologist, isLoading, error } = usePsychologistProfile(id!);
   const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
+  const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([]);
+  const [languages, setLanguages] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [s, l] = await Promise.all([
+        supabase.from("specialties").select("id, name").order("name"),
+        supabase.from("languages").select("id, name").order("name"),
+      ]);
+      if (s.data) setSpecialties(s.data);
+      if (l.data) setLanguages(l.data);
+    };
+    fetchData();
+  }, []);
 
   if (isLoading) {
     return (
@@ -361,7 +376,7 @@ const PsychologistProfile = () => {
         </div>
       </section>
 
-      <MatchingFormModal open={isMatchingModalOpen} onOpenChange={setIsMatchingModalOpen} />
+      <MatchingFormModal open={isMatchingModalOpen} onClose={() => setIsMatchingModalOpen(false)} specialties={specialties} languages={languages} />
     </div>
   );
 };
