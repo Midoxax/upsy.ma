@@ -1,4 +1,4 @@
-import { Brain, Clock, Flower2, TrendingUp, Video } from "lucide-react";
+import { Brain, Clock, Flower2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -13,51 +13,6 @@ const Services = () => {
   const serviceItems = translations[locale].services.items;
   const expectationsList = translations[locale].services.expectations.list;
 
-  const services = [
-    {
-      icon: Brain,
-      title: "Initial Diagnostic",
-      description: "90-min comprehensive assessment, goal setting, and personalized plan.",
-      price: "700 MAD",
-      color: "text-accent"
-    },
-    {
-      icon: TrendingUp,
-      title: "Performance & Resilience Pack",
-      description: "6×60-min sessions: visualization, pre-event routines, stress mastery.",
-      price: "3,600 MAD",
-      color: "text-secondary"
-    },
-    {
-      icon: Flower2,
-      title: "Therapy & Recovery Pack",
-      description: "10×60-min CBT/Schema for anxiety, trauma, addiction.",
-      price: "5,500 MAD",
-      color: "text-accent"
-    },
-    {
-      icon: Brain,
-      title: "Personality & Serenity Tests",
-      description: "Psychometric tools + 2×60-min feedback sessions.",
-      price: "1,800 MAD",
-      color: "text-secondary"
-    },
-    {
-      icon: Clock,
-      title: "Express Online Follow-up",
-      description: "30-min tune-up session (returning clients only).",
-      price: "300 MAD",
-      color: "text-accent"
-    }
-  ];
-
-  const expectations = [
-    "Clear structure and measurable goals",
-    "Evidence-based therapeutic approaches",
-    "Bilingual sessions (English/French/Arabic)",
-    "Complete confidentiality & ethics",
-    "Flexible online and in-clinic options"
-  ];
 
   return (
     <main className="min-h-screen bg-background">

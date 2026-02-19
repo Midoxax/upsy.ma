@@ -1,18 +1,60 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
 import NeuralConnector from "@/components/ui/neural-connector";
 import { useLocale } from "@/contexts/LocaleContext";
 import { translations } from "@/lib/i18n/translations";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  email: z.string().trim().email("Invalid email").max(255),
+  phone: z.string().trim().max(30).optional(),
+  message: z.string().trim().min(1, "Message is required").max(2000),
+});
 
 const Contact = () => {
   const { t, locale } = useLocale();
+  const { toast } = useToast();
   const faqQuestions = translations[locale].contact.faq.questions;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const validated = contactSchema.parse(formData);
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone || null,
+        message: validated.message,
+      });
+
+      if (error) throw error;
+
+      toast({ title: t('contact.form.successTitle') || "Message Sent!", description: t('contact.form.successMessage') || "We'll get back to you within 24 hours." });
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast({ title: "Validation Error", description: err.errors[0].message, variant: "destructive" });
+      } else {
+        toast({ title: "Error", description: "Failed to send message. Please try again.", variant: "destructive" });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
   return (
     <main className="min-h-screen bg-background">
@@ -44,20 +86,20 @@ const Contact = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">{t('contact.form.nameLabel')} {t('contact.form.required')}</Label>
-                      <Input id="name" placeholder={t('contact.form.namePlaceholder')} required />
+                      <Input id="name" placeholder={t('contact.form.namePlaceholder')} required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="email">{t('contact.form.emailLabel')} {t('contact.form.required')}</Label>
-                      <Input id="email" type="email" placeholder={t('contact.form.emailPlaceholder')} required />
+                      <Input id="email" type="email" placeholder={t('contact.form.emailPlaceholder')} required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="phone">{t('contact.form.phoneLabel')}</Label>
-                      <Input id="phone" type="tel" placeholder={t('contact.form.phonePlaceholder')} />
+                      <Input id="phone" type="tel" placeholder={t('contact.form.phonePlaceholder')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                     </div>
                     
                     <div className="space-y-2">
@@ -67,11 +109,20 @@ const Contact = () => {
                         placeholder={t('contact.form.messagePlaceholder')}
                         className="min-h-[150px]"
                         required
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       />
                     </div>
                     
-                    <Button type="submit" size="lg" className="w-full hover-glow">
-                      {t('contact.form.submitButton')}
+                    <Button type="submit" size="lg" className="w-full hover-glow" disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {t('contact.form.submitButton')}
+                        </>
+                      ) : (
+                        t('contact.form.submitButton')
+                      )}
                     </Button>
                   </form>
                 </CardContent>
@@ -95,8 +146,8 @@ const Contact = () => {
                       </div>
                       <div>
                         <p className="font-semibold">{t('contact.info.email')}</p>
-                        <a href="mailto:contact@upsy.ma" className="text-muted-foreground hover:text-primary transition-colors link-underline">
-                          {t('contact.info.emailValue')}
+                        <a href="mailto:mypersonalpsychologist212@gmail.com" className="text-muted-foreground hover:text-primary transition-colors link-underline">
+                          mypersonalpsychologist212@gmail.com
                         </a>
                       </div>
                     </div>
@@ -107,8 +158,8 @@ const Contact = () => {
                       </div>
                       <div>
                         <p className="font-semibold">{t('contact.info.phone')}</p>
-                        <a href="tel:+212600000000" className="text-muted-foreground hover:text-secondary transition-colors link-underline">
-                          {t('contact.info.phoneValue')}
+                        <a href="tel:+212668594699" className="text-muted-foreground hover:text-secondary transition-colors link-underline">
+                          +212 668-594699
                         </a>
                       </div>
                     </div>

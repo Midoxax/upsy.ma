@@ -43,28 +43,32 @@ const Footer = () => {
             <h3 className="text-u-white font-semibold mb-4">{t('footer.followUs')}</h3>
             <div className="flex space-x-4">
               <a 
-                href="#" 
+                href="https://www.youtube.com/@UPsy-psychology" 
+                target="_blank" rel="noopener noreferrer"
                 className="text-u-gray-300 hover:text-u-white transition-colors"
                 aria-label="YouTube"
               >
                 <Youtube size={20} />
               </a>
               <a 
-                href="#" 
+                href="https://www.linkedin.com/company/upsy-psychology" 
+                target="_blank" rel="noopener noreferrer"
                 className="text-u-gray-300 hover:text-u-white transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin size={20} />
               </a>
               <a 
-                href="#" 
+                href="https://www.instagram.com/upsy.psychology" 
+                target="_blank" rel="noopener noreferrer"
                 className="text-u-gray-300 hover:text-u-white transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
               </a>
               <a 
-                href="#" 
+                href="https://www.tiktok.com/@upsy.psychology" 
+                target="_blank" rel="noopener noreferrer"
                 className="text-u-gray-300 hover:text-u-white transition-colors"
                 aria-label="TikTok"
               >
