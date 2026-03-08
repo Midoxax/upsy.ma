@@ -81,6 +81,7 @@ const PsychologistProfile = () => {
     <div className="min-h-screen pb-24 lg:pb-8">
       {/* Sticky Booking Widget */}
       <BookingWidget
+        psychologistId={psychologist.id}
         calendlyUrl={psychologist.calendly_url}
         hourlyRate={psychologist.hourly_rate_mad}
         isAccredited={psychologist.is_accredited}
