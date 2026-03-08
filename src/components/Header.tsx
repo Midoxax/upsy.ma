@@ -127,13 +127,13 @@ const Header = () => {
                   to={addLocalePrefix('/auth', locale)}
                   className="text-sm text-u-gray-200 hover:text-u-white transition-colors px-3 py-2"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
                 <Button variant="secondary" size="sm" asChild>
-                  <Link to={addLocalePrefix('/auth', locale)}>Sign Up</Link>
+                  <Link to={addLocalePrefix('/auth', locale)}>{t('nav.signUp')}</Link>
                 </Button>
                 <Button variant="primary" size="sm" asChild>
-                  <Link to={addLocalePrefix('/psychologists', locale)}>Find Psychologist</Link>
+                  <Link to={addLocalePrefix('/psychologists', locale)}>{t('nav.findPsychologist')}</Link>
                 </Button>
               </>
             )}
