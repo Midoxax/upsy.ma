@@ -63,7 +63,7 @@ const PsychologistProfile = () => {
   }
 
   const scrollToBooking = () => {
-    document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setIsBookingModalOpen(true);
   };
 
   const yearsExperience = psychologist.created_at
