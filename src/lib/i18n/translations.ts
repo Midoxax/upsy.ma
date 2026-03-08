@@ -604,6 +604,26 @@ export const translations = {
       legal: { title: "Legal Information", content: "Content coming soon..." },
       talentHub: { title: "Talent & Innovation Hub", content: "Content coming soon..." },
     },
+    pillars: {
+      title: "The U.Psy Ecosystem",
+      subtitle: "A comprehensive mental-health ecosystem — from clinical care to organizational transformation.",
+      ariaLabel: "Our four pillars",
+      learnMore: "Learn more",
+      cta: "Explore All Services",
+      care: { title: "Care", description: "Online psychological consultations with licensed professionals." },
+      learning: { title: "Learning", description: "Courses and mental-health education for personal growth." },
+      performance: { title: "Performance", description: "Mental performance coaching for athletes and high performers." },
+      organizations: { title: "Organizations", description: "Mental-health solutions for institutions and sports organizations." },
+    },
+    howItWorks: {
+      title: "Start Your Mental Health Journey",
+      subtitle: "Three simple steps to get the support you need.",
+      ariaLabel: "How it works",
+      cta: "Get Started Now",
+      step1: { title: "Take a Self-Assessment", description: "Understand your mental wellbeing with a quick evidence-based screening." },
+      step2: { title: "Find the Right Psychologist", description: "Filter by language, specialty, availability, and session format." },
+      step3: { title: "Start Your Sessions", description: "Secure video consultations with licensed professionals." },
+    },
   },
   fr: {
     nav: {
