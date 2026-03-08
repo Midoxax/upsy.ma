@@ -42,7 +42,7 @@ const MySpace = () => {
       <section className="section-spacing">
         <div className="container-custom">
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
               <TabsTrigger value="profile" className="gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
@@ -62,6 +62,10 @@ const MySpace = () => {
               <TabsTrigger value="leads" className="gap-2">
                 <Users className="h-4 w-4" />
                 <span className="hidden sm:inline">Leads</span>
+              </TabsTrigger>
+              <TabsTrigger value="certificates" className="gap-2">
+                <Award className="h-4 w-4" />
+                <span className="hidden sm:inline">Certificates</span>
               </TabsTrigger>
               <TabsTrigger value="billing" className="gap-2">
                 <CreditCard className="h-4 w-4" />
@@ -87,6 +91,10 @@ const MySpace = () => {
 
             <TabsContent value="leads">
               <LeadsTab />
+            </TabsContent>
+
+            <TabsContent value="certificates">
+              <CertificatesTab />
             </TabsContent>
 
             <TabsContent value="billing">
