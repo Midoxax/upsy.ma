@@ -164,7 +164,7 @@
     line-height: 1.05;
     font-weight: 600;
     letter-spacing: -0.03em;
-    color: hsl(var(--white));
+    color: hsl(var(--foreground));
   }
 
   .text-h1 {
@@ -172,7 +172,7 @@
     line-height: 1.15;
     font-weight: 600;
     letter-spacing: -0.02em;
-    color: hsl(var(--white));
+    color: hsl(var(--foreground));
   }
 
   .text-h2 {
@@ -180,7 +180,7 @@
     line-height: 1.25;
     font-weight: 600;
     letter-spacing: -0.015em;
-    color: hsl(var(--white));
+    color: hsl(var(--foreground));
   }
 
   .text-h3 {
@@ -188,21 +188,21 @@
     line-height: 1.35;
     font-weight: 500;
     letter-spacing: -0.01em;
-    color: hsl(var(--white));
+    color: hsl(var(--foreground));
   }
 
   .text-body {
     font-size: var(--text-body);
     line-height: 1.7;
     font-weight: 400;
-    color: hsl(var(--gray-300));
+    color: hsl(var(--muted-foreground));
   }
 
   .text-small {
     font-size: var(--text-small);
     line-height: 1.6;
     font-weight: 400;
-    color: hsl(var(--gray-300));
+    color: hsl(var(--muted-foreground));
   }
 
   @media (max-width: 768px) {
