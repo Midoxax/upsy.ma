@@ -2,10 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-
-const NeuralSphere = lazy(() => import("@/components/3d/NeuralSphere"));
+import mehdiPhoto from "@/assets/mehdi-felji.png";
 
 const HeroSection = () => {
   const { t } = useLocale();
@@ -59,9 +57,11 @@ const HeroSection = () => {
           >
             <div className="w-full max-w-md">
               <div className="aspect-square rounded-u-lg overflow-hidden">
-                <Suspense fallback={<div className="w-full h-full bg-muted/20 rounded-u-lg animate-pulse" />}>
-                  <NeuralSphere />
-                </Suspense>
+                <img
+                  src={mehdiPhoto}
+                  alt="Mehdi Felji"
+                  className="w-full h-full object-cover rounded-u-lg"
+                />
               </div>
             </div>
           </motion.div>
