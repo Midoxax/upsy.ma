@@ -10,8 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         /* U.Psy Liquid-Glass Variants */
-        primary: "text-[16px] font-medium px-[22px] py-[14px] min-h-[48px] text-[#1A1A1A] hover:opacity-90 hover:shadow-gold",
-        secondary: "text-[16px] font-medium px-[22px] py-[14px] min-h-[48px] bg-transparent text-u-gold border border-u-gold hover:bg-u-gold/10",
+        primary: "text-[16px] font-medium px-[22px] py-[14px] min-h-[48px] text-[#1A1A1A] hover:opacity-90 hover:shadow-gold hover:brightness-110",
+        secondary: "text-[16px] font-medium px-[22px] py-[14px] min-h-[48px] bg-transparent text-u-gold border border-u-gold hover:bg-u-gold/10 hover:shadow-[0_0_20px_rgba(255,179,0,0.15)]",
         tertiary: "text-u-white hover:text-u-gold bg-transparent border-none p-0 h-auto font-medium transition-colors duration-200",
 
         /* Standard variants */
