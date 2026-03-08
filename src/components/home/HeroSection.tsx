@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Shield, Video, FlaskConical } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import mehdiFeljiPhoto from "@/assets/mehdi-felji.png";
+import { lazy } from "react";
+
+const NeuralSphere = lazy(() => import("@/components/3d/NeuralSphere"));
 
 const HeroSection = () => {
   const { t } = useLocale();
@@ -48,15 +51,11 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Column - Photo */}
+          {/* Right Column - Neural Sphere */}
           <div className="flex justify-center lg:justify-end">
             <div className="w-full max-w-md">
-              <div className="aspect-[4/5] rounded-u-lg overflow-hidden glass-card">
-                <img
-                  src={mehdiFeljiPhoto}
-                  alt={t('home.hero.drName')}
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-square rounded-u-lg overflow-hidden">
+                <NeuralSphere />
               </div>
             </div>
           </div>
