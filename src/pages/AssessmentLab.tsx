@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -43,6 +45,7 @@ const AssessmentLab = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t, locale } = useLocale();
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -71,7 +74,7 @@ const AssessmentLab = () => {
       setAnswers({});
       setShowResults(false);
     } else {
-      toast({ title: "No questions", description: "This assessment has no questions yet.", variant: "destructive" });
+      toast({ title: t('assessments.noQuestions'), description: t('assessments.noQuestionsDesc'), variant: "destructive" });
     }
   };
 
@@ -83,7 +86,6 @@ const AssessmentLab = () => {
     if (!user || !selectedAssessment) return;
     setLoading(true);
 
-    // Calculate scores by dimension
     const dimensionScores: Record<string, { total: number; count: number }> = {};
     let totalScore = 0;
     questions.forEach((q) => {
@@ -100,12 +102,11 @@ const AssessmentLab = () => {
       Object.entries(dimensionScores).map(([dim, { total, count }]) => [dim, { score: total, max: count * 3, percent: Math.round((total / (count * 3)) * 100) }])
     );
 
-    // Determine interpretation
     const maxPossible = questions.length * 3;
     const percent = Math.round((totalScore / maxPossible) * 100);
-    let interpretation = "Your results suggest minimal concerns. Continue maintaining your wellbeing practices.";
-    if (percent > 70) interpretation = "Your results indicate significant symptoms. We recommend speaking with a psychologist for professional support.";
-    else if (percent > 40) interpretation = "Your results suggest moderate symptoms. Consider exploring our programs or speaking with a professional.";
+    let interpretation = t('assessments.resultMinimal');
+    if (percent > 70) interpretation = t('assessments.resultSignificant');
+    else if (percent > 40) interpretation = t('assessments.resultModerate');
 
     const resultData = {
       user_id: user.id,
@@ -118,12 +119,19 @@ const AssessmentLab = () => {
 
     const { error } = await supabase.from("assessment_results").insert(resultData);
     if (error) {
-      toast({ title: "Error", description: "Failed to save results.", variant: "destructive" });
+      toast({ title: t('common.error'), description: t('assessments.noQuestionsDesc'), variant: "destructive" });
     } else {
       setResult({ ...resultData, percent });
       setShowResults(true);
     }
     setLoading(false);
+  };
+
+  const categoryLabel = (cat: string) => {
+    if (cat === "general") return t('assessments.generalMentalHealth');
+    if (cat === "athlete") return t('assessments.athletePerformance');
+    if (cat === "organization") return t('assessments.organizational');
+    return cat;
   };
 
   // Assessment list view
@@ -138,8 +146,8 @@ const AssessmentLab = () => {
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ background: "rgba(46,94,153,0.15)", border: "2px solid rgba(46,94,153,0.3)" }}>
                   <Brain className="w-8 h-8 text-u-clinical" />
                 </div>
-                <h1 className="text-display">Psychological Assessment Lab</h1>
-                <p className="text-body text-muted-foreground">Scientifically validated assessments to understand your mental health, performance, and wellbeing.</p>
+                <h1 className="text-display">{t('assessments.labTitle')}</h1>
+                <p className="text-body text-muted-foreground">{t('assessments.labSubtitle')}</p>
               </div>
             </ScrollReveal>
           </div>
@@ -153,7 +161,7 @@ const AssessmentLab = () => {
               <div key={cat}>
                 <h2 className="text-h2 mb-6 capitalize flex items-center gap-2">
                   <Brain className={`w-5 h-5 ${CATEGORY_COLORS[cat] || "text-primary"}`} />
-                  {cat === "general" ? "General Mental Health" : cat === "athlete" ? "Athlete Performance" : cat === "organization" ? "Organizational" : cat} Assessments
+                  {categoryLabel(cat)} {t('assessments.assessments')}
                 </h2>
                 <StaggerContainer staggerDelay={0.06}>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -164,11 +172,11 @@ const AssessmentLab = () => {
                           <h3 className="font-semibold text-foreground text-lg mb-2">{assessment.title}</h3>
                           <p className="text-sm text-muted-foreground mb-4 flex-1">{assessment.description}</p>
                           <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> {assessment.question_count} questions</span>
-                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~{assessment.estimated_minutes} min</span>
+                            <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> {assessment.question_count} {t('common.questions')}</span>
+                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~{assessment.estimated_minutes} {t('common.minutes')}</span>
                           </div>
-                          <Button variant="primary" size="sm" onClick={() => user ? startAssessment(assessment) : navigate("/auth")} className="w-full">
-                            {user ? "Start Assessment" : "Sign In to Start"}
+                          <Button variant="primary" size="sm" onClick={() => user ? startAssessment(assessment) : navigate(addLocalePrefix("/auth", locale))} className="w-full">
+                            {user ? t('assessments.startAssessment') : t('assessments.signInToStart')}
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                         </div>
@@ -179,12 +187,11 @@ const AssessmentLab = () => {
               </div>
             ))}
 
-            {/* Trust strip */}
             <div className="flex flex-wrap items-center justify-center gap-8 pt-8">
               {[
-                { icon: Shield, label: "Evidence-Based Tools" },
-                { icon: Brain, label: "Clinically Validated" },
-                { icon: CheckCircle2, label: "Confidential Results" },
+                { icon: Shield, label: t('assessments.evidenceBasedTools') },
+                { icon: Brain, label: t('assessments.clinicallyValidated') },
+                { icon: CheckCircle2, label: t('assessments.confidentialResults') },
               ].map((item) => (
                 <div key={item.label} className="flex items-center gap-2">
                   <item.icon className="w-4 h-4 text-u-clinical" />
@@ -214,18 +221,17 @@ const AssessmentLab = () => {
                  severity === "moderate" ? <BarChart3 className="w-10 h-10 text-primary" /> :
                  <CheckCircle2 className="w-10 h-10 text-u-turquoise" />}
               </div>
-              <h1 className="text-h1">Your Results</h1>
+              <h1 className="text-h1">{t('assessments.yourResults')}</h1>
               <p className="text-lg text-muted-foreground">{selectedAssessment.title}</p>
 
               <div className="glass-card p-6 text-left space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Total Score</span>
+                  <span className="text-sm text-muted-foreground">{t('assessments.totalScore')}</span>
                   <span className="text-2xl font-bold text-foreground">{result.total_score} / {questions.length * 3}</span>
                 </div>
                 <Progress value={result.percent} className="h-3" />
                 <p className="text-sm text-muted-foreground leading-relaxed">{result.interpretation}</p>
 
-                {/* Dimension breakdown */}
                 {Object.entries(result.scores as Record<string, any>).map(([dim, data]: [string, any]) => (
                   <div key={dim} className="flex items-center justify-between py-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
                     <span className="text-sm text-muted-foreground capitalize">{dim}</span>
@@ -240,14 +246,14 @@ const AssessmentLab = () => {
               <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
                 {severity !== "low" && (
                   <Button variant="primary" size="lg" asChild>
-                    <Link to="/psychologists">Find a Psychologist</Link>
+                    <Link to={addLocalePrefix("/psychologists", locale)}>{t('assessments.findPsychologist')}</Link>
                   </Button>
                 )}
                 <Button variant="secondary" size="lg" asChild>
-                  <Link to="/resources">Explore Programs</Link>
+                  <Link to={addLocalePrefix("/resources", locale)}>{t('assessments.explorePrograms')}</Link>
                 </Button>
                 <Button variant="ghost" size="lg" onClick={() => { setSelectedAssessment(null); setShowResults(false); }}>
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Assessments
+                  <ArrowLeft className="mr-2 h-4 w-4" /> {t('assessments.backToAssessments')}
                 </Button>
               </div>
             </div>
@@ -264,12 +270,11 @@ const AssessmentLab = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Progress bar */}
       <div className="sticky top-16 z-30 py-3" style={{ background: "rgba(26,26,26,0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="container-custom">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" onClick={() => currentQ > 0 ? setCurrentQ(currentQ - 1) : setSelectedAssessment(null)} className="text-muted-foreground">
-              <ArrowLeft className="h-4 w-4 mr-1" /> Back
+              <ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}
             </Button>
             <div className="flex-1"><Progress value={progress} className="h-2" /></div>
             <span className="text-xs text-muted-foreground">{currentQ + 1} / {questions.length}</span>
@@ -282,7 +287,7 @@ const AssessmentLab = () => {
           <div className="max-w-lg mx-auto space-y-6">
             <p className="text-xs text-muted-foreground text-center uppercase tracking-wide">{selectedAssessment.title}</p>
             <h2 className="text-h2 text-center">{question?.question_text}</h2>
-            <p className="text-xs text-center text-muted-foreground">Over the last 2 weeks, how often have you been bothered by this?</p>
+            <p className="text-xs text-center text-muted-foreground">{t('assessments.overLastTwoWeeks')}</p>
 
             <div className="space-y-3">
               {question?.options.map((opt) => (
@@ -304,11 +309,11 @@ const AssessmentLab = () => {
             <div className="flex justify-center pt-4 gap-3">
               {currentQ < questions.length - 1 ? (
                 <Button variant="primary" size="lg" onClick={() => setCurrentQ(currentQ + 1)} disabled={answers[question?.id] === undefined}>
-                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('common.next')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ) : (
                 <Button variant="primary" size="lg" onClick={submitAssessment} disabled={!allAnswered || loading}>
-                  {loading ? "Calculating..." : "See Results"} <CheckCircle2 className="ml-2 h-4 w-4" />
+                  {loading ? t('assessments.calculating') : t('assessments.seeResults')} <CheckCircle2 className="ml-2 h-4 w-4" />
                 </Button>
               )}
             </div>
