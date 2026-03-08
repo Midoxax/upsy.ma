@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { usePsychologistProfile } from "@/hooks/usePsychologistProfile";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
 import MatchingFormModal from "@/components/matching/MatchingFormModal";
 import { BookingWidget } from "@/components/psychologists/BookingWidget";
 import BookingModal from "@/components/psychologists/BookingModal";
@@ -20,6 +22,7 @@ import {
 const PsychologistProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: psychologist, isLoading, error } = usePsychologistProfile(id!);
+  const { t, locale } = useLocale();
   const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([]);
@@ -41,10 +44,7 @@ const PsychologistProfile = () => {
   useEffect(() => {
     if (!psychologist) return;
     const fetchStats = async () => {
-      const { data } = await supabase
-        .from("reviews")
-        .select("rating")
-        .eq("psychologist_id", psychologist.id);
+      const { data } = await supabase.from("reviews").select("rating").eq("psychologist_id", psychologist.id);
       if (data && data.length > 0) {
         const avg = data.reduce((s, r) => s + r.rating, 0) / data.length;
         setReviewStats({ count: data.length, avg: Math.round(avg * 10) / 10 });
@@ -66,12 +66,12 @@ const PsychologistProfile = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="glass-card p-12 text-center max-w-md">
           <User className="w-16 h-16 text-u-gray-400 mx-auto mb-4 opacity-50" />
-          <h2 className="text-h2 mb-2">Psychologist Not Found</h2>
-          <p className="text-u-gray-300 mb-6">This profile is not available or has been removed.</p>
+          <h2 className="text-h2 mb-2">{t('profile.notFound')}</h2>
+          <p className="text-u-gray-300 mb-6">{t('profile.notFoundDesc')}</p>
           <Button asChild variant="primary">
-            <Link to="/psychologists">
+            <Link to={addLocalePrefix("/psychologists", locale)}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Directory
+              {t('profile.backToDirectory')}
             </Link>
           </Button>
         </div>
@@ -79,9 +79,7 @@ const PsychologistProfile = () => {
     );
   }
 
-  const scrollToBooking = () => {
-    setIsBookingModalOpen(true);
-  };
+  const scrollToBooking = () => setIsBookingModalOpen(true);
 
   const yearsExperience = psychologist.created_at
     ? Math.max(1, new Date().getFullYear() - new Date(psychologist.created_at).getFullYear())
@@ -89,7 +87,6 @@ const PsychologistProfile = () => {
 
   return (
     <div className="min-h-screen pb-24 lg:pb-8">
-      {/* Sticky Booking Widget */}
       <BookingWidget
         psychologistId={psychologist.id}
         calendlyUrl={psychologist.calendly_url}
@@ -103,29 +100,19 @@ const PsychologistProfile = () => {
         <div className="container-custom relative z-10">
           <div className="mb-6">
             <Button asChild variant="ghost" size="sm" className="text-u-gray-300 hover:text-u-white">
-              <Link to="/psychologists">
+              <Link to={addLocalePrefix("/psychologists", locale)}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Directory
+                {t('profile.backToDirectory')}
               </Link>
             </Button>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            {/* Photo */}
             <div className="relative shrink-0">
               {psychologist.photo_url ? (
-                <img
-                  src={psychologist.photo_url}
-                  alt={psychologist.full_name}
-                  className="w-32 h-32 rounded-full object-cover"
-                  style={{ border: '3px solid rgba(255,179,0,0.3)' }}
-                  loading="lazy"
-                />
+                <img src={psychologist.photo_url} alt={psychologist.full_name} className="w-32 h-32 rounded-full object-cover" style={{ border: '3px solid rgba(255,179,0,0.3)' }} loading="lazy" />
               ) : (
-                <div
-                  className="w-32 h-32 rounded-full flex items-center justify-center"
-                  style={{ background: 'rgba(255,179,0,0.1)', border: '3px solid rgba(255,179,0,0.3)' }}
-                >
+                <div className="w-32 h-32 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,179,0,0.1)', border: '3px solid rgba(255,179,0,0.3)' }}>
                   <User className="w-16 h-16 text-u-gold" />
                 </div>
               )}
@@ -136,35 +123,28 @@ const PsychologistProfile = () => {
               )}
             </div>
 
-            {/* Info */}
             <div className="flex-1 space-y-4">
               <div>
                 <h1 className="text-display mb-2">{psychologist.full_name}</h1>
                 {psychologist.is_accredited && (
                   <Badge className="bg-u-burgundy/20 text-u-burgundy border-u-burgundy/30 hover:bg-u-burgundy/30">
                     <Award className="mr-1 h-3 w-3" />
-                    U.Psy Accredited
+                    {t('psychologists.accredited')}
                   </Badge>
                 )}
               </div>
 
               <div className="flex flex-wrap gap-4 text-u-gray-300">
                 {psychologist.city && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-u-gold" />
-                    <span>{psychologist.city}</span>
-                  </div>
+                  <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-u-gold" /><span>{psychologist.city}</span></div>
                 )}
                 {psychologist.languages.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-u-gold" />
-                    <span>{psychologist.languages.map((l) => l.name).join(", ")}</span>
-                  </div>
+                  <div className="flex items-center gap-2"><Globe className="w-4 h-4 text-u-gold" /><span>{psychologist.languages.map((l) => l.name).join(", ")}</span></div>
                 )}
                 {psychologist.hourly_rate_mad && (
                   <div className="flex items-center gap-2">
                     <span className="text-u-gold font-bold text-lg">{psychologist.hourly_rate_mad} MAD</span>
-                    <span className="text-u-gray-400 text-sm">/ session</span>
+                    <span className="text-u-gray-400 text-sm">{t('psychologists.perSession')}</span>
                   </div>
                 )}
               </div>
@@ -172,10 +152,10 @@ const PsychologistProfile = () => {
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button variant="primary" size="lg" onClick={scrollToBooking}>
                   <Calendar className="mr-2 h-4 w-4" />
-                  Book Session
+                  {t('booking.bookSession')}
                 </Button>
                 <Button variant="secondary" size="lg" onClick={() => setIsMatchingModalOpen(true)}>
-                  Get Matched
+                  {t('profile.getMatched')}
                 </Button>
                 <PoliciesDrawer />
               </div>
@@ -189,10 +169,10 @@ const PsychologistProfile = () => {
         <div className="container-custom py-8">
           <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
             {[
-              ...(psychologist.is_accredited ? [{ icon: Award, label: "U.Psy Accredited" }] : []),
-              { icon: Briefcase, label: `${yearsExperience}+ Years Experience` },
-              ...(psychologist.languages.length > 0 ? [{ icon: Languages, label: `${psychologist.languages.length} Language${psychologist.languages.length > 1 ? 's' : ''}` }] : []),
-              ...(psychologist.specialties.length > 0 ? [{ icon: Shield, label: `${psychologist.specialties.length} Specialties` }] : []),
+              ...(psychologist.is_accredited ? [{ icon: Award, label: t('profile.accreditedProfessional') }] : []),
+              { icon: Briefcase, label: `${yearsExperience}+ ${t('profile.years')}` },
+              ...(psychologist.languages.length > 0 ? [{ icon: Languages, label: `${psychologist.languages.length} ${t('common.languages')}` }] : []),
+              ...(psychologist.specialties.length > 0 ? [{ icon: Shield, label: `${psychologist.specialties.length} ${t('common.specialties')}` }] : []),
             ].map((seal) => (
               <div key={seal.label} className="glass-card !p-3 !shadow-none !transform-none hover:!transform-none flex items-center gap-2">
                 <seal.icon className="w-4 h-4 text-u-gold" />
@@ -201,7 +181,6 @@ const PsychologistProfile = () => {
             ))}
           </div>
 
-          {/* Social Proof */}
           <div className="flex flex-wrap items-center justify-center gap-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             {reviewStats.count > 0 && (
               <>
@@ -212,19 +191,19 @@ const PsychologistProfile = () => {
                     ))}
                   </div>
                   <span className="text-lg font-bold text-foreground">{reviewStats.avg}</span>
-                  <span className="text-sm text-muted-foreground">avg rating</span>
+                  <span className="text-sm text-muted-foreground">{t('profile.avgRating')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-primary" />
                   <span className="text-lg font-bold text-foreground">{reviewStats.count}</span>
-                  <span className="text-sm text-muted-foreground">reviews</span>
+                  <span className="text-sm text-muted-foreground">{t('profile.reviews')}</span>
                 </div>
               </>
             )}
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-primary" />
               <span className="text-lg font-bold text-foreground">98%</span>
-              <span className="text-sm text-muted-foreground">response rate</span>
+              <span className="text-sm text-muted-foreground">{t('profile.responseRate')}</span>
             </div>
           </div>
         </div>
@@ -236,31 +215,29 @@ const PsychologistProfile = () => {
       <section className="section-spacing liquid-bg">
         <div className="container-custom lg:max-w-5xl xl:max-w-6xl">
           <div className="lg:pr-[340px] space-y-8">
-            {/* Bio / About */}
             {psychologist.bio && (
               <ScrollReveal>
                 <div className="glass-card p-7">
                   <h2 className="text-h3 mb-4 flex items-center gap-2">
                     <User className="w-5 h-5 text-u-gold" />
-                    About
+                    {t('profile.about')}
                   </h2>
                   <p className="text-u-gray-300 whitespace-pre-line leading-relaxed">{psychologist.bio}</p>
                 </div>
               </ScrollReveal>
             )}
 
-            {/* Therapy Approach */}
             <ScrollReveal>
               <div className="glass-card p-7">
                 <h2 className="text-h3 mb-4 flex items-center gap-2">
                   <Brain className="w-5 h-5 text-u-gold" />
-                  Therapy Approach
+                  {t('profile.therapyApproach')}
                 </h2>
                 <div className="space-y-4">
                   {[
-                    { method: "Cognitive Behavioral Therapy (CBT)", desc: "Restructure thought patterns and build practical coping skills for anxiety, depression, and stress." },
-                    { method: "Evidence-Based Practice", desc: "All interventions are grounded in peer-reviewed research and adapted to individual needs." },
-                    { method: "Client-Centered Approach", desc: "A safe, non-judgmental space where you lead the direction of therapy at your own pace." },
+                    { method: t('profile.cbt'), desc: t('profile.cbtDesc') },
+                    { method: t('profile.evidenceBased'), desc: t('profile.evidenceBasedDesc') },
+                    { method: t('profile.clientCentered'), desc: t('profile.clientCenteredDesc') },
                   ].map((approach) => (
                     <div key={approach.method} className="flex items-start gap-3">
                       <CheckCircle2 className="w-5 h-5 text-u-gold shrink-0 mt-0.5" />
@@ -274,38 +251,34 @@ const PsychologistProfile = () => {
               </div>
             </ScrollReveal>
 
-            {/* Specialties */}
             {psychologist.specialties.length > 0 && (
               <ScrollReveal>
                 <div className="glass-card p-7">
                   <h2 className="text-h3 mb-4 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-u-gold" />
-                    Specialties
+                    {t('profile.specialties')}
                   </h2>
                   <div className="flex flex-wrap gap-2">
                     {psychologist.specialties.map((s) => (
-                      <Badge key={s.id} variant="outline" className="text-sm py-2 px-4 text-u-gray-200 border-white/10">
-                        {s.name}
-                      </Badge>
+                      <Badge key={s.id} variant="outline" className="text-sm py-2 px-4 text-u-gray-200 border-white/10">{s.name}</Badge>
                     ))}
                   </div>
                 </div>
               </ScrollReveal>
             )}
 
-            {/* Experience & Training */}
             <ScrollReveal>
               <div className="glass-card p-7">
                 <h2 className="text-h3 mb-4 flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-u-gold" />
-                  Experience & Training
+                  {t('profile.experienceTraining')}
                 </h2>
                 <div className="space-y-4">
                   {[
-                    { label: "Years of Practice", value: `${yearsExperience}+ years` },
-                    { label: "Education", value: "Master's in Clinical Psychology" },
-                    { label: "Certifications", value: "Licensed Clinical Psychologist" },
-                    { label: "Supervision", value: "Regular clinical supervision maintained" },
+                    { label: t('profile.yearsOfPractice'), value: `${yearsExperience}+ ${t('profile.years')}` },
+                    { label: t('profile.education'), value: t('profile.educationValue') },
+                    { label: t('profile.certifications'), value: t('profile.certificationsValue') },
+                    { label: t('profile.supervision'), value: t('profile.supervisionValue') },
                   ].map((item) => (
                     <div key={item.label} className="flex items-center justify-between py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       <span className="text-sm text-u-gray-400">{item.label}</span>
@@ -316,19 +289,18 @@ const PsychologistProfile = () => {
               </div>
             </ScrollReveal>
 
-            {/* Session Fees */}
             {psychologist.hourly_rate_mad && (
               <ScrollReveal>
                 <div className="glass-card p-7">
                   <h2 className="text-h3 mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-u-gold" />
-                    Session Fees
+                    {t('profile.sessionFees')}
                   </h2>
                   <div className="grid md:grid-cols-3 gap-4">
                     {[
-                      { duration: "30 min", rate: Math.round(psychologist.hourly_rate_mad * 0.5), label: "Brief Check-in" },
-                      { duration: "60 min", rate: psychologist.hourly_rate_mad, label: "Standard Session" },
-                      { duration: "90 min", rate: Math.round(psychologist.hourly_rate_mad * 1.5), label: "Extended Session" },
+                      { duration: "30 min", rate: Math.round(psychologist.hourly_rate_mad * 0.5), label: t('profile.briefCheckin') },
+                      { duration: "60 min", rate: psychologist.hourly_rate_mad, label: t('profile.standardSession') },
+                      { duration: "90 min", rate: Math.round(psychologist.hourly_rate_mad * 1.5), label: t('profile.extendedSession') },
                     ].map((tier) => (
                       <div key={tier.duration} className="p-4 rounded-xl text-center"
                         style={{ background: 'rgba(255,179,0,0.05)', border: '1px solid rgba(255,179,0,0.15)' }}>
@@ -342,63 +314,53 @@ const PsychologistProfile = () => {
               </ScrollReveal>
             )}
 
-            {/* Session Options */}
             <ScrollReveal>
               <div className="glass-card p-7">
                 <h2 className="text-h3 mb-4 flex items-center gap-2">
                   <Globe className="w-5 h-5 text-u-gold" />
-                  Session Options
+                  {t('profile.sessionOptions')}
                 </h2>
                 <div className="flex gap-3 flex-wrap">
                   {psychologist.offers_online && (
                     <Badge className="text-sm py-2 px-4 bg-u-gold/10 text-u-gold border-u-gold/20 hover:bg-u-gold/20">
                       <Globe className="mr-2 h-4 w-4" />
-                      Online Sessions
+                      {t('booking.onlineSessions')}
                     </Badge>
                   )}
                   {psychologist.offers_in_person && (
                     <Badge className="text-sm py-2 px-4 bg-u-gold/10 text-u-gold border-u-gold/20 hover:bg-u-gold/20">
                       <MapPin className="mr-2 h-4 w-4" />
-                      In-Person Sessions
+                      {t('booking.inPersonSessions')}
                     </Badge>
                   )}
                 </div>
               </div>
             </ScrollReveal>
 
-            {/* Reviews */}
             <ReviewsList psychologistId={psychologist.id} />
 
-            {/* Booking CTA */}
             <ScrollReveal>
               <div className="glass-card p-10 text-center" id="booking">
                 <Calendar className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h2 className="text-h3 mb-2">Ready to Book?</h2>
+                <h2 className="text-h3 mb-2">{t('booking.readyToBook')}</h2>
                 <p className="text-muted-foreground mb-6 text-sm">
-                  Schedule a session with {psychologist.full_name} — choose your preferred time and format.
+                  {t('booking.scheduleSession').replace('{name}', psychologist.full_name)}
                 </p>
                 <Button variant="primary" size="lg" onClick={() => setIsBookingModalOpen(true)}>
                   <Calendar className="mr-2 h-4 w-4" />
-                  Book Session
+                  {t('booking.bookSession')}
                 </Button>
               </div>
             </ScrollReveal>
 
-            {/* Trust Note */}
             {psychologist.is_accredited && (
               <ScrollReveal>
                 <div className="glass-card p-7" style={{ background: 'linear-gradient(180deg, rgba(122,12,32,0.1), rgba(122,12,32,0.05))', border: '1px solid rgba(122,12,32,0.3)' }}>
                   <div className="flex items-start gap-4">
                     <Shield className="w-8 h-8 text-u-burgundy shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-lg mb-2 text-u-burgundy">
-                        U.Psy-Accredited Professional
-                      </h3>
-                      <p className="text-u-gray-300 text-sm leading-relaxed">
-                        This psychologist is verified and accredited by U.Psy, ensuring evidence-based
-                        care and adherence to professional standards. All sessions are confidential and
-                        conducted with the highest level of ethical practice.
-                      </p>
+                      <h3 className="font-semibold text-lg mb-2 text-u-burgundy">{t('profile.accreditedProfessional')}</h3>
+                      <p className="text-u-gray-300 text-sm leading-relaxed">{t('profile.accreditedDesc')}</p>
                     </div>
                   </div>
                 </div>
@@ -408,23 +370,8 @@ const PsychologistProfile = () => {
         </div>
       </section>
 
-      <MatchingFormModal
-        open={isMatchingModalOpen}
-        onClose={() => setIsMatchingModalOpen(false)}
-        specialties={specialties}
-        languages={languages}
-      />
-
-      <BookingModal
-        open={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        psychologistId={psychologist.id}
-        psychologistName={psychologist.full_name}
-        hourlyRate={psychologist.hourly_rate_mad}
-        offersOnline={psychologist.offers_online}
-        offersInPerson={psychologist.offers_in_person}
-        city={psychologist.city}
-      />
+      <MatchingFormModal open={isMatchingModalOpen} onClose={() => setIsMatchingModalOpen(false)} specialties={specialties} languages={languages} />
+      <BookingModal open={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} psychologistId={psychologist.id} psychologistName={psychologist.full_name} hourlyRate={psychologist.hourly_rate_mad} offersOnline={psychologist.offers_online} offersInPerson={psychologist.offers_in_person} city={psychologist.city} />
     </div>
   );
 };
