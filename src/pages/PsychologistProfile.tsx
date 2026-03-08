@@ -383,40 +383,20 @@ const PsychologistProfile = () => {
               </div>
             </ScrollReveal>
 
-            {/* Booking / Calendly */}
-            {psychologist.calendly_url && (
-              <ScrollReveal>
-                <div className="glass-card p-7" id="booking">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Calendar className="w-5 h-5 text-u-gold" />
-                    <h2 className="text-h3">Book Your Session</h2>
-                  </div>
-                  <div
-                    className="calendly-inline-widget w-full h-[600px] rounded-xl overflow-hidden"
-                    data-url={psychologist.calendly_url}
-                  />
-                  <script
-                    type="text/javascript"
-                    src="https://assets.calendly.com/assets/external/widget.js"
-                    async
-                  />
-                </div>
-              </ScrollReveal>
-            )}
-
-            {/* No Calendly — CTA */}
-            {!psychologist.calendly_url && (
-              <ScrollReveal>
-                <div className="glass-card p-10 text-center" id="booking">
-                  <Calendar className="w-12 h-12 text-u-gold mx-auto mb-4" />
-                  <h2 className="text-h3 mb-2">Ready to Book?</h2>
-                  <p className="text-u-gray-300 mb-6 text-sm">Contact us to schedule a session with {psychologist.full_name}.</p>
-                  <Button variant="primary" size="lg" asChild>
-                    <Link to="/contact">Get in Touch</Link>
-                  </Button>
-                </div>
-              </ScrollReveal>
-            )}
+            {/* Booking CTA */}
+            <ScrollReveal>
+              <div className="glass-card p-10 text-center" id="booking">
+                <Calendar className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h2 className="text-h3 mb-2">Ready to Book?</h2>
+                <p className="text-muted-foreground mb-6 text-sm">
+                  Schedule a session with {psychologist.full_name} — choose your preferred time and format.
+                </p>
+                <Button variant="primary" size="lg" onClick={() => setIsBookingModalOpen(true)}>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Book Session
+                </Button>
+              </div>
+            </ScrollReveal>
 
             {/* Trust Note */}
             {psychologist.is_accredited && (
