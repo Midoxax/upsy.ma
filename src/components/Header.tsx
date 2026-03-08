@@ -14,10 +14,11 @@ const Header = () => {
   const { user } = useAuth();
   const { locale, t } = useLocale();
 
+  // Nav structure: Home | Programs ▼ | Learning | Research | About ▼
   const navigation = [
-    { name: t('nav.findPsychologist'), href: "/psychologists" },
+    { name: "Home", href: "/" },
     { 
-      name: t('nav.services'),
+      name: "Programs",
       href: "/services",
       dropdown: [
         { name: t('nav.individualServices'), href: "/services" },
@@ -25,6 +26,8 @@ const Header = () => {
         { name: t('nav.getMatched'), href: "/get-matched" },
       ],
     },
+    { name: "Learning", href: "/resources" },
+    { name: "Research", href: "/talent-innovation-hub" },
     {
       name: t('nav.about'),
       href: "/about",
@@ -32,15 +35,6 @@ const Header = () => {
         { name: t('nav.ourStory'), href: "/about" },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation'), href: "/apply" },
-      ],
-    },
-    {
-      name: t('nav.community'),
-      href: "/resources",
-      dropdown: [
-        { name: t('nav.resources'), href: "/resources" },
-        { name: t('nav.skoolCommunity'), href: "/skool" },
-        { name: t('nav.innovationHub'), href: "/talent-innovation-hub" },
       ],
     },
   ];
@@ -68,9 +62,7 @@ const Header = () => {
               src={logo} 
               alt="U.Psy Logo - Navigate to homepage" 
               className="h-14 w-auto transition-all duration-200"
-              style={{ 
-                filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.6)) brightness(1.05)',
-              }}
+              style={{ filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.6)) brightness(1.05)' }}
             />
           </Link>
 
@@ -91,10 +83,11 @@ const Header = () => {
                 </Link>
                 {item.dropdown && (
                   <div 
-                    className="absolute top-full left-0 mt-1 w-64 rounded-u-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                    className="absolute top-full left-0 mt-1 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
                     style={{
                       background: 'linear-gradient(180deg, rgba(30,30,30,0.98), rgba(26,26,26,0.98))',
                       border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '14px',
                       boxShadow: '0 18px 40px rgba(0,0,0,0.5)',
                     }}
                   >
@@ -115,9 +108,9 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Desktop CTAs */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <LanguageSwitcher className="mr-2" />
+          {/* Desktop CTAs: Login | Sign Up | Find Psychologist */}
+          <div className="hidden lg:flex items-center space-x-3">
+            <LanguageSwitcher className="mr-1" />
             {user ? (
               <Button variant="primary" size="sm" asChild>
                 <Link to={addLocalePrefix('/my-space', locale)}>
@@ -127,11 +120,17 @@ const Header = () => {
               </Button>
             ) : (
               <>
-                <Button variant="primary" size="sm" asChild>
-                  <Link to={addLocalePrefix('/contact', locale)}>{t('cta.getStarted')}</Link>
-                </Button>
+                <Link
+                  to={addLocalePrefix('/auth', locale)}
+                  className="text-sm text-u-gray-200 hover:text-u-white transition-colors px-3 py-2"
+                >
+                  Login
+                </Link>
                 <Button variant="secondary" size="sm" asChild>
-                  <Link to={addLocalePrefix('/auth', locale)}>{t('cta.login')}</Link>
+                  <Link to={addLocalePrefix('/auth', locale)}>Sign Up</Link>
+                </Button>
+                <Button variant="primary" size="sm" asChild>
+                  <Link to={addLocalePrefix('/psychologists', locale)}>Find Psychologist</Link>
                 </Button>
               </>
             )}
@@ -194,13 +193,13 @@ const Header = () => {
                 ) : (
                   <>
                     <Button variant="primary" size="sm" asChild>
-                      <Link to={addLocalePrefix('/contact', locale)} onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('cta.getStarted')}
+                      <Link to={addLocalePrefix('/psychologists', locale)} onClick={() => setIsMobileMenuOpen(false)}>
+                        Find Psychologist
                       </Link>
                     </Button>
                     <Button variant="secondary" size="sm" asChild>
                       <Link to={addLocalePrefix('/auth', locale)} onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('cta.login')}
+                        Sign Up
                       </Link>
                     </Button>
                   </>
