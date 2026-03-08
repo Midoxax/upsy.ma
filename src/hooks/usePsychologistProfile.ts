@@ -16,6 +16,9 @@ export const usePsychologistProfile = (slugOrId: string) => {
           ),
           psychologist_languages(
             language:languages(id, name)
+          ),
+          psychologist_therapy_approaches(
+            therapy_approach:therapy_approaches(id, name)
           )
         `)
         .eq("is_published", true);
