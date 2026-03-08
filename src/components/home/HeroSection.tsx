@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Shield, Video, FlaskConical } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import mehdiFeljiPhoto from "@/assets/mehdi-felji.png";
+import { lazy } from "react";
+
+const NeuralSphere = lazy(() => import("@/components/3d/NeuralSphere"));
 
 const HeroSection = () => {
   const { t } = useLocale();
