@@ -32,9 +32,12 @@ const Psychologists = () => {
   const [filters, setFilters] = useState<FilterState>({
     specialties: [],
     languages: [],
+    therapyApproaches: [],
     city: "",
     online: false,
     inPerson: false,
+    gender: "",
+    availability: "",
     minPrice: 0,
     maxPrice: 2000,
   });
@@ -51,9 +54,12 @@ const Psychologists = () => {
   const activeFilterCount = [
     filters.specialties.length > 0,
     filters.languages.length > 0,
+    filters.therapyApproaches.length > 0,
     filters.city !== "",
     filters.online,
     filters.inPerson,
+    filters.gender !== "",
+    filters.availability !== "",
     filters.minPrice > 0 || filters.maxPrice < 2000,
   ].filter(Boolean).length;
 
@@ -186,7 +192,7 @@ const Psychologists = () => {
                     </Button>
                     <Button variant="secondary" onClick={() => {
                       setSearchQuery("");
-                      setFilters({ specialties: [], languages: [], city: "", online: false, inPerson: false, minPrice: 0, maxPrice: 2000 });
+                      setFilters({ specialties: [], languages: [], therapyApproaches: [], city: "", online: false, inPerson: false, gender: "", availability: "", minPrice: 0, maxPrice: 2000 });
                     }}>
                       Clear All Filters
                     </Button>

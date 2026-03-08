@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability_slots: {
+        Row: {
+          created_at: string | null
+          day_of_week: number
+          end_time: string
+          id: string
+          is_available: boolean
+          psychologist_id: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_available?: boolean
+          psychologist_id: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string | null
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_available?: boolean
+          psychologist_id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_slots_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_matching_requests: {
         Row: {
           budget_max: number | null
@@ -286,6 +324,7 @@ export type Database = {
           city: string | null
           created_at: string | null
           full_name: string
+          gender: string | null
           hourly_rate_mad: number | null
           id: string
           is_accredited: boolean | null
@@ -302,6 +341,7 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           full_name: string
+          gender?: string | null
           hourly_rate_mad?: number | null
           id: string
           is_accredited?: boolean | null
@@ -318,6 +358,7 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           full_name?: string
+          gender?: string | null
           hourly_rate_mad?: number | null
           id?: string
           is_accredited?: boolean | null
@@ -356,6 +397,36 @@ export type Database = {
             columns: ["specialty_id"]
             isOneToOne: false
             referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      psychologist_therapy_approaches: {
+        Row: {
+          psychologist_id: string
+          therapy_approach_id: string
+        }
+        Insert: {
+          psychologist_id: string
+          therapy_approach_id: string
+        }
+        Update: {
+          psychologist_id?: string
+          therapy_approach_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "psychologist_therapy_approaches_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "psychologist_therapy_approaches_therapy_approach_id_fkey"
+            columns: ["therapy_approach_id"]
+            isOneToOne: false
+            referencedRelation: "therapy_approaches"
             referencedColumns: ["id"]
           },
         ]
@@ -419,6 +490,24 @@ export type Database = {
           },
         ]
       }
+      therapy_approaches: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -457,36 +546,71 @@ export type Database = {
         }
         Returns: boolean
       }
-      search_psychologists: {
-        Args: {
-          p_city?: string
-          p_in_person?: boolean
-          p_languages?: string[]
-          p_max_price?: number
-          p_min_price?: number
-          p_online?: boolean
-          p_page?: number
-          p_page_size?: number
-          p_specialties?: string[]
-        }
-        Returns: {
-          bio: string
-          calendly_url: string
-          city: string
-          created_at: string
-          full_name: string
-          hourly_rate_mad: number
-          id: string
-          is_accredited: boolean
-          is_published: boolean
-          offers_in_person: boolean
-          offers_online: boolean
-          photo_url: string
-          slug: string
-          total_count: number
-          updated_at: string
-        }[]
-      }
+      search_psychologists:
+        | {
+            Args: {
+              p_city?: string
+              p_in_person?: boolean
+              p_languages?: string[]
+              p_max_price?: number
+              p_min_price?: number
+              p_online?: boolean
+              p_page?: number
+              p_page_size?: number
+              p_specialties?: string[]
+            }
+            Returns: {
+              bio: string
+              calendly_url: string
+              city: string
+              created_at: string
+              full_name: string
+              hourly_rate_mad: number
+              id: string
+              is_accredited: boolean
+              is_published: boolean
+              offers_in_person: boolean
+              offers_online: boolean
+              photo_url: string
+              slug: string
+              total_count: number
+              updated_at: string
+            }[]
+          }
+        | {
+            Args: {
+              p_availability?: string
+              p_city?: string
+              p_gender?: string
+              p_in_person?: boolean
+              p_languages?: string[]
+              p_max_price?: number
+              p_min_price?: number
+              p_online?: boolean
+              p_page?: number
+              p_page_size?: number
+              p_specialties?: string[]
+              p_therapy_approaches?: string[]
+            }
+            Returns: {
+              bio: string
+              calendly_url: string
+              city: string
+              created_at: string
+              full_name: string
+              gender: string
+              hourly_rate_mad: number
+              id: string
+              is_accredited: boolean
+              is_published: boolean
+              offers_in_person: boolean
+              offers_online: boolean
+              photo_url: string
+              slug: string
+              total_count: number
+              updated_at: string
+            }[]
+          }
     }
     Enums: {
       app_role: "admin" | "psychologist" | "user"

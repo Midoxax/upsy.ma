@@ -8,12 +8,18 @@ export interface Language {
   name: string;
 }
 
+export interface TherapyApproach {
+  id: string;
+  name: string;
+}
+
 export interface PsychologistProfile {
   id: string;
   full_name: string;
   bio: string | null;
   photo_url: string | null;
   city: string | null;
+  gender: string | null;
   is_accredited: boolean;
   offers_online: boolean;
   offers_in_person: boolean;
@@ -23,6 +29,7 @@ export interface PsychologistProfile {
   slug: string;
   specialties: Specialty[];
   languages: Language[];
+  therapy_approaches?: TherapyApproach[];
   created_at?: string;
   updated_at?: string;
 }
@@ -30,9 +37,12 @@ export interface PsychologistProfile {
 export interface FilterState {
   specialties: string[];
   languages: string[];
+  therapyApproaches: string[];
   city: string;
   online: boolean;
   inPerson: boolean;
+  gender: string;
+  availability: string;
   minPrice: number;
   maxPrice: number;
 }
