@@ -2,6 +2,9 @@ import { Heart, BookOpen, Activity, Building2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
+import { lazy, Suspense } from "react";
+
+const FloatingPillarIcons = lazy(() => import("@/components/3d/FloatingPillarIcons"));
 
 const pillars = [
   {
