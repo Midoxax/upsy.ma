@@ -428,6 +428,17 @@ const PsychologistProfile = () => {
         specialties={specialties}
         languages={languages}
       />
+
+      <BookingModal
+        open={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        psychologistId={psychologist.id}
+        psychologistName={psychologist.full_name}
+        hourlyRate={psychologist.hourly_rate_mad}
+        offersOnline={psychologist.offers_online}
+        offersInPerson={psychologist.offers_in_person}
+        city={psychologist.city}
+      />
     </div>
   );
 };
