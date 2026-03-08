@@ -2,232 +2,152 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* U.Psy Liquid-Glass Design System
+   Brand palette preserved from original card.
+   Simulated glass using gradients + translucency (no heavy blur).
 */
 
 @layer base {
   :root {
-    /* U.Psy Brand Colors - Bold Modern Psychology Theme */
-    --bg: 215 25% 11%;          /* #0F172A - Deep charcoal slate base */
-    --surface: 215 25% 16%;     /* #1E293B - Elevated charcoal surface */
-    --maroon: 343 63% 33%;      /* #8B1E3F - Strategic maroon accent (dividers/banners) */
-    --gold: 45 100% 50%;        /* #FFC300 - Premium golden yellow (CTAs, highlights) */
-    --teal: 180 100% 27%;       /* #008B8B - Neural teal (networks, glows, data) */
-    --white: 0 0% 100%;         /* #FFFFFF - Primary text */
-    --black: 0 0% 0%;           /* #000000 - Structure */
-    --gray-100: 215 20% 92%;    /* #E5E9F0 - Lightest gray */
-    --gray-300: 215 16% 70%;    /* #94A3B8 - Secondary text */
-    --gray-500: 215 20% 45%;    /* #64748B - Muted text */
-    --gray-700: 215 25% 27%;    /* #334155 - Darker gray */
-    
-    /* Semantic Color Mapping - Science + Performance + Innovation */
-    --background: var(--bg);
+    /* ── Brand Palette ── */
+    --burgundy: 348 82% 26%;       /* #7A0C20 */
+    --charcoal: 0 0% 10%;          /* #1A1A1A */
+    --gold-accent: 42 100% 50%;    /* #FFB300 */
+    --gold-highlight: 39 100% 48%; /* #F4A300 */
+    --crimson: 349 63% 37%;        /* #A3263A */
+    --white: 0 0% 100%;
+    --black: 0 0% 7%;              /* #121212 */
+
+    /* ── Neutral Scale ── */
+    --gray-50: 0 0% 96%;
+    --gray-100: 0 0% 90%;
+    --gray-200: 0 0% 80%;
+    --gray-300: 0 0% 62%;
+    --gray-400: 0 0% 45%;
+    --gray-500: 0 0% 30%;
+    --gray-600: 0 0% 20%;
+    --gray-700: 0 0% 14%;
+    --gray-800: 0 0% 11%;
+
+    /* ── Semantic Tokens ── */
+    --background: var(--charcoal);
     --foreground: var(--gray-100);
-    --card: var(--surface);
+    --card: 0 0% 13%;
     --card-foreground: var(--gray-100);
-    --popover: var(--surface);
+    --popover: 0 0% 12%;
     --popover-foreground: var(--gray-100);
-    --primary: var(--gold);
+    --primary: var(--gold-accent);
     --primary-foreground: var(--black);
-    --secondary: var(--teal);
+    --secondary: var(--burgundy);
     --secondary-foreground: var(--white);
     --muted: var(--gray-700);
     --muted-foreground: var(--gray-300);
-    --accent: var(--maroon);
+    --accent: var(--burgundy);
     --accent-foreground: var(--white);
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: var(--white);
-    --border: var(--gray-500);
+    --border: 0 0% 18%;
     --input: var(--gray-700);
-    --ring: var(--gold);
-    
-    /* Design System Tokens */
-    --radius-sm: 16px;          /* Buttons, cards */
-    --radius-lg: 24px;          /* Hero, media blocks */
-    --max-width: 1200px;        /* Layout max-width */
-    --gutter: 24px;             /* Side gutters */
-    --section-spacing: 80px;    /* Vertical section spacing */
-    --section-spacing-mobile: 56px; /* Mobile vertical spacing */
-    
-    /* Enhanced Typography Scale - Modular Scale (1.333 - Perfect Fourth) */
-    --text-display: 80px;       /* Display - Hero headlines */
-    --text-h1: 60px;            /* Desktop H1 */
-    --text-h1-mobile: 40px;     /* Mobile H1 */
-    --text-h2: 45px;            /* Desktop H2 */
-    --text-h2-mobile: 32px;     /* Mobile H2 */
-    --text-h3: 34px;            /* Desktop H3 */
-    --text-h3-mobile: 24px;     /* Mobile H3 */
-    --text-body: 18px;          /* Desktop body */
-    --text-body-mobile: 16px;   /* Mobile body */
-    --text-small: 14px;         /* Small text */
-    
-    /* Enhanced Shadows - Premium Depth */
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 195, 0, 0.1);
-    --shadow-card-hover: 0 12px 48px rgba(0, 139, 139, 0.25), 0 0 0 1px rgba(255, 195, 0, 0.2);
-    --shadow-neural: 0 0 40px rgba(0, 139, 139, 0.3);
-    --shadow-gold: 0 0 30px rgba(255, 195, 0, 0.25);
-    --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.7);
-    
-    /* Enhanced Gradients - Bold & Modern */
-    --gradient-hero: linear-gradient(155deg, hsl(var(--bg)) 0%, hsl(215 25% 8%) 50%, hsl(var(--bg)) 100%);
-    --gradient-neural: linear-gradient(135deg, hsl(var(--teal) / 0.8) 0%, hsl(var(--gold) / 0.6) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(45 100% 60%) 100%);
-    --gradient-teal-glow: radial-gradient(circle at center, hsl(var(--teal) / 0.15), transparent 70%);
-    --gradient-maroon-divider: linear-gradient(90deg, transparent 0%, hsl(var(--maroon) / 0.5) 50%, transparent 100%);
-    
-    /* Animations */
+    --ring: var(--gold-accent);
+
+    /* ── Layout Tokens ── */
+    --radius-sm: 16px;
+    --radius-lg: 20px;
+    --max-width: 1200px;
+    --gutter: 24px;
+    --section-spacing: 80px;
+    --section-spacing-mobile: 56px;
+
+    /* ── Typography Scale ── */
+    --text-display: 72px;
+    --text-h1: 48px;
+    --text-h1-mobile: 36px;
+    --text-h2: 36px;
+    --text-h2-mobile: 28px;
+    --text-h3: 26px;
+    --text-h3-mobile: 22px;
+    --text-body: 18px;
+    --text-body-mobile: 16px;
+    --text-small: 14px;
+
+    /* ── Liquid-Glass Tokens ── */
+    --glass-bg: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    --glass-border: 1px solid rgba(255,255,255,0.08);
+    --glass-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    --glass-shadow-hover: 0 24px 56px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,179,0,0.12);
+
+    /* ── Atmospheric Background ── */
+    --liquid-atmosphere: 
+      radial-gradient(circle at 20% 30%, rgba(163,38,58,0.25), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(122,12,32,0.3), transparent 45%),
+      hsl(var(--charcoal));
+
+    /* ── Gradient Tokens ── */
+    --gradient-gold: linear-gradient(135deg, hsl(var(--gold-accent)), hsl(var(--gold-highlight)));
+    --gradient-burgundy: linear-gradient(135deg, hsl(var(--burgundy)), hsl(var(--crimson)));
+    --gradient-divider: linear-gradient(90deg, transparent 0%, hsl(var(--burgundy) / 0.5) 50%, transparent 100%);
+
+    /* ── Shadows ── */
+    --shadow-soft: 0 4px 20px rgba(0,0,0,0.3);
+    --shadow-gold: 0 0 24px rgba(255,179,0,0.2);
+
+    /* ── Animation ── */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    
-    /* Z-Index Layers */
-    --z-background: 0;
-    --z-midground: 10;
-    --z-foreground: 20;
-    --z-dropdown: 1000;
-    --z-modal: 2000;
   }
-  
+
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground font-outfit;
-    font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
     letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Route-Based Theme Tokens */
-  body[data-theme="clinic"] {
-    --theme-accent: 180 100% 27%;      /* #008B8B - teal */
-    --theme-halo: 0 0 8px hsl(180 100% 27% / 0.5);
-    --theme-motion: subtle;
-  }
-
-  body[data-theme="performance"] {
-    --theme-accent: 45 100% 50%;       /* #FFC300 - gold */
-    --theme-halo: 0 0 6px hsl(45 100% 50% / 0.6);
-    --theme-motion: kinetic;
-  }
-
-  body[data-theme="institutions"] {
-    --theme-accent: 343 63% 33%;       /* #8B1E3F - maroon */
-    --theme-halo: none;
-    --theme-chart-primary: 343 63% 33%;
-    --theme-chart-secondary: 180 100% 27%;
-    --theme-motion: none;
-  }
-
-  body[data-theme="accreditation"] {
-    --theme-accent: 45 100% 50%;       /* #FFC300 - gold */
-    --theme-halo: 0 0 8px hsl(45 100% 50% / 0.4);
-    --theme-badge-glow: 0 0 16px hsl(45 100% 50% / 0.3);
-    --theme-motion: subtle;
-  }
-
-  body[data-theme="innovation"] {
-    --theme-accent: 180 100% 27%;      /* #008B8B - teal */
-    --theme-halo: 0 0 10px hsl(180 100% 27% / 0.6);
-    --theme-gradient: linear-gradient(135deg, hsl(180 100% 27%) 0%, hsl(215 25% 11%) 100%);
-    --theme-particle-density: high;
-    --theme-motion: subtle;
-  }
-
-  body[data-theme="skool"] {
-    --theme-accent: 45 100% 50%;       /* #FFC300 - gold */
-    --theme-halo: 0 0 6px hsl(45 100% 50% / 0.4);
-    --theme-card-radius: 20px;
-    --theme-card-padding: 24px;
-    --theme-motion: subtle;
-  }
-
-  body[data-theme="default"] {
-    --theme-accent: 45 100% 50%;       /* #FFC300 - gold (base) */
-    --theme-halo: 0 0 6px hsl(45 100% 50% / 0.3);
-    --theme-motion: subtle;
-  }
-
-  /* Theme-aware utility classes */
-  .theme-accent {
-    color: hsl(var(--theme-accent));
-  }
-
-  .theme-halo {
-    box-shadow: var(--theme-halo);
-  }
-
-  .theme-gradient-bg {
-    background: var(--theme-gradient, var(--gradient-hero));
-  }
-
-  /* Motion respects theme + user preference */
-  @media (prefers-reduced-motion: no-preference) {
-    body[data-theme="performance"] .kinetic-underline {
-      animation: kinetic-slide 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-  }
-
-  @keyframes kinetic-slide {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(0); }
-  }
-
-  /* Disable motion for institutions theme or reduced-motion preference */
-  body[data-theme="institutions"] *,
-  @media (prefers-reduced-motion: reduce) {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  /* Bold Modern Typography - Athletic Energy + Clinical Credibility */
+  /* ── Typography Classes ── */
   .text-display {
     font-size: var(--text-display);
     line-height: 1.05;
-    font-weight: 800;
+    font-weight: 600;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, hsl(var(--white)), hsl(var(--gold)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    color: hsl(var(--white));
   }
 
   .text-h1 {
     font-size: var(--text-h1);
     line-height: 1.15;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.02em;
-    color: hsl(var(--gray-100));
+    color: hsl(var(--white));
   }
-  
+
   .text-h2 {
     font-size: var(--text-h2);
     line-height: 1.25;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.015em;
-    color: hsl(var(--gray-100));
+    color: hsl(var(--white));
   }
-  
+
   .text-h3 {
     font-size: var(--text-h3);
     line-height: 1.35;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.01em;
-    color: hsl(var(--gray-100));
+    color: hsl(var(--white));
   }
-  
+
   .text-body {
     font-size: var(--text-body);
     line-height: 1.7;
     font-weight: 400;
-    letter-spacing: 0.01em;
     color: hsl(var(--gray-300));
   }
-  
+
   .text-small {
     font-size: var(--text-small);
     line-height: 1.6;
@@ -235,322 +155,196 @@ All colors MUST be HSL.
     color: hsl(var(--gray-300));
   }
 
-  /* Premium Text Effects */
-  .text-neural-glow {
-    color: hsl(var(--teal));
-    text-shadow: 0 0 20px hsl(var(--teal) / 0.6), 0 0 40px hsl(var(--teal) / 0.3);
-  }
-
-  .text-gold-glow {
-    color: hsl(var(--gold));
-    text-shadow: 0 0 20px hsl(var(--gold) / 0.5), 0 2px 8px rgba(0, 0, 0, 0.4);
-  }
-  
-  /* Mobile Typography */
   @media (max-width: 768px) {
-    .text-display { font-size: 56px; }
+    .text-display { font-size: 44px; }
     .text-h1 { font-size: var(--text-h1-mobile); }
     .text-h2 { font-size: var(--text-h2-mobile); }
     .text-h3 { font-size: var(--text-h3-mobile); }
     .text-body { font-size: var(--text-body-mobile); }
   }
-  
-  /* Layout Classes */
+
+  /* ── Layout ── */
   .container-custom {
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 var(--gutter);
   }
-  
+
   .section-spacing {
     padding: var(--section-spacing) 0;
   }
-  
+
   @media (max-width: 768px) {
     .section-spacing {
       padding: var(--section-spacing-mobile) 0;
     }
   }
-  
-  /* Focus States for Accessibility - Enhanced for Visibility */
-  *:focus-visible {
-    outline: 3px solid hsl(var(--gold));
-    outline-offset: 3px;
-    box-shadow: 0 0 0 6px hsl(var(--gold) / 0.2);
-    transition: outline-offset 0.2s ease, box-shadow 0.2s ease;
-    border-radius: 6px;
-  }
-  
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible {
-    outline: 2px solid hsl(var(--gold));
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px hsl(var(--gold) / 0.15);
+
+  /* ── Liquid-Glass Card ── */
+  .glass-card {
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
 
-  /* Micro-Interactions & Animations */
-  @keyframes neural-pulse {
-    0%, 100% {
-      box-shadow: 0 0 0 0 hsl(var(--teal) / 0.7), 0 0 30px hsl(var(--gold) / 0.2);
-    }
-    50% {
-      box-shadow: 0 0 25px 15px hsl(var(--teal) / 0), 0 0 40px hsl(var(--gold) / 0);
-    }
+  .glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--glass-shadow-hover);
   }
 
-  @keyframes megaMenuSlide {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* ── Atmospheric Background ── */
+  .liquid-bg {
+    background: var(--liquid-atmosphere);
   }
 
-  @keyframes glow-pulse {
-    0%, 100% {
-      filter: drop-shadow(0 0 10px hsl(var(--teal) / 0.5)) drop-shadow(0 0 2px hsl(var(--gold) / 0.3));
-    }
-    50% {
-      filter: drop-shadow(0 0 20px hsl(var(--teal) / 0.8)) drop-shadow(0 0 4px hsl(var(--gold) / 0.5));
-    }
-  }
-
-  .hover-lift {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 20px 50px -10px hsl(var(--teal) / 0.3), 0 0 0 1px hsl(var(--gold) / 0.2);
-  }
-
-  .hover-glow:hover {
-    animation: neural-pulse 1.5s infinite;
-  }
-
-  .link-underline {
-    position: relative;
-  }
-
-  .link-underline::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: -2px;
-    left: 0;
-    background: hsl(var(--gold));
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .link-underline:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-
-  .icon-spin:hover {
-    animation: spin 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  /* Reduced Motion Support */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-    
-    .hover-lift:hover {
-      transform: none;
-    }
-  }
-  
-  /* Premium Hero Background - Deep Charcoal + Teal Neural Pattern */
+  /* ── Hero Background ── */
   .hero-neural-bg {
     position: relative;
     overflow: hidden;
-    background: var(--gradient-hero);
+    background: var(--liquid-atmosphere);
   }
-  
-  /* Dark charcoal gradient base */
+
   .hero-neural-bg::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(ellipse at top left, hsl(215 25% 15%) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom right, hsl(180 100% 10%) 0%, transparent 50%);
-    z-index: var(--z-background);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(163,38,58,0.15), transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(122,12,32,0.2), transparent 50%);
     pointer-events: none;
   }
-  
-  /* Low-opacity teal neural network pattern */
+
   .hero-neural-bg::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background-image: url('/src/assets/neural-network-bg.webp');
     background-size: cover;
     background-position: center;
-    opacity: 0.12;
-    z-index: calc(var(--z-background) + 1);
+    opacity: 0.06;
     pointer-events: none;
     mix-blend-mode: screen;
-    filter: brightness(0.8) contrast(1.3) hue-rotate(10deg);
   }
-  
-  /* Animated neural pattern with parallax */
+
   @media (prefers-reduced-motion: no-preference) {
     .hero-neural-bg::after {
       animation: neural-parallax 40s ease-in-out infinite;
     }
   }
-  
+
   @keyframes neural-parallax {
-    0%, 100% { 
-      transform: translateY(0) scale(1.05);
-      opacity: 0.12;
-    }
-    50% { 
-      transform: translateY(-30px) scale(1.08);
-      opacity: 0.18;
-    }
+    0%, 100% { transform: translateY(0) scale(1.05); opacity: 0.06; }
+    50% { transform: translateY(-20px) scale(1.08); opacity: 0.10; }
   }
-  
-  /* Static version for reduced motion preference */
-  @media (prefers-reduced-motion: reduce) {
-    .hero-neural-bg::after {
-      opacity: 0.10;
-      animation: none;
-      transform: none;
-    }
-  }
-  
+
   .hero-neural-bg > * {
     position: relative;
-    z-index: var(--z-midground);
+    z-index: 10;
   }
 
-  /* Depth & Layering System */
-  .layer-background {
-    position: relative;
-    z-index: var(--z-background);
+  /* ── Hover Effects ── */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--glass-shadow-hover);
   }
 
-  .layer-midground {
-    position: relative;
-    z-index: var(--z-midground);
+  .hover-glow:hover {
+    box-shadow: var(--shadow-gold);
   }
 
-  .layer-foreground {
-    position: relative;
-    z-index: var(--z-foreground);
-    transform: translateZ(20px);
-  }
-
-  /* Mega Menu Styles */
-  .mega-menu {
-    animation: megaMenuSlide 300ms ease-out;
-  }
-
-  .mega-menu-column:hover {
-    box-shadow: 0 0 20px rgba(0, 139, 139, 0.15);
-  }
-
-  .mega-menu-cta {
+  /* ── Link Underline ── */
+  .link-underline {
     position: relative;
   }
-
-  .mega-menu-cta::after {
+  .link-underline::after {
     content: '';
     position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: hsl(var(--gold));
+    width: 100%; height: 2px;
+    bottom: -2px; left: 0;
+    background: hsl(var(--gold-accent));
     transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 200ms ease;
+    transform-origin: right;
+    transition: transform 0.3s ease;
   }
-
-  .mega-menu-cta:hover::after {
+  .link-underline:hover::after {
     transform: scaleX(1);
+    transform-origin: left;
   }
 
-  /* Premium Glassmorphism */
+  /* ── Focus States ── */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--gold-accent));
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px hsl(var(--gold-accent) / 0.15);
+    border-radius: 6px;
+  }
+
+  /* ── Glassmorphism Utility ── */
   .glass-effect {
-    background: linear-gradient(135deg, hsl(var(--surface) / 0.7), hsl(var(--surface) / 0.5));
-    backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid hsl(var(--gold) / 0.15);
-    box-shadow: var(--shadow-card),
-                inset 0 1px 0 hsl(var(--teal) / 0.1),
-                inset 0 0 60px hsl(var(--teal) / 0.03);
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
   }
 
-  /* Premium Card Variant - Bold & Modern */
+  /* ── Premium Card Float ── */
   .card-float {
-    background: linear-gradient(135deg, hsl(var(--surface) / 0.9), hsl(var(--surface) / 0.7));
-    border: 1px solid hsl(var(--gray-700));
-    transform: translateZ(10px);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                border-color 0.4s ease;
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   }
-
   .card-float:hover {
-    transform: translateZ(30px) translateY(-8px) scale(1.02);
-    box-shadow: var(--shadow-card-hover), var(--shadow-neural);
-    border-color: hsl(var(--teal) / 0.4);
+    transform: translateY(-6px);
+    box-shadow: var(--glass-shadow-hover);
+    border-color: rgba(255,179,0,0.15);
   }
 
-  /* Neural-themed decorative borders */
-  .dendrite-border {
-    position: relative;
-    border-image: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--gold))) 1;
+  /* ── Reduced Motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .hover-lift:hover { transform: none; }
   }
 
-  .dendrite-border::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-    background: linear-gradient(135deg, hsl(var(--teal) / 0.5), hsl(var(--gold) / 0.5));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  /* ── Route-Based Theme Tokens (preserved) ── */
+  body[data-theme="clinic"] {
+    --theme-accent: var(--burgundy);
+  }
+  body[data-theme="performance"] {
+    --theme-accent: var(--gold-accent);
+  }
+  body[data-theme="institutions"] {
+    --theme-accent: var(--burgundy);
+  }
+  body[data-theme="accreditation"] {
+    --theme-accent: var(--gold-accent);
+  }
+  body[data-theme="innovation"] {
+    --theme-accent: var(--gold-accent);
+  }
+  body[data-theme="skool"] {
+    --theme-accent: var(--gold-accent);
+  }
+  body[data-theme="default"] {
+    --theme-accent: var(--gold-accent);
   }
 
-  .dendrite-border:hover::before {
-    opacity: 1;
+  .theme-accent {
+    color: hsl(var(--theme-accent));
   }
+
+  /* ── Mega Menu (legacy compat) ── */
+  @keyframes megaMenuSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mega-menu { animation: megaMenuSlide 300ms ease-out; }
 }

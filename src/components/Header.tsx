@@ -15,14 +15,14 @@ const Header = () => {
   const { locale, t } = useLocale();
 
   const navigation = [
+    { name: t('nav.findPsychologist'), href: "/psychologists" },
     { 
       name: t('nav.services'),
       href: "/services",
       dropdown: [
-        { name: t('nav.findPsychologist'), href: "/psychologists" },
-        { name: t('nav.getMatched'), href: "/get-matched" },
         { name: t('nav.individualServices'), href: "/services" },
         { name: t('nav.forOrganizations'), href: "/services/consulting-for-organizations" },
+        { name: t('nav.getMatched'), href: "/get-matched" },
       ],
     },
     {
@@ -53,17 +53,23 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-u-surface/95 backdrop-blur-lg border-b border-u-gray-700/50 shadow-u-card">
+    <header 
+      className="sticky top-0 z-50 border-b transition-colors"
+      style={{
+        background: 'rgba(26,26,26,0.85)',
+        borderBottomColor: 'rgba(255,255,255,0.06)',
+      }}
+    >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center focus:outline-none focus:ring-2 focus:ring-accent rounded-md">
+          <Link to="/" className="flex items-center focus:outline-none focus:ring-2 focus:ring-ring rounded-md">
             <img 
               src={logo} 
               alt="U.Psy Logo - Navigate to homepage" 
-              className="h-14 w-auto transition-all duration-300"
+              className="h-14 w-auto transition-all duration-200"
               style={{ 
-                filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)) brightness(1.05)',
+                filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.6)) brightness(1.05)',
               }}
             />
           </Link>
@@ -76,21 +82,28 @@ const Header = () => {
                   to={addLocalePrefix(item.href, locale)}
                   className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     isActive(item.href)
-                      ? "text-u-gold bg-u-gray-700/50"
-                      : "text-u-gray-100 hover:text-u-gold hover:bg-u-gray-700/30"
+                      ? "text-u-gold"
+                      : "text-u-gray-200 hover:text-u-white"
                   }`}
                 >
                   {item.name}
                   {item.dropdown && <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />}
                 </Link>
                 {item.dropdown && (
-                  <div className="absolute top-full left-0 mt-1 w-64 bg-u-surface/98 backdrop-blur-xl border border-u-gray-700/50 rounded-lg shadow-[0_8px_32px_rgba(0,0,0,0.6)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div 
+                    className="absolute top-full left-0 mt-1 w-64 rounded-u-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                    style={{
+                      background: 'linear-gradient(180deg, rgba(30,30,30,0.98), rgba(26,26,26,0.98))',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      boxShadow: '0 18px 40px rgba(0,0,0,0.5)',
+                    }}
+                  >
                     <div className="py-2">
                       {item.dropdown.map((subItem) => (
                         <Link
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
-                          className="block px-4 py-2.5 text-sm text-u-gray-200 hover:text-u-gold hover:bg-u-gray-700/40 transition-colors"
+                          className="block px-4 py-2.5 text-sm text-u-gray-300 hover:text-u-gold hover:bg-white/5 transition-colors"
                         >
                           {subItem.name}
                         </Link>
@@ -114,7 +127,7 @@ const Header = () => {
               </Button>
             ) : (
               <>
-                <Button variant="primary" size="sm" asChild className="hover-glow">
+                <Button variant="primary" size="sm" asChild>
                   <Link to={addLocalePrefix('/contact', locale)}>{t('cta.getStarted')}</Link>
                 </Button>
                 <Button variant="secondary" size="sm" asChild>
@@ -136,7 +149,10 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-u-gray-500">
+          <div 
+            className="lg:hidden py-4"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+          >
             <nav className="flex flex-col space-y-2">
               {navigation.map((item) => (
                 <div key={item.name}>
@@ -144,7 +160,7 @@ const Header = () => {
                     to={addLocalePrefix(item.href, locale)}
                     onClick={() => !item.dropdown && setIsMobileMenuOpen(false)}
                     className={`flex items-center justify-between text-sm font-medium transition-colors hover:text-u-white py-2 ${
-                      isActive(item.href) ? "text-u-white" : "text-u-gray-300"
+                      isActive(item.href) ? "text-u-gold" : "text-u-gray-300"
                     }`}
                   >
                     {item.name}
@@ -166,7 +182,7 @@ const Header = () => {
                   )}
                 </div>
               ))}
-              <div className="flex flex-col space-y-3 pt-4 mt-4 border-t border-u-gray-500">
+              <div className="flex flex-col space-y-3 pt-4 mt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <LanguageSwitcher className="pb-3" />
                 {user ? (
                   <Button variant="primary" size="sm" asChild>

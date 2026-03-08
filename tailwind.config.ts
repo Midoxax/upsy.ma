@@ -14,22 +14,27 @@ export default {
     },
     extend: {
       fontFamily: {
-        outfit: ['Outfit', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        outfit: ['Outfit', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
-        /* U.Psy Brand Colors - Bold Modern Psychology */
-        'u-bg': "hsl(var(--bg))",
-        'u-surface': "hsl(var(--surface))",
-        'u-maroon': "hsl(var(--maroon))",
-        'u-gold': "hsl(var(--gold))",
-        'u-teal': "hsl(var(--teal))",
+        /* U.Psy Brand Colors */
+        'u-burgundy': "hsl(var(--burgundy))",
+        'u-charcoal': "hsl(var(--charcoal))",
+        'u-gold': "hsl(var(--gold-accent))",
+        'u-gold-highlight': "hsl(var(--gold-highlight))",
+        'u-crimson': "hsl(var(--crimson))",
         'u-white': "hsl(var(--white))",
         'u-black': "hsl(var(--black))",
+        'u-gray-50': "hsl(var(--gray-50))",
         'u-gray-100': "hsl(var(--gray-100))",
+        'u-gray-200': "hsl(var(--gray-200))",
         'u-gray-300': "hsl(var(--gray-300))",
+        'u-gray-400': "hsl(var(--gray-400))",
         'u-gray-500': "hsl(var(--gray-500))",
+        'u-gray-600': "hsl(var(--gray-600))",
         'u-gray-700': "hsl(var(--gray-700))",
-        
+        'u-gray-800': "hsl(var(--gray-800))",
+
         /* Semantic Colors */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -74,37 +79,26 @@ export default {
         'section-mobile': 'var(--section-spacing-mobile)',
       },
       borderRadius: {
-        'u-sm': 'var(--radius-sm)',      /* 16px - buttons, cards */
-        'u-lg': 'var(--radius-lg)',      /* 24px - hero, media */
+        'u-sm': 'var(--radius-sm)',
+        'u-lg': 'var(--radius-lg)',
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        'u-card': 'var(--shadow-card)',
-      },
-      backgroundImage: {
-        'u-hero': 'var(--gradient-hero)',
-      },
-      transitionTimingFunction: {
-        'u-smooth': 'var(--transition-smooth)',
+        'glass': 'var(--glass-shadow)',
+        'glass-hover': 'var(--glass-shadow-hover)',
+        'soft': 'var(--shadow-soft)',
+        'gold': 'var(--shadow-gold)',
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
