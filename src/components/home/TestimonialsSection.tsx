@@ -37,10 +37,10 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t("testimonials.title", "What Our Community Says")}
+            {t("testimonials.title") || "What Our Community Says"}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            {t("testimonials.subtitle", "Real stories from clients and psychologists on the platform.")}
+            {t("testimonials.subtitle") || "Real stories from clients and psychologists on the platform."}
           </p>
         </motion.div>
 

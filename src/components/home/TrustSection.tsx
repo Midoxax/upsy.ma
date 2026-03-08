@@ -27,7 +27,7 @@ const TrustSection = () => {
             >
               <item.icon className="h-5 w-5 text-primary" />
               <span className="text-sm font-medium tracking-wide uppercase">
-                {t(item.labelKey, item.fallback)}
+                {t(item.labelKey) || item.fallback}
               </span>
             </motion.div>
           ))}
