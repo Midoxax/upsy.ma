@@ -2,12 +2,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User, Calendar, DollarSign, Users, CreditCard } from "lucide-react";
+import { LogOut, User, Calendar, DollarSign, Users, CreditCard, Video } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
 import { PricingTab } from "@/components/dashboard/PricingTab";
 import { LeadsTab } from "@/components/dashboard/LeadsTab";
 import { BillingTab } from "@/components/dashboard/BillingTab";
+import { SessionsTab } from "@/components/dashboard/SessionsTab";
 
 const MySpace = () => {
   const { signOut, user } = useAuth();
