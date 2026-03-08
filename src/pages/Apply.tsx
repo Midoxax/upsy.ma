@@ -163,6 +163,8 @@ const Apply = () => {
                   )}
                 />
 
+                <DataPrivacyNotice />
+
                 <div className="flex gap-4">
                   <Button type="button" variant="outline" onClick={() => navigate("/")} className="flex-1">
                     Cancel
