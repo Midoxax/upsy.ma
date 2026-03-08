@@ -1,40 +1,53 @@
+import { lazy, Suspense, ComponentType } from "react";
 import MaroonDivider from "@/components/ui/maroon-divider";
 import HeroSection from "@/components/home/HeroSection";
-import PillarsSection from "@/components/home/PillarsSection";
-import HowItWorksSection from "@/components/home/HowItWorksSection";
+import TrustSection from "@/components/home/TrustSection";
 import SelfAssessmentSection from "@/components/home/SelfAssessmentSection";
 import FeaturedPsychologistsSection from "@/components/home/FeaturedPsychologistsSection";
-import ProgramsSection from "@/components/home/ProgramsSection";
-import LearningSection from "@/components/home/LearningSection";
-import OrganizationsSection from "@/components/home/OrganizationsSection";
-import ResearchSection from "@/components/home/ResearchSection";
-import CommunitySection from "@/components/home/CommunitySection";
-import FinalCTASection from "@/components/home/FinalCTASection";
+import HowItWorksSection from "@/components/home/HowItWorksSection";
+import PillarsSection from "@/components/home/PillarsSection";
+
+// Lazy-loaded below-the-fold sections
+const ProgramsSection = lazy(() => import("@/components/home/ProgramsSection"));
+const LearningSection = lazy(() => import("@/components/home/LearningSection"));
+const OrganizationsSection = lazy(() => import("@/components/home/OrganizationsSection"));
+const ResearchSection = lazy(() => import("@/components/home/ResearchSection"));
+const CommunitySection = lazy(() => import("@/components/home/CommunitySection"));
+const TestimonialsSection = lazy(() => import("@/components/home/TestimonialsSection"));
+const FinalCTASection = lazy(() => import("@/components/home/FinalCTASection"));
+
+// Conversion-optimised order
+const sections: ComponentType[] = [
+  HeroSection,
+  TrustSection,
+  SelfAssessmentSection,
+  FeaturedPsychologistsSection,
+  HowItWorksSection,
+  PillarsSection,
+  ProgramsSection,
+  LearningSection,
+  OrganizationsSection,
+  ResearchSection,
+  CommunitySection,
+  TestimonialsSection,
+  FinalCTASection,
+];
+
+const SectionFallback = () => (
+  <div className="py-20 flex items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+  </div>
+);
 
 const Index = () => {
   return (
     <main className="flex-1">
-      <HeroSection />
-      <MaroonDivider />
-      <PillarsSection />
-      <MaroonDivider />
-      <HowItWorksSection />
-      <MaroonDivider />
-      <SelfAssessmentSection />
-      <MaroonDivider />
-      <FeaturedPsychologistsSection />
-      <MaroonDivider />
-      <ProgramsSection />
-      <MaroonDivider />
-      <LearningSection />
-      <MaroonDivider />
-      <OrganizationsSection />
-      <MaroonDivider />
-      <ResearchSection />
-      <MaroonDivider />
-      <CommunitySection />
-      <MaroonDivider />
-      <FinalCTASection />
+      {sections.map((Section, index) => (
+        <Suspense key={index} fallback={<SectionFallback />}>
+          <Section />
+          {index < sections.length - 1 && <MaroonDivider />}
+        </Suspense>
+      ))}
     </main>
   );
 };
