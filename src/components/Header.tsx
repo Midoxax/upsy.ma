@@ -52,11 +52,7 @@ const Header = () => {
 
   return (
     <header 
-      className="sticky top-0 z-50 border-b transition-colors"
-      style={{
-        background: 'rgba(26,26,26,0.85)',
-        borderBottomColor: 'rgba(255,255,255,0.06)',
-      }}
+      className="sticky top-0 z-50 border-b transition-colors bg-background/85 backdrop-blur-sm border-border/30"
     >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
