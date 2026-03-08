@@ -4,12 +4,13 @@
 
 /* U.Psy Liquid-Glass Design System
    Brand palette preserved from original card.
-   Simulated glass using gradients + translucency (no heavy blur).
+   Standard Tailwind convention: :root = light, .dark = dark.
+   Glass effects use backdrop-filter for true glassmorphism.
 */
 
 @layer base {
   :root {
-    /* ── Brand Palette ── */
+    /* ── Brand Palette (shared) ── */
     --burgundy: 348 82% 26%;       /* #7A0C20 */
     --charcoal: 0 0% 10%;          /* #1A1A1A */
     --gold-accent: 42 100% 50%;    /* #FFB300 */
@@ -33,7 +34,82 @@
     --gray-700: 0 0% 14%;
     --gray-800: 0 0% 11%;
 
-    /* ── Semantic Tokens ── */
+    /* ── Light Semantic Tokens ── */
+    --background: 220 20% 97%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: var(--gold-accent);
+    --primary-foreground: var(--black);
+    --secondary: var(--burgundy);
+    --secondary-foreground: var(--white);
+    --muted: 220 14% 93%;
+    --muted-foreground: 0 0% 40%;
+    --accent: var(--burgundy);
+    --accent-foreground: var(--white);
+    --destructive: 0 84% 60%;
+    --destructive-foreground: var(--white);
+    --border: 220 13% 88%;
+    --input: 220 14% 93%;
+    --ring: var(--gold-accent);
+
+    /* ── Layout Tokens ── */
+    --radius-btn: 14px;
+    --radius-card: 20px;
+    --radius-input: 12px;
+    --radius: 0.5rem;
+    --max-width: 1200px;
+    --gutter: 24px;
+    --section-spacing: 80px;
+    --section-spacing-mobile: 56px;
+
+    /* ── Typography Scale ── */
+    --text-display: 72px;
+    --text-h1: 48px;
+    --text-h1-mobile: 36px;
+    --text-h2: 36px;
+    --text-h2-mobile: 28px;
+    --text-h3: 26px;
+    --text-h3-mobile: 22px;
+    --text-body: 18px;
+    --text-body-mobile: 16px;
+    --text-small: 14px;
+
+    /* ── Light Liquid-Glass Tokens ── */
+    --glass-bg: rgba(255,255,255,0.7);
+    --glass-border-color: rgba(0,0,0,0.06);
+    --glass-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    --glass-shadow-hover: 0 20px 50px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,179,0,0.15);
+
+    /* ── Light Atmosphere ── */
+    --liquid-atmosphere:
+      radial-gradient(circle at 25% 30%, rgba(163,38,58,0.06), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(122,12,32,0.08), transparent 45%),
+      hsl(var(--background));
+
+    /* ── Gradient Tokens ── */
+    --gradient-gold: linear-gradient(135deg, hsl(var(--gold-accent)), hsl(var(--gold-highlight)));
+    --gradient-burgundy: linear-gradient(135deg, hsl(var(--burgundy)), hsl(var(--crimson)));
+    --gradient-divider: linear-gradient(90deg, transparent 0%, hsl(var(--burgundy) / 0.5) 50%, transparent 100%);
+
+    /* ── Shadows ── */
+    --shadow-soft: 0 4px 20px rgba(0,0,0,0.06);
+    --shadow-gold: 0 0 24px rgba(255,179,0,0.15);
+
+    /* ── Motion Tokens ── */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-calm: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --duration-ui: 300ms;
+    --duration-emphasis: 500ms;
+    --duration-ambient: 800ms;
+    --ease-calm: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ── Dark Theme ── */
+  .dark {
     --background: var(--charcoal);
     --foreground: var(--gray-100);
     --card: 0 0% 13%;
@@ -54,95 +130,21 @@
     --input: var(--gray-700);
     --ring: var(--gold-accent);
 
-    /* ── Layout Tokens ── */
-    --radius-btn: 14px;
-    --radius-card: 20px;
-    --radius-input: 12px;
-    --max-width: 1200px;
-    --gutter: 24px;
-    --section-spacing: 80px;
-    --section-spacing-mobile: 56px;
-
-    /* ── Typography Scale ── */
-    --text-display: 72px;
-    --text-h1: 48px;
-    --text-h1-mobile: 36px;
-    --text-h2: 36px;
-    --text-h2-mobile: 28px;
-    --text-h3: 26px;
-    --text-h3-mobile: 22px;
-    --text-body: 18px;
-    --text-body-mobile: 16px;
-    --text-small: 14px;
-
-    /* ── Liquid-Glass Tokens ── */
-    --glass-bg: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-    --glass-border: 1px solid rgba(255,255,255,0.08);
-    --glass-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    /* ── Dark Liquid-Glass ── */
+    --glass-bg: rgba(255,255,255,0.06);
+    --glass-border-color: rgba(255,255,255,0.1);
+    --glass-shadow: 0 20px 40px rgba(0,0,0,0.35);
     --glass-shadow-hover: 0 24px 56px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,179,0,0.12);
 
-    /* ── Atmospheric Background ── */
-    --liquid-atmosphere: 
+    /* ── Dark Atmosphere ── */
+    --liquid-atmosphere:
       radial-gradient(circle at 20% 30%, rgba(163,38,58,0.25), transparent 40%),
       radial-gradient(circle at 80% 70%, rgba(122,12,32,0.3), transparent 45%),
       hsl(var(--charcoal));
 
-    /* ── Gradient Tokens ── */
-    --gradient-gold: linear-gradient(135deg, hsl(var(--gold-accent)), hsl(var(--gold-highlight)));
-    --gradient-burgundy: linear-gradient(135deg, hsl(var(--burgundy)), hsl(var(--crimson)));
-    --gradient-divider: linear-gradient(90deg, transparent 0%, hsl(var(--burgundy) / 0.5) 50%, transparent 100%);
-
-    /* ── Shadows ── */
+    /* ── Dark Shadows ── */
     --shadow-soft: 0 4px 20px rgba(0,0,0,0.3);
     --shadow-gold: 0 0 24px rgba(255,179,0,0.2);
-
-    /* ── Motion Tokens ── */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-calm: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-    --duration-ui: 300ms;
-    --duration-emphasis: 500ms;
-    --duration-ambient: 800ms;
-    --ease-calm: cubic-bezier(0.25, 0.1, 0.25, 1);
-    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  /* ── Light Theme ── */
-  .light {
-    --background: 0 0% 97%;
-    --foreground: 0 0% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 12%;
-    --primary: var(--gold-accent);
-    --primary-foreground: var(--black);
-    --secondary: var(--burgundy);
-    --secondary-foreground: var(--white);
-    --muted: 0 0% 93%;
-    --muted-foreground: 0 0% 40%;
-    --accent: var(--burgundy);
-    --accent-foreground: var(--white);
-    --destructive: 0 84% 60%;
-    --destructive-foreground: var(--white);
-    --border: 0 0% 88%;
-    --input: 0 0% 93%;
-    --ring: var(--gold-accent);
-
-    /* ── Light Liquid-Glass ── */
-    --glass-bg: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
-    --glass-border: 1px solid rgba(0,0,0,0.08);
-    --glass-shadow: 0 18px 40px rgba(0,0,0,0.08);
-    --glass-shadow-hover: 0 24px 56px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,179,0,0.15);
-
-    /* ── Light Atmosphere ── */
-    --liquid-atmosphere:
-      radial-gradient(circle at 20% 30%, rgba(163,38,58,0.06), transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(122,12,32,0.08), transparent 45%),
-      hsl(0 0% 97%);
-
-    /* ── Light Shadows ── */
-    --shadow-soft: 0 4px 20px rgba(0,0,0,0.06);
-    --shadow-gold: 0 0 24px rgba(255,179,0,0.15);
   }
 
   * {
@@ -230,12 +232,14 @@
     }
   }
 
-  /* ── Liquid-Glass Card ── */
+  /* ── Liquid-Glass Card (with true glassmorphism) ── */
   .glass-card {
     background: var(--glass-bg);
-    border: var(--glass-border);
+    border: 1px solid var(--glass-border-color);
     border-radius: var(--radius-card);
     box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     padding: 28px;
     transition:
       transform var(--duration-ui) var(--ease-calm),
@@ -287,7 +291,12 @@
     mix-blend-mode: screen;
   }
 
-  .light .hero-neural-bg::after {
+  .dark .hero-neural-bg::after {
+    mix-blend-mode: screen;
+    opacity: 0.06;
+  }
+
+  :root .hero-neural-bg::after {
     mix-blend-mode: multiply;
     opacity: 0.04;
   }
@@ -439,8 +448,10 @@
   /* ── Glassmorphism Utility ── */
   .glass-effect {
     background: var(--glass-bg);
-    border: var(--glass-border);
+    border: 1px solid var(--glass-border-color);
     box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   /* ── Glass Input ── */
@@ -460,8 +471,10 @@
   /* ── Premium Card Float ── */
   .card-float {
     background: var(--glass-bg);
-    border: var(--glass-border);
+    border: 1px solid var(--glass-border-color);
     border-radius: var(--radius-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   }
   .card-float:hover {

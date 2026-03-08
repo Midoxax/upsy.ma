@@ -15,7 +15,6 @@ const Header = () => {
   const { user } = useAuth();
   const { locale, t } = useLocale();
 
-  // Nav structure: Home | Programs ▼ | Learning | Research | About ▼
   const navigation = [
     { name: t('nav.home'), href: "/" },
     { name: t('nav.findPsychologist'), href: "/psychologists" },
@@ -51,9 +50,7 @@ const Header = () => {
   };
 
   return (
-    <header 
-      className="sticky top-0 z-50 border-b transition-colors bg-background/85 backdrop-blur-sm border-border/30"
-    >
+    <header className="sticky top-0 z-50 border-b transition-colors bg-background/85 backdrop-blur-sm border-border/30">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -74,29 +71,21 @@ const Header = () => {
                   to={addLocalePrefix(item.href, locale)}
                   className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     isActive(item.href)
-                      ? "text-u-gold"
-                      : "text-u-gray-200 hover:text-u-white"
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {item.name}
                   {item.dropdown && <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />}
                 </Link>
                 {item.dropdown && (
-                  <div 
-                    className="absolute top-full left-0 mt-1 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
-                    style={{
-                      background: 'linear-gradient(180deg, rgba(30,30,30,0.98), rgba(26,26,26,0.98))',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: '14px',
-                      boxShadow: '0 18px 40px rgba(0,0,0,0.5)',
-                    }}
-                  >
+                  <div className="absolute top-full left-0 mt-1 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 glass-card p-0">
                     <div className="py-2">
                       {item.dropdown.map((subItem) => (
                         <Link
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
-                          className="block px-4 py-2.5 text-sm text-u-gray-300 hover:text-u-gold hover:bg-white/5 transition-colors"
+                          className="block px-4 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-accent/10 transition-colors"
                         >
                           {subItem.name}
                         </Link>
@@ -108,7 +97,7 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Desktop CTAs: Login | Sign Up | Find Psychologist */}
+          {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-3">
             <ThemeToggle />
             <LanguageSwitcher className="mr-1" />
@@ -123,7 +112,7 @@ const Header = () => {
               <>
                 <Link
                   to={addLocalePrefix('/auth', locale)}
-                  className="text-sm text-u-gray-200 hover:text-u-white transition-colors px-3 py-2"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
                 >
                   {t('nav.login')}
                 </Link>
@@ -140,7 +129,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-u-white hover:text-u-gray-300 transition-colors"
+            className="lg:hidden p-2 text-foreground hover:text-muted-foreground transition-colors"
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -156,8 +145,8 @@ const Header = () => {
                   <Link
                     to={addLocalePrefix(item.href, locale)}
                     onClick={() => !item.dropdown && setIsMobileMenuOpen(false)}
-                    className={`flex items-center justify-between text-sm font-medium transition-colors hover:text-u-white py-2 ${
-                      isActive(item.href) ? "text-u-gold" : "text-u-gray-300"
+                    className={`flex items-center justify-between text-sm font-medium transition-colors hover:text-foreground py-2 ${
+                      isActive(item.href) ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
                     {item.name}
@@ -170,7 +159,7 @@ const Header = () => {
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block text-sm text-u-gray-300 hover:text-u-white py-1.5"
+                          className="block text-sm text-muted-foreground hover:text-foreground py-1.5"
                         >
                           {subItem.name}
                         </Link>
@@ -179,7 +168,7 @@ const Header = () => {
                   )}
                 </div>
               ))}
-              <div className="flex flex-col space-y-3 pt-4 mt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div className="flex flex-col space-y-3 pt-4 mt-4 border-t border-border/30">
                 <LanguageSwitcher className="pb-3" />
                 {user ? (
                   <Button variant="primary" size="sm" asChild>

@@ -5,17 +5,7 @@ import { cn } from "@/lib/utils";
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "shadow-glass transition-all duration-200",
-      "hover:translate-y-[-6px] hover:shadow-glass-hover",
-      className
-    )}
-    style={{
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '20px',
-      padding: '28px',
-    }}
+    className={cn("glass-card", className)}
     {...props}
   />
 ));
