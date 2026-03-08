@@ -41,6 +41,13 @@ const PillarsSection = () => {
   return (
     <section className="section-spacing liquid-bg">
       <div className="container-custom">
+        {/* 3D Floating Pillar Icons */}
+        <Suspense fallback={null}>
+          <div className="h-48 md:h-56 mb-8">
+            <FloatingPillarIcons />
+          </div>
+        </Suspense>
+
         <ScrollReveal>
           <div className="text-center mb-16">
             <h2 className="text-h2 mb-4">The U.Psy Ecosystem</h2>
