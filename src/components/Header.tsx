@@ -149,10 +149,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div 
-            className="lg:hidden py-4 border-t border-border/30"
-          >
-          >
+          <div className="lg:hidden py-4 border-t border-border/30">
             <nav className="flex flex-col space-y-2">
               {navigation.map((item) => (
                 <div key={item.name}>
