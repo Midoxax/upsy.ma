@@ -49,7 +49,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-u-gray-300 text-sm mb-6">
-              Evidence-based psychology & sport performance.
+              {t('header.tagline')}
             </p>
 
             <div className="space-y-2 text-sm mb-6">
