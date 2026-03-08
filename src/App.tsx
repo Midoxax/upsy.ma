@@ -37,6 +37,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
+import BrandGuidelines from "./pages/BrandGuidelines";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
