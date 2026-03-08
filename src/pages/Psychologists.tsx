@@ -32,9 +32,12 @@ const Psychologists = () => {
   const [filters, setFilters] = useState<FilterState>({
     specialties: [],
     languages: [],
+    therapyApproaches: [],
     city: "",
     online: false,
     inPerson: false,
+    gender: "",
+    availability: "",
     minPrice: 0,
     maxPrice: 2000,
   });
