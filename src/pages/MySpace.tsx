@@ -2,12 +2,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User, Calendar, DollarSign, Users, CreditCard } from "lucide-react";
+import { LogOut, User, Calendar, DollarSign, Users, CreditCard, Video } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
 import { PricingTab } from "@/components/dashboard/PricingTab";
 import { LeadsTab } from "@/components/dashboard/LeadsTab";
 import { BillingTab } from "@/components/dashboard/BillingTab";
+import { SessionsTab } from "@/components/dashboard/SessionsTab";
 
 const MySpace = () => {
   const { signOut, user } = useAuth();
@@ -40,10 +41,14 @@ const MySpace = () => {
       <section className="section-spacing">
         <div className="container-custom">
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
               <TabsTrigger value="profile" className="gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
+              </TabsTrigger>
+              <TabsTrigger value="sessions" className="gap-2">
+                <Video className="h-4 w-4" />
+                <span className="hidden sm:inline">Sessions</span>
               </TabsTrigger>
               <TabsTrigger value="availability" className="gap-2">
                 <Calendar className="h-4 w-4" />
@@ -65,6 +70,10 @@ const MySpace = () => {
 
             <TabsContent value="profile">
               <ProfileTab />
+            </TabsContent>
+
+            <TabsContent value="sessions">
+              <SessionsTab />
             </TabsContent>
 
             <TabsContent value="availability">
