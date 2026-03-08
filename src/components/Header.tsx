@@ -197,12 +197,12 @@ const Header = () => {
                   <>
                     <Button variant="primary" size="sm" asChild>
                       <Link to={addLocalePrefix('/psychologists', locale)} onClick={() => setIsMobileMenuOpen(false)}>
-                        Find Psychologist
+                        {t('nav.findPsychologist')}
                       </Link>
                     </Button>
                     <Button variant="secondary" size="sm" asChild>
                       <Link to={addLocalePrefix('/auth', locale)} onClick={() => setIsMobileMenuOpen(false)}>
-                        Sign Up
+                        {t('nav.signUp')}
                       </Link>
                     </Button>
                   </>

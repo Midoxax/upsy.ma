@@ -109,7 +109,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="mt-6 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <p className="text-u-gray-300 text-xs text-center">
-            © {new Date().getFullYear()} U.Psy by Mehdi Felji. All rights reserved.
+            © {new Date().getFullYear()} U.Psy by Mehdi Felji. {t('header.copyright')}
           </p>
         </div>
       </div>

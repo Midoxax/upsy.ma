@@ -14,20 +14,20 @@ const HeroSection = () => {
           {/* Left Column */}
           <div className="text-center lg:text-left pt-10">
             <h1 className="text-display mb-6 leading-tight">
-              Your Personal<br />
-              <span className="text-u-gold">Psychologist</span>
+              {t('hero.title')}<br />
+              <span className="text-u-gold">{t('hero.titleHighlight')}</span>
             </h1>
 
             <p className="text-body text-u-gray-200 mb-8 max-w-xl font-normal">
-              A modern mental-health platform combining clinical care, education, performance psychology, and digital wellbeing tools.
+              {t('hero.subtitle')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-16">
               <Button variant="primary" size="hero" asChild>
-                <Link to="/psychologists">Find a Psychologist</Link>
+                <Link to="/psychologists">{t('hero.findPsychologist')}</Link>
               </Button>
               <Button variant="secondary" size="hero" asChild>
-                <Link to="/services">Explore Programs</Link>
+                <Link to="/services">{t('hero.explorePrograms')}</Link>
               </Button>
             </div>
 
@@ -35,9 +35,9 @@ const HeroSection = () => {
             <div className="mt-12 pt-8" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
                 {[
-                  { icon: Shield, label: "Licensed Psychologists" },
-                  { icon: Video, label: "Secure Telehealth" },
-                  { icon: FlaskConical, label: "Evidence-Based Care" },
+                  { icon: Shield, label: t('hero.licensedPsychologists') },
+                  { icon: Video, label: t('hero.secureTelehealth') },
+                  { icon: FlaskConical, label: t('hero.evidenceBasedCare') },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2">
                     <item.icon className="w-4 h-4 text-u-gold" />
