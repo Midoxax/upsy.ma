@@ -29,6 +29,9 @@ const SelfAssessmentSection = () => {
                 style={{ background: 'rgba(255,179,0,0.1)', border: '2px solid rgba(255,179,0,0.3)' }}>
                 <BarChart3 className="w-8 h-8 text-u-gold" />
               </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 mb-4">
+                <Clock className="w-3 h-3" /> Takes only 2 minutes
+              </span>
               <h2 className="text-h2 mb-4">Check Your Mental Health</h2>
               <p className="text-body text-u-gray-300 max-w-xl mx-auto mb-8">
                 Take a quick self-assessment to understand your needs. Results will recommend resources or connect you with the right psychologist.
