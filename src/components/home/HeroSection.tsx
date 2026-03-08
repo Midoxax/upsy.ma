@@ -2,10 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-
-const NeuralSphere = lazy(() => import("@/components/3d/NeuralSphere"));
+import mehdiPhoto from "@/assets/mehdi-felji.png";
 
 const HeroSection = () => {
   const { t } = useLocale();
