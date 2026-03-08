@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { usePsychologistProfile } from "@/hooks/usePsychologistProfile";
 import MatchingFormModal from "@/components/matching/MatchingFormModal";
 import { BookingWidget } from "@/components/psychologists/BookingWidget";
+import BookingModal from "@/components/psychologists/BookingModal";
 import { PoliciesDrawer } from "@/components/psychologists/PoliciesDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
