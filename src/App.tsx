@@ -37,6 +37,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
+import BrandGuidelines from "./pages/BrandGuidelines";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -90,6 +91,7 @@ const AnimatedRoutes = () => {
           <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
           <Route path="/session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
+          <Route path="/brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
           
           {/* FR routes */}
           <Route path="/fr" element={<PageTransition><Index /></PageTransition>} />
