@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { stripLocalePrefix } from "@/lib/i18n/utils";
@@ -88,8 +89,8 @@ const AnimatedRoutes = () => {
           <Route path="/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
           <Route path="/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><PageTransition><AdminDashboard /></PageTransition></AdminRoute>} />
+          <Route path="/admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
           <Route path="/session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
           <Route path="/brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
           
@@ -113,8 +114,8 @@ const AnimatedRoutes = () => {
           <Route path="/fr/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
           <Route path="/fr/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/fr/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
-          <Route path="/fr/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/fr/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          <Route path="/fr/admin" element={<AdminRoute><PageTransition><AdminDashboard /></PageTransition></AdminRoute>} />
+          <Route path="/fr/admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
           
           {/* AR routes */}
           <Route path="/ar" element={<PageTransition><Index /></PageTransition>} />
@@ -136,8 +137,8 @@ const AnimatedRoutes = () => {
           <Route path="/ar/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
           <Route path="/ar/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/ar/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
-          <Route path="/ar/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/ar/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          <Route path="/ar/admin" element={<AdminRoute><PageTransition><AdminDashboard /></PageTransition></AdminRoute>} />
+          <Route path="/ar/admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
           
           <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
         </Routes>
