@@ -114,6 +114,8 @@ const Contact = () => {
                       />
                     </div>
                     
+                    <DataPrivacyNotice />
+
                     <Button type="submit" size="lg" className="w-full hover-glow" disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>
