@@ -9,11 +9,12 @@ import ScrollReveal from "@/components/ScrollReveal";
 import MaroonDivider from "@/components/ui/maroon-divider";
 import {
   Heart, Brain, Calendar, TrendingUp, Smile, Frown, Meh,
-  BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun,
+  BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun, Award,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
+import CertificatesTab from "@/components/dashboard/CertificatesTab";
 
 interface MoodEntry {
   id: string;
