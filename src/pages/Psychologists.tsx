@@ -54,9 +54,12 @@ const Psychologists = () => {
   const activeFilterCount = [
     filters.specialties.length > 0,
     filters.languages.length > 0,
+    filters.therapyApproaches.length > 0,
     filters.city !== "",
     filters.online,
     filters.inPerson,
+    filters.gender !== "",
+    filters.availability !== "",
     filters.minPrice > 0 || filters.maxPrice < 2000,
   ].filter(Boolean).length;
 
