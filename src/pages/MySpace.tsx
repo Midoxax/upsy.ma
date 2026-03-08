@@ -41,10 +41,14 @@ const MySpace = () => {
       <section className="section-spacing">
         <div className="container-custom">
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
               <TabsTrigger value="profile" className="gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
+              </TabsTrigger>
+              <TabsTrigger value="sessions" className="gap-2">
+                <Video className="h-4 w-4" />
+                <span className="hidden sm:inline">Sessions</span>
               </TabsTrigger>
               <TabsTrigger value="availability" className="gap-2">
                 <Calendar className="h-4 w-4" />
