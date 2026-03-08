@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { BarChart3, Brain, Flame, HeartPulse } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import { lazy, Suspense } from "react";
+
+const MoodSpheres = lazy(() => import("@/components/3d/MoodSpheres"));
 
 const assessments = [
   { icon: HeartPulse, label: "Anxiety Screening", color: "hsl(348, 82%, 26%)" },
