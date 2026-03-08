@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, SlidersHorizontal } from "lucide-react";
 
 interface PsychologistFiltersProps {
   filters: FilterState;
@@ -44,10 +44,13 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
   };
 
   return (
-    <div className="bg-surface rounded-lg p-6 space-y-6">
+    <div className="glass-card p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-h3 font-semibold">Filters</h3>
-        <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="w-5 h-5 text-u-gold" />
+          <h3 className="text-lg font-semibold text-u-white">Filters</h3>
+        </div>
+        <Button variant="ghost" size="sm" onClick={handleReset} className="text-u-gray-400 hover:text-u-white">
           <X className="h-4 w-4 mr-1" />
           Reset
         </Button>
@@ -55,47 +58,40 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
 
       {/* City Filter */}
       <div className="space-y-2">
-        <Label htmlFor="city">City</Label>
+        <Label htmlFor="city" className="text-u-gray-200">City</Label>
         <Input
           id="city"
           placeholder="Search by city..."
           value={filters.city}
           onChange={(e) => onFiltersChange({ ...filters, city: e.target.value })}
-          className="bg-background"
           aria-label="Filter psychologists by city"
         />
       </div>
 
-      {/* Online/In-Person Filters */}
+      {/* Online/In-Person */}
       <div className="space-y-3" role="group" aria-label="Session type filters">
-        <Label>Session Type</Label>
+        <Label className="text-u-gray-200">Session Type</Label>
         <div className="flex items-center justify-between">
-          <Label htmlFor="online" className="text-sm font-normal">
-            Online Sessions
-          </Label>
+          <Label htmlFor="online" className="text-sm font-normal text-u-gray-300">Online Sessions</Label>
           <Switch
             id="online"
             checked={filters.online}
             onCheckedChange={(checked) => onFiltersChange({ ...filters, online: checked })}
-            aria-label="Filter for online sessions"
           />
         </div>
         <div className="flex items-center justify-between">
-          <Label htmlFor="inPerson" className="text-sm font-normal">
-            In-Person Sessions
-          </Label>
+          <Label htmlFor="inPerson" className="text-sm font-normal text-u-gray-300">In-Person Sessions</Label>
           <Switch
             id="inPerson"
             checked={filters.inPerson}
             onCheckedChange={(checked) => onFiltersChange({ ...filters, inPerson: checked })}
-            aria-label="Filter for in-person sessions"
           />
         </div>
       </div>
 
-      {/* Price Range Filter */}
+      {/* Price Range */}
       <div className="space-y-3" role="group" aria-label="Price range filter">
-        <Label>Price Range (MAD/hour)</Label>
+        <Label className="text-u-gray-200">Price Range (MAD/hour)</Label>
         <div className="px-2">
           <Slider
             min={0}
@@ -106,30 +102,28 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
               onFiltersChange({ ...filters, minPrice: min, maxPrice: max })
             }
             className="w-full"
-            aria-label={`Price range from ${filters.minPrice} to ${filters.maxPrice} MAD per hour`}
           />
         </div>
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span aria-label="Minimum price">{filters.minPrice} MAD</span>
-          <span aria-label="Maximum price">{filters.maxPrice} MAD</span>
+        <div className="flex items-center justify-between text-sm text-u-gray-400">
+          <span>{filters.minPrice} MAD</span>
+          <span>{filters.maxPrice} MAD</span>
         </div>
       </div>
 
-      {/* Specialties Filter */}
+      {/* Specialties */}
       <div className="space-y-3" role="group" aria-label="Specialty filters">
-        <Label>Specialties</Label>
-        <div className="space-y-2 max-h-48 overflow-y-auto">
+        <Label className="text-u-gray-200">Specialties</Label>
+        <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
           {specialties.map((specialty) => (
             <div key={specialty.id} className="flex items-center space-x-2">
               <Checkbox
                 id={`specialty-${specialty.id}`}
                 checked={filters.specialties.includes(specialty.id)}
                 onCheckedChange={() => handleSpecialtyToggle(specialty.id)}
-                aria-label={`Filter by ${specialty.name}`}
               />
               <label
                 htmlFor={`specialty-${specialty.id}`}
-                className="text-sm cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm text-u-gray-300 cursor-pointer leading-none"
               >
                 {specialty.name}
               </label>
@@ -138,9 +132,9 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
         </div>
       </div>
 
-      {/* Languages Filter */}
+      {/* Languages */}
       <div className="space-y-3" role="group" aria-label="Language filters">
-        <Label>Languages</Label>
+        <Label className="text-u-gray-200">Languages</Label>
         <div className="space-y-2">
           {languages.map((language) => (
             <div key={language.id} className="flex items-center space-x-2">
@@ -148,11 +142,10 @@ export const PsychologistFilters = ({ filters, onFiltersChange }: PsychologistFi
                 id={`language-${language.id}`}
                 checked={filters.languages.includes(language.id)}
                 onCheckedChange={() => handleLanguageToggle(language.id)}
-                aria-label={`Filter by ${language.name}`}
               />
               <label
                 htmlFor={`language-${language.id}`}
-                className="text-sm cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm text-u-gray-300 cursor-pointer leading-none"
               >
                 {language.name}
               </label>
