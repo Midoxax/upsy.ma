@@ -44,6 +44,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="matching">Matching Requests</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="translations">Translations</TabsTrigger>
+          </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
             <AdminStats />
