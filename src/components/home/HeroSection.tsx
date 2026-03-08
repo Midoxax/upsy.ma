@@ -23,11 +23,11 @@ const HeroSection = () => {
           >
             <h1 className="text-display mb-6 leading-tight">
               {t('hero.title')}<br />
-              <span className="text-u-gold">{t('hero.titleHighlight')}</span>
+              <span className="text-primary">{t('hero.titleHighlight')}</span>
             </h1>
 
             <motion.p
-              className="text-body text-u-gray-200 mb-8 max-w-xl font-normal"
+              className="text-body text-muted-foreground mb-8 max-w-xl font-normal"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}

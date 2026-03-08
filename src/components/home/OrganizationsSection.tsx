@@ -17,7 +17,7 @@ const OrganizationsSection = () => {
         <ScrollReveal>
           <div className="text-center mb-12">
             <h2 className="text-h2 mb-4">Mental Health for Organizations</h2>
-            <p className="text-body text-u-gray-300">Tailored solutions for teams, institutions, and sports organizations.</p>
+            <p className="text-body text-muted-foreground">Tailored solutions for teams, institutions, and sports organizations.</p>
           </div>
         </ScrollReveal>
 
@@ -26,12 +26,11 @@ const OrganizationsSection = () => {
             {services.map((service) => (
               <StaggerItem key={service.title}>
                 <div className="glass-card p-7 h-full text-center">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-                    style={{ background: 'rgba(122,12,32,0.15)', border: '2px solid rgba(122,12,32,0.4)' }}>
-                    <service.icon className="w-7 h-7 text-u-burgundy" />
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5 bg-secondary/10 border-2 border-secondary/25">
+                    <service.icon className="w-7 h-7 text-secondary" />
                   </div>
                   <h3 className="text-h3 mb-2 text-lg">{service.title}</h3>
-                  <p className="text-sm text-u-gray-300 leading-relaxed">{service.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
                 </div>
               </StaggerItem>
             ))}
