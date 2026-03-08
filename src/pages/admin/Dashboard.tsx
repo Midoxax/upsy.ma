@@ -43,7 +43,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="directory">Psychologist Directory</TabsTrigger>
             <TabsTrigger value="matching">Matching Requests</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
-          </TabsList>
+            <TabsTrigger value="translations">Translations</TabsTrigger>
 
           <TabsContent value="overview" className="space-y-4">
             <AdminStats />
