@@ -57,9 +57,11 @@ const HeroSection = () => {
           >
             <div className="w-full max-w-md">
               <div className="aspect-square rounded-u-lg overflow-hidden">
-                <Suspense fallback={<div className="w-full h-full bg-muted/20 rounded-u-lg animate-pulse" />}>
-                  <NeuralSphere />
-                </Suspense>
+                <img
+                  src={mehdiPhoto}
+                  alt="Mehdi Felji"
+                  className="w-full h-full object-cover rounded-u-lg"
+                />
               </div>
             </div>
           </motion.div>
