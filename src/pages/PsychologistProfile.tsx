@@ -368,35 +368,7 @@ const PsychologistProfile = () => {
             </ScrollReveal>
 
             {/* Reviews */}
-            <ScrollReveal>
-              <div className="glass-card p-7">
-                <h2 className="text-h3 mb-6 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-u-gold" />
-                  Client Reviews
-                </h2>
-                <div className="space-y-6">
-                  {mockReviews.map((review, i) => (
-                    <div key={i} className="pb-6" style={{ borderBottom: i < mockReviews.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-u-gold"
-                            style={{ background: 'rgba(255,179,0,0.1)', border: '1px solid rgba(255,179,0,0.2)' }}>
-                            {review.name}
-                          </div>
-                          <div className="flex">
-                            {[...Array(review.rating)].map((_, j) => (
-                              <Star key={j} className="w-3.5 h-3.5 fill-u-gold text-u-gold" />
-                            ))}
-                          </div>
-                        </div>
-                        <span className="text-xs text-u-gray-400">{review.date}</span>
-                      </div>
-                      <p className="text-sm text-u-gray-300 leading-relaxed">{review.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </ScrollReveal>
+            <ReviewsList psychologistId={psychologist.id} />
 
             {/* Booking CTA */}
             <ScrollReveal>
