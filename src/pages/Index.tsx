@@ -29,6 +29,7 @@ const sections: ComponentType[] = [
   LearningSection,
   OrganizationsSection,
   ResearchSection,
+  PsfSection,
   CommunitySection,
   TestimonialsSection,
   FinalCTASection,
