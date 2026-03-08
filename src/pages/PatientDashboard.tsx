@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
 
 interface MoodEntry {
   id: string;
