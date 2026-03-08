@@ -24,6 +24,7 @@ const PsychologistProfile = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([]);
   const [languages, setLanguages] = useState<{ id: string; name: string }[]>([]);
+  const [reviewStats, setReviewStats] = useState({ count: 0, avg: 0 });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +37,21 @@ const PsychologistProfile = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!psychologist) return;
+    const fetchStats = async () => {
+      const { data } = await supabase
+        .from("reviews")
+        .select("rating")
+        .eq("psychologist_id", psychologist.id);
+      if (data && data.length > 0) {
+        const avg = data.reduce((s, r) => s + r.rating, 0) / data.length;
+        setReviewStats({ count: data.length, avg: Math.round(avg * 10) / 10 });
+      }
+    };
+    fetchStats();
+  }, [psychologist]);
 
   if (isLoading) {
     return (
@@ -70,23 +86,6 @@ const PsychologistProfile = () => {
   const yearsExperience = psychologist.created_at
     ? Math.max(1, new Date().getFullYear() - new Date(psychologist.created_at).getFullYear())
     : 5;
-
-  // Fetch review stats
-  const [reviewStats, setReviewStats] = useState({ count: 0, avg: 0 });
-  useEffect(() => {
-    if (!psychologist) return;
-    const fetchStats = async () => {
-      const { data } = await supabase
-        .from("reviews")
-        .select("rating")
-        .eq("psychologist_id", psychologist.id);
-      if (data && data.length > 0) {
-        const avg = data.reduce((s, r) => s + r.rating, 0) / data.length;
-        setReviewStats({ count: data.length, avg: Math.round(avg * 10) / 10 });
-      }
-    };
-    fetchStats();
-  }, [psychologist]);
 
   return (
     <div className="min-h-screen pb-24 lg:pb-8">
