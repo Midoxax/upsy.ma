@@ -119,22 +119,24 @@ const AnimatedRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <LocaleProvider>
-            <ErrorBoundary>
-              <div className="min-h-screen flex flex-col bg-background">
-                <Header />
-                <BreadcrumbWrapper />
-                <AnimatedRoutes />
-                <Footer />
-              </div>
-            </ErrorBoundary>
-          </LocaleProvider>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <LocaleProvider>
+              <ErrorBoundary>
+                <div className="min-h-screen flex flex-col bg-background">
+                  <Header />
+                  <BreadcrumbWrapper />
+                  <AnimatedRoutes />
+                  <Footer />
+                </div>
+              </ErrorBoundary>
+            </LocaleProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
