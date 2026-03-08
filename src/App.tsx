@@ -89,8 +89,8 @@ const AnimatedRoutes = () => {
           <Route path="/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
           <Route path="/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><PageTransition><AdminDashboard /></PageTransition></AdminRoute>} />
+          <Route path="/admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
           <Route path="/session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
           <Route path="/brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
           
