@@ -16,10 +16,10 @@ const Header = () => {
 
   // Nav structure: Home | Programs ▼ | Learning | Research | About ▼
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Find a Psychologist", href: "/psychologists" },
+    { name: t('nav.home'), href: "/" },
+    { name: t('nav.findPsychologist'), href: "/psychologists" },
     { 
-      name: "Programs",
+      name: t('nav.programs'),
       href: "/services",
       dropdown: [
         { name: t('nav.individualServices'), href: "/services" },
@@ -27,9 +27,9 @@ const Header = () => {
         { name: t('nav.getMatched'), href: "/get-matched" },
       ],
     },
-    { name: "Learning", href: "/resources" },
-    { name: "Organizations", href: "/services/consulting-for-organizations" },
-    { name: "Research", href: "/talent-innovation-hub" },
+    { name: t('nav.learning'), href: "/resources" },
+    { name: t('nav.organizations'), href: "/services/consulting-for-organizations" },
+    { name: t('nav.research'), href: "/talent-innovation-hub" },
     {
       name: t('nav.about'),
       href: "/about",
@@ -39,7 +39,7 @@ const Header = () => {
         { name: t('nav.applyAccreditation'), href: "/apply" },
       ],
     },
-    { name: "Blog", href: "/resources" },
+    { name: t('nav.blog'), href: "/resources" },
   ];
 
   const isActive = (href: string) => {
