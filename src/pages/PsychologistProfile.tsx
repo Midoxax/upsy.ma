@@ -20,6 +20,7 @@ const PsychologistProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: psychologist, isLoading, error } = usePsychologistProfile(id!);
   const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([]);
   const [languages, setLanguages] = useState<{ id: string; name: string }[]>([]);
 
