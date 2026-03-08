@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { format, addDays, startOfDay, isSameDay } from "date-fns";
 import { Link } from "react-router-dom";
+import DataPrivacyNotice from "@/components/DataPrivacyNotice";
 
 interface AvailabilitySlot {
   id: string;
@@ -388,6 +389,8 @@ const BookingModal = ({
           </Button>
         </div>
       )}
+
+      <DataPrivacyNotice />
 
       <div className="flex justify-between pt-2">
         <Button variant="ghost" onClick={() => setStep("time")}>

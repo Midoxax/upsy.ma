@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DataPrivacyNotice from "@/components/DataPrivacyNotice";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -326,6 +327,8 @@ const MatchingFormModal = ({ open, onClose, specialties, languages }: MatchingFo
                 </FormItem>
               )}
             />
+
+            <DataPrivacyNotice />
 
             <div className="flex gap-3 justify-end">
               <Button type="button" variant="outline" onClick={handleClose}>

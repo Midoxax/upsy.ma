@@ -12,6 +12,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { translations } from "@/lib/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import DataPrivacyNotice from "@/components/DataPrivacyNotice";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -114,6 +115,8 @@ const Contact = () => {
                       />
                     </div>
                     
+                    <DataPrivacyNotice />
+
                     <Button type="submit" size="lg" className="w-full hover-glow" disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>

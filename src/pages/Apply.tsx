@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import DataPrivacyNotice from "@/components/DataPrivacyNotice";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -162,6 +163,8 @@ const Apply = () => {
                     </FormItem>
                   )}
                 />
+
+                <DataPrivacyNotice />
 
                 <div className="flex gap-4">
                   <Button type="button" variant="outline" onClick={() => navigate("/")} className="flex-1">
