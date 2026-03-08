@@ -17,6 +17,12 @@ const SelfAssessmentSection = () => {
     <section className="section-spacing liquid-bg">
       <div className="container-custom">
         <div className="glass-card p-10 md:p-14 max-w-4xl mx-auto">
+          {/* Mood Tracker Spheres */}
+          <Suspense fallback={null}>
+            <div className="h-48 md:h-56 mb-6 -mt-2">
+              <MoodSpheres />
+            </div>
+          </Suspense>
           <ScrollReveal>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
