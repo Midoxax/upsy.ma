@@ -6,13 +6,15 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   <div
     ref={ref}
     className={cn(
-      "rounded-u-lg shadow-glass transition-all duration-200",
+      "shadow-glass transition-all duration-200",
       "hover:translate-y-[-6px] hover:shadow-glass-hover",
       className
     )}
     style={{
       background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
       border: '1px solid rgba(255,255,255,0.08)',
+      borderRadius: '20px',
+      padding: '28px',
     }}
     {...props}
   />
@@ -21,7 +23,7 @@ Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-7", className)} {...props} />
+    <div ref={ref} className={cn("flex flex-col space-y-1.5 pb-4", className)} {...props} />
   ),
 );
 CardHeader.displayName = "CardHeader";
@@ -41,13 +43,13 @@ const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttribu
 CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-7 pt-0", className)} {...props} />,
+  ({ className, ...props }, ref) => <div ref={ref} className={cn("pt-0", className)} {...props} />,
 );
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center p-7 pt-0", className)} {...props} />
+    <div ref={ref} className={cn("flex items-center pt-4", className)} {...props} />
   ),
 );
 CardFooter.displayName = "CardFooter";
