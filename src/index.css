@@ -34,26 +34,31 @@
     --gray-700: 0 0% 14%;
     --gray-800: 0 0% 11%;
 
+    /* ── Light Theme Palette (Blue · Purple · Royal Green) ── */
+    --light-blue: 220 72% 50%;       /* #2563EB */
+    --light-purple: 262 60% 50%;     /* #7C3AED */
+    --light-green: 160 60% 32%;      /* #217A5B */
+
     /* ── Light Semantic Tokens ── */
-    --background: 220 20% 97%;
-    --foreground: 0 0% 10%;
+    --background: 225 25% 97%;
+    --foreground: 224 30% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 224 30% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: var(--gold-accent);
-    --primary-foreground: var(--black);
-    --secondary: var(--burgundy);
+    --popover-foreground: 224 30% 12%;
+    --primary: var(--light-blue);
+    --primary-foreground: var(--white);
+    --secondary: var(--light-purple);
     --secondary-foreground: var(--white);
-    --muted: 220 14% 93%;
-    --muted-foreground: 0 0% 40%;
-    --accent: var(--burgundy);
+    --muted: 225 20% 93%;
+    --muted-foreground: 224 10% 42%;
+    --accent: var(--light-green);
     --accent-foreground: var(--white);
     --destructive: 0 84% 60%;
     --destructive-foreground: var(--white);
-    --border: 220 13% 88%;
-    --input: 220 14% 93%;
-    --ring: var(--gold-accent);
+    --border: 225 18% 88%;
+    --input: 225 18% 93%;
+    --ring: var(--light-blue);
 
     /* ── Layout Tokens ── */
     --radius-btn: 14px;
@@ -78,25 +83,26 @@
     --text-small: 14px;
 
     /* ── Light Liquid-Glass Tokens ── */
-    --glass-bg: rgba(255,255,255,0.7);
-    --glass-border-color: rgba(0,0,0,0.06);
-    --glass-shadow: 0 12px 30px rgba(0,0,0,0.08);
-    --glass-shadow-hover: 0 20px 50px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,179,0,0.15);
+    --glass-bg: rgba(255,255,255,0.72);
+    --glass-border-color: rgba(37,99,235,0.08);
+    --glass-shadow: 0 12px 30px rgba(37,99,235,0.06);
+    --glass-shadow-hover: 0 20px 50px rgba(37,99,235,0.1), 0 0 0 1px rgba(124,58,237,0.12);
 
     /* ── Light Atmosphere ── */
     --liquid-atmosphere:
-      radial-gradient(circle at 25% 30%, rgba(163,38,58,0.06), transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(122,12,32,0.08), transparent 45%),
+      radial-gradient(circle at 20% 25%, rgba(37,99,235,0.06), transparent 40%),
+      radial-gradient(circle at 75% 70%, rgba(124,58,237,0.06), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(33,122,91,0.04), transparent 40%),
       hsl(var(--background));
 
     /* ── Gradient Tokens ── */
     --gradient-gold: linear-gradient(135deg, hsl(var(--gold-accent)), hsl(var(--gold-highlight)));
     --gradient-burgundy: linear-gradient(135deg, hsl(var(--burgundy)), hsl(var(--crimson)));
-    --gradient-divider: linear-gradient(90deg, transparent 0%, hsl(var(--burgundy) / 0.5) 50%, transparent 100%);
+    --gradient-divider: linear-gradient(90deg, transparent 0%, hsl(var(--light-purple) / 0.4) 50%, transparent 100%);
 
     /* ── Shadows ── */
-    --shadow-soft: 0 4px 20px rgba(0,0,0,0.06);
-    --shadow-gold: 0 0 24px rgba(255,179,0,0.15);
+    --shadow-soft: 0 4px 20px rgba(37,99,235,0.06);
+    --shadow-gold: 0 0 24px rgba(124,58,237,0.12);
 
     /* ── Motion Tokens ── */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
