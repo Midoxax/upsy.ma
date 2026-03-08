@@ -4,7 +4,7 @@ export const translations = {
       home: "Home",
       services: "Services",
       forOrganizations: "For Organizations",
-      findPsychologist: "Find Psychologist",
+      findPsychologist: "Find a Psychologist",
       getMatched: "Get Matched",
       accreditation: "Accreditation",
       innovationHub: "Innovation Hub",
