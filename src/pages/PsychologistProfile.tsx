@@ -71,12 +71,22 @@ const PsychologistProfile = () => {
     ? Math.max(1, new Date().getFullYear() - new Date(psychologist.created_at).getFullYear())
     : 5;
 
-  // Mock reviews — would come from a reviews table in production
-  const mockReviews = [
-    { name: "A.M.", rating: 5, text: "Very professional and understanding. Helped me work through my anxiety with practical tools.", date: "2 weeks ago" },
-    { name: "K.B.", rating: 5, text: "Excellent listener. The sessions were well-structured and I felt real progress after just a few weeks.", date: "1 month ago" },
-    { name: "S.T.", rating: 4, text: "Knowledgeable and empathetic. Would recommend to anyone seeking support.", date: "2 months ago" },
-  ];
+  // Fetch review stats
+  const [reviewStats, setReviewStats] = useState({ count: 0, avg: 0 });
+  useEffect(() => {
+    if (!psychologist) return;
+    const fetchStats = async () => {
+      const { data } = await supabase
+        .from("reviews")
+        .select("rating")
+        .eq("psychologist_id", psychologist.id);
+      if (data && data.length > 0) {
+        const avg = data.reduce((s, r) => s + r.rating, 0) / data.length;
+        setReviewStats({ count: data.length, avg: Math.round(avg * 10) / 10 });
+      }
+    };
+    fetchStats();
+  }, [psychologist]);
 
   return (
     <div className="min-h-screen pb-24 lg:pb-8">
