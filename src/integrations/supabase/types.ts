@@ -968,6 +968,56 @@ export type Database = {
           },
         ]
       }
+      sessions: {
+        Row: {
+          client_id: string
+          created_at: string | null
+          date_time: string
+          duration_minutes: number
+          id: string
+          notes: string | null
+          psychologist_id: string
+          session_type: string
+          status: string
+          updated_at: string | null
+          video_room_id: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string | null
+          date_time: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          psychologist_id: string
+          session_type?: string
+          status?: string
+          updated_at?: string | null
+          video_room_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string | null
+          date_time?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          psychologist_id?: string
+          session_type?: string
+          status?: string
+          updated_at?: string | null
+          video_room_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       specialties: {
         Row: {
           created_at: string | null
