@@ -1,27 +1,23 @@
+const SUPPORTED_LOCALES = ['fr', 'ar'] as const;
+
 export const getLocaleFromPath = (pathname: string): 'en' | 'fr' | 'ar' => {
-  if (pathname.startsWith('/fr')) return 'fr';
-  if (pathname.startsWith('/ar')) return 'ar';
+  // Match /fr, /fr/, /fr/anything or /ar, /ar/, /ar/anything
+  const match = pathname.match(/^\/(fr|ar)(?:\/|$)/);
+  if (match) return match[1] as 'fr' | 'ar';
   return 'en';
 };
 
 export const stripLocalePrefix = (pathname: string): string => {
-  if (pathname.startsWith('/fr')) {
-    return pathname.slice(3) || '/';
-  }
-  if (pathname.startsWith('/ar')) {
-    return pathname.slice(3) || '/';
-  }
+  const match = pathname.match(/^\/(fr|ar)(\/.*)?$/);
+  if (match) return match[2] || '/';
   return pathname;
 };
 
 export const addLocalePrefix = (pathname: string, locale: 'en' | 'fr' | 'ar'): string => {
-  if (locale === 'fr') {
-    return '/fr' + pathname;
-  }
-  if (locale === 'ar') {
-    return '/ar' + pathname;
-  }
-  return pathname;
+  // Ensure pathname starts with /
+  const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  if (locale === 'en') return path;
+  return `/${locale}${path === '/' ? '' : path}`;
 };
 
 export const getCookie = (name: string): string | null => {
