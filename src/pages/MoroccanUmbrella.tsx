@@ -1,6 +1,6 @@
 import ScrollReveal from "@/components/ScrollReveal";
 import { useLocale } from "@/contexts/LocaleContext";
-import umbrellaLogo from "@/assets/moroccan-umbrella-logo.png";
+import umbrellaLogo from "@/assets/umbrella-logo.png";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Users, Award, Heart, Globe } from "lucide-react";
