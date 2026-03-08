@@ -9,28 +9,28 @@ const Footer = () => {
 
   const columns = [
     {
-      title: "Platform",
+      title: t('header.platform'),
       links: [
-        { name: "Programs", href: "/services" },
-        { name: "Learning", href: "/resources" },
-        { name: "Research", href: "/talent-innovation-hub" },
-        { name: "Find Psychologist", href: "/psychologists" },
+        { name: t('nav.programs'), href: "/services" },
+        { name: t('nav.learning'), href: "/resources" },
+        { name: t('nav.research'), href: "/talent-innovation-hub" },
+        { name: t('nav.findPsychologist'), href: "/psychologists" },
       ],
     },
     {
-      title: "Resources",
+      title: t('header.resources'),
       links: [
-        { name: "Blog", href: "/resources" },
-        { name: "Self-Assessment", href: "/get-matched" },
+        { name: t('nav.blog'), href: "/resources" },
+        { name: t('header.selfAssessment'), href: "/get-matched" },
         { name: t('nav.contact'), href: "/contact" },
       ],
     },
     {
-      title: "Legal",
+      title: t('header.legal'),
       links: [
-        { name: "Privacy & Terms", href: "/legal" },
-        { name: "Ethics", href: "/legal" },
-        { name: "Telehealth Security", href: "/legal" },
+        { name: t('header.privacyTerms'), href: "/legal" },
+        { name: t('header.ethics'), href: "/legal" },
+        { name: t('header.telehealthSecurity'), href: "/legal" },
       ],
     },
   ];
