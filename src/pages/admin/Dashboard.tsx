@@ -8,6 +8,7 @@ import PsychologistDirectory from "@/components/admin/PsychologistDirectory";
 import MatchingRequestsManager from "@/components/admin/MatchingRequestsManager";
 import SubscriptionsOverview from "@/components/admin/SubscriptionsOverview";
 import AdminStats from "@/components/admin/AdminStats";
+import TranslationManager from "@/components/admin/TranslationManager";
 import { useApplications } from "@/hooks/useApplications";
 
 const AdminDashboard = () => {
