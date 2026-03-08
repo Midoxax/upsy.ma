@@ -72,6 +72,10 @@ const MySpace = () => {
               <ProfileTab />
             </TabsContent>
 
+            <TabsContent value="sessions">
+              <SessionsTab />
+            </TabsContent>
+
             <TabsContent value="availability">
               <AvailabilityTab />
             </TabsContent>
