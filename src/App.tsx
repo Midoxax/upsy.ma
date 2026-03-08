@@ -11,6 +11,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { stripLocalePrefix } from "@/lib/i18n/utils";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -118,22 +119,24 @@ const AnimatedRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <LocaleProvider>
-            <ErrorBoundary>
-              <div className="min-h-screen flex flex-col bg-background">
-                <Header />
-                <BreadcrumbWrapper />
-                <AnimatedRoutes />
-                <Footer />
-              </div>
-            </ErrorBoundary>
-          </LocaleProvider>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <LocaleProvider>
+              <ErrorBoundary>
+                <div className="min-h-screen flex flex-col bg-background">
+                  <Header />
+                  <BreadcrumbWrapper />
+                  <AnimatedRoutes />
+                  <Footer />
+                </div>
+              </ErrorBoundary>
+            </LocaleProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

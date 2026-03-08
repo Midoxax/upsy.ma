@@ -7,6 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
 import logo from "@/assets/logo.webp";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -51,11 +52,7 @@ const Header = () => {
 
   return (
     <header 
-      className="sticky top-0 z-50 border-b transition-colors"
-      style={{
-        background: 'rgba(26,26,26,0.85)',
-        borderBottomColor: 'rgba(255,255,255,0.06)',
-      }}
+      className="sticky top-0 z-50 border-b transition-colors bg-background/85 backdrop-blur-sm border-border/30"
     >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
@@ -113,6 +110,7 @@ const Header = () => {
 
           {/* Desktop CTAs: Login | Sign Up | Find Psychologist */}
           <div className="hidden lg:flex items-center space-x-3">
+            <ThemeToggle />
             <LanguageSwitcher className="mr-1" />
             {user ? (
               <Button variant="primary" size="sm" asChild>
@@ -151,10 +149,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div 
-            className="lg:hidden py-4"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
-          >
+          <div className="lg:hidden py-4 border-t border-border/30">
             <nav className="flex flex-col space-y-2">
               {navigation.map((item) => (
                 <div key={item.name}>
