@@ -150,8 +150,8 @@ const Header = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div 
-            className="lg:hidden py-4"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            className="lg:hidden py-4 border-t border-border/30"
+          >
           >
             <nav className="flex flex-col space-y-2">
               {navigation.map((item) => (

@@ -445,15 +445,15 @@
 
   /* ── Glass Input ── */
   .glass-input {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: hsl(var(--input) / 0.5);
+    border: 1px solid hsl(var(--border));
     border-radius: var(--radius-input);
     padding: 14px;
-    color: hsl(var(--white));
+    color: hsl(var(--foreground));
     transition: border-color 0.2s ease;
   }
   .glass-input:focus {
-    border-color: rgba(255,179,0,0.4);
+    border-color: hsl(var(--primary) / 0.5);
     outline: none;
   }
 
