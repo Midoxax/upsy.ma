@@ -247,6 +247,9 @@ const PatientDashboard = () => {
             </div>
           </div>
 
+          {/* Upcoming Sessions */}
+          <UpcomingSessionsCard />
+
           {/* Assessments + Courses */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Recent Assessments */}
