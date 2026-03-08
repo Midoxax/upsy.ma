@@ -38,7 +38,7 @@ const FeaturedPsychologistsSection = () => {
         <ScrollReveal>
           <div className="text-center mb-12">
             <h2 className="text-h2 mb-4">Meet Our Psychologists</h2>
-            <p className="text-body text-u-gray-300">Licensed professionals ready to support your journey.</p>
+            <p className="text-body text-muted-foreground">Licensed professionals ready to support your journey.</p>
           </div>
         </ScrollReveal>
 
@@ -47,21 +47,20 @@ const FeaturedPsychologistsSection = () => {
             {displayPsychologists.map((psych: any) => (
               <StaggerItem key={psych.id}>
                 <div className="glass-card p-6 text-center">
-                  <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden"
-                    style={{ background: 'rgba(255,179,0,0.1)', border: '2px solid rgba(255,179,0,0.3)' }}>
+                  <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden bg-primary/10 border-2 border-primary/30">
                     {psych.photo_url ? (
                       <img src={psych.photo_url} alt={psych.full_name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-u-gold text-2xl font-bold">
+                      <div className="w-full h-full flex items-center justify-center text-primary text-2xl font-bold">
                         {psych.full_name?.charAt(0)}
                       </div>
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold text-u-white mb-1">{psych.full_name}</h3>
-                  <p className="text-sm text-u-gold mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-1">{psych.full_name}</h3>
+                  <p className="text-sm text-primary mb-3">
                     {psych.psychologist_specialties?.[0]?.specialties?.name || psych.bio}
                   </p>
-                  <div className="flex items-center justify-center gap-3 text-xs text-u-gray-300 mb-3">
+                  <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mb-3">
                     {psych.city && (
                       <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{psych.city}</span>
                     )}
@@ -77,7 +76,7 @@ const FeaturedPsychologistsSection = () => {
                     ))}
                   </div>
                   {psych.hourly_rate_mad && (
-                    <p className="text-u-gold font-semibold mb-4">{psych.hourly_rate_mad} MAD / session</p>
+                    <p className="text-primary font-semibold mb-4">{psych.hourly_rate_mad} MAD / session</p>
                   )}
                   <Button variant="primary" size="sm" asChild className="w-full">
                     <Link to={`/psychologists/${psych.slug}`}>Book Session</Link>

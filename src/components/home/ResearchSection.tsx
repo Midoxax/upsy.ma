@@ -17,7 +17,7 @@ const ResearchSection = () => {
         <ScrollReveal>
           <div className="text-center mb-12">
             <h2 className="text-h2 mb-4">Mental Health Insights</h2>
-            <p className="text-body text-u-gray-300">Research-backed articles and clinical insights.</p>
+            <p className="text-body text-muted-foreground">Research-backed articles and clinical insights.</p>
           </div>
         </ScrollReveal>
 
@@ -27,12 +27,12 @@ const ResearchSection = () => {
               <StaggerItem key={article.title}>
                 <div className="glass-card p-7 h-full flex flex-col">
                   <div className="flex items-center gap-2 mb-4">
-                    <FileText className="w-5 h-5 text-u-gold" />
-                    <span className="text-xs text-u-gold font-medium">{article.category}</span>
+                    <FileText className="w-5 h-5 text-primary" />
+                    <span className="text-xs text-primary font-medium">{article.category}</span>
                   </div>
-                  <h3 className="font-semibold text-u-white mb-2">{article.title}</h3>
-                  <p className="text-sm text-u-gray-300 leading-relaxed mb-4 flex-1">{article.summary}</p>
-                  <Link to="/talent-innovation-hub" className="inline-flex items-center gap-1 text-sm text-u-gold font-medium hover:gap-2 transition-all">
+                  <h3 className="font-semibold text-foreground mb-2">{article.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">{article.summary}</p>
+                  <Link to="/talent-innovation-hub" className="inline-flex items-center gap-1 text-sm text-primary font-medium hover:gap-2 transition-all">
                     Read more <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
