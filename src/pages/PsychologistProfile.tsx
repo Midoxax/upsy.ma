@@ -7,21 +7,11 @@ import { PoliciesDrawer } from "@/components/psychologists/PoliciesDrawer";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ScrollReveal from "@/components/ScrollReveal";
 import {
-  Award,
-  MapPin,
-  Globe,
-  User,
-  ArrowLeft,
-  DollarSign,
-  Calendar,
-  Shield,
-  Clock,
-  Star,
-  MessageSquare,
-  Briefcase,
-  Languages,
+  Award, MapPin, Globe, User, ArrowLeft,
+  Calendar, Shield, Clock, Star, MessageSquare,
+  Briefcase, Languages,
 } from "lucide-react";
 
 const PsychologistProfile = () => {
@@ -45,19 +35,19 @@ const PsychologistProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-u-gold"></div>
       </div>
     );
   }
 
   if (error || !psychologist) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <User className="w-16 h-16 text-muted-foreground mx-auto opacity-50" />
-          <h2 className="text-h2 font-semibold">Psychologist Not Found</h2>
-          <p className="text-muted-foreground">This profile is not available or has been removed.</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="glass-card p-12 text-center max-w-md">
+          <User className="w-16 h-16 text-u-gray-400 mx-auto mb-4 opacity-50" />
+          <h2 className="text-h2 mb-2">Psychologist Not Found</h2>
+          <p className="text-u-gray-300 mb-6">This profile is not available or has been removed.</p>
           <Button asChild variant="primary">
             <Link to="/psychologists">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -70,21 +60,17 @@ const PsychologistProfile = () => {
   }
 
   const scrollToBooking = () => {
-    const bookingSection = document.getElementById('booking');
-    if (bookingSection) {
-      bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Calculate years of experience (mock - would come from psychologist data)
-  const yearsExperience = psychologist.created_at 
-    ? new Date().getFullYear() - new Date(psychologist.created_at).getFullYear() 
+  const yearsExperience = psychologist.created_at
+    ? new Date().getFullYear() - new Date(psychologist.created_at).getFullYear()
     : 5;
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-8">
+    <div className="min-h-screen pb-24 lg:pb-8">
       {/* Sticky Booking Widget */}
-      <BookingWidget 
+      <BookingWidget
         calendlyUrl={psychologist.calendly_url}
         hourlyRate={psychologist.hourly_rate_mad}
         isAccredited={psychologist.is_accredited}
@@ -92,10 +78,10 @@ const PsychologistProfile = () => {
       />
 
       {/* Hero Section */}
-      <section className="bg-surface border-b border-border">
-        <div className="container-custom py-12">
+      <section className="hero-neural-bg relative py-12">
+        <div className="container-custom relative z-10">
           <div className="mb-6">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="text-u-gray-300 hover:text-u-white">
               <Link to="/psychologists">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Directory
@@ -105,31 +91,26 @@ const PsychologistProfile = () => {
 
           <div className="flex flex-col md:flex-row gap-8 items-start">
             {/* Photo */}
-            <div className="relative">
+            <div className="relative shrink-0">
               {psychologist.photo_url ? (
                 <img
                   src={psychologist.photo_url}
-                  alt={`${psychologist.full_name} - Professional psychologist headshot photo`}
-                  className="w-32 h-32 rounded-full object-cover border-4 border-primary/20"
+                  alt={psychologist.full_name}
+                  className="w-32 h-32 rounded-full object-cover"
+                  style={{ border: '3px solid rgba(255,179,0,0.3)' }}
                   loading="lazy"
-                  decoding="async"
                 />
               ) : (
-                <div 
-                  className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20"
-                  role="img"
-                  aria-label={`${psychologist.full_name} - No photo available`}
+                <div
+                  className="w-32 h-32 rounded-full flex items-center justify-center"
+                  style={{ background: 'rgba(255,179,0,0.1)', border: '3px solid rgba(255,179,0,0.3)' }}
                 >
-                  <User className="w-16 h-16 text-primary" aria-hidden="true" />
+                  <User className="w-16 h-16 text-u-gold" />
                 </div>
               )}
               {psychologist.is_accredited && (
-                <div 
-                  className="absolute -bottom-2 -right-2 bg-primary rounded-full p-3 shadow-glow"
-                  role="img"
-                  aria-label="Accredited by U.Psy"
-                >
-                  <Award className="w-6 h-6 text-background" aria-hidden="true" />
+                <div className="absolute -bottom-2 -right-2 bg-u-burgundy rounded-full p-2.5 shadow-lg">
+                  <Award className="w-5 h-5 text-u-white" />
                 </div>
               )}
             </div>
@@ -137,44 +118,36 @@ const PsychologistProfile = () => {
             {/* Info */}
             <div className="flex-1 space-y-4">
               <div>
-                <h1 className="text-h1 font-bold mb-2">{psychologist.full_name}</h1>
+                <h1 className="text-display mb-2">{psychologist.full_name}</h1>
                 {psychologist.is_accredited && (
-                  <Badge className="bg-primary/20 text-primary border-primary/30">
+                  <Badge className="bg-u-burgundy/20 text-u-burgundy border-u-burgundy/30 hover:bg-u-burgundy/30">
                     <Award className="mr-1 h-3 w-3" />
                     U.Psy Accredited
                   </Badge>
                 )}
               </div>
 
-              <div className="flex flex-wrap gap-4 text-muted-foreground">
+              <div className="flex flex-wrap gap-4 text-u-gray-300">
                 {psychologist.city && (
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-primary" />
+                    <MapPin className="w-4 h-4 text-u-gold" />
                     <span>{psychologist.city}</span>
                   </div>
                 )}
                 {psychologist.languages.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-primary" />
-                    <span>{psychologist.languages.map((lang) => lang.name).join(", ")}</span>
+                    <Globe className="w-4 h-4 text-u-gold" />
+                    <span>{psychologist.languages.map((l) => l.name).join(", ")}</span>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button 
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground" 
-                  size="lg"
-                  onClick={scrollToBooking}
-                >
+                <Button variant="primary" size="lg" onClick={scrollToBooking}>
                   <Calendar className="mr-2 h-4 w-4" />
                   Book Now
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => setIsMatchingModalOpen(true)}
-                >
+                <Button variant="secondary" size="lg" onClick={() => setIsMatchingModalOpen(true)}>
                   Get Matched
                 </Button>
                 <PoliciesDrawer />
@@ -184,163 +157,145 @@ const PsychologistProfile = () => {
         </div>
       </section>
 
-      {/* Trust Seals & Social Proof */}
-      <section className="border-b border-border bg-background">
+      {/* Trust Seals */}
+      <section className="liquid-bg" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="container-custom py-8">
-          {/* Trust Seals */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
             {psychologist.is_accredited && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 border border-secondary/20">
-                <Award className="w-5 h-5 text-secondary" strokeWidth={2} />
-                <span className="text-sm font-semibold text-foreground">U.Psy Accredited</span>
+              <div className="glass-card !p-3 !shadow-none !transform-none hover:!transform-none flex items-center gap-2">
+                <Award className="w-4 h-4 text-u-gold" />
+                <span className="text-sm font-medium text-u-gray-200">U.Psy Accredited</span>
               </div>
             )}
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 border border-secondary/20">
-              <Briefcase className="w-5 h-5 text-secondary" strokeWidth={2} />
-              <span className="text-sm font-semibold text-foreground">{yearsExperience}+ Years Experience</span>
+            <div className="glass-card !p-3 !shadow-none !transform-none hover:!transform-none flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-u-gold" />
+              <span className="text-sm font-medium text-u-gray-200">{yearsExperience}+ Years</span>
             </div>
             {psychologist.languages.length > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 border border-secondary/20">
-                <Languages className="w-5 h-5 text-secondary" strokeWidth={2} />
-                <span className="text-sm font-semibold text-foreground">{psychologist.languages.length} Language{psychologist.languages.length > 1 ? 's' : ''}</span>
+              <div className="glass-card !p-3 !shadow-none !transform-none hover:!transform-none flex items-center gap-2">
+                <Languages className="w-4 h-4 text-u-gold" />
+                <span className="text-sm font-medium text-u-gray-200">{psychologist.languages.length} Language{psychologist.languages.length > 1 ? 's' : ''}</span>
               </div>
             )}
             {psychologist.specialties.length > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 border border-secondary/20">
-                <Shield className="w-5 h-5 text-secondary" strokeWidth={2} />
-                <span className="text-sm font-semibold text-foreground">{psychologist.specialties.length} Specialties</span>
+              <div className="glass-card !p-3 !shadow-none !transform-none hover:!transform-none flex items-center gap-2">
+                <Shield className="w-4 h-4 text-u-gold" />
+                <span className="text-sm font-medium text-u-gray-200">{psychologist.specialties.length} Specialties</span>
               </div>
             )}
           </div>
 
-          {/* Social Proof Strip */}
-          <div className="flex flex-wrap items-center justify-center gap-8 text-center pt-6 border-t border-border">
+          {/* Social Proof */}
+          <div className="flex flex-wrap items-center justify-center gap-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="flex items-center gap-2">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-primary text-primary" />
+                  <Star key={i} className="w-4 h-4 fill-u-gold text-u-gold" />
                 ))}
               </div>
-              <span className="text-lg font-bold text-foreground">4.9</span>
-              <span className="text-sm text-muted-foreground">avg rating</span>
+              <span className="text-lg font-bold text-u-white">4.9</span>
+              <span className="text-sm text-u-gray-400">avg rating</span>
             </div>
             <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-secondary" strokeWidth={2} />
-              <span className="text-lg font-bold text-foreground">127</span>
-              <span className="text-sm text-muted-foreground">client reviews</span>
+              <MessageSquare className="w-4 h-4 text-u-gold" />
+              <span className="text-lg font-bold text-u-white">127</span>
+              <span className="text-sm text-u-gray-400">reviews</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-secondary" strokeWidth={2} />
-              <span className="text-lg font-bold text-foreground">98%</span>
-              <span className="text-sm text-muted-foreground">response rate</span>
+              <Calendar className="w-4 h-4 text-u-gold" />
+              <span className="text-lg font-bold text-u-white">98%</span>
+              <span className="text-sm text-u-gray-400">response rate</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="section-spacing">
+      <section className="section-spacing liquid-bg">
         <div className="container-custom lg:max-w-5xl xl:max-w-6xl">
           <div className="lg:pr-[340px] space-y-8">
             {/* Bio */}
             {psychologist.bio && (
-              <Card className="bg-white border-secondary/20">
-                <CardHeader>
-                  <CardTitle>About</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-body whitespace-pre-line">{psychologist.bio}</p>
-                </CardContent>
-              </Card>
+              <ScrollReveal>
+                <div className="glass-card p-7">
+                  <h2 className="text-h3 mb-4">About</h2>
+                  <p className="text-u-gray-300 whitespace-pre-line leading-relaxed">{psychologist.bio}</p>
+                </div>
+              </ScrollReveal>
             )}
 
             {/* Specialties */}
             {psychologist.specialties.length > 0 && (
-              <Card className="bg-white border-secondary/20">
-                <CardHeader>
-                  <CardTitle>Specialties</CardTitle>
-                </CardHeader>
-                <CardContent>
+              <ScrollReveal>
+                <div className="glass-card p-7">
+                  <h2 className="text-h3 mb-4">Specialties</h2>
                   <div className="flex flex-wrap gap-2">
-                    {psychologist.specialties.map((specialty) => (
-                      <Badge key={specialty.id} variant="outline" className="text-sm py-2 px-4 border-secondary/30">
-                        {specialty.name}
+                    {psychologist.specialties.map((s) => (
+                      <Badge key={s.id} variant="outline" className="text-sm py-2 px-4 text-u-gray-200 border-white/10">
+                        {s.name}
                       </Badge>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </ScrollReveal>
             )}
 
             {/* Fees */}
             {psychologist.hourly_rate_mad && (
-              <Card className="bg-white border-secondary/20">
-                <CardHeader>
-                  <CardTitle>Session Fees</CardTitle>
-                </CardHeader>
-                <CardContent>
+              <ScrollReveal>
+                <div className="glass-card p-7">
+                  <h2 className="text-h3 mb-4">Session Fees</h2>
                   <div className="grid md:grid-cols-3 gap-4">
-                    <div className="flex items-center gap-3 p-4 bg-secondary/5 rounded-lg border border-secondary/10">
-                      <Clock className="w-5 h-5 text-secondary" strokeWidth={2} />
-                      <div>
-                        <p className="text-sm text-muted-foreground">30 minutes</p>
-                        <p className="text-lg font-semibold">{Math.round(psychologist.hourly_rate_mad * 0.5)} MAD</p>
+                    {[
+                      { duration: "30 min", rate: Math.round(psychologist.hourly_rate_mad * 0.5) },
+                      { duration: "60 min", rate: psychologist.hourly_rate_mad },
+                      { duration: "90 min", rate: Math.round(psychologist.hourly_rate_mad * 1.5) },
+                    ].map((tier) => (
+                      <div key={tier.duration} className="flex items-center gap-3 p-4 rounded-xl"
+                        style={{ background: 'rgba(255,179,0,0.05)', border: '1px solid rgba(255,179,0,0.15)' }}>
+                        <Clock className="w-5 h-5 text-u-gold" />
+                        <div>
+                          <p className="text-sm text-u-gray-400">{tier.duration}</p>
+                          <p className="text-lg font-semibold text-u-gold">{tier.rate} MAD</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-4 bg-secondary/5 rounded-lg border border-secondary/10">
-                      <Clock className="w-5 h-5 text-secondary" strokeWidth={2} />
-                      <div>
-                        <p className="text-sm text-muted-foreground">60 minutes</p>
-                        <p className="text-lg font-semibold">{psychologist.hourly_rate_mad} MAD</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-4 bg-secondary/5 rounded-lg border border-secondary/10">
-                      <Clock className="w-5 h-5 text-secondary" strokeWidth={2} />
-                      <div>
-                        <p className="text-sm text-muted-foreground">90 minutes</p>
-                        <p className="text-lg font-semibold">{Math.round(psychologist.hourly_rate_mad * 1.5)} MAD</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </ScrollReveal>
             )}
 
             {/* Session Options */}
-            <Card className="bg-white border-secondary/20">
-              <CardHeader>
-                <CardTitle>Session Options</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-4">
+            <ScrollReveal>
+              <div className="glass-card p-7">
+                <h2 className="text-h3 mb-4">Session Options</h2>
+                <div className="flex gap-3">
                   {psychologist.offers_online && (
-                    <Badge className="text-sm py-2 px-4 bg-secondary/10 text-secondary border-secondary/20">
-                      <Globe className="mr-2 h-4 w-4" strokeWidth={2} />
+                    <Badge className="text-sm py-2 px-4 bg-u-gold/10 text-u-gold border-u-gold/20 hover:bg-u-gold/20">
+                      <Globe className="mr-2 h-4 w-4" />
                       Online Sessions
                     </Badge>
                   )}
                   {psychologist.offers_in_person && (
-                    <Badge className="text-sm py-2 px-4 bg-secondary/10 text-secondary border-secondary/20">
-                      <MapPin className="mr-2 h-4 w-4" strokeWidth={2} />
+                    <Badge className="text-sm py-2 px-4 bg-u-gold/10 text-u-gold border-u-gold/20 hover:bg-u-gold/20">
+                      <MapPin className="mr-2 h-4 w-4" />
                       In-Person Sessions
                     </Badge>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </ScrollReveal>
 
-            {/* Booking/Availability */}
+            {/* Booking / Calendly */}
             {psychologist.calendly_url && (
-              <Card className="bg-white border-secondary/20" id="booking">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-secondary" strokeWidth={2} />
-                    Book Your Session
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div 
-                    className="calendly-inline-widget w-full h-[600px] rounded-lg overflow-hidden bg-background"
+              <ScrollReveal>
+                <div className="glass-card p-7" id="booking">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Calendar className="w-5 h-5 text-u-gold" />
+                    <h2 className="text-h3">Book Your Session</h2>
+                  </div>
+                  <div
+                    className="calendly-inline-widget w-full h-[600px] rounded-xl overflow-hidden"
                     data-url={psychologist.calendly_url}
                   />
                   <script
@@ -348,35 +303,40 @@ const PsychologistProfile = () => {
                     src="https://assets.calendly.com/assets/external/widget.js"
                     async
                   />
-                </CardContent>
-              </Card>
+                </div>
+              </ScrollReveal>
             )}
 
             {/* Trust Note */}
             {psychologist.is_accredited && (
-              <Card className="bg-secondary/10 border-secondary/30">
-                <CardContent className="p-6">
+              <ScrollReveal>
+                <div className="glass-card p-7" style={{ background: 'linear-gradient(180deg, rgba(122,12,32,0.1), rgba(122,12,32,0.05))', border: '1px solid rgba(122,12,32,0.3)' }}>
                   <div className="flex items-start gap-4">
-                    <Shield className="w-8 h-8 text-secondary flex-shrink-0 mt-1" strokeWidth={2} />
+                    <Shield className="w-8 h-8 text-u-burgundy shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-lg mb-2 text-secondary">
+                      <h3 className="font-semibold text-lg mb-2 text-u-burgundy">
                         U.Psy-Accredited Professional
                       </h3>
-                      <p className="text-muted-foreground">
+                      <p className="text-u-gray-300 text-sm leading-relaxed">
                         This psychologist is verified and accredited by U.Psy, ensuring evidence-based
                         care and adherence to professional standards. All sessions are confidential and
                         conducted with the highest level of ethical practice.
                       </p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </ScrollReveal>
             )}
           </div>
         </div>
       </section>
 
-      <MatchingFormModal open={isMatchingModalOpen} onClose={() => setIsMatchingModalOpen(false)} specialties={specialties} languages={languages} />
+      <MatchingFormModal
+        open={isMatchingModalOpen}
+        onClose={() => setIsMatchingModalOpen(false)}
+        specialties={specialties}
+        languages={languages}
+      />
     </div>
   );
 };
