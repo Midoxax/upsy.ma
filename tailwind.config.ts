@@ -79,8 +79,11 @@ export default {
         'section-mobile': 'var(--section-spacing-mobile)',
       },
       borderRadius: {
-        'u-sm': 'var(--radius-sm)',
-        'u-lg': 'var(--radius-lg)',
+        'u-btn': 'var(--radius-btn)',
+        'u-card': 'var(--radius-card)',
+        'u-input': 'var(--radius-input)',
+        'u-sm': 'var(--radius-btn)',
+        'u-lg': 'var(--radius-card)',
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

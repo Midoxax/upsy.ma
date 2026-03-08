@@ -51,8 +51,9 @@
     --ring: var(--gold-accent);
 
     /* ── Layout Tokens ── */
-    --radius-sm: 16px;
-    --radius-lg: 20px;
+    --radius-btn: 14px;
+    --radius-card: 20px;
+    --radius-input: 12px;
     --max-width: 1200px;
     --gutter: 24px;
     --section-spacing: 80px;
@@ -184,8 +185,9 @@
   .glass-card {
     background: var(--glass-bg);
     border: var(--glass-border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-card);
     box-shadow: var(--glass-shadow);
+    padding: 28px;
     transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
 
@@ -291,11 +293,25 @@
     box-shadow: var(--glass-shadow);
   }
 
+  /* ── Glass Input ── */
+  .glass-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-input);
+    padding: 14px;
+    color: hsl(var(--white));
+    transition: border-color 0.2s ease;
+  }
+  .glass-input:focus {
+    border-color: rgba(255,179,0,0.4);
+    outline: none;
+  }
+
   /* ── Premium Card Float ── */
   .card-float {
     background: var(--glass-bg);
     border: var(--glass-border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-card);
     transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   }
   .card-float:hover {
