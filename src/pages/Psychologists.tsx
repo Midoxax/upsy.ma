@@ -189,7 +189,7 @@ const Psychologists = () => {
                     </Button>
                     <Button variant="secondary" onClick={() => {
                       setSearchQuery("");
-                      setFilters({ specialties: [], languages: [], city: "", online: false, inPerson: false, minPrice: 0, maxPrice: 2000 });
+                      setFilters({ specialties: [], languages: [], therapyApproaches: [], city: "", online: false, inPerson: false, gender: "", availability: "", minPrice: 0, maxPrice: 2000 });
                     }}>
                       Clear All Filters
                     </Button>
