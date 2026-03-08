@@ -17,6 +17,7 @@ const Header = () => {
   // Nav structure: Home | Programs ▼ | Learning | Research | About ▼
   const navigation = [
     { name: "Home", href: "/" },
+    { name: "Find a Psychologist", href: "/psychologists" },
     { 
       name: "Programs",
       href: "/services",
@@ -27,6 +28,7 @@ const Header = () => {
       ],
     },
     { name: "Learning", href: "/resources" },
+    { name: "Organizations", href: "/services/consulting-for-organizations" },
     { name: "Research", href: "/talent-innovation-hub" },
     {
       name: t('nav.about'),
@@ -37,6 +39,7 @@ const Header = () => {
         { name: t('nav.applyAccreditation'), href: "/apply" },
       ],
     },
+    { name: "Blog", href: "/resources" },
   ];
 
   const isActive = (href: string) => {
