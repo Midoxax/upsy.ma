@@ -96,8 +96,14 @@
     --shadow-soft: 0 4px 20px rgba(0,0,0,0.3);
     --shadow-gold: 0 0 24px rgba(255,179,0,0.2);
 
-    /* ── Animation ── */
+    /* ── Motion Tokens ── */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-calm: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --duration-ui: 300ms;
+    --duration-emphasis: 500ms;
+    --duration-ambient: 800ms;
+    --ease-calm: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   * {
