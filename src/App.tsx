@@ -30,6 +30,10 @@ import Auth from "./pages/Auth";
 import MySpace from "./pages/MySpace";
 import Apply from "./pages/Apply";
 import GetMatched from "./pages/GetMatched";
+import PatientDashboard from "./pages/PatientDashboard";
+import AthleteHub from "./pages/AthleteHub";
+import AssessmentLab from "./pages/AssessmentLab";
+import AIAssistant from "./pages/AIAssistant";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -77,6 +81,10 @@ const AnimatedRoutes = () => {
           <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
           <Route path="/apply" element={<PageTransition><Apply /></PageTransition>} />
           <Route path="/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+          <Route path="/dashboard" element={<ProtectedRoute><PageTransition><PatientDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/athlete-hub" element={<ProtectedRoute><PageTransition><AthleteHub /></PageTransition></ProtectedRoute>} />
+          <Route path="/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
+          <Route path="/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
@@ -96,6 +104,10 @@ const AnimatedRoutes = () => {
           <Route path="/fr/auth" element={<PageTransition><Auth /></PageTransition>} />
           <Route path="/fr/apply" element={<PageTransition><Apply /></PageTransition>} />
           <Route path="/fr/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+          <Route path="/fr/dashboard" element={<ProtectedRoute><PageTransition><PatientDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/fr/athlete-hub" element={<ProtectedRoute><PageTransition><AthleteHub /></PageTransition></ProtectedRoute>} />
+          <Route path="/fr/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
+          <Route path="/fr/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/fr/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
           <Route path="/fr/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="/fr/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
@@ -115,6 +127,10 @@ const AnimatedRoutes = () => {
           <Route path="/ar/auth" element={<PageTransition><Auth /></PageTransition>} />
           <Route path="/ar/apply" element={<PageTransition><Apply /></PageTransition>} />
           <Route path="/ar/get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+          <Route path="/ar/dashboard" element={<ProtectedRoute><PageTransition><PatientDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/ar/athlete-hub" element={<ProtectedRoute><PageTransition><AthleteHub /></PageTransition></ProtectedRoute>} />
+          <Route path="/ar/assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
+          <Route path="/ar/ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
           <Route path="/ar/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
           <Route path="/ar/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="/ar/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
