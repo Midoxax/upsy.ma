@@ -1212,6 +1212,26 @@ export const translations = {
       legal: { title: "Informations Légales", content: "Contenu à venir..." },
       talentHub: { title: "Pôle Talents & Innovation", content: "Contenu à venir..." },
     },
+    pillars: {
+      title: "L'Écosystème U.Psy",
+      subtitle: "Un écosystème complet de santé mentale — du soin clinique à la transformation organisationnelle.",
+      ariaLabel: "Nos quatre piliers",
+      learnMore: "En savoir plus",
+      cta: "Explorer tous les services",
+      care: { title: "Soins", description: "Consultations psychologiques en ligne avec des professionnels agréés." },
+      learning: { title: "Formation", description: "Cours et éducation en santé mentale pour le développement personnel." },
+      performance: { title: "Performance", description: "Coaching en performance mentale pour athlètes et professionnels." },
+      organizations: { title: "Organisations", description: "Solutions de santé mentale pour institutions et organisations sportives." },
+    },
+    howItWorks: {
+      title: "Commencez votre parcours santé mentale",
+      subtitle: "Trois étapes simples pour obtenir le soutien dont vous avez besoin.",
+      ariaLabel: "Comment ça marche",
+      cta: "Commencer maintenant",
+      step1: { title: "Faites une auto-évaluation", description: "Comprenez votre bien-être mental avec un dépistage rapide et fondé sur des preuves." },
+      step2: { title: "Trouvez le bon psychologue", description: "Filtrez par langue, spécialité, disponibilité et format de séance." },
+      step3: { title: "Commencez vos séances", description: "Consultations vidéo sécurisées avec des professionnels agréés." },
+    },
   },
   ar: {
     nav: {
