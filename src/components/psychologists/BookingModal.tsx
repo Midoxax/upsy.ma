@@ -142,6 +142,12 @@ const BookingModal = ({
       const dateTime = new Date(selectedDate);
       dateTime.setHours(hours, minutes, 0, 0);
 
+      // Generate a unique Jitsi room ID for online sessions
+      const videoRoomId =
+        sessionType === "online"
+          ? `upsy-${psychologistId.slice(0, 8)}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
+          : null;
+
       const { error } = await supabase.from("sessions").insert({
         client_id: user.id,
         psychologist_id: psychologistId,
@@ -149,6 +155,7 @@ const BookingModal = ({
         session_type: sessionType,
         notes: notes || null,
         status: "confirmed",
+        video_room_id: videoRoomId,
       });
 
       if (error) throw error;
