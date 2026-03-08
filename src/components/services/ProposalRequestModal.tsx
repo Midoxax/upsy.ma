@@ -235,6 +235,8 @@ export function ProposalRequestModal({ open, onOpenChange }: ProposalRequestModa
               )}
             />
 
+            <DataPrivacyNotice />
+
             <div className="flex gap-3 justify-end">
               <Button
                 type="button"
