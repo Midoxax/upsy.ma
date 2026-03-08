@@ -14,32 +14,22 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        outfit: ['Outfit', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
-        /* U.Psy Calm Palette */
+        /* U.Psy Brand Colors - Bold Modern Psychology */
         'u-bg': "hsl(var(--bg))",
         'u-surface': "hsl(var(--surface))",
-        'u-lavender': "hsl(var(--lavender))",
-        'u-lavender-light': "hsl(var(--lavender-light))",
-        'u-blue': "hsl(var(--blue))",
-        'u-blue-light': "hsl(var(--blue-light))",
-        'u-sage': "hsl(var(--sage))",
-        'u-sage-light': "hsl(var(--sage-light))",
-        'u-coral': "hsl(var(--coral))",
-        'u-coral-light': "hsl(var(--coral-light))",
-        'u-navy': "hsl(var(--navy))",
+        'u-maroon': "hsl(var(--maroon))",
+        'u-gold': "hsl(var(--gold))",
+        'u-teal': "hsl(var(--teal))",
         'u-white': "hsl(var(--white))",
         'u-black': "hsl(var(--black))",
-        'u-gray-50': "hsl(var(--gray-50))",
         'u-gray-100': "hsl(var(--gray-100))",
-        'u-gray-200': "hsl(var(--gray-200))",
         'u-gray-300': "hsl(var(--gray-300))",
-        'u-gray-400': "hsl(var(--gray-400))",
         'u-gray-500': "hsl(var(--gray-500))",
-        'u-gray-600': "hsl(var(--gray-600))",
         'u-gray-700': "hsl(var(--gray-700))",
-
+        
         /* Semantic Colors */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -84,37 +74,42 @@ export default {
         'section-mobile': 'var(--section-spacing-mobile)',
       },
       borderRadius: {
-        'u-sm': 'var(--radius-sm)',
-        'u-lg': 'var(--radius-lg)',
-        'u-xl': 'var(--radius-xl)',
+        'u-sm': 'var(--radius-sm)',      /* 16px - buttons, cards */
+        'u-lg': 'var(--radius-lg)',      /* 24px - hero, media */
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
         'u-card': 'var(--shadow-card)',
-        'u-card-hover': 'var(--shadow-card-hover)',
-        'u-elevated': 'var(--shadow-elevated)',
-        'u-glass': 'var(--shadow-glass)',
+      },
+      backgroundImage: {
+        'u-hero': 'var(--gradient-hero)',
+      },
+      transitionTimingFunction: {
+        'u-smooth': 'var(--transition-smooth)',
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-8px)" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "float": "float 6s ease-in-out infinite",
       },
     },
   },
