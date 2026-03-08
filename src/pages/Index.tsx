@@ -12,6 +12,7 @@ const ProgramsSection = lazy(() => import("@/components/home/ProgramsSection"));
 const LearningSection = lazy(() => import("@/components/home/LearningSection"));
 const OrganizationsSection = lazy(() => import("@/components/home/OrganizationsSection"));
 const ResearchSection = lazy(() => import("@/components/home/ResearchSection"));
+const PsfSection = lazy(() => import("@/components/home/PsfSection"));
 const CommunitySection = lazy(() => import("@/components/home/CommunitySection"));
 const TestimonialsSection = lazy(() => import("@/components/home/TestimonialsSection"));
 const FinalCTASection = lazy(() => import("@/components/home/FinalCTASection"));
@@ -28,6 +29,7 @@ const sections: ComponentType[] = [
   LearningSection,
   OrganizationsSection,
   ResearchSection,
+  PsfSection,
   CommunitySection,
   TestimonialsSection,
   FinalCTASection,
