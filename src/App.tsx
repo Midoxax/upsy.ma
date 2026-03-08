@@ -26,6 +26,7 @@ import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
 import Legal from "./pages/Legal";
 import TalentInnovationHub from "./pages/TalentInnovationHub";
+import MoroccanUmbrella from "./pages/MoroccanUmbrella";
 import Psychologists from "./pages/Psychologists";
 import PsychologistProfile from "./pages/PsychologistProfile";
 import Auth from "./pages/Auth";
@@ -68,6 +69,7 @@ const AppRoutes = () => (
     <Route path="contact" element={<PageTransition><Contact /></PageTransition>} />
     <Route path="legal" element={<PageTransition><Legal /></PageTransition>} />
     <Route path="talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
+    <Route path="moroccan-umbrella" element={<PageTransition><MoroccanUmbrella /></PageTransition>} />
     <Route path="psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
