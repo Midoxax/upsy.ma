@@ -246,7 +246,7 @@
   .glass-card:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: var(--glass-shadow-hover);
-    border-color: rgba(255,179,0,0.12);
+    border-color: hsl(var(--primary) / 0.15);
   }
 
   .glass-card:active {
