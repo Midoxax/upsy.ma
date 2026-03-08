@@ -16,6 +16,9 @@ export const usePsychologistProfile = (slugOrId: string) => {
           ),
           psychologist_languages(
             language:languages(id, name)
+          ),
+          psychologist_therapy_approaches(
+            therapy_approach:therapy_approaches(id, name)
           )
         `)
         .eq("is_published", true);
@@ -37,8 +40,9 @@ export const usePsychologistProfile = (slugOrId: string) => {
       // Transform data to match PsychologistProfile interface
       const profile: PsychologistProfile = {
         ...data,
-        specialties: data.psychologist_specialties?.map((ps: any) => ps.specialty) || [],
-        languages: data.psychologist_languages?.map((pl: any) => pl.language) || [],
+        specialties: data.psychologist_specialties?.map((ps: any) => ps.specialty).filter(Boolean) || [],
+        languages: data.psychologist_languages?.map((pl: any) => pl.language).filter(Boolean) || [],
+        therapy_approaches: data.psychologist_therapy_approaches?.map((pt: any) => pt.therapy_approach).filter(Boolean) || [],
       };
 
       return profile;
