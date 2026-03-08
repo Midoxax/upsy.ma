@@ -968,6 +968,51 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          client_id: string
+          comment: string | null
+          created_at: string | null
+          id: string
+          psychologist_id: string
+          rating: number
+          session_id: string
+        }
+        Insert: {
+          client_id: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          psychologist_id: string
+          rating: number
+          session_id: string
+        }
+        Update: {
+          client_id?: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          psychologist_id?: string
+          rating?: number
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sessions: {
         Row: {
           client_id: string

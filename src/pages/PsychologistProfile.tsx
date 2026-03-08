@@ -5,6 +5,7 @@ import MatchingFormModal from "@/components/matching/MatchingFormModal";
 import { BookingWidget } from "@/components/psychologists/BookingWidget";
 import BookingModal from "@/components/psychologists/BookingModal";
 import { PoliciesDrawer } from "@/components/psychologists/PoliciesDrawer";
+import ReviewsList from "@/components/psychologists/ReviewsList";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ const PsychologistProfile = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([]);
   const [languages, setLanguages] = useState<{ id: string; name: string }[]>([]);
+  const [reviewStats, setReviewStats] = useState({ count: 0, avg: 0 });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +37,21 @@ const PsychologistProfile = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!psychologist) return;
+    const fetchStats = async () => {
+      const { data } = await supabase
+        .from("reviews")
+        .select("rating")
+        .eq("psychologist_id", psychologist.id);
+      if (data && data.length > 0) {
+        const avg = data.reduce((s, r) => s + r.rating, 0) / data.length;
+        setReviewStats({ count: data.length, avg: Math.round(avg * 10) / 10 });
+      }
+    };
+    fetchStats();
+  }, [psychologist]);
 
   if (isLoading) {
     return (
@@ -69,13 +86,6 @@ const PsychologistProfile = () => {
   const yearsExperience = psychologist.created_at
     ? Math.max(1, new Date().getFullYear() - new Date(psychologist.created_at).getFullYear())
     : 5;
-
-  // Mock reviews — would come from a reviews table in production
-  const mockReviews = [
-    { name: "A.M.", rating: 5, text: "Very professional and understanding. Helped me work through my anxiety with practical tools.", date: "2 weeks ago" },
-    { name: "K.B.", rating: 5, text: "Excellent listener. The sessions were well-structured and I felt real progress after just a few weeks.", date: "1 month ago" },
-    { name: "S.T.", rating: 4, text: "Knowledgeable and empathetic. Would recommend to anyone seeking support.", date: "2 months ago" },
-  ];
 
   return (
     <div className="min-h-screen pb-24 lg:pb-8">
@@ -193,24 +203,28 @@ const PsychologistProfile = () => {
 
           {/* Social Proof */}
           <div className="flex flex-wrap items-center justify-center gap-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            {reviewStats.count > 0 && (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i < Math.round(reviewStats.avg) ? "fill-primary text-primary" : "text-muted-foreground/20"}`} />
+                    ))}
+                  </div>
+                  <span className="text-lg font-bold text-foreground">{reviewStats.avg}</span>
+                  <span className="text-sm text-muted-foreground">avg rating</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                  <span className="text-lg font-bold text-foreground">{reviewStats.count}</span>
+                  <span className="text-sm text-muted-foreground">reviews</span>
+                </div>
+              </>
+            )}
             <div className="flex items-center gap-2">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-u-gold text-u-gold" />
-                ))}
-              </div>
-              <span className="text-lg font-bold text-u-white">4.9</span>
-              <span className="text-sm text-u-gray-400">avg rating</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-u-gold" />
-              <span className="text-lg font-bold text-u-white">{mockReviews.length}</span>
-              <span className="text-sm text-u-gray-400">reviews</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-u-gold" />
-              <span className="text-lg font-bold text-u-white">98%</span>
-              <span className="text-sm text-u-gray-400">response rate</span>
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-lg font-bold text-foreground">98%</span>
+              <span className="text-sm text-muted-foreground">response rate</span>
             </div>
           </div>
         </div>
@@ -353,35 +367,7 @@ const PsychologistProfile = () => {
             </ScrollReveal>
 
             {/* Reviews */}
-            <ScrollReveal>
-              <div className="glass-card p-7">
-                <h2 className="text-h3 mb-6 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-u-gold" />
-                  Client Reviews
-                </h2>
-                <div className="space-y-6">
-                  {mockReviews.map((review, i) => (
-                    <div key={i} className="pb-6" style={{ borderBottom: i < mockReviews.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-u-gold"
-                            style={{ background: 'rgba(255,179,0,0.1)', border: '1px solid rgba(255,179,0,0.2)' }}>
-                            {review.name}
-                          </div>
-                          <div className="flex">
-                            {[...Array(review.rating)].map((_, j) => (
-                              <Star key={j} className="w-3.5 h-3.5 fill-u-gold text-u-gold" />
-                            ))}
-                          </div>
-                        </div>
-                        <span className="text-xs text-u-gray-400">{review.date}</span>
-                      </div>
-                      <p className="text-sm text-u-gray-300 leading-relaxed">{review.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </ScrollReveal>
+            <ReviewsList psychologistId={psychologist.id} />
 
             {/* Booking CTA */}
             <ScrollReveal>
