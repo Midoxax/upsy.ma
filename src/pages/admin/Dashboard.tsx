@@ -83,6 +83,10 @@ const AdminDashboard = () => {
           <TabsContent value="subscriptions">
             <SubscriptionsOverview />
           </TabsContent>
+
+          <TabsContent value="translations">
+            <TranslationManager />
+          </TabsContent>
         </Tabs>
       </main>
     </div>

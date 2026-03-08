@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useNavigate, useLocation } from 'react-router-dom';
 import { translations } from '@/lib/i18n/translations';
 import { getCookie, setCookie, getLocaleFromPath, stripLocalePrefix, addLocalePrefix } from '@/lib/i18n/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 type Locale = 'en' | 'fr' | 'ar';
 
@@ -21,6 +22,25 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     if (cookieLocale === 'fr' || cookieLocale === 'en' || cookieLocale === 'ar') return cookieLocale;
     return getLocaleFromPath(location.pathname);
   });
+  const [overrides, setOverrides] = useState<Record<string, Record<string, string>>>({});
+
+  // Load translation overrides once
+  useEffect(() => {
+    const loadOverrides = async () => {
+      const { data } = await supabase
+        .from('translation_overrides')
+        .select('locale, translation_key, translation_value');
+      if (data && data.length > 0) {
+        const map: Record<string, Record<string, string>> = {};
+        for (const row of data) {
+          if (!map[row.locale]) map[row.locale] = {};
+          map[row.locale][row.translation_key] = row.translation_value;
+        }
+        setOverrides(map);
+      }
+    };
+    loadOverrides();
+  }, []);
 
   // First-visit auto-redirect
   useEffect(() => {
@@ -70,6 +90,11 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const t = (key: string): string => {
+    // Check DB overrides first
+    const override = overrides[locale]?.[key];
+    if (override !== undefined) return override;
+
+    // Fall back to static translations
     const keys = key.split('.');
     let value: any = translations[locale];
     
