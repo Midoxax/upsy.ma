@@ -8,6 +8,7 @@ import PsychologistDirectory from "@/components/admin/PsychologistDirectory";
 import MatchingRequestsManager from "@/components/admin/MatchingRequestsManager";
 import SubscriptionsOverview from "@/components/admin/SubscriptionsOverview";
 import AdminStats from "@/components/admin/AdminStats";
+import TranslationManager from "@/components/admin/TranslationManager";
 import { useApplications } from "@/hooks/useApplications";
 
 const AdminDashboard = () => {
@@ -42,6 +43,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="directory">Psychologist Directory</TabsTrigger>
             <TabsTrigger value="matching">Matching Requests</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
+            <TabsTrigger value="translations">Translations</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
@@ -80,6 +82,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="subscriptions">
             <SubscriptionsOverview />
+          </TabsContent>
+
+          <TabsContent value="translations">
+            <TranslationManager />
           </TabsContent>
         </Tabs>
       </main>
