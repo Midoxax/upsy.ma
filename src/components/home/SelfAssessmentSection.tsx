@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BarChart3, Brain, Flame, HeartPulse } from "lucide-react";
+import { BarChart3, Brain, Clock, Flame, HeartPulse } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { lazy, Suspense } from "react";
 

@@ -69,9 +69,13 @@ const FeaturedPsychologistsSection = () => {
                       <span className="flex items-center gap-1"><Globe className="w-3 h-3" />Online</span>
                     )}
                   </div>
-                  <p className="text-sm text-u-gray-300 mb-4">
-                    {psych.psychologist_languages?.map((l: any) => l.languages?.name).filter(Boolean).join(" · ")}
-                  </p>
+                  <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+                    {psych.psychologist_languages?.map((l: any) => l.languages?.name).filter(Boolean).map((lang: string) => (
+                      <span key={lang} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
                   {psych.hourly_rate_mad && (
                     <p className="text-u-gold font-semibold mb-4">{psych.hourly_rate_mad} MAD / session</p>
                   )}

@@ -16,7 +16,7 @@ const FinalCTASection = () => {
               <Link to="/psychologists">Find a Psychologist</Link>
             </Button>
             <Button variant="secondary" size="hero" asChild>
-              <Link to="/get-matched">Take Assessment</Link>
+              <Link to="/get-matched">Start Self-Assessment</Link>
             </Button>
           </div>
         </div>

@@ -5,10 +5,10 @@ import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 
 const programs = [
-  { icon: Heart, title: "Clinical Care", description: "Evidence-based therapy for anxiety, depression, and trauma.", color: "hsl(348, 82%, 26%)" },
-  { icon: Activity, title: "Mental Performance", description: "Peak performance coaching for athletes and professionals.", color: "#FFB300" },
-  { icon: Leaf, title: "Mindfulness Training", description: "Structured mindfulness programs for daily resilience.", color: "#F4A300" },
-  { icon: ShieldCheck, title: "Trauma Recovery", description: "Specialized trauma processing and recovery pathways.", color: "hsl(348, 82%, 26%)" },
+  { icon: Heart, title: "Clinical Care", description: "Evidence-based therapy for anxiety, depression, and trauma.", color: "hsl(348, 82%, 26%)", audiences: ["Adults", "Students"] },
+  { icon: Activity, title: "Mental Performance", description: "Peak performance coaching for athletes and professionals.", color: "#FFB300", audiences: ["Athletes", "Professionals"] },
+  { icon: Leaf, title: "Mindfulness Training", description: "Structured mindfulness programs for daily resilience.", color: "#F4A300", audiences: ["All Levels"] },
+  { icon: ShieldCheck, title: "Trauma Recovery", description: "Specialized trauma processing and recovery pathways.", color: "hsl(348, 82%, 26%)", audiences: ["Adults", "Professionals"] },
 ];
 
 const ProgramsSection = () => {
@@ -18,7 +18,7 @@ const ProgramsSection = () => {
         <ScrollReveal>
           <div className="text-center mb-12">
             <h2 className="text-h2 mb-4">Mental Health Programs</h2>
-            <p className="text-body text-u-gray-300">Structured programs designed for lasting change.</p>
+            <p className="text-body text-muted-foreground">Structured programs designed for lasting change.</p>
           </div>
         </ScrollReveal>
 
@@ -32,7 +32,14 @@ const ProgramsSection = () => {
                     <program.icon className="w-6 h-6" style={{ color: program.color }} />
                   </div>
                   <h3 className="text-h3 mb-2 text-lg">{program.title}</h3>
-                  <p className="text-sm text-u-gray-300 leading-relaxed">{program.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{program.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {program.audiences.map((audience) => (
+                      <span key={audience} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                        {audience}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </StaggerItem>
             ))}
