@@ -310,6 +310,48 @@ export type Database = {
           },
         ]
       }
+      certificates: {
+        Row: {
+          certificate_number: string
+          certificate_type: Database["public"]["Enums"]["certificate_type"]
+          created_at: string | null
+          description: string | null
+          id: string
+          issued_at: string
+          metadata: Json | null
+          recipient_name: string
+          reference_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          certificate_number?: string
+          certificate_type: Database["public"]["Enums"]["certificate_type"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          issued_at?: string
+          metadata?: Json | null
+          recipient_name: string
+          reference_id?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          certificate_number?: string
+          certificate_type?: Database["public"]["Enums"]["certificate_type"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          issued_at?: string
+          metadata?: Json | null
+          recipient_name?: string
+          reference_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_matching_requests: {
         Row: {
           budget_max: number | null
@@ -1252,6 +1294,11 @@ export type Database = {
         | "athlete"
         | "coach"
         | "organization"
+      certificate_type:
+        | "course_completion"
+        | "assessment_completion"
+        | "psychologist_accreditation"
+        | "mooc_training"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1386,6 +1433,12 @@ export const Constants = {
         "athlete",
         "coach",
         "organization",
+      ],
+      certificate_type: [
+        "course_completion",
+        "assessment_completion",
+        "psychologist_accreditation",
+        "mooc_training",
       ],
     },
   },

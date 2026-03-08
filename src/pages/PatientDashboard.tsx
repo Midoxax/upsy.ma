@@ -9,11 +9,12 @@ import ScrollReveal from "@/components/ScrollReveal";
 import MaroonDivider from "@/components/ui/maroon-divider";
 import {
   Heart, Brain, Calendar, TrendingUp, Smile, Frown, Meh,
-  BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun,
+  BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun, Award,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
+import CertificatesTab from "@/components/dashboard/CertificatesTab";
 
 interface MoodEntry {
   id: string;
@@ -309,13 +310,16 @@ const PatientDashboard = () => {
             </div>
           </div>
 
+          {/* Certificates */}
+          <CertificatesTab />
+
           {/* Quick Actions */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "Take Assessment", icon: Brain, href: "/assessments", accent: "u-clinical" },
               { label: "AI Assistant", icon: Heart, href: "/ai-assistant", accent: "u-turquoise" },
               { label: "Find Psychologist", icon: Calendar, href: "/psychologists", accent: "primary" },
-              { label: "Get Matched", icon: BarChart3, href: "/get-matched", accent: "u-lavender" },
+              { label: "My Certificates", icon: Award, href: "/dashboard", accent: "primary" },
             ].map((action) => (
               <Link key={action.label} to={action.href} className="glass-card p-5 text-center group hover:shadow-glass-hover transition-all">
                 <action.icon className={`w-7 h-7 mx-auto mb-2 text-${action.accent} group-hover:scale-110 transition-transform`} />
