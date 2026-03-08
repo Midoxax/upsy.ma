@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { stripLocalePrefix } from "@/lib/i18n/utils";
