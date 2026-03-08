@@ -94,8 +94,7 @@ const MySpace = () => {
   const renderDashboard = () => {
     switch (primaryRole) {
       case "admin":
-        navigate("/admin", { replace: true });
-        return null;
+        return <Navigate to="/admin" replace />;
       case "psychologist":
         return <PsychologistDashboard />;
       case "athlete":
