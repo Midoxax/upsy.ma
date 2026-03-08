@@ -389,6 +389,8 @@ const BookingModal = ({
         </div>
       )}
 
+      <DataPrivacyNotice />
+
       <div className="flex justify-between pt-2">
         <Button variant="ghost" onClick={() => setStep("time")}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
