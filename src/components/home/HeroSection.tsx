@@ -45,7 +45,7 @@ const HeroSection = () => {
                 <Link to="/psychologists">{t('hero.findPsychologist')}</Link>
               </Button>
               <Button variant="secondary" size="hero" asChild>
-                <Link to="/services">{t('hero.explorePrograms')}</Link>
+                <Link to="/get-matched">Start Self-Assessment</Link>
               </Button>
             </motion.div>
           </motion.div>
