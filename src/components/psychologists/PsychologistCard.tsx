@@ -3,13 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe, User, Award, Star, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface PsychologistCardProps {
   psychologist: PsychologistProfile;
 }
 
 export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
-  // Mock rating — in production this would come from reviews
+  const { t } = useLocale();
   const rating = 4.8 + Math.random() * 0.2;
 
   return (
@@ -29,29 +30,26 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
             <User className="w-16 h-16 text-u-gold/30" />
           </div>
         )}
-        {/* Accreditation badge */}
         {psychologist.is_accredited && (
           <div className="absolute top-3 right-3 bg-u-burgundy rounded-full px-3 py-1 flex items-center gap-1.5">
             <Award className="w-3.5 h-3.5 text-u-white" />
-            <span className="text-xs text-u-white font-medium">Accredited</span>
+            <span className="text-xs text-u-white font-medium">{t('psychologists.accredited')}</span>
           </div>
         )}
-        {/* Session type badges */}
         <div className="absolute bottom-3 left-3 flex gap-1.5">
           {psychologist.offers_online && (
             <span className="text-[10px] text-u-white font-medium px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(0,0,0,0.5)' }}>Online</span>
+              style={{ background: 'rgba(0,0,0,0.5)' }}>{t('psychologists.online')}</span>
           )}
           {psychologist.offers_in_person && (
             <span className="text-[10px] text-u-white font-medium px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(0,0,0,0.5)' }}>In-Person</span>
+              style={{ background: 'rgba(0,0,0,0.5)' }}>{t('psychologists.inPerson')}</span>
           )}
         </div>
       </div>
 
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
-        {/* Name & Rating */}
         <div className="flex items-start justify-between mb-2">
           <h3 className="font-semibold text-lg text-u-white leading-tight">{psychologist.full_name}</h3>
           <div className="flex items-center gap-1 shrink-0 ml-2">
@@ -60,7 +58,6 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
           </div>
         </div>
 
-        {/* Specialties */}
         {psychologist.specialties.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {psychologist.specialties.slice(0, 3).map((s) => (
@@ -76,7 +73,6 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
           </div>
         )}
 
-        {/* Languages */}
         {psychologist.languages.length > 0 && (
           <div className="flex items-center gap-2 text-sm text-u-gray-300 mb-1.5">
             <Globe className="w-3.5 h-3.5 text-u-gold/50" />
@@ -84,7 +80,6 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
           </div>
         )}
 
-        {/* Location */}
         {psychologist.city && (
           <div className="flex items-center gap-2 text-sm text-u-gray-300 mb-3">
             <MapPin className="w-3.5 h-3.5 text-u-gold/50" />
@@ -92,20 +87,18 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
           </div>
         )}
 
-        {/* Price */}
         {psychologist.hourly_rate_mad && (
-          <p className="text-u-gold font-bold text-lg mb-4">{psychologist.hourly_rate_mad} MAD <span className="text-xs font-normal text-u-gray-400">/ session</span></p>
+          <p className="text-u-gold font-bold text-lg mb-4">{psychologist.hourly_rate_mad} MAD <span className="text-xs font-normal text-u-gray-400">{t('psychologists.perSession')}</span></p>
         )}
 
-        {/* Dual CTAs */}
         <div className="mt-auto flex gap-2">
           <Button asChild variant="secondary" size="sm" className="flex-1">
-            <Link to={`/psychologists/${psychologist.slug}`}>View Profile</Link>
+            <Link to={`/psychologists/${psychologist.slug}`}>{t('psychologists.viewProfile')}</Link>
           </Button>
           <Button asChild variant="primary" size="sm" className="flex-1">
             <Link to={`/psychologists/${psychologist.slug}#booking`}>
               <Calendar className="mr-1.5 h-3.5 w-3.5" />
-              Book
+              {t('psychologists.book')}
             </Link>
           </Button>
         </div>

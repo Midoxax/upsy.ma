@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import {
   Dialog,
   DialogContent,
@@ -63,6 +64,7 @@ const BookingModal = ({
 }: BookingModalProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLocale();
   const [step, setStep] = useState<BookingStep>("type");
   const [sessionType, setSessionType] = useState<"online" | "in_person">(
     offersOnline ? "online" : "in_person"
@@ -74,7 +76,6 @@ const BookingModal = ({
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
-  // Fetch availability
   useEffect(() => {
     if (!open) return;
     const fetchSlots = async () => {
@@ -90,7 +91,6 @@ const BookingModal = ({
     fetchSlots();
   }, [open, psychologistId]);
 
-  // Reset on close
   useEffect(() => {
     if (!open) {
       setStep("type");
@@ -100,22 +100,17 @@ const BookingModal = ({
     }
   }, [open]);
 
-  // Generate next 14 days that have availability
   const availableDates = useMemo(() => {
     const dates: Date[] = [];
     const today = startOfDay(new Date());
     const availableDows = new Set(slots.map((s) => s.day_of_week));
-
     for (let i = 1; i <= 21 && dates.length < 14; i++) {
       const d = addDays(today, i);
-      if (availableDows.has(d.getDay())) {
-        dates.push(d);
-      }
+      if (availableDows.has(d.getDay())) dates.push(d);
     }
     return dates;
   }, [slots]);
 
-  // Get time slots for selected date
   const timeSlots = useMemo(() => {
     if (!selectedDate) return [];
     const dow = selectedDate.getDay();
@@ -127,23 +122,17 @@ const BookingModal = ({
 
   const handleBook = async () => {
     if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to book a session.",
-        variant: "destructive",
-      });
+      toast({ title: t('booking.signInRequired'), description: t('booking.signInRequiredDesc'), variant: "destructive" });
       return;
     }
     if (!selectedDate || !selectedSlot) return;
 
     setLoading(true);
     try {
-      // Construct datetime
       const [hours, minutes] = selectedSlot.start.split(":").map(Number);
       const dateTime = new Date(selectedDate);
       dateTime.setHours(hours, minutes, 0, 0);
 
-      // Generate a unique Jitsi room ID for online sessions
       const videoRoomId =
         sessionType === "online"
           ? `upsy-${psychologistId.slice(0, 8)}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
@@ -163,11 +152,7 @@ const BookingModal = ({
       setStep("success");
     } catch (err: any) {
       console.error(err);
-      toast({
-        title: "Booking failed",
-        description: err.message || "Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: t('booking.bookingFailed'), description: err.message || "Please try again.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -175,48 +160,34 @@ const BookingModal = ({
 
   const renderSessionType = () => (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground text-center">
-        How would you like to attend your session?
-      </p>
+      <p className="text-sm text-muted-foreground text-center">{t('booking.howAttend')}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {offersOnline && (
           <button
             onClick={() => setSessionType("online")}
-            className={`p-5 rounded-2xl text-left transition-all ${
-              sessionType === "online" ? "ring-2 ring-primary bg-primary/10" : ""
-            }`}
-            style={
-              sessionType !== "online"
-                ? { background: "var(--glass-bg)", border: "var(--glass-border)" }
-                : {}
-            }
+            className={`p-5 rounded-2xl text-left transition-all ${sessionType === "online" ? "ring-2 ring-primary bg-primary/10" : ""}`}
+            style={sessionType !== "online" ? { background: "var(--glass-bg)", border: "var(--glass-border)" } : {}}
           >
             <Video className={`w-6 h-6 mb-2 ${sessionType === "online" ? "text-primary" : "text-muted-foreground"}`} />
-            <p className="font-medium text-foreground">Online</p>
-            <p className="text-xs text-muted-foreground mt-1">Video session from anywhere</p>
+            <p className="font-medium text-foreground">{t('booking.onlineOption')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('booking.onlineDesc')}</p>
           </button>
         )}
         {offersInPerson && (
           <button
             onClick={() => setSessionType("in_person")}
-            className={`p-5 rounded-2xl text-left transition-all ${
-              sessionType === "in_person" ? "ring-2 ring-primary bg-primary/10" : ""
-            }`}
-            style={
-              sessionType !== "in_person"
-                ? { background: "var(--glass-bg)", border: "var(--glass-border)" }
-                : {}
-            }
+            className={`p-5 rounded-2xl text-left transition-all ${sessionType === "in_person" ? "ring-2 ring-primary bg-primary/10" : ""}`}
+            style={sessionType !== "in_person" ? { background: "var(--glass-bg)", border: "var(--glass-border)" } : {}}
           >
             <Building2 className={`w-6 h-6 mb-2 ${sessionType === "in_person" ? "text-primary" : "text-muted-foreground"}`} />
-            <p className="font-medium text-foreground">In-Person</p>
-            <p className="text-xs text-muted-foreground mt-1">{city || "At the office"}</p>
+            <p className="font-medium text-foreground">{t('booking.inPersonOption')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{city || t('booking.atOffice')}</p>
           </button>
         )}
       </div>
       <div className="flex justify-end pt-2">
         <Button variant="primary" onClick={() => setStep("date")}>
-          Continue <ArrowRight className="ml-2 h-4 w-4" />
+          {t('booking.continue')} <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -224,9 +195,7 @@ const BookingModal = ({
 
   const renderDatePicker = () => (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground text-center">
-        Select a date for your session
-      </p>
+      <p className="text-sm text-muted-foreground text-center">{t('booking.selectDateDesc')}</p>
       {slotsLoading ? (
         <div className="flex items-center justify-center py-8">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -234,8 +203,8 @@ const BookingModal = ({
       ) : availableDates.length === 0 ? (
         <div className="text-center py-8">
           <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-50" />
-          <p className="text-sm text-muted-foreground">No available dates in the next 3 weeks.</p>
-          <p className="text-xs text-muted-foreground mt-1">Please contact us for alternative options.</p>
+          <p className="text-sm text-muted-foreground">{t('booking.noAvailableDates')}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t('booking.contactAlternative')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -245,24 +214,12 @@ const BookingModal = ({
               <button
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`p-3 rounded-xl text-center transition-all ${
-                  isSelected ? "ring-2 ring-primary bg-primary/10" : "hover:bg-muted/40"
-                }`}
-                style={
-                  !isSelected
-                    ? { background: "var(--glass-bg)", border: "var(--glass-border)" }
-                    : {}
-                }
+                className={`p-3 rounded-xl text-center transition-all ${isSelected ? "ring-2 ring-primary bg-primary/10" : "hover:bg-muted/40"}`}
+                style={!isSelected ? { background: "var(--glass-bg)", border: "var(--glass-border)" } : {}}
               >
-                <p className={`text-xs font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                  {DAY_NAMES[date.getDay()]}
-                </p>
-                <p className={`text-lg font-bold ${isSelected ? "text-primary" : "text-foreground"}`}>
-                  {format(date, "d")}
-                </p>
-                <p className={`text-[10px] ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                  {format(date, "MMM")}
-                </p>
+                <p className={`text-xs font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>{DAY_NAMES[date.getDay()]}</p>
+                <p className={`text-lg font-bold ${isSelected ? "text-primary" : "text-foreground"}`}>{format(date, "d")}</p>
+                <p className={`text-[10px] ${isSelected ? "text-primary" : "text-muted-foreground"}`}>{format(date, "MMM")}</p>
               </button>
             );
           })}
@@ -270,10 +227,10 @@ const BookingModal = ({
       )}
       <div className="flex justify-between pt-2">
         <Button variant="ghost" onClick={() => setStep("type")}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t('booking.back')}
         </Button>
         <Button variant="primary" onClick={() => setStep("time")} disabled={!selectedDate}>
-          Continue <ArrowRight className="ml-2 h-4 w-4" />
+          {t('booking.continue')} <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -282,33 +239,24 @@ const BookingModal = ({
   const renderTimePicker = () => (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground text-center">
-        {selectedDate && `Available times for ${format(selectedDate, "EEEE, MMMM d")}`}
+        {selectedDate && `${t('booking.availableTimesFor')} ${format(selectedDate, "EEEE, MMMM d")}`}
       </p>
       {timeSlots.length === 0 ? (
-        <p className="text-center text-sm text-muted-foreground py-6">No time slots available for this date.</p>
+        <p className="text-center text-sm text-muted-foreground py-6">{t('booking.noTimeSlots')}</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {timeSlots.map((slot) => {
-            const isSelected =
-              selectedSlot?.start === slot.start && selectedSlot?.end === slot.end;
+            const isSelected = selectedSlot?.start === slot.start && selectedSlot?.end === slot.end;
             return (
               <button
                 key={slot.start}
                 onClick={() => setSelectedSlot(slot)}
-                className={`p-3 rounded-xl text-center transition-all ${
-                  isSelected ? "ring-2 ring-primary bg-primary/10" : "hover:bg-muted/40"
-                }`}
-                style={
-                  !isSelected
-                    ? { background: "var(--glass-bg)", border: "var(--glass-border)" }
-                    : {}
-                }
+                className={`p-3 rounded-xl text-center transition-all ${isSelected ? "ring-2 ring-primary bg-primary/10" : "hover:bg-muted/40"}`}
+                style={!isSelected ? { background: "var(--glass-bg)", border: "var(--glass-border)" } : {}}
               >
                 <div className="flex items-center justify-center gap-2">
                   <Clock className={`w-3.5 h-3.5 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                  <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-foreground"}`}>
-                    {slot.start.slice(0, 5)}
-                  </span>
+                  <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-foreground"}`}>{slot.start.slice(0, 5)}</span>
                 </div>
               </button>
             );
@@ -317,10 +265,10 @@ const BookingModal = ({
       )}
       <div className="flex justify-between pt-2">
         <Button variant="ghost" onClick={() => setStep("date")}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t('booking.back')}
         </Button>
         <Button variant="primary" onClick={() => setStep("confirm")} disabled={!selectedSlot}>
-          Continue <ArrowRight className="ml-2 h-4 w-4" />
+          {t('booking.continue')} <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -329,37 +277,33 @@ const BookingModal = ({
   const renderConfirm = () => (
     <div className="space-y-5">
       <div className="glass-card p-5 space-y-3">
-        <h3 className="font-semibold text-foreground">Booking Summary</h3>
+        <h3 className="font-semibold text-foreground">{t('booking.bookingSummary')}</h3>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Psychologist</span>
+            <span className="text-muted-foreground">{t('booking.psychologist')}</span>
             <span className="text-foreground font-medium">{psychologistName}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Type</span>
+            <span className="text-muted-foreground">{t('booking.type')}</span>
             <Badge variant="outline" className="text-xs">
               {sessionType === "online" ? (
-                <><Globe className="mr-1 h-3 w-3" /> Online</>
+                <><Globe className="mr-1 h-3 w-3" /> {t('booking.onlineOption')}</>
               ) : (
-                <><MapPin className="mr-1 h-3 w-3" /> In-Person</>
+                <><MapPin className="mr-1 h-3 w-3" /> {t('booking.inPersonOption')}</>
               )}
             </Badge>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Date</span>
-            <span className="text-foreground font-medium">
-              {selectedDate && format(selectedDate, "EEE, MMM d, yyyy")}
-            </span>
+            <span className="text-muted-foreground">{t('booking.date')}</span>
+            <span className="text-foreground font-medium">{selectedDate && format(selectedDate, "EEE, MMM d, yyyy")}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Time</span>
-            <span className="text-foreground font-medium">
-              {selectedSlot?.start.slice(0, 5)} – {selectedSlot?.end.slice(0, 5)}
-            </span>
+            <span className="text-muted-foreground">{t('booking.time')}</span>
+            <span className="text-foreground font-medium">{selectedSlot?.start.slice(0, 5)} – {selectedSlot?.end.slice(0, 5)}</span>
           </div>
           {hourlyRate && (
             <div className="flex justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-              <span className="text-muted-foreground">Session Fee</span>
+              <span className="text-muted-foreground">{t('booking.sessionFee')}</span>
               <span className="text-primary font-bold text-lg">{hourlyRate} MAD</span>
             </div>
           )}
@@ -367,25 +311,15 @@ const BookingModal = ({
       </div>
 
       <div>
-        <label className="text-sm text-muted-foreground block mb-1.5">
-          Notes for your psychologist (optional)
-        </label>
-        <Textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Any specific topics or concerns you'd like to discuss..."
-          rows={3}
-          maxLength={500}
-        />
+        <label className="text-sm text-muted-foreground block mb-1.5">{t('booking.notesLabel')}</label>
+        <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('booking.notesPlaceholder')} rows={3} maxLength={500} />
       </div>
 
       {!user && (
         <div className="glass-card p-4 text-center space-y-2">
-          <p className="text-sm text-muted-foreground">
-            You need to sign in to complete your booking.
-          </p>
+          <p className="text-sm text-muted-foreground">{t('booking.signInToBook')}</p>
           <Button variant="primary" size="sm" asChild>
-            <Link to="/auth">Sign In</Link>
+            <Link to="/auth">{t('auth.signIn')}</Link>
           </Button>
         </div>
       )}
@@ -394,13 +328,13 @@ const BookingModal = ({
 
       <div className="flex justify-between pt-2">
         <Button variant="ghost" onClick={() => setStep("time")}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t('booking.back')}
         </Button>
         <Button variant="primary" onClick={handleBook} disabled={loading || !user}>
           {loading ? (
-            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Confirming...</>
+            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('booking.confirming')}</>
           ) : (
-            "Confirm Booking"
+            t('booking.confirmBookingBtn')
           )}
         </Button>
       </div>
@@ -416,37 +350,33 @@ const BookingModal = ({
         <CheckCircle2 className="w-8 h-8 text-primary" />
       </div>
       <div>
-        <h3 className="text-h3 mb-1">Session Booked!</h3>
+        <h3 className="text-h3 mb-1">{t('booking.sessionBooked')}</h3>
         <p className="text-sm text-muted-foreground">
-          Your session with {psychologistName} is confirmed.
+          {t('booking.sessionConfirmedWith').replace('{name}', psychologistName)}
         </p>
       </div>
       <div className="glass-card p-4 text-sm space-y-1.5">
-        <p className="text-foreground font-medium">
-          {selectedDate && format(selectedDate, "EEEE, MMMM d, yyyy")}
-        </p>
+        <p className="text-foreground font-medium">{selectedDate && format(selectedDate, "EEEE, MMMM d, yyyy")}</p>
         <p className="text-muted-foreground">
           {selectedSlot?.start.slice(0, 5)} – {selectedSlot?.end.slice(0, 5)} ·{" "}
-          {sessionType === "online" ? "Online" : "In-Person"}
+          {sessionType === "online" ? t('booking.onlineOption') : t('booking.inPersonOption')}
         </p>
       </div>
       <div className="flex flex-col gap-2 pt-2">
         <Button variant="primary" asChild>
-          <Link to="/dashboard">Go to Dashboard</Link>
+          <Link to="/dashboard">{t('dashboard.goToDashboard')}</Link>
         </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Close
-        </Button>
+        <Button variant="ghost" onClick={onClose}>{t('booking.close')}</Button>
       </div>
     </div>
   );
 
   const stepTitles: Record<BookingStep, string> = {
-    type: "Choose Session Type",
-    date: "Select Date",
-    time: "Select Time",
-    confirm: "Confirm Booking",
-    success: "Booking Confirmed",
+    type: t('booking.chooseType'),
+    date: t('booking.selectDate'),
+    time: t('booking.selectTime'),
+    confirm: t('booking.confirmBooking'),
+    success: t('booking.bookingConfirmed'),
   };
 
   return (
@@ -456,8 +386,8 @@ const BookingModal = ({
           <DialogTitle>{stepTitles[step]}</DialogTitle>
           <DialogDescription>
             {step !== "success"
-              ? `Book a session with ${psychologistName}`
-              : "Your session has been confirmed"}
+              ? `${t('psychologists.book')} — ${psychologistName}`
+              : t('booking.bookingConfirmed')}
           </DialogDescription>
         </DialogHeader>
         {step === "type" && renderSessionType()}

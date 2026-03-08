@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,17 +26,10 @@ interface MoodEntry {
   recorded_at: string;
 }
 
-const MOOD_ICONS = [
-  { score: 1, icon: Frown, label: "Very Low", color: "text-destructive" },
-  { score: 2, icon: Frown, label: "Low", color: "text-orange-400" },
-  { score: 3, icon: Meh, label: "Neutral", color: "text-muted-foreground" },
-  { score: 4, icon: Smile, label: "Good", color: "text-u-turquoise" },
-  { score: 5, icon: Smile, label: "Great", color: "text-primary" },
-];
-
 const PatientDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLocale();
   const [entries, setEntries] = useState<MoodEntry[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [moodScore, setMoodScore] = useState(0);
@@ -44,6 +38,14 @@ const PatientDashboard = () => {
   const [notes, setNotes] = useState("");
   const [assessmentResults, setAssessmentResults] = useState<any[]>([]);
   const [enrollments, setEnrollments] = useState<any[]>([]);
+
+  const MOOD_ICONS = [
+    { score: 1, icon: Frown, label: t('mood.veryLow'), color: "text-destructive" },
+    { score: 2, icon: Frown, label: t('mood.low'), color: "text-orange-400" },
+    { score: 3, icon: Meh, label: t('mood.neutral'), color: "text-muted-foreground" },
+    { score: 4, icon: Smile, label: t('mood.good'), color: "text-u-turquoise" },
+    { score: 5, icon: Smile, label: t('mood.great'), color: "text-primary" },
+  ];
 
   useEffect(() => {
     if (!user) return;
@@ -73,7 +75,7 @@ const PatientDashboard = () => {
     if (error) {
       toast({ title: "Error", description: "Failed to save mood entry", variant: "destructive" });
     } else {
-      toast({ title: "Saved", description: "Mood entry recorded" });
+      toast({ title: t('dashboard.save'), description: "Mood entry recorded" });
       setShowForm(false);
       setMoodScore(0);
       setEnergyLevel(0);
@@ -100,9 +102,9 @@ const PatientDashboard = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="glass-card p-12 text-center max-w-md">
           <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h2 className="text-h2 mb-2">Sign In Required</h2>
-          <p className="text-muted-foreground mb-6">Please sign in to access your dashboard.</p>
-          <Button variant="primary" asChild><Link to="/auth">Sign In</Link></Button>
+          <h2 className="text-h2 mb-2">{t('auth.signInRequired')}</h2>
+          <p className="text-muted-foreground mb-6">{t('auth.signInRequiredDesc')}</p>
+          <Button variant="primary" asChild><Link to="/auth">{t('auth.signIn')}</Link></Button>
         </div>
       </div>
     );
@@ -115,8 +117,8 @@ const PatientDashboard = () => {
         <div className="container-custom relative z-10">
           <ScrollReveal>
             <div className="space-y-2">
-              <h1 className="text-h1">Welcome back 👋</h1>
-              <p className="text-muted-foreground">Track your wellbeing and manage your mental health journey.</p>
+              <h1 className="text-h1">{t('dashboard.welcomeBack')}</h1>
+              <p className="text-muted-foreground">{t('dashboard.welcomeSubtitle')}</p>
             </div>
           </ScrollReveal>
         </div>
@@ -129,10 +131,10 @@ const PatientDashboard = () => {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Avg Mood", value: avgMood, icon: Smile, accent: "text-primary" },
-              { label: "Avg Stress", value: avgStress, icon: Zap, accent: "text-u-crimson" },
-              { label: "Entries", value: entries.length.toString(), icon: BarChart3, accent: "text-u-clinical" },
-              { label: "Assessments", value: assessmentResults.length.toString(), icon: Brain, accent: "text-u-turquoise" },
+              { label: t('dashboard.avgMood'), value: avgMood, icon: Smile, accent: "text-primary" },
+              { label: t('dashboard.avgStress'), value: avgStress, icon: Zap, accent: "text-u-crimson" },
+              { label: t('dashboard.entries'), value: entries.length.toString(), icon: BarChart3, accent: "text-u-clinical" },
+              { label: t('dashboard.assessments'), value: assessmentResults.length.toString(), icon: Brain, accent: "text-u-turquoise" },
             ].map((stat) => (
               <div key={stat.label} className="glass-card p-5 text-center">
                 <stat.icon className={`w-6 h-6 mx-auto mb-2 ${stat.accent}`} />
@@ -149,11 +151,11 @@ const PatientDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-h3 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-primary" />
-                  Mood Trends
+                  {t('dashboard.moodTrends')}
                 </h2>
                 <Button variant="secondary" size="sm" onClick={() => setShowForm(true)}>
                   <Plus className="h-4 w-4 mr-1" />
-                  Log Mood
+                  {t('dashboard.logMood')}
                 </Button>
               </div>
               {chartData.length > 1 ? (
@@ -173,7 +175,7 @@ const PatientDashboard = () => {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-[220px] flex items-center justify-center text-muted-foreground text-sm">
-                  Log at least 2 mood entries to see trends
+                  {t('dashboard.logMinEntries')}
                 </div>
               )}
             </div>
@@ -182,12 +184,12 @@ const PatientDashboard = () => {
             <div className="glass-card p-6 space-y-5">
               <h3 className="text-h3 flex items-center gap-2">
                 <Heart className="w-5 h-5 text-primary" />
-                {showForm ? "How are you feeling?" : "Quick Check-In"}
+                {showForm ? t('dashboard.howFeeling') : t('dashboard.quickCheckIn')}
               </h3>
 
               {!showForm ? (
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">Tap to log how you're feeling right now.</p>
+                  <p className="text-sm text-muted-foreground">{t('dashboard.tapToLog')}</p>
                   <div className="flex justify-between">
                     {MOOD_ICONS.map((m) => (
                       <button
@@ -203,7 +205,6 @@ const PatientDashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* Selected mood */}
                   <div className="flex justify-between">
                     {MOOD_ICONS.map((m) => (
                       <button
@@ -216,9 +217,8 @@ const PatientDashboard = () => {
                     ))}
                   </div>
 
-                  {/* Energy */}
                   <div>
-                    <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1"><Sun className="w-3 h-3" /> Energy Level</p>
+                    <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1"><Sun className="w-3 h-3" /> {t('dashboard.energyLevel')}</p>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((v) => (
                         <button key={v} className={`flex-1 h-8 rounded-lg text-xs font-medium transition-all ${energyLevel === v ? "bg-u-turquoise text-white" : "bg-muted/30 text-muted-foreground"}`}
@@ -227,9 +227,8 @@ const PatientDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Stress */}
                   <div>
-                    <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1"><Zap className="w-3 h-3" /> Stress Level</p>
+                    <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1"><Zap className="w-3 h-3" /> {t('dashboard.stressLevel')}</p>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((v) => (
                         <button key={v} className={`flex-1 h-8 rounded-lg text-xs font-medium transition-all ${stressLevel === v ? "bg-u-crimson text-white" : "bg-muted/30 text-muted-foreground"}`}
@@ -238,10 +237,10 @@ const PatientDashboard = () => {
                     </div>
                   </div>
 
-                  <Textarea placeholder="Any thoughts or notes..." value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} />
+                  <Textarea placeholder="..." value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} />
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => setShowForm(false)} className="flex-1">Cancel</Button>
-                    <Button variant="primary" size="sm" onClick={submitMood} disabled={moodScore === 0} className="flex-1">Save</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setShowForm(false)} className="flex-1">{t('dashboard.cancel')}</Button>
+                    <Button variant="primary" size="sm" onClick={submitMood} disabled={moodScore === 0} className="flex-1">{t('dashboard.save')}</Button>
                   </div>
                 </div>
               )}
@@ -253,16 +252,15 @@ const PatientDashboard = () => {
 
           {/* Assessments + Courses */}
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Recent Assessments */}
             <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-h3 flex items-center gap-2"><Brain className="w-5 h-5 text-u-clinical" /> Assessments</h3>
-                <Button variant="ghost" size="sm" asChild><Link to="/assessments">View All <ChevronRight className="ml-1 h-3 w-3" /></Link></Button>
+                <h3 className="text-h3 flex items-center gap-2"><Brain className="w-5 h-5 text-u-clinical" /> {t('dashboard.assessments')}</h3>
+                <Button variant="ghost" size="sm" asChild><Link to="/assessments">{t('dashboard.viewAll')} <ChevronRight className="ml-1 h-3 w-3" /></Link></Button>
               </div>
               {assessmentResults.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground mb-4">No assessments completed yet.</p>
-                  <Button variant="secondary" size="sm" asChild><Link to="/assessments">Take Assessment</Link></Button>
+                  <p className="text-sm text-muted-foreground mb-4">{t('dashboard.noAssessments')}</p>
+                  <Button variant="secondary" size="sm" asChild><Link to="/assessments">{t('dashboard.takeAssessment')}</Link></Button>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -281,16 +279,15 @@ const PatientDashboard = () => {
               )}
             </div>
 
-            {/* Course Progress */}
             <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-h3 flex items-center gap-2"><BookOpen className="w-5 h-5 text-u-turquoise" /> Courses</h3>
-                <Button variant="ghost" size="sm" asChild><Link to="/resources">Browse <ChevronRight className="ml-1 h-3 w-3" /></Link></Button>
+                <h3 className="text-h3 flex items-center gap-2"><BookOpen className="w-5 h-5 text-u-turquoise" /> {t('dashboard.courses')}</h3>
+                <Button variant="ghost" size="sm" asChild><Link to="/resources">{t('dashboard.browse')} <ChevronRight className="ml-1 h-3 w-3" /></Link></Button>
               </div>
               {enrollments.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground mb-4">No courses enrolled yet.</p>
-                  <Button variant="secondary" size="sm" asChild><Link to="/resources">Explore Courses</Link></Button>
+                  <p className="text-sm text-muted-foreground mb-4">{t('dashboard.noCourses')}</p>
+                  <Button variant="secondary" size="sm" asChild><Link to="/resources">{t('dashboard.exploreCourses')}</Link></Button>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -316,10 +313,10 @@ const PatientDashboard = () => {
           {/* Quick Actions */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Take Assessment", icon: Brain, href: "/assessments", accent: "u-clinical" },
-              { label: "AI Assistant", icon: Heart, href: "/ai-assistant", accent: "u-turquoise" },
-              { label: "Find Psychologist", icon: Calendar, href: "/psychologists", accent: "primary" },
-              { label: "My Certificates", icon: Award, href: "/dashboard", accent: "primary" },
+              { label: t('dashboard.takeAssessmentAction'), icon: Brain, href: "/assessments", accent: "u-clinical" },
+              { label: t('dashboard.aiAssistant'), icon: Heart, href: "/ai-assistant", accent: "u-turquoise" },
+              { label: t('dashboard.findPsychologist'), icon: Calendar, href: "/psychologists", accent: "primary" },
+              { label: t('dashboard.myCertificates'), icon: Award, href: "/dashboard", accent: "primary" },
             ].map((action) => (
               <Link key={action.label} to={action.href} className="glass-card p-5 text-center group hover:shadow-glass-hover transition-all">
                 <action.icon className={`w-7 h-7 mx-auto mb-2 text-${action.accent} group-hover:scale-110 transition-transform`} />

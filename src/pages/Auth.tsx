@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
+  const { t } = useLocale();
   const [isLoading, setIsLoading] = useState(false);
 
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -34,25 +36,14 @@ const Auth = () => {
       const { error } = await signIn(loginData.email, loginData.password);
 
       if (error) {
-        toast({
-          title: "Login Failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast({ title: t('auth.loginFailed'), description: error.message, variant: "destructive" });
       } else {
-        toast({
-          title: "Welcome back!",
-          description: "You've successfully logged in.",
-        });
+        toast({ title: t('auth.welcomeBack'), description: t('auth.welcomeBackDesc') });
         navigate("/my-space");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        toast({
-          title: "Validation Error",
-          description: error.errors[0].message,
-          variant: "destructive",
-        });
+        toast({ title: t('auth.validationError'), description: error.errors[0].message, variant: "destructive" });
       }
     } finally {
       setIsLoading(false);
@@ -74,31 +65,16 @@ const Auth = () => {
       const { error } = await signUp(signupData.email, signupData.password, signupData.fullName);
 
       if (error) {
-        toast({
-          title: "Signup Failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast({ title: t('auth.signupFailed'), description: error.message, variant: "destructive" });
       } else {
-        toast({
-          title: "Welcome to U.Psy!",
-          description: "Your psychologist account has been created.",
-        });
+        toast({ title: t('auth.welcomeNew'), description: t('auth.welcomeNewDesc') });
         navigate("/my-space");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        toast({
-          title: "Validation Error",
-          description: error.errors[0].message,
-          variant: "destructive",
-        });
+        toast({ title: t('auth.validationError'), description: error.errors[0].message, variant: "destructive" });
       } else if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast({ title: "Error", description: error.message, variant: "destructive" });
       }
     } finally {
       setIsLoading(false);
@@ -112,20 +88,20 @@ const Auth = () => {
           <div className="flex justify-center mb-4">
             <Brain className="w-12 h-12 text-primary" />
           </div>
-          <CardTitle className="text-h2">U.Psy Psychologist Portal</CardTitle>
-          <CardDescription>Login or create your psychologist account</CardDescription>
+          <CardTitle className="text-h2">{t('auth.portalTitle')}</CardTitle>
+          <CardDescription>{t('auth.portalDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+              <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-email">{t('auth.email')}</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -137,7 +113,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password">{t('auth.password')}</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -150,12 +126,9 @@ const Auth = () => {
                 </div>
                 <Button type="submit" variant="primary" className="w-full" disabled={isLoading}>
                   {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logging in...
-                    </>
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('auth.loggingIn')}</>
                   ) : (
-                    "Login"
+                    t('auth.login')
                   )}
                 </Button>
                 <button
@@ -163,20 +136,20 @@ const Auth = () => {
                   className="w-full text-sm text-muted-foreground hover:text-primary transition-colors mt-2"
                   onClick={async () => {
                     if (!loginData.email) {
-                      toast({ title: "Enter your email", description: "Please enter your email address first.", variant: "destructive" });
+                      toast({ title: t('auth.enterEmail'), description: t('auth.enterEmailDesc'), variant: "destructive" });
                       return;
                     }
                     try {
                       await supabase.auth.resetPasswordForEmail(loginData.email, {
                         redirectTo: `${window.location.origin}/auth`,
                       });
-                      toast({ title: "Check your email", description: "A password reset link has been sent to your email." });
+                      toast({ title: t('auth.checkEmail'), description: t('auth.checkEmailDesc') });
                     } catch {
                       toast({ title: "Error", description: "Failed to send reset email.", variant: "destructive" });
                     }
                   }}
                 >
-                  Forgot Password?
+                  {t('auth.forgotPassword')}
                 </button>
               </form>
             </TabsContent>
@@ -184,7 +157,7 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
+                  <Label htmlFor="signup-name">{t('auth.fullName')}</Label>
                   <Input
                     id="signup-name"
                     type="text"
@@ -196,7 +169,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email">{t('auth.email')}</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -208,7 +181,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">{t('auth.password')}</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -221,12 +194,9 @@ const Auth = () => {
                 </div>
                 <Button type="submit" variant="primary" className="w-full" disabled={isLoading}>
                   {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
-                    </>
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('auth.creatingAccount')}</>
                   ) : (
-                    "Create Account"
+                    t('auth.createAccount')
                   )}
                 </Button>
               </form>
