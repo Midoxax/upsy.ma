@@ -204,24 +204,28 @@ const PsychologistProfile = () => {
 
           {/* Social Proof */}
           <div className="flex flex-wrap items-center justify-center gap-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            {reviewStats.count > 0 && (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i < Math.round(reviewStats.avg) ? "fill-primary text-primary" : "text-muted-foreground/20"}`} />
+                    ))}
+                  </div>
+                  <span className="text-lg font-bold text-foreground">{reviewStats.avg}</span>
+                  <span className="text-sm text-muted-foreground">avg rating</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                  <span className="text-lg font-bold text-foreground">{reviewStats.count}</span>
+                  <span className="text-sm text-muted-foreground">reviews</span>
+                </div>
+              </>
+            )}
             <div className="flex items-center gap-2">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-u-gold text-u-gold" />
-                ))}
-              </div>
-              <span className="text-lg font-bold text-u-white">4.9</span>
-              <span className="text-sm text-u-gray-400">avg rating</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-u-gold" />
-              <span className="text-lg font-bold text-u-white">{mockReviews.length}</span>
-              <span className="text-sm text-u-gray-400">reviews</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-u-gold" />
-              <span className="text-lg font-bold text-u-white">98%</span>
-              <span className="text-sm text-u-gray-400">response rate</span>
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-lg font-bold text-foreground">98%</span>
+              <span className="text-sm text-muted-foreground">response rate</span>
             </div>
           </div>
         </div>
