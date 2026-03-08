@@ -110,6 +110,7 @@ const Header = () => {
 
           {/* Desktop CTAs: Login | Sign Up | Find Psychologist */}
           <div className="hidden lg:flex items-center space-x-3">
+            <ThemeToggle />
             <LanguageSwitcher className="mr-1" />
             {user ? (
               <Button variant="primary" size="sm" asChild>
