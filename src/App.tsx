@@ -36,6 +36,7 @@ import AssessmentLab from "./pages/AssessmentLab";
 import AIAssistant from "./pages/AIAssistant";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
+import VideoCall from "./pages/VideoCall";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -88,6 +89,7 @@ const AnimatedRoutes = () => {
           <Route path="/my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><PageTransition><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/applications" element={<ProtectedRoute><PageTransition><Applications /></PageTransition></ProtectedRoute>} />
+          <Route path="/session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
           
           {/* FR routes */}
           <Route path="/fr" element={<PageTransition><Index /></PageTransition>} />

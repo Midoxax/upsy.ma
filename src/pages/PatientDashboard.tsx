@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
 
 interface MoodEntry {
   id: string;
@@ -245,6 +246,9 @@ const PatientDashboard = () => {
               )}
             </div>
           </div>
+
+          {/* Upcoming Sessions */}
+          <UpcomingSessionsCard />
 
           {/* Assessments + Courses */}
           <div className="grid md:grid-cols-2 gap-6">
