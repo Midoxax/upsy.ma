@@ -6,32 +6,32 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Footer = () => {
   const { locale, t } = useLocale();
-  
+
   return (
-    <footer className="bg-u-surface border-t border-u-gray-500">
+    <footer className="bg-u-surface border-t border-u-gray-100">
       <div className="container-custom py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo & Bio */}
           <div className="lg:col-span-2">
             <div className="flex flex-col mb-4">
-              <span className="text-u-white font-bold text-xl">U.Psy</span>
-              <span className="text-u-gray-300 text-xs">by Mehdi Felji</span>
-              <span className="text-u-gray-300 text-sm mt-1.5 leading-[1.4]">
+              <span className="text-u-navy font-bold text-xl">U.Psy</span>
+              <span className="text-u-gray-400 text-xs">by Mehdi Felji</span>
+              <span className="text-u-gray-400 text-sm mt-1.5 leading-[1.4]">
                 {t('footer.strapline')}
               </span>
             </div>
-            <p className="text-u-gray-300 text-sm mb-6">
-              Evidence-based psychology & sport performance.
+            <p className="text-u-gray-400 text-sm mb-6">
+              Evidence-based psychology & mental performance.
             </p>
-            
+
             {/* Contact Info */}
             <div className="space-y-2 text-sm">
-              <p className="text-u-gray-300">
-                <span className="text-u-white">{t('footer.email')}:</span> mypersonalpsychologist212@gmail.com
+              <p className="text-u-gray-400">
+                <span className="text-u-navy font-medium">{t('footer.email')}:</span> mypersonalpsychologist212@gmail.com
               </p>
-              <p className="text-u-gray-300">
-                <span className="text-u-white">{t('footer.whatsapp')}:</span>{" "}
-                <a href="https://wa.me/212668594699" className="text-u-orange hover:underline" target="_blank" rel="noopener noreferrer">
+              <p className="text-u-gray-400">
+                <span className="text-u-navy font-medium">{t('footer.whatsapp')}:</span>{" "}
+                <a href="https://wa.me/212668594699" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                   +212 668-594699
                 </a>
               </p>
@@ -40,38 +40,18 @@ const Footer = () => {
 
           {/* Social Media */}
           <div>
-            <h3 className="text-u-white font-semibold mb-4">{t('footer.followUs')}</h3>
+            <h3 className="text-u-navy font-semibold mb-4">{t('footer.followUs')}</h3>
             <div className="flex space-x-4">
-              <a 
-                href="https://www.youtube.com/@UPsy-psychology" 
-                target="_blank" rel="noopener noreferrer"
-                className="text-u-gray-300 hover:text-u-white transition-colors"
-                aria-label="YouTube"
-              >
+              <a href="https://www.youtube.com/@UPsy-psychology" target="_blank" rel="noopener noreferrer" className="text-u-gray-300 hover:text-primary transition-colors" aria-label="YouTube">
                 <Youtube size={20} />
               </a>
-              <a 
-                href="https://www.linkedin.com/company/upsy-psychology" 
-                target="_blank" rel="noopener noreferrer"
-                className="text-u-gray-300 hover:text-u-white transition-colors"
-                aria-label="LinkedIn"
-              >
+              <a href="https://www.linkedin.com/company/upsy-psychology" target="_blank" rel="noopener noreferrer" className="text-u-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
-              <a 
-                href="https://www.instagram.com/upsy.psychology" 
-                target="_blank" rel="noopener noreferrer"
-                className="text-u-gray-300 hover:text-u-white transition-colors"
-                aria-label="Instagram"
-              >
+              <a href="https://www.instagram.com/upsy.psychology" target="_blank" rel="noopener noreferrer" className="text-u-gray-300 hover:text-primary transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
-              <a 
-                href="https://www.tiktok.com/@upsy.psychology" 
-                target="_blank" rel="noopener noreferrer"
-                className="text-u-gray-300 hover:text-u-white transition-colors"
-                aria-label="TikTok"
-              >
+              <a href="https://www.tiktok.com/@upsy.psychology" target="_blank" rel="noopener noreferrer" className="text-u-gray-300 hover:text-primary transition-colors" aria-label="TikTok">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-.88-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
                 </svg>
@@ -81,13 +61,13 @@ const Footer = () => {
 
           {/* Legal & Language */}
           <div>
-            <h3 className="text-u-white font-semibold mb-4">Legal</h3>
+            <h3 className="text-u-navy font-semibold mb-4">Legal</h3>
             <div className="space-y-3">
-              <Link to={addLocalePrefix('/legal', locale)} className="text-u-gray-300 hover:text-u-white text-sm block transition-colors">
+              <Link to={addLocalePrefix('/legal', locale)} className="text-u-gray-400 hover:text-primary text-sm block transition-colors">
                 {t('footer.legal')}
               </Link>
               <div>
-                <div className="text-u-white text-sm mb-2">{t('footer.language')}:</div>
+                <div className="text-u-navy text-sm mb-2 font-medium">{t('footer.language')}:</div>
                 <LanguageSwitcher compact />
               </div>
             </div>
@@ -95,14 +75,14 @@ const Footer = () => {
         </div>
 
         {/* Crisis Notice */}
-        <div className="border-t border-u-gray-500 pt-8 mt-8">
-          <p className="text-u-gray-300 text-xs text-center">
-            <strong className="text-u-orange">Important:</strong> {t('footer.crisis')}
+        <div className="border-t border-u-gray-100 pt-8 mt-8">
+          <p className="text-u-gray-400 text-xs text-center">
+            <strong className="text-u-coral">Important:</strong> {t('footer.crisis')}
           </p>
         </div>
 
         {/* Copyright */}
-        <div className="mt-6 pt-6 border-t border-u-gray-500">
+        <div className="mt-6 pt-6 border-t border-u-gray-100">
           <p className="text-u-gray-300 text-xs text-center">
             © {new Date().getFullYear()} U.Psy by Mehdi Felji. All rights reserved.
           </p>
