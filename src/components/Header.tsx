@@ -17,7 +17,8 @@ const Header = () => {
   const { locale, t } = useLocale();
 
   // Consolidated nav: 5 items max + dropdowns
-  const navigation = [
+  type NavDropdownItem = { name: string; href: string; icon?: React.ComponentType<any>; featured?: boolean };
+  const navigation: { name: string; href: string; dropdown?: NavDropdownItem[] }[] = [
     { name: t('nav.findPsychologist'), href: "/psychologists" },
     {
       name: t('nav.programs'),
