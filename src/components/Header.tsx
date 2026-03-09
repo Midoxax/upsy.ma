@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ChevronDown } from "lucide-react";
+import { Menu, X, User, ChevronDown, Umbrella } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
@@ -17,7 +17,8 @@ const Header = () => {
   const { locale, t } = useLocale();
 
   // Consolidated nav: 5 items max + dropdowns
-  const navigation = [
+  type NavDropdownItem = { name: string; href: string; icon?: React.ComponentType<any>; featured?: boolean };
+  const navigation: { name: string; href: string; dropdown?: NavDropdownItem[] }[] = [
     { name: t('nav.findPsychologist'), href: "/psychologists" },
     {
       name: t('nav.programs'),
@@ -35,7 +36,7 @@ const Header = () => {
       href: "/about",
       dropdown: [
         { name: t('nav.ourStory'), href: "/about" },
-        { name: "The Moroccan Umbrella", href: "/moroccan-umbrella" },
+        { name: "The Moroccan Umbrella", href: "/moroccan-umbrella", icon: Umbrella, featured: true },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation'), href: "/apply" },
       ],
@@ -50,7 +51,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 glass-effect border-b border-border/40">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-sm">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -85,9 +86,19 @@ const Header = () => {
                         <Link
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
-                          className="block px-4 py-2.5 text-sm text-foreground/70 hover:text-primary hover:bg-primary/5 transition-colors"
+                          className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
+                            subItem.featured
+                              ? "text-primary font-semibold bg-primary/5 hover:bg-primary/10"
+                              : "text-foreground/70 hover:text-primary hover:bg-primary/5"
+                          }`}
                         >
+                          {subItem.icon && <subItem.icon className="h-4 w-4 shrink-0" />}
                           {subItem.name}
+                          {subItem.featured && (
+                            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+                              New
+                            </span>
+                          )}
                         </Link>
                       ))}
                     </div>
@@ -173,9 +184,19 @@ const Header = () => {
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block text-sm text-foreground/60 hover:text-primary py-2 px-3 rounded-lg hover:bg-primary/5 transition-colors"
+                          className={`flex items-center gap-2 text-sm py-2 px-3 rounded-lg transition-colors ${
+                            subItem.featured
+                              ? "text-primary font-semibold bg-primary/5 hover:bg-primary/10"
+                              : "text-foreground/60 hover:text-primary hover:bg-primary/5"
+                          }`}
                         >
+                          {subItem.icon && <subItem.icon className="h-4 w-4 shrink-0" />}
                           {subItem.name}
+                          {subItem.featured && (
+                            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+                              New
+                            </span>
+                          )}
                         </Link>
                       ))}
                     </div>
