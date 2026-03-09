@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -9,12 +11,13 @@ import ScrollReveal from "@/components/ScrollReveal";
 import MaroonDivider from "@/components/ui/maroon-divider";
 import {
   Target, Zap, Eye, Shield, Brain, TrendingUp, Medal,
-  Dumbbell, Wind, Timer, ChevronRight, BarChart3,
+  Dumbbell, Wind, Timer, BarChart3,
 } from "lucide-react";
 import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis } from "recharts";
 
 const AthleteHub = () => {
   const { user } = useAuth();
+  const { t, locale } = useLocale();
   const [profile, setProfile] = useState<any>(null);
   const [trainingSessions, setTrainingSessions] = useState<any[]>([]);
 
@@ -39,14 +42,13 @@ const AthleteHub = () => {
   };
 
   const overallScore = Math.round((scores.readiness + scores.focus + scores.confidence + scores.resilience) / 4);
-
   const radialData = [{ name: "Score", value: overallScore, fill: "hsl(42,100%,50%)" }];
 
   const TRAINING_PROGRAMS = [
-    { icon: Wind, title: "Mindfulness Training", desc: "Build mental clarity and present-moment awareness", duration: "10 min/day", category: "mindfulness" },
-    { icon: Eye, title: "Visualization Protocol", desc: "Mental rehearsal for peak performance", duration: "15 min", category: "visualization" },
-    { icon: Timer, title: "Pre-Competition Routine", desc: "Structured warm-up for mental readiness", duration: "20 min", category: "pre_competition" },
-    { icon: Brain, title: "Recovery Psychology", desc: "Mental strategies for optimal recovery", duration: "12 min", category: "recovery" },
+    { icon: Wind, title: t('athleteHubPage.mindfulnessTraining'), desc: t('athleteHubPage.mindfulnessDesc'), duration: "10 min/day" },
+    { icon: Eye, title: t('athleteHubPage.visualizationProtocol'), desc: t('athleteHubPage.visualizationDesc'), duration: "15 min" },
+    { icon: Timer, title: t('athleteHubPage.preCompetitionRoutine'), desc: t('athleteHubPage.preCompetitionDesc'), duration: "20 min" },
+    { icon: Brain, title: t('athleteHubPage.recoveryPsychology'), desc: t('athleteHubPage.recoveryDesc'), duration: "12 min" },
   ];
 
   if (!user) {
@@ -54,9 +56,9 @@ const AthleteHub = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="glass-card p-12 text-center max-w-md">
           <Medal className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h2 className="text-h2 mb-2">Sign In Required</h2>
-          <p className="text-muted-foreground mb-6">Sign in to access your Athlete Performance Hub.</p>
-          <Button variant="primary" asChild><Link to="/auth">Sign In</Link></Button>
+          <h2 className="text-h2 mb-2">{t('athleteHubPage.signInRequired')}</h2>
+          <p className="text-muted-foreground mb-6">{t('athleteHubPage.signInDesc')}</p>
+          <Button variant="primary" asChild><Link to={addLocalePrefix("/auth", locale)}>{t('athleteHubPage.signIn')}</Link></Button>
         </div>
       </div>
     );
@@ -70,10 +72,10 @@ const AthleteHub = () => {
           <ScrollReveal>
             <div className="flex items-center gap-3 mb-2">
               <Dumbbell className="w-6 h-6 text-primary" />
-              <Badge className="bg-primary/10 text-primary border-primary/20">Performance Hub</Badge>
+              <Badge className="bg-primary/10 text-primary border-primary/20">{t('athleteHubPage.badge')}</Badge>
             </div>
-            <h1 className="text-h1">Athlete Performance Hub</h1>
-            <p className="text-muted-foreground mt-2">Monitor your mental performance metrics and train your mind for peak performance.</p>
+            <h1 className="text-h1">{t('athleteHubPage.title')}</h1>
+            <p className="text-muted-foreground mt-2">{t('athleteHubPage.subtitle')}</p>
           </ScrollReveal>
         </div>
       </section>
@@ -82,12 +84,10 @@ const AthleteHub = () => {
 
       <section className="section-spacing liquid-bg">
         <div className="container-custom space-y-8">
-
           {/* Readiness Score + Metrics */}
           <div className="grid lg:grid-cols-[320px_1fr] gap-6">
-            {/* Overall Score */}
             <div className="glass-card p-6 text-center">
-              <h3 className="text-sm text-muted-foreground mb-4 uppercase tracking-wide">Mental Readiness</h3>
+              <h3 className="text-sm text-muted-foreground mb-4 uppercase tracking-wide">{t('athleteHubPage.mentalReadiness')}</h3>
               <div className="w-48 h-48 mx-auto">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadialBarChart innerRadius="75%" outerRadius="100%" data={radialData} startAngle={90} endAngle={-270}>
@@ -97,16 +97,15 @@ const AthleteHub = () => {
                 </ResponsiveContainer>
               </div>
               <p className="text-4xl font-bold text-primary -mt-28 mb-20">{overallScore}%</p>
-              <p className="text-xs text-muted-foreground">Overall mental performance score</p>
+              <p className="text-xs text-muted-foreground">{t('athleteHubPage.overallScore')}</p>
             </div>
 
-            {/* Individual Metrics */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: "Mental Readiness", value: scores.readiness, icon: Target, color: "bg-primary" },
-                { label: "Focus Capacity", value: scores.focus, icon: Eye, color: "bg-u-clinical" },
-                { label: "Confidence", value: scores.confidence, icon: Shield, color: "bg-u-turquoise" },
-                { label: "Resilience", value: scores.resilience, icon: Zap, color: "bg-u-lavender" },
+                { label: t('athleteHubPage.mentalReadiness'), value: scores.readiness, icon: Target, color: "bg-primary" },
+                { label: t('athleteHubPage.focusCapacity'), value: scores.focus, icon: Eye, color: "bg-u-clinical" },
+                { label: t('athleteHubPage.confidence'), value: scores.confidence, icon: Shield, color: "bg-u-turquoise" },
+                { label: t('athleteHubPage.resilience'), value: scores.resilience, icon: Zap, color: "bg-u-lavender" },
               ].map((metric) => (
                 <div key={metric.label} className="glass-card p-5">
                   <div className="flex items-center gap-2 mb-3">
@@ -125,7 +124,7 @@ const AthleteHub = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-h2 flex items-center gap-2">
                 <Brain className="w-6 h-6 text-primary" />
-                Mental Training Programs
+                {t('athleteHubPage.mentalTraining')}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -143,11 +142,11 @@ const AthleteHub = () => {
           {/* Recent Training Sessions */}
           <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-h3 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-primary" /> Training History</h3>
+              <h3 className="text-h3 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-primary" /> {t('athleteHubPage.trainingHistory')}</h3>
             </div>
             {trainingSessions.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground mb-4">No training sessions recorded yet. Start a program above!</p>
+                <p className="text-sm text-muted-foreground mb-4">{t('athleteHubPage.noTrainingSessions')}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -158,7 +157,7 @@ const AthleteHub = () => {
                       <p className="text-xs text-muted-foreground">{s.session_type} · {s.duration_minutes} min</p>
                     </div>
                     <Badge variant={s.completed ? "default" : "outline"}>
-                      {s.completed ? "Completed" : "Scheduled"}
+                      {s.completed ? t('athleteHubPage.completed') : t('athleteHubPage.scheduled')}
                     </Badge>
                   </div>
                 ))}
@@ -168,15 +167,15 @@ const AthleteHub = () => {
 
           {/* CTA */}
           <div className="grid md:grid-cols-2 gap-4">
-            <Link to="/assessments" className="glass-card p-6 text-center group hover:shadow-glass-hover transition-all">
+            <Link to={addLocalePrefix("/assessments", locale)} className="glass-card p-6 text-center group hover:shadow-glass-hover transition-all">
               <BarChart3 className="w-8 h-8 text-u-clinical mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <p className="font-semibold text-foreground">Take Performance Assessment</p>
-              <p className="text-xs text-muted-foreground mt-1">Measure focus, anxiety, confidence, and resilience</p>
+              <p className="font-semibold text-foreground">{t('athleteHubPage.takeAssessment')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('athleteHubPage.takeAssessmentDesc')}</p>
             </Link>
-            <Link to="/psychologists" className="glass-card p-6 text-center group hover:shadow-glass-hover transition-all">
+            <Link to={addLocalePrefix("/psychologists", locale)} className="glass-card p-6 text-center group hover:shadow-glass-hover transition-all">
               <Brain className="w-8 h-8 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <p className="font-semibold text-foreground">Find a Sport Psychologist</p>
-              <p className="text-xs text-muted-foreground mt-1">Work with specialists in athletic performance</p>
+              <p className="font-semibold text-foreground">{t('athleteHubPage.findSportPsych')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('athleteHubPage.findSportPsychDesc')}</p>
             </Link>
           </div>
         </div>

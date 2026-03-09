@@ -1,17 +1,10 @@
 import { useLocale } from "@/contexts/LocaleContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { BookOpen, FileText, Headphones, Video, Download, ArrowRight, Search, Filter, Clock, Star } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
-
-const categories = [
-  { icon: FileText, title: "Articles & Guides", count: "120+", description: "Evidence-based articles on mental health, therapy techniques, and wellbeing strategies." },
-  { icon: Video, title: "Video Library", count: "45+", description: "Expert talks, workshop recordings, and educational content from licensed professionals." },
-  { icon: Headphones, title: "Podcasts", count: "30+", description: "Conversations with leading psychologists on topics from anxiety to peak performance." },
-  { icon: Download, title: "Toolkits & Worksheets", count: "60+", description: "Downloadable CBT worksheets, mindfulness exercises, and self-help tools." },
-];
 
 const featuredResources = [
   { title: "Understanding Cognitive Behavioral Therapy", type: "Guide", readTime: "12 min", rating: 4.8, category: "Therapy" },
@@ -31,6 +24,13 @@ const topics = [
 const Resources = () => {
   const { t } = useLocale();
 
+  const categories = [
+    { icon: FileText, title: t('resourcesPage.articlesGuides'), count: "120+", description: t('resourcesPage.articlesGuidesDesc') },
+    { icon: Video, title: t('resourcesPage.videoLibrary'), count: "45+", description: t('resourcesPage.videoLibraryDesc') },
+    { icon: Headphones, title: t('resourcesPage.podcasts'), count: "30+", description: t('resourcesPage.podcastsDesc') },
+    { icon: Download, title: t('resourcesPage.toolkitsWorksheets'), count: "60+", description: t('resourcesPage.toolkitsWorksheetsDesc') },
+  ];
+
   return (
     <main className="min-h-screen bg-background">
       {/* Hero */}
@@ -39,25 +39,14 @@ const Resources = () => {
           <ScrollReveal>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-sm font-medium mb-6">
               <BookOpen className="w-4 h-4" />
-              Knowledge Hub
+              {t('resourcesPage.badge')}
             </div>
-            <h1 className="text-h1 text-foreground mb-6">
-              Mental Health Resources
-            </h1>
-            <p className="text-h3 text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Curated, evidence-based resources to support your mental health journey — whether you're a professional or seeking personal growth.
-            </p>
-            {/* Search Bar */}
+            <h1 className="text-h1 text-foreground mb-6">{t('resourcesPage.title')}</h1>
+            <p className="text-h3 text-muted-foreground mb-8 max-w-2xl mx-auto">{t('resourcesPage.subtitle')}</p>
             <div className="flex items-center gap-3 max-w-xl mx-auto bg-card border border-border rounded-xl p-2">
               <Search className="w-5 h-5 text-muted-foreground ml-3" />
-              <input
-                type="text"
-                placeholder="Search resources..."
-                className="flex-1 bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground"
-              />
-              <Button size="sm" variant="default">
-                <Filter className="w-4 h-4 mr-2" /> Filter
-              </Button>
+              <input type="text" placeholder={t('resourcesPage.searchPlaceholder')} className="flex-1 bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground" />
+              <Button size="sm" variant="default"><Filter className="w-4 h-4 mr-2" /> {t('resourcesPage.filter')}</Button>
             </div>
           </ScrollReveal>
         </div>
@@ -68,10 +57,7 @@ const Resources = () => {
         <div className="container-custom">
           <div className="flex flex-wrap gap-2 justify-center">
             {topics.map((topic) => (
-              <button
-                key={topic}
-                className="px-4 py-2 rounded-full text-sm font-medium border border-border bg-background text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
-              >
+              <button key={topic} className="px-4 py-2 rounded-full text-sm font-medium border border-border bg-background text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors">
                 {topic}
               </button>
             ))}
@@ -83,8 +69,8 @@ const Resources = () => {
       <section className="container-custom section-spacing">
         <ScrollReveal>
           <div className="text-center mb-14">
-            <h2 className="text-h2 text-foreground mb-4">Browse by Format</h2>
-            <p className="text-body text-muted-foreground">Find the right type of content for your learning style.</p>
+            <h2 className="text-h2 text-foreground mb-4">{t('resourcesPage.browseByFormat')}</h2>
+            <p className="text-body text-muted-foreground">{t('resourcesPage.browseByFormatDesc')}</p>
           </div>
         </ScrollReveal>
         <StaggerContainer staggerDelay={0.1}>
@@ -112,8 +98,8 @@ const Resources = () => {
         <div className="container-custom">
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-h2 text-foreground mb-4">Featured Resources</h2>
-              <p className="text-body text-muted-foreground">Our most popular and highly rated content.</p>
+              <h2 className="text-h2 text-foreground mb-4">{t('resourcesPage.featuredResources')}</h2>
+              <p className="text-body text-muted-foreground">{t('resourcesPage.featuredResourcesDesc')}</p>
             </div>
           </ScrollReveal>
           <StaggerContainer staggerDelay={0.08}>
@@ -144,13 +130,11 @@ const Resources = () => {
       <section className="container-custom section-spacing text-center">
         <ScrollReveal>
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-h2 text-foreground mb-4">Want Personalized Recommendations?</h2>
-            <p className="text-body text-muted-foreground mb-8">
-              Create an account to get resource suggestions tailored to your interests and goals.
-            </p>
+            <h2 className="text-h2 text-foreground mb-4">{t('resourcesPage.personalizedCTA')}</h2>
+            <p className="text-body text-muted-foreground mb-8">{t('resourcesPage.personalizedCTADesc')}</p>
             <Button size="lg" variant="default" asChild>
               <Link to="/auth" className="inline-flex items-center gap-2">
-                Create Free Account <ArrowRight className="w-4 h-4" />
+                {t('resourcesPage.createFreeAccount')} <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
           </div>
