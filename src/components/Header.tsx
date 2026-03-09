@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ChevronDown } from "lucide-react";
+import { Menu, X, User, ChevronDown, Umbrella } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
