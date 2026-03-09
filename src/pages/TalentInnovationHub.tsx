@@ -16,7 +16,7 @@ const pillars = [
 const researchAreas = [
   { title: "Workplace Mental Health in MENA", status: "Ongoing", year: "2025–2026", lead: "Dr. Karim Benali" },
   { title: "Digital Therapy Efficacy Study", status: "Published", year: "2024", lead: "Dr. Amina Tazi" },
-  { title: "Athlete Mental Resilience Framework", status: "Ongoing", year: "2025", lead: "Dr. Mehdi Felji" },
+  { title: "Athlete Mental Resilience Framework", status: "Ongoing", year: "2025", lead: "Mr. Mehdi Felji" },
   { title: "Cultural Adaptation of CBT in Morocco", status: "Published", year: "2024", lead: "Dr. Sarah Ahmed" },
   { title: "AI-Assisted Psychological Assessment", status: "Pilot", year: "2026", lead: "Research Team" },
 ];

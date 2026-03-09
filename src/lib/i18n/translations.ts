@@ -410,12 +410,12 @@ export const translations = {
     },
     about: {
       hero: {
-        title: "About Dr. Mehdi Felji",
+        title: "About Mr. Mehdi Felji",
         subtitle: "Clinical Psychologist & Mental Performance Coach",
       },
       background: {
         title: "Professional Background",
-        paragraph1: "Dr. Mehdi Felji is a licensed clinical psychologist specializing in mental performance, sport psychology, and evidence-based therapeutic interventions. With extensive experience working with athletes, professionals, and organizations, Dr. Felji combines rigorous scientific methodology with practical, results-oriented coaching.",
+        paragraph1: "Mr. Mehdi Felji is a licensed clinical psychologist specializing in mental performance, sport psychology, and evidence-based therapeutic interventions. With extensive experience working with athletes, professionals, and organizations, Mr. Felji combines rigorous scientific methodology with practical, results-oriented coaching.",
         paragraph2: "His approach integrates cognitive-behavioral techniques, performance psychology principles, and mindfulness-based interventions to help clients overcome anxiety, build mental resilience, and perform at their highest level under pressure.",
       },
       credentials: {
@@ -507,7 +507,7 @@ export const translations = {
         title: "Send us a message",
         description: "Fill out the form below and we'll get back to you within 24 hours.",
         nameLabel: "Full Name",
-        namePlaceholder: "Dr. Mehdi Felji",
+        namePlaceholder: "Mehdi Felji",
         emailLabel: "Email",
         emailPlaceholder: "your@email.com",
         phoneLabel: "Phone (optional)",
@@ -530,7 +530,7 @@ export const translations = {
       },
       booking: {
         title: "Book Directly",
-        description: "Schedule your session with Dr. Mehdi Felji",
+        description: "Schedule your session with Mr. Mehdi Felji",
         button: "View Calendar",
       },
       matching: {
@@ -1036,12 +1036,12 @@ export const translations = {
     },
     about: {
       hero: {
-        title: "À propos du Dr. Mehdi Felji",
+        title: "À propos de M. Mehdi Felji",
         subtitle: "Psychologue Clinicien & Coach en Performance Mentale",
       },
       background: {
         title: "Parcours Professionnel",
-        paragraph1: "Le Dr. Mehdi Felji est un psychologue clinicien agréé spécialisé en performance mentale, psychologie du sport et interventions thérapeutiques fondées sur des preuves. Fort d'une vaste expérience avec des athlètes, des professionnels et des organisations, le Dr. Felji combine une méthodologie scientifique rigoureuse avec un coaching pratique et axé sur les résultats.",
+        paragraph1: "M. Mehdi Felji est un psychologue clinicien agréé spécialisé en performance mentale, psychologie du sport et interventions thérapeutiques fondées sur des preuves. Fort d'une vaste expérience avec des athlètes, des professionnels et des organisations, M. Felji combine une méthodologie scientifique rigoureuse avec un coaching pratique et axé sur les résultats.",
         paragraph2: "Son approche intègre des techniques cognitivo-comportementales, des principes de psychologie de la performance et des interventions basées sur la pleine conscience pour aider les clients à surmonter l'anxiété, développer leur résilience mentale et performer à leur plus haut niveau sous pression.",
       },
       credentials: {
@@ -1115,7 +1115,7 @@ export const translations = {
         title: "Envoyez-nous un message",
         description: "Remplissez le formulaire ci-dessous et nous vous répondrons dans les 24 heures.",
         nameLabel: "Nom Complet",
-        namePlaceholder: "Dr. Mehdi Felji",
+        namePlaceholder: "Mehdi Felji",
         emailLabel: "E-mail",
         emailPlaceholder: "votre@email.com",
         phoneLabel: "Téléphone (optionnel)",
@@ -1138,7 +1138,7 @@ export const translations = {
       },
       booking: {
         title: "Réserver Directement",
-        description: "Planifiez votre séance avec le Dr. Mehdi Felji",
+        description: "Planifiez votre séance avec M. Mehdi Felji",
         button: "Voir le Calendrier",
       },
       matching: {
@@ -1644,12 +1644,12 @@ export const translations = {
     },
     about: {
       hero: {
-        title: "عن الدكتور مهدي فلجي",
+        title: "عن السيد مهدي فلجي",
         subtitle: "أخصائي نفسي سريري ومدرب الأداء العقلي",
       },
       background: {
         title: "الخلفية المهنية",
-        paragraph1: "الدكتور مهدي فلجي هو أخصائي نفسي سريري مرخص متخصص في الأداء العقلي وعلم النفس الرياضي والتدخلات العلاجية القائمة على الأدلة. بخبرة واسعة في العمل مع الرياضيين والمحترفين والمؤسسات، يجمع الدكتور فلجي بين المنهجية العلمية الصارمة والتدريب العملي الموجه نحو النتائج.",
+        paragraph1: "السيد مهدي فلجي هو أخصائي نفسي سريري مرخص متخصص في الأداء العقلي وعلم النفس الرياضي والتدخلات العلاجية القائمة على الأدلة. بخبرة واسعة في العمل مع الرياضيين والمحترفين والمؤسسات، يجمع السيد فلجي بين المنهجية العلمية الصارمة والتدريب العملي الموجه نحو النتائج.",
         paragraph2: "يدمج نهجه تقنيات سلوكية معرفية ومبادئ علم نفس الأداء وتدخلات قائمة على اليقظة الذهنية لمساعدة العملاء على التغلب على القلق وبناء المرونة العقلية والأداء في أعلى مستوياتهم تحت الضغط.",
       },
       credentials: {
@@ -1723,7 +1723,7 @@ export const translations = {
         title: "أرسل لنا رسالة",
         description: "املأ النموذج أدناه وسنعود إليك خلال 24 ساعة.",
         nameLabel: "الاسم الكامل",
-        namePlaceholder: "الدكتور مهدي فلجي",
+        namePlaceholder: "مهدي فلجي",
         emailLabel: "البريد الإلكتروني",
         emailPlaceholder: "your@email.com",
         phoneLabel: "الهاتف (اختياري)",
@@ -1746,7 +1746,7 @@ export const translations = {
       },
       booking: {
         title: "احجز مباشرة",
-        description: "حدد موعد جلستك مع الدكتور مهدي فلجي",
+        description: "حدد موعد جلستك مع السيد مهدي فلجي",
         button: "عرض التقويم",
       },
       matching: {
