@@ -1723,7 +1723,7 @@ export const translations = {
         title: "أرسل لنا رسالة",
         description: "املأ النموذج أدناه وسنعود إليك خلال 24 ساعة.",
         nameLabel: "الاسم الكامل",
-        namePlaceholder: "الدكتور مهدي فلجي",
+        namePlaceholder: "مهدي فلجي",
         emailLabel: "البريد الإلكتروني",
         emailPlaceholder: "your@email.com",
         phoneLabel: "الهاتف (اختياري)",
