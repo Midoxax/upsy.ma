@@ -1115,7 +1115,7 @@ export const translations = {
         title: "Envoyez-nous un message",
         description: "Remplissez le formulaire ci-dessous et nous vous répondrons dans les 24 heures.",
         nameLabel: "Nom Complet",
-        namePlaceholder: "Dr. Mehdi Felji",
+        namePlaceholder: "Mehdi Felji",
         emailLabel: "E-mail",
         emailPlaceholder: "votre@email.com",
         phoneLabel: "Téléphone (optionnel)",
