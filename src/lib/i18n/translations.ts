@@ -530,7 +530,7 @@ export const translations = {
       },
       booking: {
         title: "Book Directly",
-        description: "Schedule your session with Dr. Mehdi Felji",
+        description: "Schedule your session with Mr. Mehdi Felji",
         button: "View Calendar",
       },
       matching: {
