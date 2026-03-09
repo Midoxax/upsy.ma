@@ -86,9 +86,19 @@ const Header = () => {
                         <Link
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
-                          className="block px-4 py-2.5 text-sm text-foreground/70 hover:text-primary hover:bg-primary/5 transition-colors"
+                          className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
+                            subItem.featured
+                              ? "text-primary font-semibold bg-primary/5 hover:bg-primary/10"
+                              : "text-foreground/70 hover:text-primary hover:bg-primary/5"
+                          }`}
                         >
+                          {subItem.icon && <subItem.icon className="h-4 w-4 shrink-0" />}
                           {subItem.name}
+                          {subItem.featured && (
+                            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+                              New
+                            </span>
+                          )}
                         </Link>
                       ))}
                     </div>
