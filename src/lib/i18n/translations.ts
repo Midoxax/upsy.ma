@@ -507,7 +507,7 @@ export const translations = {
         title: "Send us a message",
         description: "Fill out the form below and we'll get back to you within 24 hours.",
         nameLabel: "Full Name",
-        namePlaceholder: "Dr. Mehdi Felji",
+        namePlaceholder: "Mehdi Felji",
         emailLabel: "Email",
         emailPlaceholder: "your@email.com",
         phoneLabel: "Phone (optional)",
