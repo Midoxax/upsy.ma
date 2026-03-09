@@ -1644,7 +1644,7 @@ export const translations = {
     },
     about: {
       hero: {
-        title: "عن الدكتور مهدي فلجي",
+        title: "عن السيد مهدي فلجي",
         subtitle: "أخصائي نفسي سريري ومدرب الأداء العقلي",
       },
       background: {
