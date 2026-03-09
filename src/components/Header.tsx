@@ -35,6 +35,7 @@ const Header = () => {
       href: "/about",
       dropdown: [
         { name: t('nav.ourStory'), href: "/about" },
+        { name: "The Moroccan Umbrella", href: "/moroccan-umbrella" },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation'), href: "/apply" },
       ],
