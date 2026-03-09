@@ -415,7 +415,7 @@ export const translations = {
       },
       background: {
         title: "Professional Background",
-        paragraph1: "Dr. Mehdi Felji is a licensed clinical psychologist specializing in mental performance, sport psychology, and evidence-based therapeutic interventions. With extensive experience working with athletes, professionals, and organizations, Dr. Felji combines rigorous scientific methodology with practical, results-oriented coaching.",
+        paragraph1: "Mr. Mehdi Felji is a licensed clinical psychologist specializing in mental performance, sport psychology, and evidence-based therapeutic interventions. With extensive experience working with athletes, professionals, and organizations, Mr. Felji combines rigorous scientific methodology with practical, results-oriented coaching.",
         paragraph2: "His approach integrates cognitive-behavioral techniques, performance psychology principles, and mindfulness-based interventions to help clients overcome anxiety, build mental resilience, and perform at their highest level under pressure.",
       },
       credentials: {
