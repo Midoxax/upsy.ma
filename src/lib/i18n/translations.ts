@@ -1041,7 +1041,7 @@ export const translations = {
       },
       background: {
         title: "Parcours Professionnel",
-        paragraph1: "Le Dr. Mehdi Felji est un psychologue clinicien agréé spécialisé en performance mentale, psychologie du sport et interventions thérapeutiques fondées sur des preuves. Fort d'une vaste expérience avec des athlètes, des professionnels et des organisations, le Dr. Felji combine une méthodologie scientifique rigoureuse avec un coaching pratique et axé sur les résultats.",
+        paragraph1: "M. Mehdi Felji est un psychologue clinicien agréé spécialisé en performance mentale, psychologie du sport et interventions thérapeutiques fondées sur des preuves. Fort d'une vaste expérience avec des athlètes, des professionnels et des organisations, M. Felji combine une méthodologie scientifique rigoureuse avec un coaching pratique et axé sur les résultats.",
         paragraph2: "Son approche intègre des techniques cognitivo-comportementales, des principes de psychologie de la performance et des interventions basées sur la pleine conscience pour aider les clients à surmonter l'anxiété, développer leur résilience mentale et performer à leur plus haut niveau sous pression.",
       },
       credentials: {
