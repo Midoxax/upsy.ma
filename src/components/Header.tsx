@@ -184,9 +184,19 @@ const Header = () => {
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block text-sm text-foreground/60 hover:text-primary py-2 px-3 rounded-lg hover:bg-primary/5 transition-colors"
+                          className={`flex items-center gap-2 text-sm py-2 px-3 rounded-lg transition-colors ${
+                            subItem.featured
+                              ? "text-primary font-semibold bg-primary/5 hover:bg-primary/10"
+                              : "text-foreground/60 hover:text-primary hover:bg-primary/5"
+                          }`}
                         >
+                          {subItem.icon && <subItem.icon className="h-4 w-4 shrink-0" />}
                           {subItem.name}
+                          {subItem.featured && (
+                            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+                              New
+                            </span>
+                          )}
                         </Link>
                       ))}
                     </div>
