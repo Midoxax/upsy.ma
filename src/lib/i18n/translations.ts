@@ -1138,7 +1138,7 @@ export const translations = {
       },
       booking: {
         title: "Réserver Directement",
-        description: "Planifiez votre séance avec le Dr. Mehdi Felji",
+        description: "Planifiez votre séance avec M. Mehdi Felji",
         button: "Voir le Calendrier",
       },
       matching: {

@@ -8,7 +8,7 @@ const courses = [
   { title: "Understanding Anxiety", duration: "6 weeks", level: "Beginner", instructor: "Dr. Sarah Ahmed" },
   { title: "Stress Management", duration: "4 weeks", level: "All Levels", instructor: "Dr. Karim Benali" },
   { title: "Mental Resilience", duration: "8 weeks", level: "Intermediate", instructor: "Dr. Amina Tazi" },
-  { title: "Sport Psychology", duration: "10 weeks", level: "Advanced", instructor: "Dr. Mehdi Felji" },
+  { title: "Sport Psychology", duration: "10 weeks", level: "Advanced", instructor: "Mr. Mehdi Felji" },
 ];
 
 const LearningSection = () => {

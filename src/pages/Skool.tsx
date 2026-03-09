@@ -16,7 +16,7 @@ const communityFeatures = [
 const upcomingEvents = [
   { title: "Mindfulness in Clinical Practice", date: "March 15, 2026", speaker: "Dr. Amina Tazi", type: "Workshop" },
   { title: "Burnout Prevention Strategies", date: "March 22, 2026", speaker: "Dr. Karim Benali", type: "Webinar" },
-  { title: "Sport Psychology Roundtable", date: "March 29, 2026", speaker: "Dr. Mehdi Felji", type: "Discussion" },
+  { title: "Sport Psychology Roundtable", date: "March 29, 2026", speaker: "Mr. Mehdi Felji", type: "Discussion" },
 ];
 
 const stats = [
