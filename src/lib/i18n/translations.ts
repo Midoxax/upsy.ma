@@ -1036,7 +1036,7 @@ export const translations = {
     },
     about: {
       hero: {
-        title: "À propos du Dr. Mehdi Felji",
+        title: "À propos de M. Mehdi Felji",
         subtitle: "Psychologue Clinicien & Coach en Performance Mentale",
       },
       background: {
