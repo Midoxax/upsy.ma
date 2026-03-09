@@ -1746,7 +1746,7 @@ export const translations = {
       },
       booking: {
         title: "احجز مباشرة",
-        description: "حدد موعد جلستك مع الدكتور مهدي فلجي",
+        description: "حدد موعد جلستك مع السيد مهدي فلجي",
         button: "عرض التقويم",
       },
       matching: {
