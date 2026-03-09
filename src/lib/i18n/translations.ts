@@ -410,7 +410,7 @@ export const translations = {
     },
     about: {
       hero: {
-        title: "About Dr. Mehdi Felji",
+        title: "About Mr. Mehdi Felji",
         subtitle: "Clinical Psychologist & Mental Performance Coach",
       },
       background: {
