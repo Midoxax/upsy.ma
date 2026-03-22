@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ChevronDown, Umbrella } from "lucide-react";
+import { Menu, X, User, ChevronDown, Umbrella, Globe, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
@@ -37,6 +37,7 @@ const Header = () => {
       dropdown: [
         { name: t('nav.ourStory'), href: "/about" },
         { name: "The Moroccan Umbrella", href: "/moroccan-umbrella", icon: Umbrella, featured: true },
+        { name: t('psf.navLabel') !== 'psf.navLabel' ? t('psf.navLabel') : "Psychologues Sans Frontières", href: "/psf", icon: Heart, featured: true },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation'), href: "/apply" },
       ],
