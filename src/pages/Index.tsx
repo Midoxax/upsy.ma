@@ -4,6 +4,7 @@ import TrustSection from "@/components/home/TrustSection";
 import SelfAssessmentSection from "@/components/home/SelfAssessmentSection";
 import FeaturedPsychologistsSection from "@/components/home/FeaturedPsychologistsSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
+import FounderSection from "@/components/home/FounderSection";
 import PillarsSection from "@/components/home/PillarsSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import { useDynamicSections } from "@/hooks/useDynamicSections";
@@ -176,10 +177,19 @@ const sections: SectionConfig[] = [
     narrativeConstraints: {},
   },
   {
+    key: "founder",
+    component: FounderSection,
+    trackingId: "founder",
+    defaultIndex: 11,
+    skeletonVariant: "text",
+    priorityByIntent: { EXPLORING: 6, READY_TO_ACT: 7, RESEARCHING: 5, SKEPTICAL: 2 },
+    narrativeConstraints: {},
+  },
+  {
     key: "community",
     component: CommunitySection,
     trackingId: "community",
-    defaultIndex: 11,
+    defaultIndex: 12,
     skeletonVariant: "text",
     priorityByIntent: { EXPLORING: 9, READY_TO_ACT: 6, RESEARCHING: 9, SKEPTICAL: 2 },
     narrativeConstraints: {},
@@ -188,7 +198,7 @@ const sections: SectionConfig[] = [
     key: "testimonials",
     component: TestimonialsSection,
     trackingId: "testimonials",
-    defaultIndex: 12,
+    defaultIndex: 13,
     skeletonVariant: "cards",
     priorityByIntent: { EXPLORING: 10, READY_TO_ACT: 4, RESEARCHING: 10, SKEPTICAL: 1 },
     narrativeConstraints: { mustAppearBefore: ["final-cta"] },
@@ -197,7 +207,7 @@ const sections: SectionConfig[] = [
     key: "final-cta",
     component: FinalCTASection,
     trackingId: "final_cta",
-    defaultIndex: 13,
+    defaultIndex: 14,
     skeletonVariant: "text",
     priorityByIntent: { EXPLORING: 0, READY_TO_ACT: 0, RESEARCHING: 0, SKEPTICAL: 0 },
     narrativeConstraints: { pinPosition: "last" },

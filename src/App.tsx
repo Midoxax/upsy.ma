@@ -42,9 +42,13 @@ import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
 import BrandGuidelines from "./pages/BrandGuidelines";
+import Founder from "./pages/Founder";
 import BlogIndex from "./pages/blog/BlogIndex";
 import FindRightPsychologist from "./pages/blog/FindRightPsychologist";
 import DoINeedTherapy from "./pages/blog/DoINeedTherapy";
+import UnderstandingAnxiety from "./pages/blog/UnderstandingAnxiety";
+import BenefitsOnlineTherapy from "./pages/blog/BenefitsOnlineTherapy";
+import MentalHealthAtWork from "./pages/blog/MentalHealthAtWork";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -89,9 +93,13 @@ const AppRoutes = () => (
     <Route path="admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
     <Route path="session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
     <Route path="brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
+    <Route path="founder" element={<PageTransition><Founder /></PageTransition>} />
     <Route path="blog" element={<PageTransition><BlogIndex /></PageTransition>} />
     <Route path="blog/find-right-psychologist" element={<PageTransition><FindRightPsychologist /></PageTransition>} />
     <Route path="blog/do-i-need-therapy" element={<PageTransition><DoINeedTherapy /></PageTransition>} />
+    <Route path="blog/understanding-anxiety" element={<PageTransition><UnderstandingAnxiety /></PageTransition>} />
+    <Route path="blog/benefits-online-therapy" element={<PageTransition><BenefitsOnlineTherapy /></PageTransition>} />
+    <Route path="blog/mental-health-at-work" element={<PageTransition><MentalHealthAtWork /></PageTransition>} />
   </>
 );
 
