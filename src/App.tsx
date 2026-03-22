@@ -93,6 +93,7 @@ const AppRoutes = () => (
     <Route path="admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
     <Route path="session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
     <Route path="brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
+    <Route path="founder" element={<PageTransition><Founder /></PageTransition>} />
     <Route path="blog" element={<PageTransition><BlogIndex /></PageTransition>} />
     <Route path="blog/find-right-psychologist" element={<PageTransition><FindRightPsychologist /></PageTransition>} />
     <Route path="blog/do-i-need-therapy" element={<PageTransition><DoINeedTherapy /></PageTransition>} />
