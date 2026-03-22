@@ -2162,6 +2162,8 @@ export const translations = {
         ctaText: "Nos programmes et psychologues peuvent vous aider à construire une pratique durable adaptée à vos besoins.",
       },
     },
+  },
+  ar: {
     nav: {
       home: "الرئيسية",
       services: "الخدمات",
