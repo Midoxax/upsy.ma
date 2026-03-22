@@ -71,6 +71,7 @@ const AppRoutes = () => (
     <Route path="legal" element={<PageTransition><Legal /></PageTransition>} />
     <Route path="talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
     <Route path="moroccan-umbrella" element={<PageTransition><MoroccanUmbrella /></PageTransition>} />
+    <Route path="psf" element={<PageTransition><PsychologuesSansFrontieres /></PageTransition>} />
     <Route path="psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
