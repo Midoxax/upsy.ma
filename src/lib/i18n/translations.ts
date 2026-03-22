@@ -1610,6 +1610,7 @@ export const translations = {
       statSessions: "Séances Réalisées",
       statSatisfaction: "Satisfaction Client",
       reassurance: "Vous êtes entre de bonnes mains. Chaque séance est privée, sécurisée et sans jugement.",
+      partnersLabel: "Partenaires & Affiliations de Confiance",
     },
     featured: {
       title: "Rencontrez Nos Psychologues",
