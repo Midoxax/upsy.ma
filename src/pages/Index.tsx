@@ -177,6 +177,15 @@ const sections: SectionConfig[] = [
     narrativeConstraints: {},
   },
   {
+    key: "founder",
+    component: FounderSection,
+    trackingId: "founder",
+    defaultIndex: 11,
+    skeletonVariant: "text",
+    priorityByIntent: { EXPLORING: 6, READY_TO_ACT: 7, RESEARCHING: 5, SKEPTICAL: 2 },
+    narrativeConstraints: {},
+  },
+  {
     key: "community",
     component: CommunitySection,
     trackingId: "community",
