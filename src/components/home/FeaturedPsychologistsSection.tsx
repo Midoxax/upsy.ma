@@ -1,27 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Globe, MapPin } from "lucide-react";
+import { ArrowRight, Globe, MapPin, Sparkles } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getFeaturedPsychologists } from "@/services/psychologistsService";
+import { useAssessmentStore } from "@/stores/assessmentStore";
 
 const FeaturedPsychologistsSection = () => {
+  const { latestResult, hasCompletedAssessment } = useAssessmentStore();
+
   const { data: psychologists } = useQuery({
     queryKey: ["featured-psychologists"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("psychologist_profiles")
-        .select(`
-          id, full_name, bio, photo_url, city, slug, hourly_rate_mad,
-          offers_online, offers_in_person,
-          psychologist_specialties(specialty_id, specialties(name)),
-          psychologist_languages(language_id, languages(name))
-        `)
-        .eq("is_published", true)
-        .limit(4);
-      return data || [];
-    },
+    queryFn: () => getFeaturedPsychologists(4),
   });
 
   const displayPsychologists = psychologists && psychologists.length > 0
@@ -39,6 +30,12 @@ const FeaturedPsychologistsSection = () => {
           <div className="text-center mb-12">
             <h2 className="text-h2 mb-4">Meet Our Psychologists</h2>
             <p className="text-body text-muted-foreground">Licensed professionals ready to support your journey.</p>
+            {hasCompletedAssessment && latestResult && (
+              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
+                <Sparkles className="w-4 h-4" />
+                Based on your {latestResult.type} assessment ({latestResult.severity})
+              </div>
+            )}
           </div>
         </ScrollReveal>
 
