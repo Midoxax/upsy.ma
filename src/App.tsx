@@ -45,6 +45,9 @@ import BrandGuidelines from "./pages/BrandGuidelines";
 import BlogIndex from "./pages/blog/BlogIndex";
 import FindRightPsychologist from "./pages/blog/FindRightPsychologist";
 import DoINeedTherapy from "./pages/blog/DoINeedTherapy";
+import UnderstandingAnxiety from "./pages/blog/UnderstandingAnxiety";
+import BenefitsOnlineTherapy from "./pages/blog/BenefitsOnlineTherapy";
+import MentalHealthAtWork from "./pages/blog/MentalHealthAtWork";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
