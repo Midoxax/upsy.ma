@@ -27,6 +27,7 @@ import Contact from "./pages/Contact";
 import Legal from "./pages/Legal";
 import TalentInnovationHub from "./pages/TalentInnovationHub";
 import MoroccanUmbrella from "./pages/MoroccanUmbrella";
+import PsychologuesSansFrontieres from "./pages/PsychologuesSansFrontieres";
 import Psychologists from "./pages/Psychologists";
 import PsychologistProfile from "./pages/PsychologistProfile";
 import Auth from "./pages/Auth";
