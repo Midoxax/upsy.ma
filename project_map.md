@@ -28,6 +28,7 @@ A scalable mental-health digital ecosystem for Africa & MENA, built on four pill
 | `/dashboard` | PatientDashboard | Client sessions & mood tracking |
 | `/athlete-hub` | AthleteHub | Mental performance dashboard |
 | `/moroccan-umbrella` | MoroccanUmbrella | Umbrella organization page |
+| `/psf` | PsychologuesSansFrontieres | PSF sub-brand: mission, pillars, programs, volunteer CTA |
 | `/talent-innovation-hub` | TalentInnovationHub | Innovation programs |
 | `/admin` | AdminDashboard | Admin panel |
 | `/admin/applications` | Applications | Review psychologist applications |
