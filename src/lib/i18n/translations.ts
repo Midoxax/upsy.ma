@@ -2471,6 +2471,7 @@ export const translations = {
       statSessions: "جلسات مكتملة",
       statSatisfaction: "رضا العملاء",
       reassurance: "أنت في أيدٍ أمينة. كل جلسة خاصة وآمنة وخالية من الأحكام.",
+      partnersLabel: "شركاء وانتماءات موثوقة",
     },
     featured: {
       title: "تعرف على أخصائيينا النفسيين",
