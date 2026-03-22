@@ -7,23 +7,28 @@ const FinalCTASection = () => {
   const { t } = useLocale();
 
   return (
-    <section className="section-spacing relative overflow-hidden liquid-bg">
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, hsl(var(--secondary) / 0.2), transparent 70%)' }} />
+    <section className="py-24 md:py-32 relative overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at 50% 50%, hsl(var(--primary) / 0.04), transparent 60%)",
+        }}
+      />
       <div className="container-custom relative z-10">
         <motion.div
-          className="glass-card p-10 md:p-16 max-w-3xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
+          className="max-w-2xl mx-auto text-center"
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-h2 mb-4">
-            {t("finalCta.title") || "Take the First Step Toward Better Mental Health"}
+          <h2 className="text-h2 mb-5">
+            {t("finalCta.title") || "Take the First Step"}
           </h2>
-          <p className="text-body text-muted-foreground mb-4">
-            {t("finalCta.subtitle") || "Whether you need therapy, coaching, or education — U.Psy connects you with the right support."}
+          <p className="text-body text-muted-foreground mb-4 leading-relaxed">
+            {t("finalCta.subtitle") || "Whether you need therapy, coaching, or education — we're here to help you find the right support."}
           </p>
-          <p className="text-sm text-muted-foreground/80 mb-8">
+          <p className="text-sm text-muted-foreground/50 mb-10 italic">
             {t("finalCta.reassurance") || "No commitment required. Start with a free 2-minute self-assessment."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
