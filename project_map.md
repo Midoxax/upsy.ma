@@ -1,124 +1,149 @@
-# U.Psy — Project Architecture Map
+# U.Psy — Project Map (System Brain)
 
-## Platform Vision
-A scalable mental-health digital ecosystem for Africa & MENA, built on four pillars:
-1. **Clinical Care** — Psychologist directory, matching, sessions, PSF initiative
-2. **Learning & Education** — 3-tier MOOC, assessments, certificates
-3. **Mental Performance** — Athlete hub, training sessions, coaching
-4. **Institutional Services** — B2B diagnostics, organizational wellbeing
+> Last updated: 2026-03-22
 
-## Pages
+## Vision
+A calm, trust-first mental wellness platform combining therapy, education, performance psychology, and community — designed for Morocco and francophone Africa.
 
-| Route | Page | Purpose |
-|---|---|---|
-| `/` | Index | Conversion funnel: Hero → Trust → Assessment → Psychologists → Programs → CTA |
-| `/about` | About | Team, mission, pillars |
-| `/services` | Services | Service catalog |
-| `/services/consulting-for-organizations` | ConsultingForOrganizations | B2B offering |
-| `/psychologists` | Psychologists | Directory with filters (specialty, language, price, location) |
-| `/psychologists/:id` | PsychologistProfile | Individual profile + booking |
-| `/get-matched` | GetMatched | AI-powered matching form |
-| `/assessments` | AssessmentLab | GAD-7, PHQ-9, burnout screenings |
-| `/ai-assistant` | AIAssistant | AI mental health chat (Lovable AI) |
-| `/skool` | Skool | Learning platform / MOOC |
-| `/resources` | Resources | Articles, guides |
-| `/apply` | Apply | Psychologist application form |
-| `/auth` | Auth | Login / signup |
-| `/my-space` | MySpace | Role-based dashboard (psychologist, athlete, coach, org) |
-| `/dashboard` | PatientDashboard | Client sessions & mood tracking |
-| `/athlete-hub` | AthleteHub | Mental performance dashboard |
-| `/moroccan-umbrella` | MoroccanUmbrella | Umbrella organization page |
-| `/psf` | PsychologuesSansFrontieres | PSF sub-brand: mission, pillars, programs, volunteer CTA |
-| `/talent-innovation-hub` | TalentInnovationHub | Innovation programs |
-| `/admin` | AdminDashboard | Admin panel |
-| `/admin/applications` | Applications | Review psychologist applications |
-| `/contact` | Contact | Contact form |
-| `/legal` | Legal | Privacy, terms |
-| `/brand` | BrandGuidelines | Design system reference |
+## Architecture Model
+`UX → Functionality → Database → UI`
+`UI Components → Hooks → Services → API/Database`
 
-## Homepage Sections (Conversion Funnel Order)
+## Documentation Files
+| File | Purpose |
+|------|---------|
+| `masterplan.md` | Product strategy, roadmap, audience |
+| `implementation-plan.md` | Phased build sequence with checkpoints |
+| `design-guidelines.md` | Typography, color, spacing, motion, voice |
+| `project_map.md` | Architecture, data flow, component map (this file) |
+| `request.txt` | Feature specification log |
 
-| Section | Responsibility | Data Source |
-|---|---|---|
-| HeroSection | Brand awareness + primary CTA | Static |
-| TrustSection | Credibility signals | Static |
-| SelfAssessmentSection | Quick mental health check → drives engagement | Links to `/assessments` |
-| FeaturedPsychologistsSection | Showcase professionals → drive bookings | `psychologist_profiles` via Supabase |
-| HowItWorksSection | Process explanation | Static |
-| PillarsSection | Platform pillars overview | Static |
-| ProgramsSection | Programs showcase | Static |
-| LearningSection | MOOC / education CTA | Static |
-| OrganizationsSection | B2B pitch | Static |
-| ResearchSection | Research credibility | Static |
-| PsfSection | Psychologues sans frontières | Static |
-| CommunitySection | Community engagement | Static |
-| TestimonialsSection | Social proof | Static |
-| FinalCTASection | Final conversion push | Static |
+---
+
+## Pages & Routes
+
+| Route | Page | Status |
+|-------|------|--------|
+| `/` | Homepage (Index) | ✅ |
+| `/psychologists` | Psychologist directory | ✅ |
+| `/psychologists/:slug` | Psychologist profile | ✅ |
+| `/get-matched` | Self-assessment / matching | ✅ |
+| `/services` | Services overview | ✅ |
+| `/services/consulting-for-organizations` | B2B consulting | ✅ |
+| `/resources` | Learning resources | ✅ |
+| `/about` | About U.Psy | ✅ |
+| `/contact` | Contact form | ✅ |
+| `/auth` | Login / Signup | ✅ |
+| `/my-space` | User dashboard | ✅ |
+| `/ai-assistant` | AI Mental Health Assistant | ✅ |
+| `/psf` | Psychologues Sans Frontières | ✅ |
+| `/moroccan-umbrella` | Moroccan Umbrella of Psychology | ✅ |
+| `/apply` | Psychologist application | ✅ |
+| `/assessment-lab` | Assessment instruments | ✅ |
+| `/athlete-hub` | Athlete mental performance | ✅ |
+| `/talent-innovation-hub` | Innovation hub | ✅ |
+| `/skool` | Community platform | ✅ |
+| `/legal` | Legal pages | ✅ |
+| `/brand-guidelines` | Brand identity | ✅ |
+| `/video-call/:id` | Video session | ✅ |
+| `/admin/*` | Admin dashboard | ✅ |
+
+---
+
+## Homepage Sections (Conversion Flow)
+
+| # | Section | Act | Responsibility | Loaded |
+|---|---------|-----|---------------|--------|
+| 1 | HeroSection | Safety | Brand intro + primary CTA | Eager |
+| 2 | TrustSection | Safety | Credibility signals + social proof numbers | Eager |
+| 3 | SelfAssessmentSection | Self-awareness | Entry hook (2-min assessment) | Eager |
+| 4 | FeaturedPsychologistsSection | Solution | Therapist discovery + personalization | Eager |
+| 5 | HowItWorksSection | Solution | 3-step journey | Eager |
+| 6 | PillarsSection | Solution | 4 ecosystem pillars | Eager |
+| 7 | ProgramsSection | Depth | Structured programs | Lazy |
+| 8 | LearningSection | Depth | Educational content | Lazy |
+| 9 | OrganizationsSection | Depth | B2B solutions | Lazy |
+| 10 | ResearchSection | Depth | Research credibility | Lazy |
+| 11 | PsfSection | Depth | Humanitarian sub-brand | Lazy |
+| 12 | CommunitySection | Conversion | Community engagement | Lazy |
+| 13 | TestimonialsSection | Conversion | Social proof | Lazy |
+| 14 | FinalCTASection | Conversion | Final conversion push | Lazy |
+
+---
 
 ## Data Flow Architecture
 
 ```
-[UI Sections]
-     ↓
-[Hooks] (usePsychologists, useAssessments, useUserRole, etc.)
-     ↓
-[Services] (psychologistsService, assessmentsService, etc.)
-     ↓
-[Supabase Client] → Database
+UI Components → Hooks → Services → Supabase
+     ↑                                  ↓
+  Zustand Store ←── Assessment Results ──┘
 ```
 
-### Cross-Section State (Zustand)
-```
-[SelfAssessmentSection] → writes assessment result to store
-     ↓
-[FeaturedPsychologistsSection] → reads assessment state for recommendations
-[FinalCTASection] → personalizes CTA based on assessment
-```
+### Service Layer (`src/services/`)
+- `psychologistsService.ts` — Supabase queries for psychologist data
 
-## Database Schema (Key Tables)
+### Hooks Layer (`src/hooks/`)
+- `usePsychologists.ts` — React Query wrapper for psychologist fetching
+- `usePsychologistProfile.ts` — Single profile fetching
+- `usePsychologistDashboard.ts` — Dashboard data
+- `useApplications.ts` — Application management
+- `useAdminAuth.ts` — Admin authentication
+- `useUserRole.ts` — Role checking
 
-| Table | Purpose |
-|---|---|
-| `profiles` | User profiles (linked to auth.users) |
-| `user_roles` | Role assignments (admin, psychologist, user, athlete, coach, organization) |
-| `psychologist_profiles` | Professional profiles |
-| `psychologist_specialties` | Junction: psychologist ↔ specialties |
-| `psychologist_languages` | Junction: psychologist ↔ languages |
-| `psychologist_therapy_approaches` | Junction: psychologist ↔ approaches |
-| `specialties` | Specialty catalog |
-| `languages` | Language catalog |
-| `therapy_approaches` | Therapy approach catalog |
-| `sessions` | Booked sessions |
-| `reviews` | Session reviews |
-| `leads` | Client inquiry leads |
-| `availability_slots` | Psychologist availability |
-| `subscriptions` | Psychologist subscription plans |
-| `assessments` | Assessment definitions |
-| `assessment_questions` | Assessment questions |
-| `assessment_results` | User assessment results |
-| `courses` | MOOC courses |
-| `course_modules` | Course content modules |
-| `course_enrollments` | User enrollments |
-| `certificates` | Issued certificates |
-| `mood_entries` | Mood tracking data |
-| `athlete_profiles` | Athlete mental performance profiles |
-| `athlete_training_sessions` | Mental training sessions |
-| `organization_profiles` | B2B organization profiles |
-| `organization_diagnostics` | Organizational assessments |
-| `ai_conversations` | AI chat conversations |
-| `ai_messages` | AI chat messages |
-| `client_matching_requests` | Matching form submissions |
-| `contact_submissions` | Contact form entries |
-| `proposal_requests` | B2B proposal requests |
-| `psychologist_applications` | Practitioner applications |
-| `translation_overrides` | i18n overrides from admin |
+### Global State (`src/stores/`)
+- `assessmentStore.ts` — Zustand store for assessment results, influences Featured section
 
-## Authentication & Roles
-- Auth via Supabase Auth (email/password)
-- Roles stored in `user_roles` table (not on profiles)
-- Role check: `has_role(user_id, role)` security definer function
-- Routes protected via `ProtectedRoute` and `AdminRoute` components
+---
 
-## Themes
-- Route-based theming via `data-theme` attribute
-- Themes: default, performance, institutions, innovation, skool, clinic, accreditation
+## Database Schema
+
+### Core Tables
+| Table | Purpose | RLS |
+|-------|---------|-----|
+| `profiles` | User profiles | ✅ |
+| `user_roles` | Role-based access | ✅ |
+| `psychologist_profiles` | Therapist profiles | ✅ |
+| `psychologist_specialties` | M2M specialties | ✅ |
+| `psychologist_languages` | M2M languages | ✅ |
+| `psychologist_therapy_approaches` | M2M approaches | ✅ |
+
+### Sessions & Booking
+- `sessions`, `reviews`, `leads`, `availability_slots`
+
+### Assessment
+- `assessments`, `assessment_questions`, `assessment_results`
+
+### Learning
+- `courses`, `course_modules`, `course_enrollments`, `certificates`
+
+### Organization
+- `organization_profiles`, `organization_diagnostics`
+
+### Other
+- `contact_submissions`, `proposal_requests`, `psychologist_applications`
+- `subscriptions`, `translation_overrides`, `ai_conversations`, `ai_messages`
+- `mood_entries`, `athlete_profiles`, `athlete_training_sessions`
+- `client_matching_requests`
+
+---
+
+## i18n
+- Languages: EN, FR, AR
+- Coverage: Navigation, homepage, assessments, psychologists, PSF, trust, featured, final CTA
+
+## Sub-Brands
+- **PSF** (`/psf`) — Humanitarian initiative, Heart icon + NEW badge
+- **Moroccan Umbrella** (`/moroccan-umbrella`) — Professional association, Umbrella icon
+
+## Design System
+- Tokens: `src/index.css` + `tailwind.config.ts`
+- Motion: Float, Pulse, Breathe, Orbit, Flow, Fade-rise
+- Typography: Outfit + Inter
+- See `design-guidelines.md` for full spec
+
+## Pending
+- [ ] Connect Programs/Learning/Research to database
+- [ ] Partner logos in TrustSection
+- [ ] Booking system (Calendly)
+- [ ] Enhanced AI matching
+- [ ] Accessibility audit (WCAG AA)
