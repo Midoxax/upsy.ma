@@ -21,6 +21,7 @@ const Footer = () => {
       title: t('header.resources'),
       links: [
         { name: t('header.selfAssessment'), href: "/get-matched" },
+        { name: t('nav.blog'), href: "/blog" },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation') || "Apply", href: "/apply" },
       ],

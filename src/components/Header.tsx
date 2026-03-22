@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ChevronDown, Umbrella, Globe, Heart } from "lucide-react";
+import { Menu, X, User, ChevronDown, Umbrella, Globe, Heart, BookOpen } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
@@ -30,6 +30,7 @@ const Header = () => {
       ],
     },
     { name: t('nav.learning'), href: "/resources" },
+    { name: t('nav.blog'), href: "/blog" },
     { name: t('nav.research'), href: "/talent-innovation-hub" },
     {
       name: t('nav.about'),
