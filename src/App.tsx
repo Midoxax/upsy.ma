@@ -49,6 +49,9 @@ import DoINeedTherapy from "./pages/blog/DoINeedTherapy";
 import UnderstandingAnxiety from "./pages/blog/UnderstandingAnxiety";
 import BenefitsOnlineTherapy from "./pages/blog/BenefitsOnlineTherapy";
 import MentalHealthAtWork from "./pages/blog/MentalHealthAtWork";
+import UnderstandingDepression from "./pages/blog/UnderstandingDepression";
+import HowToSupportALovedOne from "./pages/blog/HowToSupportALovedOne";
+import MindfulnessForBeginners from "./pages/blog/MindfulnessForBeginners";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
