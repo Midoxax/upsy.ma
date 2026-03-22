@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -185,12 +186,12 @@ const AIAssistant = () => {
                   <Bot className="w-4 h-4 text-u-turquoise" />
                 </div>
               )}
-              <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+              <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
                 msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "rounded-bl-md"
+                  ? "bg-primary text-primary-foreground rounded-br-md whitespace-pre-wrap"
+                  : "rounded-bl-md prose prose-sm prose-invert max-w-none"
               }`} style={msg.role === "assistant" ? { background: "var(--glass-bg)", border: "var(--glass-border)" } : {}}>
-                {msg.content}
+                {msg.role === "assistant" ? <ReactMarkdown>{msg.content}</ReactMarkdown> : msg.content}
               </div>
               {msg.role === "user" && (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1 bg-primary/20">
