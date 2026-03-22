@@ -411,40 +411,40 @@ export const translations = {
     about: {
       hero: {
         title: "About Mr. Mehdi Felji",
-        subtitle: "Clinical Psychologist & Mental Performance Coach",
+        subtitle: "Founder of U.Psy | Mental Health Innovation & Psychology Platform",
       },
       background: {
-        title: "Professional Background",
-        paragraph1: "Mr. Mehdi Felji is a licensed clinical psychologist specializing in mental performance, sport psychology, and evidence-based therapeutic interventions. With extensive experience working with athletes, professionals, and organizations, Mr. Felji combines rigorous scientific methodology with practical, results-oriented coaching.",
-        paragraph2: "His approach integrates cognitive-behavioral techniques, performance psychology principles, and mindfulness-based interventions to help clients overcome anxiety, build mental resilience, and perform at their highest level under pressure.",
+        title: "Who is Mehdi Felji?",
+        paragraph1: "Mr. Mehdi Felji is the founder of U.Psy, a modern psychology platform designed to make mental health support more accessible, personalized, and human-centered. With a strong focus on user experience and behavioral design, Mehdi Felji is building U.Psy as more than just a directory of psychologists — it is a guided mental health journey.",
+        paragraph2: "He believes that many people struggle not because help is unavailable, but because they don't know where to start, feel overwhelmed by choices, or lack trust in the process. U.Psy addresses these challenges through intelligent design, personalization, and a deep understanding of user psychology.",
       },
       credentials: {
         title: "Qualifications & Credentials",
         list: [
           "Licensed Clinical Psychologist",
           "Certified Sport & Performance Psychology Consultant",
-          "Ph.D. in Clinical Psychology",
-          "Master's in Applied Sport Psychology",
+          "Advanced Degree in Clinical Psychology",
+          "Specialized Training in Applied Sport Psychology",
           "Registered with National Psychology Board",
           "Member of International Society of Sport Psychology (ISSP)",
         ],
       },
       philosophy: {
-        title: "Philosophy & Approach",
-        paragraph1: "Dr. Felji's philosophy centers on practical, evidence-based solutions tailored to each individual's unique challenges and goals. He believes that peak performance—whether in sports, business, or daily life—emerges from a foundation of mental clarity, emotional regulation, and disciplined habits.",
-        paragraph2: "His work emphasizes:",
+        title: "Vision & Approach",
+        paragraph1: "Mehdi Felji created U.Psy with a clear mission: to remove friction, confusion, and hesitation in accessing mental health support. He believes that peak performance — whether in sports, business, or daily life — emerges from a foundation of mental clarity, emotional regulation, and disciplined habits.",
+        paragraph2: "Under his direction, U.Psy is built using modern product principles:",
         list: [
-          "Building sustainable mental health practices",
-          "Developing resilience under stress and pressure",
-          "Cultivating self-awareness and emotional intelligence",
-          "Implementing actionable strategies for immediate impact",
+          "Intent-based personalization for each user",
+          "Progressive user guidance through self-assessment",
+          "Behavior-driven UX design for trust-building",
+          "Evidence-based therapeutic approaches",
           "Creating long-term behavioral change through consistent practice",
         ],
       },
       specializations: {
-        title: "Areas of Specialization",
+        title: "Areas of Focus",
         individual: {
-          title: "Individual Work",
+          title: "Individual Support",
           list: [
             "Anxiety & Stress Management",
             "Performance Enhancement",
@@ -465,9 +465,9 @@ export const translations = {
         },
       },
       experience: {
-        title: "Professional Experience",
-        paragraph1: "Dr. Felji has worked with a diverse range of clients including national-level athletes, corporate executives, performing artists, and individuals seeking personal growth. He has served as a consultant for sports federations, multinational corporations, and educational institutions.",
-        paragraph2: "His training programs and workshops have been delivered across multiple countries, helping hundreds of professionals develop the mental skills necessary for sustained excellence in their respective fields.",
+        title: "Why U.Psy Matters",
+        paragraph1: "Mental health is one of the most important challenges of our time. U.Psy aims to make psychological support easier to access, reduce stigma around therapy, and help users take their first step with confidence.",
+        paragraph2: "By combining technology, psychology, and design, Mehdi Felji is positioning U.Psy as a leading platform in the future of digital mental health — turning a complex, emotional decision into a clear, guided, and empowering journey.",
       },
     },
     services: {
