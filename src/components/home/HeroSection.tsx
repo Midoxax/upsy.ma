@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { motion } from "framer-motion";
 import mehdiPhoto from "@/assets/mehdi-felji.png";
+import upsyLogo from "@/assets/upsy-logo-hero.png";
 
 const HeroSection = () => {
   const { t } = useLocale();
