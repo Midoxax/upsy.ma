@@ -1,0 +1,123 @@
+import { supabase } from "@/integrations/supabase/client";
+import type { FilterState, PsychologistProfile } from "@/types/psychologist";
+
+interface SearchParams {
+  filters: FilterState;
+  page?: number;
+  pageSize?: number;
+}
+
+interface SearchResult {
+  profiles: PsychologistProfile[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export const searchPsychologists = async ({
+  filters,
+  page = 1,
+  pageSize = 12,
+}: SearchParams): Promise<SearchResult> => {
+  const { data, error } = await supabase.rpc("search_psychologists", {
+    p_specialties: filters.specialties.length > 0 ? filters.specialties : [],
+    p_languages: filters.languages.length > 0 ? filters.languages : [],
+    p_therapy_approaches: filters.therapyApproaches.length > 0 ? filters.therapyApproaches : [],
+    p_city: filters.city || null,
+    p_online: filters.online || null,
+    p_in_person: filters.inPerson || null,
+    p_gender: filters.gender || null,
+    p_availability: filters.availability || null,
+    p_min_price: filters.minPrice,
+    p_max_price: filters.maxPrice,
+    p_page: page,
+    p_page_size: pageSize,
+  });
+
+  if (error) throw error;
+
+  const total = data && data.length > 0 ? Number(data[0].total_count) : 0;
+  const profileIds = data?.map((p: any) => p.id) || [];
+
+  if (profileIds.length === 0) {
+    return { profiles: [], total: 0, page, pageSize };
+  }
+
+  const [specialtiesData, languagesData, approachesData] = await Promise.all([
+    supabase
+      .from("psychologist_specialties")
+      .select("psychologist_id, specialty:specialties(id, name)")
+      .in("psychologist_id", profileIds),
+    supabase
+      .from("psychologist_languages")
+      .select("psychologist_id, language:languages(id, name)")
+      .in("psychologist_id", profileIds),
+    supabase
+      .from("psychologist_therapy_approaches")
+      .select("psychologist_id, therapy_approach:therapy_approaches(id, name)")
+      .in("psychologist_id", profileIds),
+  ]);
+
+  if (specialtiesData.error) throw specialtiesData.error;
+  if (languagesData.error) throw languagesData.error;
+  if (approachesData.error) throw approachesData.error;
+
+  const buildMap = (items: any[], key: string) => {
+    const map = new Map<string, any[]>();
+    items?.forEach((item: any) => {
+      if (!map.has(item.psychologist_id)) map.set(item.psychologist_id, []);
+      map.get(item.psychologist_id)!.push(item[key]);
+    });
+    return map;
+  };
+
+  const specialtiesMap = buildMap(specialtiesData.data || [], "specialty");
+  const languagesMap = buildMap(languagesData.data || [], "language");
+  const approachesMap = buildMap(approachesData.data || [], "therapy_approach");
+
+  const profiles: PsychologistProfile[] = (data || []).map((profile: any) => {
+    const { total_count, ...profileData } = profile;
+    return {
+      ...profileData,
+      specialties: specialtiesMap.get(profile.id) || [],
+      languages: languagesMap.get(profile.id) || [],
+      therapy_approaches: approachesMap.get(profile.id) || [],
+    };
+  });
+
+  return { profiles, total, page, pageSize };
+};
+
+export const getFeaturedPsychologists = async (limit = 4) => {
+  const { data, error } = await supabase
+    .from("psychologist_profiles")
+    .select(`
+      id, full_name, bio, photo_url, city, slug, hourly_rate_mad,
+      offers_online, offers_in_person,
+      psychologist_specialties(specialty_id, specialties(name)),
+      psychologist_languages(language_id, languages(name))
+    `)
+    .eq("is_published", true)
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+};
+
+export const fetchSpecialties = async () => {
+  const { data, error } = await supabase.from("specialties").select("*").order("name");
+  if (error) throw error;
+  return data;
+};
+
+export const fetchLanguages = async () => {
+  const { data, error } = await supabase.from("languages").select("*").order("name");
+  if (error) throw error;
+  return data;
+};
+
+export const fetchTherapyApproaches = async () => {
+  const { data, error } = await supabase.from("therapy_approaches").select("*").order("name");
+  if (error) throw error;
+  return data;
+};
