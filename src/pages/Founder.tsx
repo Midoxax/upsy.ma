@@ -52,14 +52,22 @@ const Founder = () => {
           <div className="container-custom max-w-3xl">
             <ScrollReveal>
               <div className="space-y-8">
-                <h2 className="text-h2 text-center">{t("founder.motTitle") || "A Word from the Founder"}</h2>
+                <h2 className="text-h2 text-center">{t("founder.motTitle") || "Mot du Président"}</h2>
                 <div className="space-y-6 text-body text-muted-foreground leading-relaxed">
-                  <p>{t("founder.mot1") || "Psychology is one of the most important tools we have for human development. Yet for most people, accessing meaningful psychological support remains confusing, intimidating, or simply unavailable."}</p>
-                  <p>{t("founder.mot2") || "I built UPsy because I believe the problem isn't a lack of psychologists — it's a lack of systems that connect the right people with the right support at the right time."}</p>
-                  <p>{t("founder.mot3") || "UPsy is not just a directory. It's a guided experience that helps individuals understand their needs, find trusted professionals, and take action with confidence. Every feature, every decision, every design choice is made with one question in mind: does this reduce friction and build trust?"}</p>
-                  <p className="text-foreground font-medium">{t("founder.mot4") || "Mental health support should feel as natural as seeking any other form of care. That's the future UPsy is building."}</p>
+                  <p className="text-lg font-medium text-foreground italic">
+                    {t("founder.motOpener") || "La psychologie ne manque pas de théories. Elle manque d'applicabilité sous pression."}
+                  </p>
+                  <p>{t("founder.mot1") || "Sur le terrain — dans le sport de haut niveau, dans les contextes migratoires, dans les situations de crise — les modèles classiques atteignent rapidement leurs limites. Ce qui fonctionne en cabinet ne fonctionne pas toujours dans l'urgence, dans l'incertitude, ou face à la performance."}</p>
+                  <p className="text-foreground font-medium">{t("founder.mot2") || "C'est dans cet écart que s'inscrit U.Psy."}</p>
+                  <p>{t("founder.mot3") || "U.Psy n'a pas été conçu comme une plateforme. C'est un système. Un système construit à partir du terrain, où la psychologie doit être : opérationnelle, mesurable, mobilisable immédiatement."}</p>
+                  <p>{t("founder.mot4") || "Mon parcours m'a conduit à intervenir dans des environnements où l'exigence est non négociable : accompagnement d'athlètes en performance, soutien psychosocial auprès de populations vulnérables, coordination de projets en santé mentale et développement."}</p>
+                  <p>{t("founder.mot5") || "Dans chacun de ces contextes, une même question revient : comment transformer la psychologie en un outil utilisable, et non en un savoir abstrait ?"}</p>
+                  <p>{t("founder.mot6") || "U.Psy est une réponse à cette question. Nous structurons une approche qui relie trois dimensions souvent séparées : la rigueur clinique, la performance mentale, et l'impact systémique."}</p>
+                  <p>{t("founder.mot7") || "Notre ambition est claire : redéfinir la manière dont la psychologie est utilisée — dans le sport, dans les institutions, et dans la société. Non pas comme un discours. Mais comme un levier."}</p>
+                  <p className="text-foreground font-medium italic">{t("founder.mot8") || "U.Psy est en construction. Mais sa direction est déjà définie : Créer une psychologie qui tient dans la réalité."}</p>
                 </div>
                 <p className="text-sm text-primary font-semibold">— Mehdi Felji</p>
+                <p className="text-xs text-muted-foreground">{t("founder.motSignature") || "Fondateur, U.Psy"}</p>
               </div>
             </ScrollReveal>
           </div>

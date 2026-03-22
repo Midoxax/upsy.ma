@@ -103,6 +103,9 @@ const AppRoutes = () => (
     <Route path="blog/understanding-anxiety" element={<PageTransition><UnderstandingAnxiety /></PageTransition>} />
     <Route path="blog/benefits-online-therapy" element={<PageTransition><BenefitsOnlineTherapy /></PageTransition>} />
     <Route path="blog/mental-health-at-work" element={<PageTransition><MentalHealthAtWork /></PageTransition>} />
+    <Route path="blog/understanding-depression" element={<PageTransition><UnderstandingDepression /></PageTransition>} />
+    <Route path="blog/how-to-support-a-loved-one" element={<PageTransition><HowToSupportALovedOne /></PageTransition>} />
+    <Route path="blog/mindfulness-for-beginners" element={<PageTransition><MindfulnessForBeginners /></PageTransition>} />
   </>
 );
 
