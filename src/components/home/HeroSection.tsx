@@ -57,14 +57,24 @@ const HeroSection = () => {
               transition={{ delay: 0.6, duration: 0.5 }}
             >
               <Button variant="primary" size="hero" asChild>
-                <Link to="/get-matched">{t("hero.startAssessment") || "Start Your Self-Assessment"}</Link>
+                <Link to="/get-matched" data-track-id="hero-assessment-cta">{t("hero.startAssessment")}</Link>
               </Button>
               <Button variant="secondary" size="hero" asChild>
-                <Link to="/psychologists">
+                <Link to="/psychologists" data-track-id="hero-psychologists-cta">
                   {t("hero.findPsychologist")}
                 </Link>
               </Button>
             </motion.div>
+
+            {/* Micro-trust line */}
+            <motion.p
+              className="text-xs text-muted-foreground/60 text-center lg:text-left mt-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+            >
+              {t("hero.microTrust")}
+            </motion.p>
           </motion.div>
 
           {/* Right — Human presence */}
