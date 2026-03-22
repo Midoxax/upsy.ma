@@ -57,24 +57,14 @@ const HeroSection = () => {
               transition={{ delay: 0.6, duration: 0.5 }}
             >
               <Button variant="primary" size="hero" asChild>
-                <Link to="/psychologists">{t("hero.findPsychologist")}</Link>
+                <Link to="/get-matched">{t("hero.startAssessment") || "Start Your Self-Assessment"}</Link>
               </Button>
               <Button variant="secondary" size="hero" asChild>
-                <Link to="/get-matched">
-                  {t("hero.startAssessment") || "Start Self-Assessment"}
+                <Link to="/psychologists">
+                  {t("hero.findPsychologist")}
                 </Link>
               </Button>
             </motion.div>
-
-            {/* Trust whisper below CTA */}
-            <motion.p
-              className="text-xs text-muted-foreground/50 mt-6 italic"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 0.6 }}
-            >
-              {t("hero.trustWhisper") || "No commitment required. Completely confidential."}
-            </motion.p>
           </motion.div>
 
           {/* Right — Human presence */}
