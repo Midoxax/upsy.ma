@@ -4,6 +4,7 @@ import TrustSection from "@/components/home/TrustSection";
 import SelfAssessmentSection from "@/components/home/SelfAssessmentSection";
 import FeaturedPsychologistsSection from "@/components/home/FeaturedPsychologistsSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
+import FounderSection from "@/components/home/FounderSection";
 import PillarsSection from "@/components/home/PillarsSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import { useDynamicSections } from "@/hooks/useDynamicSections";
