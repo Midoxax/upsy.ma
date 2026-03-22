@@ -35,11 +35,7 @@ const DoINeedTherapy = () => {
 
   return (
     <>
-      <SEOHead
-        path="/blog/do-i-need-therapy"
-        title="Do I Need Therapy? Signs, Myths & When to Seek Help | UPsy"
-        description="Wondering if therapy is right for you? Learn the common signs, debunk myths about therapy, and understand when professional mental health support can help."
-      />
+      <SEOHead path="/blog/do-i-need-therapy" />
       <main className="flex-1">
         {/* Hero */}
         <section className="hero-neural-bg py-20 md:py-28">

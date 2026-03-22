@@ -11,11 +11,7 @@ const FindRightPsychologist = () => {
 
   return (
     <>
-      <SEOHead
-        path="/blog/find-right-psychologist"
-        title="How to Find the Right Psychologist | UPsy Guide"
-        description="A practical guide to finding the right psychologist for your needs. Learn what to look for, questions to ask, and how to make the best choice for your mental health journey."
-      />
+      <SEOHead path="/blog/find-right-psychologist" />
       <main className="flex-1">
         {/* Hero */}
         <section className="hero-neural-bg py-20 md:py-28">
