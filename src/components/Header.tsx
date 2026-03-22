@@ -37,6 +37,7 @@ const Header = () => {
       dropdown: [
         { name: t('nav.ourStory'), href: "/about" },
         { name: "The Moroccan Umbrella", href: "/moroccan-umbrella", icon: Umbrella, featured: true },
+        { name: t('psf.navLabel') !== 'psf.navLabel' ? t('psf.navLabel') : "Psychologues Sans Frontières", href: "/psf", icon: Heart, featured: true },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation'), href: "/apply" },
       ],

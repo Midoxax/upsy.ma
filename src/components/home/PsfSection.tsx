@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Globe, Heart, ArrowRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useLocale } from "@/contexts/LocaleContext";
+import { addLocalePrefix } from "@/lib/i18n/utils";
 
 /**
  * PSF Homepage Section — independent module.
@@ -9,6 +11,13 @@ import ScrollReveal from "@/components/ScrollReveal";
  * Data source: Static (no DB dependency).
  */
 const PsfSection = () => {
+  const { locale, t } = useLocale();
+
+  const safeT = (key: string, fallback: string) => {
+    const val = t(key);
+    return val === key ? fallback : val;
+  };
+
   return (
     <section className="section-spacing liquid-bg">
       <div className="container-custom">
@@ -28,23 +37,21 @@ const PsfSection = () => {
               {/* Content */}
               <div className="flex-1 text-center md:text-left">
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20 mb-4">
-                  Social Impact Initiative
+                  {safeT("psf.sectionBadge", "Social Impact Initiative")}
                 </span>
-                <h2 className="text-h2 mb-3">Psychologues Sans Frontières</h2>
+                <h2 className="text-h2 mb-3">{safeT("psf.sectionTitle", "Psychologues Sans Frontières")}</h2>
                 <p className="text-body text-muted-foreground mb-6 max-w-xl">
-                  Bringing free mental health support to underserved communities across Morocco and beyond.
-                  Our volunteer psychologists provide pro-bono sessions, crisis intervention, and community workshops
-                  to those who need it most.
+                  {safeT("psf.sectionDesc", "Bringing free mental health support to underserved communities across Morocco and beyond. Our volunteer psychologists provide pro-bono sessions, crisis intervention, and community workshops to those who need it most.")}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                   <Button variant="secondary" size="lg" asChild>
-                    <Link to="/psf" className="inline-flex items-center gap-2">
-                      Learn More <ArrowRight className="w-4 h-4" />
+                    <Link to={addLocalePrefix("/psf", locale)} className="inline-flex items-center gap-2">
+                      {safeT("psf.learnMore", "Learn More")} <ArrowRight className="w-4 h-4" />
                     </Link>
                   </Button>
                   <Button variant="primary" size="lg" asChild>
-                    <Link to="/apply" className="inline-flex items-center gap-2">
-                      Volunteer as Psychologist
+                    <Link to={addLocalePrefix("/apply", locale)} className="inline-flex items-center gap-2">
+                      {safeT("psf.volunteerAs", "Volunteer as Psychologist")}
                     </Link>
                   </Button>
                 </div>
@@ -54,13 +61,13 @@ const PsfSection = () => {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-border/30">
               {[
-                { value: "500+", label: "Free Sessions Given" },
-                { value: "12", label: "Regions Covered" },
-                { value: "50+", label: "Volunteer Psychologists" },
+                { value: "500+", labelKey: "psf.statSessionsLabel", fallback: "Free Sessions Given" },
+                { value: "12", labelKey: "psf.statRegionsLabel", fallback: "Regions Covered" },
+                { value: "50+", labelKey: "psf.statVolunteersLabel", fallback: "Volunteer Psychologists" },
               ].map((stat) => (
-                <div key={stat.label} className="text-center">
+                <div key={stat.labelKey} className="text-center">
                   <div className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{safeT(stat.labelKey, stat.fallback)}</div>
                 </div>
               ))}
             </div>
