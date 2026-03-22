@@ -30,6 +30,7 @@ const Header = () => {
       ],
     },
     { name: t('nav.learning'), href: "/resources" },
+    { name: t('nav.blog'), href: "/blog" },
     { name: t('nav.research'), href: "/talent-innovation-hub" },
     {
       name: t('nav.about'),
