@@ -15,88 +15,56 @@ const stats = [
   { value: "98%", labelKey: "trust.statSatisfaction" as const, fallback: "Client Satisfaction" },
 ];
 
-const partnerLogos = [
-  { name: "Ministry of Health", initials: "MoH" },
-  { name: "WHO", initials: "WHO" },
-  { name: "UNICEF", initials: "UNICEF" },
-  { name: "Moroccan Federation", initials: "FRMPS" },
-  { name: "African Union", initials: "AU" },
-];
-
 const TrustSection = () => {
   const { t } = useLocale();
 
   return (
-    <section aria-label="Trust signals" className="py-12 bg-muted/30 border-y border-border/20">
-      <div className="container mx-auto px-4">
-        {/* Trust badges */}
+    <section aria-label="Trust signals" className="py-14">
+      <div className="container-custom">
+        {/* Trust badges — calm horizontal strip */}
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14">
           {trustItems.map((item, i) => (
             <motion.div
               key={i}
-              className="flex items-center gap-3 text-muted-foreground"
-              initial={{ opacity: 0, y: 10 }}
+              className="flex items-center gap-2.5 text-muted-foreground"
+              initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
             >
-              <item.icon className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium tracking-wide uppercase">
+              <item.icon className="h-4 w-4 text-primary/60" />
+              <span className="text-xs font-medium tracking-wider uppercase">
                 {t(item.labelKey) || item.fallback}
               </span>
             </motion.div>
           ))}
         </div>
 
-        {/* Social proof numbers */}
+        {/* Social proof — gentle numbers */}
         <motion.div
-          className="flex flex-wrap items-center justify-center gap-10 md:gap-16 mt-8 pt-8 border-t border-border/20"
+          className="flex flex-wrap items-center justify-center gap-12 md:gap-20 mt-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.25, duration: 0.5 }}
         >
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+              <div className="text-2xl md:text-3xl font-semibold text-primary">{stat.value}</div>
+              <div className="text-xs text-muted-foreground/70 mt-1 tracking-wider uppercase">
                 {t(stat.labelKey) || stat.fallback}
               </div>
             </div>
           ))}
         </motion.div>
 
-        {/* Partner logos */}
-        <motion.div
-          className="mt-8 pt-8 border-t border-border/20"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <p className="text-center text-xs text-muted-foreground/60 uppercase tracking-widest mb-6">
-            {t("trust.partnersLabel") || "Trusted Partners & Affiliations"}
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
-            {partnerLogos.map((partner) => (
-              <div
-                key={partner.name}
-                className="flex items-center justify-center w-20 h-12 md:w-24 md:h-14 rounded-lg bg-background/60 border border-border/30 text-muted-foreground/50 text-xs md:text-sm font-semibold tracking-wide hover:text-muted-foreground/80 hover:border-border/50 transition-colors duration-300"
-                title={partner.name}
-              >
-                {partner.initials}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Reassurance */}
+        {/* Reassurance whisper */}
         <motion.p
-          className="text-center text-sm text-muted-foreground/80 mt-8 italic"
+          className="text-center text-sm text-muted-foreground/60 mt-8 italic max-w-lg mx-auto"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.4 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
         >
           {t("trust.reassurance") || "You're in safe hands. Every session is private, secure, and judgment-free."}
         </motion.p>
