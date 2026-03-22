@@ -86,16 +86,16 @@
     --text-small: 14px;
 
     /* ── Light Liquid-Glass Tokens ── */
-    --glass-bg: rgba(255,255,255,0.72);
-    --glass-border-color: rgba(37,99,235,0.08);
-    --glass-shadow: 0 12px 30px rgba(37,99,235,0.06);
-    --glass-shadow-hover: 0 20px 50px rgba(37,99,235,0.1), 0 0 0 1px rgba(124,58,237,0.12);
+    --glass-bg: rgba(247,243,240,0.72);
+    --glass-border-color: rgba(107,31,42,0.06);
+    --glass-shadow: 0 12px 30px rgba(107,31,42,0.04);
+    --glass-shadow-hover: 0 20px 50px rgba(107,31,42,0.08), 0 0 0 1px rgba(200,169,106,0.15);
 
     /* ── Light Atmosphere ── */
     --liquid-atmosphere:
-      radial-gradient(circle at 20% 25%, rgba(37,99,235,0.06), transparent 40%),
-      radial-gradient(circle at 75% 70%, rgba(124,58,237,0.06), transparent 45%),
-      radial-gradient(circle at 50% 90%, rgba(33,122,91,0.04), transparent 40%),
+      radial-gradient(circle at 20% 25%, rgba(107,31,42,0.04), transparent 40%),
+      radial-gradient(circle at 75% 70%, rgba(200,169,106,0.04), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(107,31,42,0.02), transparent 40%),
       hsl(var(--background));
 
     /* ── Gradient Tokens ── */
