@@ -749,6 +749,7 @@ export const translations = {
       statSessions: "Sessions Completed",
       statSatisfaction: "Client Satisfaction",
       reassurance: "You're in safe hands. Every session is private, secure, and judgment-free.",
+      partnersLabel: "Trusted Partners & Affiliations",
     },
     featured: {
       title: "Meet Our Psychologists",
