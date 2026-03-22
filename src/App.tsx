@@ -42,6 +42,8 @@ import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
 import BrandGuidelines from "./pages/BrandGuidelines";
+import FindRightPsychologist from "./pages/blog/FindRightPsychologist";
+import DoINeedTherapy from "./pages/blog/DoINeedTherapy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
