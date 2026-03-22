@@ -14,12 +14,20 @@ export interface IntentSignals {
   referrerType: "search" | "direct" | "social" | "referral" | "unknown";
   dwellTimeMs: number;
   scrollDepthPercent: number;
-  clickedTargets: string[];
+  clickedTargets: string[]; // data-track-id values
+}
+
+// ─── Classification Result ───
+export interface ClassificationResult {
+  intent: UserIntent;
+  /** 0-1: how confident the classification is. <0.3 = ambiguous → default to EXPLORING */
+  confidence: number;
 }
 
 // ─── Store Shape ───
 interface IntentState {
   intent: UserIntent;
+  confidence: number;
   isLocked: boolean;
   signals: IntentSignals;
   sessionId: string;
@@ -68,11 +76,7 @@ function detectReferrerType(): IntentSignals["referrerType"] {
     const searchEngines = ["google", "bing", "yahoo", "duckduckgo", "baidu"];
     if (searchEngines.some((se) => url.hostname.includes(se))) return "search";
     const socialPlatforms = [
-      "facebook",
-      "twitter",
-      "instagram",
-      "linkedin",
-      "tiktok",
+      "facebook", "twitter", "instagram", "linkedin", "tiktok",
     ];
     if (socialPlatforms.some((sp) => url.hostname.includes(sp))) return "social";
     if (url.hostname === window.location.hostname) return "direct";
@@ -83,11 +87,11 @@ function detectReferrerType(): IntentSignals["referrerType"] {
 }
 
 /**
- * Classification algorithm.
- * Runs once after 3-5 seconds of signal collection.
- * Uses weighted scoring — highest score wins.
+ * Classification algorithm with confidence scoring.
+ * Confidence = (topScore - secondScore) / max(topScore, 1)
+ * If confidence < 0.3 → falls back to EXPLORING.
  */
-function classifyIntent(signals: IntentSignals): UserIntent {
+function classifyIntent(signals: IntentSignals): ClassificationResult {
   const scores: Record<UserIntent, number> = {
     EXPLORING: 0,
     READY_TO_ACT: 0,
@@ -138,7 +142,7 @@ function classifyIntent(signals: IntentSignals): UserIntent {
     scores.SKEPTICAL += 1;
   }
 
-  // ── Click behavior ──
+  // ── Click behavior (via data-track-id) ──
   if (signals.clickedTargets.length > 0) {
     scores.READY_TO_ACT += 2;
     if (
@@ -157,22 +161,31 @@ function classifyIntent(signals: IntentSignals): UserIntent {
     }
   }
 
-  // ── Find winner ──
-  let maxIntent: UserIntent = "EXPLORING";
-  let maxScore = scores.EXPLORING;
-  for (const [intent, score] of Object.entries(scores)) {
-    if (score > maxScore) {
-      maxScore = score;
-      maxIntent = intent as UserIntent;
-    }
+  // ── Find top two scores ──
+  const sorted = Object.entries(scores).sort(
+    ([, a], [, b]) => b - a
+  ) as [UserIntent, number][];
+
+  const topIntent = sorted[0][0];
+  const topScore = sorted[0][1];
+  const secondScore = sorted[1][1];
+
+  // Confidence = normalized gap between top and runner-up
+  const confidence =
+    topScore > 0 ? (topScore - secondScore) / topScore : 0;
+
+  // Low confidence → default to EXPLORING (safe fallback)
+  if (confidence < 0.3) {
+    return { intent: "EXPLORING", confidence };
   }
 
-  return maxIntent;
+  return { intent: topIntent, confidence };
 }
 
 // ─── Store ───
 export const useIntentStore = create<IntentState>((set, get) => ({
   intent: "EXPLORING",
+  confidence: 0,
   isLocked: false,
   sessionId: generateSessionId(),
   signals: {
@@ -185,7 +198,7 @@ export const useIntentStore = create<IntentState>((set, get) => ({
   },
 
   updateSignals: (partial) => {
-    if (get().isLocked) return; // No updates after lock
+    if (get().isLocked) return;
     set((state) => ({
       signals: { ...state.signals, ...partial },
     }));
@@ -193,25 +206,27 @@ export const useIntentStore = create<IntentState>((set, get) => ({
 
   classifyAndLock: () => {
     if (get().isLocked) return;
-    const classified = classifyIntent(get().signals);
-    set({ intent: classified, isLocked: true });
+    const result = classifyIntent(get().signals);
+    set({
+      intent: result.intent,
+      confidence: result.confidence,
+      isLocked: true,
+    });
 
-    // Persist last intent for next-visit analysis
     try {
-      localStorage.setItem(LS_LAST_INTENT, classified);
+      localStorage.setItem(LS_LAST_INTENT, result.intent);
     } catch {
       // Silent fail
     }
   },
 
   forceIntent: (intent) => {
-    set({ intent, isLocked: true });
+    set({ intent, confidence: 1, isLocked: true });
   },
 }));
 
 /**
  * Save scroll depth on page unload for next-visit classification.
- * Called from useIntentSignals cleanup.
  */
 export function persistScrollDepth(depth: number): void {
   try {

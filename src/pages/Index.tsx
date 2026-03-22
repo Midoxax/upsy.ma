@@ -6,6 +6,7 @@ import FeaturedPsychologistsSection from "@/components/home/FeaturedPsychologist
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import PillarsSection from "@/components/home/PillarsSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
+import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
 
 // Lazy-loaded below-the-fold sections
@@ -27,35 +28,34 @@ export interface SectionConfig {
   component: ComponentType;
   /** Analytics tracking ID */
   trackingId: string;
-  /** Priority scores per intent (1 = highest priority) */
+  /** Priority scores per intent (1 = highest priority, 0 = pinned/ignored) */
   priorityByIntent: Record<UserIntent, number>;
   /** Narrative ordering constraints */
   narrativeConstraints: {
-    /** Section keys that MUST appear before this one */
+    /** Section keys that MUST appear before this one (soft — within ±2 only) */
     mustAppearAfter?: string[];
+    /** Section keys that MUST appear after this one (soft — within ±2 only) */
+    mustAppearBefore?: string[];
     /** Pin to fixed position — exempt from reordering */
     pinPosition?: "first" | "second" | "third" | "last";
   };
-  /** Default position index (used for maxPositionShift calculation) */
+  /** Default position index (used for maxPositionShift = ±2 calculation) */
   defaultIndex: number;
   /** Skeleton variant for progressive disclosure (Phase 3) */
   skeletonVariant?: "hero" | "cards" | "text";
 }
 
 /**
- * Full section configuration with intent priorities.
- *
  * ANCHOR SECTIONS (non-movable):
  * - Hero → pinned 1st
  * - Trust → pinned 2nd
  * - How It Works (Patient Pathway) → pinned 3rd
  * - Final CTA → pinned last
  *
- * ADAPTIVE SECTIONS (positions 4–13):
- * - Sorted by intent priority in Phase 2
- * - maxPositionShift = 2 (no section moves more than ±2 from default)
+ * ADAPTIVE SECTIONS (positions 3–12, indices in adaptive zone 0–9):
+ * Sorted by intent priority. maxPositionShift = ±2 (hard limit).
  *
- * PRIORITY TABLE (for review — 1 = highest):
+ * PRIORITY TABLE (1 = highest):
  * ┌─────────────────────┬────────────┬──────────────┬─────────────┬──────────┐
  * │ Section             │ EXPLORING  │ READY_TO_ACT │ RESEARCHING │ SKEPTICAL│
  * ├─────────────────────┼────────────┼──────────────┼─────────────┼──────────┤
@@ -191,7 +191,7 @@ const sections: SectionConfig[] = [
     defaultIndex: 12,
     skeletonVariant: "cards",
     priorityByIntent: { EXPLORING: 10, READY_TO_ACT: 4, RESEARCHING: 10, SKEPTICAL: 1 },
-    narrativeConstraints: {},
+    narrativeConstraints: { mustAppearBefore: ["final-cta"] },
   },
   {
     key: "final-cta",
@@ -204,7 +204,7 @@ const sections: SectionConfig[] = [
   },
 ];
 
-// ─── Fallback (Phase 1: no dynamic ordering yet — uses default order) ───
+// ─── UI Components ───
 
 const SectionFallback = () => (
   <div className="py-20 flex items-center justify-center">
@@ -212,7 +212,6 @@ const SectionFallback = () => (
   </div>
 );
 
-/** Soft visual connector between sections */
 const NarrativeConnector = () => (
   <div className="relative h-16 md:h-24 overflow-hidden" aria-hidden="true">
     <div
@@ -227,18 +226,20 @@ const NarrativeConnector = () => (
 );
 
 const Index = () => {
-  // Phase 1: Initialize intent detection (collects signals, classifies after 4s)
+  // Phase 1: Collect signals → classify → lock intent
   useIntentSignals();
 
-  // Phase 1: Render in default order. Phase 2 will activate dynamic sorting.
+  // Phase 2: Dynamic section ordering based on intent
+  const orderedSections = useDynamicSections(sections);
+
   return (
     <main className="flex-1">
-      {sections.map((section, index) => {
+      {orderedSections.map((section, index) => {
         const Section = section.component;
         return (
           <Suspense key={section.key} fallback={<SectionFallback />}>
             <Section />
-            {index < sections.length - 1 && <NarrativeConnector />}
+            {index < orderedSections.length - 1 && <NarrativeConnector />}
           </Suspense>
         );
       })}

@@ -6,7 +6,7 @@ import {
 } from "@/stores/intentStore";
 import { initTracking, track } from "@/lib/tracking";
 
-const CLASSIFY_DELAY_MS = 4000; // 4 seconds — within the 3-5s window
+const CLASSIFY_DELAY_MS = 4000;
 const VALID_INTENTS: UserIntent[] = [
   "EXPLORING",
   "READY_TO_ACT",
@@ -17,14 +17,9 @@ const VALID_INTENTS: UserIntent[] = [
 /**
  * useIntentSignals
  *
- * Mounted once in the homepage (Index.tsx).
- * Collects behavioral signals for 4 seconds, then classifies and locks intent.
- * After lock, detaches all listeners.
- *
- * Also handles:
- * - Debug override via ?intent= query param
- * - Scroll depth persistence on unload
- * - Session tracking initialization
+ * Collects behavioral signals for 4 seconds, classifies intent, locks.
+ * Uses data-track-id attributes for click tracking (not text content).
+ * Supports ?intent= debug override.
  */
 export function useIntentSignals(): void {
   const {
@@ -46,7 +41,7 @@ export function useIntentSignals(): void {
     initTracking(sessionId);
     track("page_view", { page: "homepage" });
 
-    // ── Debug override ──
+    // ── Debug override via ?intent= ──
     const params = new URLSearchParams(window.location.search);
     const debugIntent = params.get("intent")?.toUpperCase() as
       | UserIntent
@@ -54,10 +49,9 @@ export function useIntentSignals(): void {
     if (debugIntent && VALID_INTENTS.includes(debugIntent)) {
       forceIntent(debugIntent);
       track("intent_debug_override", { intent: debugIntent });
-      return; // Skip signal collection
+      return;
     }
 
-    // ── If already locked (shouldn't happen on fresh mount, but safety) ──
     if (isLocked) return;
 
     // ── Scroll depth tracking ──
@@ -72,19 +66,24 @@ export function useIntentSignals(): void {
       }
     };
 
-    // ── Click tracking ──
+    // ── Click tracking via data-track-id ──
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const link = target.closest("a");
-      const button = target.closest("button");
-      const clickTarget =
-        link?.getAttribute("href") ||
-        button?.textContent?.trim().toLowerCase().slice(0, 30) ||
-        "";
-      if (clickTarget) {
+
+      // Walk up the DOM to find the nearest data-track-id
+      const tracked = target.closest("[data-track-id]");
+      let trackId = tracked?.getAttribute("data-track-id") || "";
+
+      // Fallback: read href from nearest link
+      if (!trackId) {
+        const link = target.closest("a");
+        trackId = link?.getAttribute("href") || "";
+      }
+
+      if (trackId) {
         const store = useIntentStore.getState();
         updateSignals({
-          clickedTargets: [...store.signals.clickedTargets, clickTarget],
+          clickedTargets: [...store.signals.clickedTargets, trackId],
         });
       }
     };
@@ -100,32 +99,44 @@ export function useIntentSignals(): void {
 
     // ── Classification timer ──
     const classifyTimer = setTimeout(() => {
-      // Final dwell time update
       updateSignals({ dwellTimeMs: Date.now() - startTime.current });
       classifyAndLock();
 
-      // Log the classification
       const state = useIntentStore.getState();
       track("intent_classified", {
         intent: state.intent,
+        confidence: state.confidence,
         signals: { ...state.signals },
       });
 
-      // Detach listeners after lock
+      // Log low confidence
+      if (state.confidence < 0.3) {
+        track("intent_low_confidence", {
+          intent: state.intent,
+          confidence: state.confidence,
+        });
+      }
+
+      // Detach after lock
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("click", handleClick);
       clearInterval(dwellInterval);
     }, CLASSIFY_DELAY_MS);
 
-    // ── Persist scroll depth on unload ──
+    // ── Persist on unload ──
     const handleUnload = () => {
       persistScrollDepth(maxScrollDepth.current);
       const state = useIntentStore.getState();
-      track("session_end", {
-        intent: state.intent,
-        scrollDepth: maxScrollDepth.current,
-        dwellTimeMs: Date.now() - startTime.current,
-      });
+      track(
+        "session_end",
+        {
+          intent: state.intent,
+          confidence: state.confidence,
+          scrollDepth: maxScrollDepth.current,
+          dwellTimeMs: Date.now() - startTime.current,
+        },
+        false // allow duplicate — always fire on unload
+      );
     };
     window.addEventListener("beforeunload", handleUnload);
 
