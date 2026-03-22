@@ -22,6 +22,7 @@ const Footer = () => {
       links: [
         { name: t('header.selfAssessment'), href: "/get-matched" },
         { name: t('nav.blog'), href: "/blog" },
+        { name: t('founder.navLabel') || "Founder", href: "/founder" },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation') || "Apply", href: "/apply" },
       ],
