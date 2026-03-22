@@ -1,21 +1,21 @@
 
 
-## Update RESEND_API_KEY Secret
+## Plan: Replace Hero Whisper with U.Psy Logo
 
-### What needs to happen
-The `RESEND_API_KEY` secret already exists in this remixed project but likely has no value (or the old project's value). We need to update it with your active Resend API key.
+**What changes:**
+- Remove the `hero.whisper` text line from `HeroSection.tsx`
+- Replace it with the U.Psy logo (`src/assets/logo.webp`, already used in the Header)
+- Logo displayed small (e.g. `h-10`) above the headline, with the same fade-in animation
+- Keep the `hero.trustWhisper` line below CTAs (or remove it too — your call)
 
-### Steps
-1. Use the secret update tool to prompt you for the new RESEND_API_KEY value
-2. You'll paste your Resend API key from [resend.com/api-keys](https://resend.com/api-keys)
-3. The secret will be stored securely and available to your backend functions (send-proposal-notification, send-rejection-email, etc.)
+**Why it works:**
+- Instant brand recognition in the hero
+- More professional than a whisper sentence
+- Reinforces trust through visual identity
+- Aligns with premium platform feel
 
-### Where to find your Resend API key
-- Go to [resend.com](https://resend.com) and sign in
-- Navigate to **API Keys** in the sidebar
-- Copy an existing key or create a new one
+**File modified:**
+- `src/components/home/HeroSection.tsx` — swap whisper `<p>` for logo `<img>`
 
-### Technical Details
-- The secret is used by edge functions: `send-proposal-notification`, `send-rejection-email`
-- No code changes are needed -- just the secret value update
+**No other files affected.**
 
