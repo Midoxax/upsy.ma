@@ -1,0 +1,47 @@
+# U.Psy — Feature Request Workflow
+
+## How to Use This File
+
+1. Write a detailed specification for any new feature, refactor, or fix below.
+2. Reference the `project_map.md` for architecture context.
+3. Ask the AI to execute the specification.
+4. After implementation, move the request to the "Completed" section with a date.
+
+---
+
+## Template
+
+### [Request Title]
+- **Date**: YYYY-MM-DD
+- **Type**: feature | refactor | bugfix | design | database
+- **Priority**: critical | high | medium | low
+- **Affected modules**: (list components, pages, services)
+- **Description**: (what needs to happen)
+- **Acceptance criteria**: (how to verify it's done)
+- **Dependencies**: (what must exist first)
+
+---
+
+## Active Requests
+
+_No active requests._
+
+---
+
+## Completed Requests
+
+### Architecture Refactor — System-First Model
+- **Date**: 2026-03-22
+- **Type**: refactor
+- **Priority**: critical
+- **Affected modules**: Index.tsx, hooks, services, stores, project docs
+- **Description**: Refactored from UI-first to system-first architecture. Added service layer (psychologistsService.ts), Zustand store (assessmentStore.ts), typed SectionConfig system for homepage, project_map.md documentation.
+- **Acceptance criteria**: ✅ Service layer separates API calls from hooks. ✅ Zustand connects assessment → psychologist sections. ✅ Homepage uses SectionConfig[]. ✅ project_map.md exists.
+
+### PSF Sub-Brand Page
+- **Date**: 2026-03-22
+- **Type**: feature
+- **Priority**: high
+- **Affected modules**: PsychologuesSansFrontieres.tsx, PsfSection.tsx, App.tsx routes
+- **Description**: Created dedicated /psf page for Psychologues Sans Frontières as a distinct sub-brand. Updated homepage section to link to /psf instead of /about.
+- **Acceptance criteria**: ✅ /psf route exists. ✅ Homepage PSF section links to /psf. ✅ Page has hero, mission, pillars, stats, programs, involvement, CTA sections.

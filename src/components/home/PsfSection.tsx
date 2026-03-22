@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 import { Globe, Heart, ArrowRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 
+/**
+ * PSF Homepage Section — independent module.
+ * Responsibility: Surface the PSF initiative and drive traffic to /psf.
+ * Data source: Static (no DB dependency).
+ */
 const PsfSection = () => {
   return (
     <section className="section-spacing liquid-bg">
@@ -27,13 +32,13 @@ const PsfSection = () => {
                 </span>
                 <h2 className="text-h2 mb-3">Psychologues Sans Frontières</h2>
                 <p className="text-body text-muted-foreground mb-6 max-w-xl">
-                  Bringing free mental health support to underserved communities across Morocco and beyond. 
-                  Our volunteer psychologists provide pro-bono sessions, crisis intervention, and community workshops 
+                  Bringing free mental health support to underserved communities across Morocco and beyond.
+                  Our volunteer psychologists provide pro-bono sessions, crisis intervention, and community workshops
                   to those who need it most.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                   <Button variant="secondary" size="lg" asChild>
-                    <Link to="/about" className="inline-flex items-center gap-2">
+                    <Link to="/psf" className="inline-flex items-center gap-2">
                       Learn More <ArrowRight className="w-4 h-4" />
                     </Link>
                   </Button>
