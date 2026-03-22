@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Globe, MapPin, Sparkles } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ import { getFeaturedPsychologists } from "@/services/psychologistsService";
 import { useAssessmentStore } from "@/stores/assessmentStore";
 
 const FeaturedPsychologistsSection = () => {
+  const { t } = useLocale();
   const { latestResult, hasCompletedAssessment } = useAssessmentStore();
 
   const { data: psychologists } = useQuery({
@@ -28,12 +30,14 @@ const FeaturedPsychologistsSection = () => {
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-12">
-            <h2 className="text-h2 mb-4">Meet Our Psychologists</h2>
-            <p className="text-body text-muted-foreground">Licensed professionals ready to support your journey.</p>
+            <h2 className="text-h2 mb-4">{t("featured.title") || "Meet Our Psychologists"}</h2>
+            <p className="text-body text-muted-foreground">
+              {t("featured.subtitle") || "Licensed professionals ready to support your journey."}
+            </p>
             {hasCompletedAssessment && latestResult && (
               <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
                 <Sparkles className="w-4 h-4" />
-                Based on your {latestResult.type} assessment ({latestResult.severity})
+                {t("featured.personalizedBadge") || `Based on your ${latestResult.type} assessment (${latestResult.severity})`}
               </div>
             )}
           </div>
@@ -62,7 +66,7 @@ const FeaturedPsychologistsSection = () => {
                       <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{psych.city}</span>
                     )}
                     {psych.offers_online && (
-                      <span className="flex items-center gap-1"><Globe className="w-3 h-3" />Online</span>
+                      <span className="flex items-center gap-1"><Globe className="w-3 h-3" />{t("featured.online") || "Online"}</span>
                     )}
                   </div>
                   <div className="flex flex-wrap justify-center gap-1.5 mb-4">
@@ -73,10 +77,10 @@ const FeaturedPsychologistsSection = () => {
                     ))}
                   </div>
                   {psych.hourly_rate_mad && (
-                    <p className="text-primary font-semibold mb-4">{psych.hourly_rate_mad} MAD / session</p>
+                    <p className="text-primary font-semibold mb-4">{psych.hourly_rate_mad} MAD / {t("featured.session") || "session"}</p>
                   )}
                   <Button variant="primary" size="sm" asChild className="w-full">
-                    <Link to={`/psychologists/${psych.slug}`}>Book Session</Link>
+                    <Link to={`/psychologists/${psych.slug}`}>{t("featured.bookSession") || "Book Session"}</Link>
                   </Button>
                 </div>
               </StaggerItem>
@@ -87,7 +91,7 @@ const FeaturedPsychologistsSection = () => {
         <div className="text-center mt-10">
           <Button variant="secondary" size="lg" asChild>
             <Link to="/psychologists" className="inline-flex items-center gap-2">
-              View All Psychologists <ArrowRight className="w-4 h-4" />
+              {t("featured.viewAll") || "View All Psychologists"} <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
         </div>
