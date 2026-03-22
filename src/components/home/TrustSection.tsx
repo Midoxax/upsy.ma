@@ -1,4 +1,4 @@
-import { Shield, Video, Lock, Award, Users, Calendar } from "lucide-react";
+import { Shield, Video, Lock, Award } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { motion } from "framer-motion";
 
@@ -15,11 +15,19 @@ const stats = [
   { value: "98%", labelKey: "trust.statSatisfaction" as const, fallback: "Client Satisfaction" },
 ];
 
+const partnerLogos = [
+  { name: "Ministry of Health", initials: "MoH" },
+  { name: "WHO", initials: "WHO" },
+  { name: "UNICEF", initials: "UNICEF" },
+  { name: "Moroccan Federation", initials: "FRMPS" },
+  { name: "African Union", initials: "AU" },
+];
+
 const TrustSection = () => {
   const { t } = useLocale();
 
   return (
-    <section aria-label="Trust signals" className="py-10 bg-muted/30 border-y border-border/30">
+    <section aria-label="Trust signals" className="py-12 bg-muted/30 border-y border-border/20">
       <div className="container mx-auto px-4">
         {/* Trust badges */}
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14">
@@ -46,7 +54,7 @@ const TrustSection = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
         >
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
@@ -58,9 +66,33 @@ const TrustSection = () => {
           ))}
         </motion.div>
 
-        {/* Reassurance microcopy */}
+        {/* Partner logos */}
+        <motion.div
+          className="mt-8 pt-8 border-t border-border/20"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <p className="text-center text-xs text-muted-foreground/60 uppercase tracking-widest mb-6">
+            {t("trust.partnersLabel") || "Trusted Partners & Affiliations"}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            {partnerLogos.map((partner) => (
+              <div
+                key={partner.name}
+                className="flex items-center justify-center w-20 h-12 md:w-24 md:h-14 rounded-lg bg-background/60 border border-border/30 text-muted-foreground/50 text-xs md:text-sm font-semibold tracking-wide hover:text-muted-foreground/80 hover:border-border/50 transition-colors duration-300"
+                title={partner.name}
+              >
+                {partner.initials}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Reassurance */}
         <motion.p
-          className="text-center text-sm text-muted-foreground mt-6"
+          className="text-center text-sm text-muted-foreground/80 mt-8 italic"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
