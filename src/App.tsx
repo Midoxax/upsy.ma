@@ -42,6 +42,8 @@ import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
 import BrandGuidelines from "./pages/BrandGuidelines";
+import FindRightPsychologist from "./pages/blog/FindRightPsychologist";
+import DoINeedTherapy from "./pages/blog/DoINeedTherapy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -86,6 +88,8 @@ const AppRoutes = () => (
     <Route path="admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
     <Route path="session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
     <Route path="brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
+    <Route path="blog/find-right-psychologist" element={<PageTransition><FindRightPsychologist /></PageTransition>} />
+    <Route path="blog/do-i-need-therapy" element={<PageTransition><DoINeedTherapy /></PageTransition>} />
   </>
 );
 
