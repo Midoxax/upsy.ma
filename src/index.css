@@ -34,31 +34,34 @@
     --gray-700: 0 0% 14%;
     --gray-800: 0 0% 11%;
 
-    /* ── Light Theme Palette (Blue · Purple · Royal Green) ── */
-    --light-blue: 220 72% 50%;       /* #2563EB */
-    --light-purple: 262 60% 50%;     /* #7C3AED */
-    --light-green: 160 60% 32%;      /* #217A5B */
+    /* ── Light Theme Palette (Warm Therapy Room) ── */
+    --light-blue: 220 72% 50%;       /* #2563EB - links, interactive */
+    --light-purple: 262 60% 50%;     /* #7C3AED - secondary */
+    --light-green: 160 60% 32%;      /* #217A5B - success */
+    --warm-maroon: 348 60% 27%;      /* #6B1F2A - trust, grounding */
+    --warm-beige: 30 33% 95%;        /* #F7F3F0 - warm background */
+    --warm-gold: 36 35% 60%;         /* #C8A96A - premium accent */
 
     /* ── Light Semantic Tokens ── */
-    --background: 225 25% 97%;
-    --foreground: 224 30% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 30% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 30% 12%;
-    --primary: var(--light-blue);
-    --primary-foreground: var(--white);
+    --background: 30 33% 97%;
+    --foreground: 0 0% 10%;
+    --card: 30 33% 99%;
+    --card-foreground: 0 0% 10%;
+    --popover: 30 33% 99%;
+    --popover-foreground: 0 0% 10%;
+    --primary: var(--warm-maroon);
+    --primary-foreground: 30 33% 97%;
     --secondary: var(--light-purple);
     --secondary-foreground: var(--white);
-    --muted: 225 20% 93%;
-    --muted-foreground: 224 10% 42%;
-    --accent: var(--light-green);
-    --accent-foreground: var(--white);
+    --muted: 30 15% 93%;
+    --muted-foreground: 0 0% 42%;
+    --accent: var(--warm-gold);
+    --accent-foreground: 0 0% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: var(--white);
-    --border: 225 18% 88%;
-    --input: 225 18% 93%;
-    --ring: var(--light-blue);
+    --border: 30 15% 88%;
+    --input: 30 15% 93%;
+    --ring: var(--warm-maroon);
 
     /* ── Layout Tokens ── */
     --radius-btn: 14px;
