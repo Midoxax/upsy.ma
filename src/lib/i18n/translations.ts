@@ -1315,6 +1315,8 @@ export const translations = {
       creatingAccount: "Création du compte...",
       createAccount: "Créer un compte",
       forgotPassword: "Mot de passe oublié ?",
+      continueWithGoogle: "Continuer avec Google",
+      orContinueWith: "ou continuer par email",
       loginFailed: "Échec de la connexion",
       signupFailed: "Échec de l'inscription",
       welcomeBack: "Bienvenue !",
