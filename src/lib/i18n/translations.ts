@@ -2390,6 +2390,8 @@ export const translations = {
       creatingAccount: "جاري إنشاء الحساب...",
       createAccount: "إنشاء حساب",
       forgotPassword: "نسيت كلمة المرور؟",
+      continueWithGoogle: "المتابعة مع جوجل",
+      orContinueWith: "أو المتابعة بالبريد الإلكتروني",
       loginFailed: "فشل تسجيل الدخول",
       signupFailed: "فشل التسجيل",
       welcomeBack: "مرحبًا بعودتك!",
