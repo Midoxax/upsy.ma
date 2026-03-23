@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Brain } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 const emailSchema = z.string().email("Invalid email address");
 const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
