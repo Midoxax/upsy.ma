@@ -222,6 +222,8 @@ export const translations = {
       creatingAccount: "Creating account...",
       createAccount: "Create Account",
       forgotPassword: "Forgot Password?",
+      continueWithGoogle: "Continue with Google",
+      orContinueWith: "or continue with email",
       loginFailed: "Login Failed",
       signupFailed: "Signup Failed",
       welcomeBack: "Welcome back!",
