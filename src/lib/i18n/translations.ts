@@ -1832,13 +1832,13 @@ export const translations = {
       partnersLabel: "Partenaires & Affiliations de Confiance",
     },
     featured: {
-      title: "Trouvez un Psychologue Qui Vous Correspond",
-      subtitle: "Chaque personne est différente. C'est pourquoi UPsy vous aide à trouver des psychologues selon vos besoins, préférences et objectifs.",
-      personalizedBadge: "Personnalisé selon vos résultats d'évaluation",
+      title: "Orienté Selon Votre Diagnostic, Pas Vos Préférences",
+      subtitle: "U.Psy ne demande pas ce que vous voulez. Il identifie ce dont vous avez besoin — par précision diagnostique.",
+      personalizedBadge: "Orienté selon vos résultats diagnostiques",
       online: "En ligne",
       session: "séance",
       bookSession: "Réserver une Séance",
-      viewAll: "Voir Tous les Psychologues",
+      viewAll: "Voir Tous les Spécialistes",
     },
     finalCta: {
       title: "Faites le Premier Pas Aujourd'hui",
