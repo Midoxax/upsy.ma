@@ -33,10 +33,10 @@ const FinalCTASection = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="primary" size="hero" asChild>
-              <Link to="/psychologists">{t("hero.findPsychologist") || "Find a Psychologist"}</Link>
+              <Link to="/get-matched">{t("finalCta.assessment") || "Run Your Diagnostic"}</Link>
             </Button>
             <Button variant="secondary" size="hero" asChild>
-              <Link to="/get-matched">{t("finalCta.assessment") || "Start Self-Assessment"}</Link>
+              <Link to="/psychologists">{t("hero.findPsychologist") || "Browse Specialists"}</Link>
             </Button>
           </div>
         </motion.div>
