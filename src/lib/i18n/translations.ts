@@ -1841,10 +1841,10 @@ export const translations = {
       viewAll: "Voir Tous les Spécialistes",
     },
     finalCta: {
-      title: "Faites le Premier Pas Aujourd'hui",
-      subtitle: "Vous n'avez pas besoin de tout comprendre. Commencez simplement — et nous vous guiderons.",
-      reassurance: "Sans engagement. Commencez par une auto-évaluation gratuite de 2 minutes.",
-      assessment: "Commencer Votre Auto-Évaluation",
+      title: "Arrêtez de Deviner. Commencez à Diagnostiquer.",
+      subtitle: "Vous savez déjà que quelque chose ne fonctionne pas. Le diagnostic vous dit exactement quoi — et quoi faire ensuite.",
+      reassurance: "Diagnostic de 2 minutes. Sans engagement. Structuré cliniquement.",
+      assessment: "Lancer Votre Diagnostic",
     },
     testimonials: {
       title: "Expériences Réelles, Impact Réel",
