@@ -757,13 +757,13 @@ export const translations = {
       partnersLabel: "Trusted Partners & Affiliations",
     },
     featured: {
-      title: "Find a Psychologist That Fits You",
-      subtitle: "Every person is different. That's why UPsy helps you find psychologists based on your specific needs, preferences, and goals.",
-      personalizedBadge: "Personalized for your assessment results",
+      title: "Matched to Your Breakdown, Not Your Preferences",
+      subtitle: "U.Psy doesn't ask what you want. It identifies what you need — based on diagnostic precision, not guesswork.",
+      personalizedBadge: "Matched from your diagnostic results",
       online: "Online",
       session: "session",
       bookSession: "Book Session",
-      viewAll: "View All Psychologists",
+      viewAll: "View All Specialists",
     },
     finalCta: {
       title: "Take the First Step Today",
