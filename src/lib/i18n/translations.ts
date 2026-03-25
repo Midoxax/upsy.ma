@@ -2907,13 +2907,13 @@ export const translations = {
       partnersLabel: "شركاء وانتماءات موثوقة",
     },
     featured: {
-      title: "اعثر على أخصائي يناسبك",
-      subtitle: "كل شخص مختلف. لهذا يساعدك UPsy في إيجاد أخصائيين حسب احتياجاتك وتفضيلاتك وأهدافك.",
-      personalizedBadge: "مخصص حسب نتائج تقييمك",
+      title: "مُوجّه حسب تشخيصك، لا تفضيلاتك",
+      subtitle: "U.Psy لا يسأل عمّا تريد. يحدد ما تحتاجه — بدقة تشخيصية.",
+      personalizedBadge: "مُوجّه من نتائج التشخيص",
       online: "عبر الإنترنت",
       session: "جلسة",
       bookSession: "احجز جلسة",
-      viewAll: "عرض جميع الأخصائيين",
+      viewAll: "عرض جميع المتخصصين",
     },
     finalCta: {
       title: "اتخذ الخطوة الأولى اليوم",
