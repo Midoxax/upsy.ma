@@ -766,10 +766,10 @@ export const translations = {
       viewAll: "View All Specialists",
     },
     finalCta: {
-      title: "Take the First Step Today",
-      subtitle: "You don't need to have everything figured out. Just start — and we'll guide you from there.",
-      reassurance: "No commitment required. Start with a free 2-minute self-assessment.",
-      assessment: "Start Your Self-Assessment",
+      title: "Stop Guessing. Start Diagnosing.",
+      subtitle: "You already know something isn't working. The diagnostic tells you exactly what — and what to do next.",
+      reassurance: "2-minute diagnostic. No commitment. Clinically structured.",
+      assessment: "Run Your Diagnostic",
     },
     testimonials: {
       title: "Real Experiences, Real Impact",
