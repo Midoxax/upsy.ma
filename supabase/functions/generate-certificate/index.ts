@@ -6,12 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-interface CertificateRequest {
-  certificate_type: "course_completion" | "assessment_completion" | "psychologist_accreditation" | "mooc_training";
-  reference_id?: string;
-  title: string;
-  description?: string;
-}
+const VALID_TYPES = ["course_completion", "assessment_completion", "psychologist_accreditation", "mooc_training"] as const;
 
 const TYPE_LABELS: Record<string, string> = {
   course_completion: "Course Completion",
@@ -19,6 +14,47 @@ const TYPE_LABELS: Record<string, string> = {
   psychologist_accreditation: "Professional Accreditation",
   mooc_training: "MOOC Training",
 };
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function validateInput(body: unknown): { valid: true; data: { certificate_type: string; title: string; description?: string; reference_id?: string } } | { valid: false; error: string } {
+  if (!body || typeof body !== "object") return { valid: false, error: "Invalid request body" };
+  const b = body as Record<string, unknown>;
+
+  if (!b.certificate_type || !VALID_TYPES.includes(b.certificate_type as any)) {
+    return { valid: false, error: "Invalid certificate_type" };
+  }
+  if (typeof b.title !== "string" || b.title.trim().length === 0 || b.title.length > 200) {
+    return { valid: false, error: "Title must be 1-200 characters" };
+  }
+  if (b.description !== undefined && b.description !== null) {
+    if (typeof b.description !== "string" || b.description.length > 500) {
+      return { valid: false, error: "Description must be at most 500 characters" };
+    }
+  }
+  if (b.reference_id !== undefined && b.reference_id !== null) {
+    if (typeof b.reference_id !== "string" || b.reference_id.length > 100) {
+      return { valid: false, error: "Invalid reference_id" };
+    }
+  }
+
+  return {
+    valid: true,
+    data: {
+      certificate_type: b.certificate_type as string,
+      title: b.title as string,
+      description: b.description as string | undefined,
+      reference_id: b.reference_id as string | undefined,
+    },
+  };
+}
 
 function generateCertificateHTML(
   recipientName: string,
@@ -28,49 +64,41 @@ function generateCertificateHTML(
   issuedAt: string,
   description?: string
 ): string {
-  const typeLabel = TYPE_LABELS[certificateType] || certificateType;
+  const typeLabel = TYPE_LABELS[certificateType] || escapeHtml(certificateType);
   const formattedDate = new Date(issuedAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+  const safeRecipient = escapeHtml(recipientName);
+  const safeTitle = escapeHtml(title);
+  const safeDesc = description ? escapeHtml(description) : "";
+  const safeCertNum = escapeHtml(certificateNumber);
 
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#ffffff;font-family:Georgia,'Times New Roman',serif;">
 <div style="max-width:680px;margin:40px auto;border:3px solid #8B1A1A;padding:0;background:#ffffff;">
-  <!-- Gold top bar -->
   <div style="height:8px;background:linear-gradient(90deg,#DAA520,#FFD700,#DAA520);"></div>
-  
   <div style="padding:50px 60px;text-align:center;">
-    <!-- Logo area -->
     <div style="margin-bottom:10px;">
       <span style="font-size:32px;font-weight:bold;color:#8B1A1A;letter-spacing:2px;">U.Psy</span>
     </div>
     <p style="color:#DAA520;font-size:11px;letter-spacing:4px;text-transform:uppercase;margin:0 0 30px;">
       ${typeLabel}
     </p>
-    
-    <!-- Decorative line -->
     <div style="width:60px;height:2px;background:#DAA520;margin:0 auto 30px;"></div>
-    
     <p style="color:#666;font-size:14px;margin:0 0 10px;">This is to certify that</p>
-    
     <h1 style="color:#1a1a1a;font-size:36px;margin:10px 0 20px;font-weight:normal;font-style:italic;">
-      ${recipientName}
+      ${safeRecipient}
     </h1>
-    
     <div style="width:60px;height:2px;background:#DAA520;margin:0 auto 20px;"></div>
-    
     <p style="color:#666;font-size:14px;margin:0 0 10px;">has successfully completed</p>
-    
     <h2 style="color:#8B1A1A;font-size:22px;margin:10px 0 20px;font-weight:bold;">
-      ${title}
+      ${safeTitle}
     </h2>
-    
-    ${description ? `<p style="color:#888;font-size:13px;margin:0 0 30px;max-width:480px;margin-left:auto;margin-right:auto;">${description}</p>` : ""}
-    
+    ${safeDesc ? `<p style="color:#888;font-size:13px;margin:0 0 30px;max-width:480px;margin-left:auto;margin-right:auto;">${safeDesc}</p>` : ""}
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:40px;border-top:1px solid #eee;padding-top:25px;">
       <div style="text-align:left;flex:1;">
         <p style="color:#1a1a1a;font-size:13px;margin:0;font-weight:bold;">Mehdi Felji</p>
@@ -78,7 +106,7 @@ function generateCertificateHTML(
       </div>
       <div style="text-align:center;flex:1;">
         <p style="color:#888;font-size:11px;margin:0;">Certificate No.</p>
-        <p style="color:#1a1a1a;font-size:12px;margin:2px 0 0;font-weight:bold;">${certificateNumber}</p>
+        <p style="color:#1a1a1a;font-size:12px;margin:2px 0 0;font-weight:bold;">${safeCertNum}</p>
       </div>
       <div style="text-align:right;flex:1;">
         <p style="color:#888;font-size:11px;margin:0;">Date of Issue</p>
@@ -86,8 +114,6 @@ function generateCertificateHTML(
       </div>
     </div>
   </div>
-  
-  <!-- Gold bottom bar -->
   <div style="height:8px;background:linear-gradient(90deg,#DAA520,#FFD700,#DAA520);"></div>
 </div>
 </body>
@@ -100,7 +126,10 @@ function generateEmailHTML(
   certificateType: string,
   certificateNumber: string
 ): string {
-  const typeLabel = TYPE_LABELS[certificateType] || certificateType;
+  const typeLabel = TYPE_LABELS[certificateType] || escapeHtml(certificateType);
+  const safeRecipient = escapeHtml(recipientName);
+  const safeTitle = escapeHtml(title);
+  const safeCertNum = escapeHtml(certificateNumber);
 
   return `<!DOCTYPE html>
 <html>
@@ -110,33 +139,26 @@ function generateEmailHTML(
   <div style="text-align:center;margin-bottom:30px;">
     <span style="font-size:28px;font-weight:bold;color:#8B1A1A;">U.Psy</span>
   </div>
-  
   <h1 style="color:#1a1a1a;font-size:22px;text-align:center;margin-bottom:10px;">
-    🎉 Congratulations, ${recipientName}!
+    🎉 Congratulations, ${safeRecipient}!
   </h1>
-  
   <p style="color:#555;font-size:15px;text-align:center;line-height:1.6;">
     You have earned your <strong>${typeLabel}</strong> certificate for completing:
   </p>
-  
   <div style="background:#f8f5f0;border-left:4px solid #DAA520;padding:16px 20px;margin:20px 0;border-radius:0 8px 8px 0;">
-    <p style="margin:0;font-size:16px;font-weight:bold;color:#1a1a1a;">${title}</p>
-    <p style="margin:4px 0 0;font-size:12px;color:#888;">Certificate #${certificateNumber}</p>
+    <p style="margin:0;font-size:16px;font-weight:bold;color:#1a1a1a;">${safeTitle}</p>
+    <p style="margin:4px 0 0;font-size:12px;color:#888;">Certificate #${safeCertNum}</p>
   </div>
-  
   <p style="color:#555;font-size:14px;line-height:1.6;">
     Your certificate is now available in your <strong>Dashboard</strong> under the Certificates section. 
     You can download it as a PDF at any time.
   </p>
-  
   <div style="text-align:center;margin:30px 0;">
     <a href="https://u-psy.com/dashboard" style="display:inline-block;background:#8B1A1A;color:#ffffff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;">
       View My Certificates
     </a>
   </div>
-  
   <hr style="border:none;border-top:1px solid #eee;margin:30px 0;" />
-  
   <p style="color:#aaa;font-size:11px;text-align:center;">
     U.Psy — Your Personal Psychologist<br/>
     Conformément à la loi 09-08, vous disposez d'un droit d'accès, de rectification et d'opposition au traitement de vos données personnelles.
@@ -164,7 +186,6 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
-    // Auth client to get user
     const supabaseAuth = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -176,13 +197,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Service client for inserts
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    const body: CertificateRequest = await req.json();
-    const { certificate_type, reference_id, title, description } = body;
+    // Validate input
+    const rawBody = await req.json();
+    const validation = validateInput(rawBody);
+    if (!validation.valid) {
+      return new Response(JSON.stringify({ error: validation.error }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { certificate_type, reference_id, title, description } = validation.data;
 
-    // Get user's profile name
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("full_name")
@@ -191,7 +218,6 @@ Deno.serve(async (req) => {
 
     const recipientName = profile?.full_name || user.user_metadata?.full_name || user.email || "Participant";
 
-    // Check for existing certificate (avoid duplicates)
     if (reference_id) {
       const { data: existing } = await supabaseAdmin
         .from("certificates")
@@ -213,7 +239,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Create certificate record
     const { data: cert, error: insertError } = await supabaseAdmin
       .from("certificates")
       .insert({
@@ -233,13 +258,12 @@ Deno.serve(async (req) => {
 
     if (insertError) {
       console.error("Insert error:", insertError);
-      return new Response(JSON.stringify({ error: "Failed to create certificate", details: insertError.message }), {
+      return new Response(JSON.stringify({ error: "Failed to create certificate" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Send email notification via Resend
     if (resendApiKey && user.email) {
       try {
         const emailHtml = generateEmailHTML(recipientName, title, certificate_type, cert.certificate_number);
@@ -253,7 +277,7 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             from: "U.Psy Certificates <onboarding@resend.dev>",
             to: [user.email],
-            subject: `🎓 Your ${TYPE_LABELS[certificate_type]} Certificate — ${title}`,
+            subject: `🎓 Your ${TYPE_LABELS[certificate_type]} Certificate — ${escapeHtml(title)}`,
             html: emailHtml,
           }),
         });
@@ -263,7 +287,6 @@ Deno.serve(async (req) => {
         }
       } catch (emailErr) {
         console.error("Email error:", emailErr);
-        // Don't fail the whole request if email fails
       }
     }
 
