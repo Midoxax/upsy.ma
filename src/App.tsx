@@ -41,6 +41,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
+import ResetPassword from "./pages/ResetPassword";
 import BrandGuidelines from "./pages/BrandGuidelines";
 import Founder from "./pages/Founder";
 import BlogIndex from "./pages/blog/BlogIndex";
@@ -86,6 +87,7 @@ const AppRoutes = () => (
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
+    <Route path="reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
     <Route path="get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
     <Route path="dashboard" element={<ProtectedRoute><PageTransition><PatientDashboard /></PageTransition></ProtectedRoute>} />
     <Route path="athlete-hub" element={<ProtectedRoute><PageTransition><AthleteHub /></PageTransition></ProtectedRoute>} />
