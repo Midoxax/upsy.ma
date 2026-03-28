@@ -41,6 +41,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
+import ResetPassword from "./pages/ResetPassword";
 import BrandGuidelines from "./pages/BrandGuidelines";
 import Founder from "./pages/Founder";
 import BlogIndex from "./pages/blog/BlogIndex";
