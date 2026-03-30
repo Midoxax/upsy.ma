@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 import { ArrowRight, Briefcase, TrendingUp, Users, AlertTriangle } from "lucide-react";
 
 const MentalHealthAtWork = () => {
@@ -12,6 +13,14 @@ const MentalHealthAtWork = () => {
   return (
     <>
       <SEOHead path="/blog/mental-health-at-work" />
+      <BlogArticleSchema
+        title={t("blog.work.title") || "Mental Health at Work: Why It Matters"}
+        description={t("blog.work.intro") || "Workplace mental health affects productivity, relationships, and overall well-being."}
+        slug="mental-health-at-work"
+        datePublished="2025-02-01"
+        category="Workplace"
+        readTimeMinutes={5}
+      />
       <main className="flex-1">
         <section className="hero-neural-bg py-20 md:py-28">
           <div className="container-custom max-w-3xl">

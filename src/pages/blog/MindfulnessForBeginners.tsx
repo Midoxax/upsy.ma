@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 
 const MindfulnessForBeginners = () => {
   const { t, locale } = useLocale();
@@ -12,6 +13,14 @@ const MindfulnessForBeginners = () => {
   return (
     <>
       <SEOHead path="/blog/mindfulness-for-beginners" />
+      <BlogArticleSchema
+        title={t("blog.mindfulness.title") || "Mindfulness for Beginners: A Practical Guide"}
+        description={t("blog.mindfulness.intro") || "Mindfulness can reduce stress, improve focus, and enhance emotional well-being."}
+        slug="mindfulness-for-beginners"
+        datePublished="2025-02-20"
+        category="Wellness"
+        readTimeMinutes={5}
+      />
       <main className="flex-1">
         <section className="hero-neural-bg py-20 md:py-28">
           <div className="container-custom max-w-3xl">

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 import { ArrowRight, AlertCircle, CheckCircle2, HelpCircle, TrendingUp, Heart } from "lucide-react";
 
 const DoINeedTherapy = () => {
@@ -36,6 +37,14 @@ const DoINeedTherapy = () => {
   return (
     <>
       <SEOHead path="/blog/do-i-need-therapy" />
+      <BlogArticleSchema
+        title={t("blog.therapy.title") || "Do I Need Therapy? Signs It Might Be Time"}
+        description={t("blog.therapy.intro") || "Wondering if therapy is right for you? Here are key signs and myths debunked."}
+        slug="do-i-need-therapy"
+        datePublished="2025-01-18"
+        category="Guide"
+        readTimeMinutes={6}
+      />
       <main className="flex-1">
         {/* Hero */}
         <section className="hero-neural-bg py-20 md:py-28">

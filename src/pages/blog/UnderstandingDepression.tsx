@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 
 const UnderstandingDepression = () => {
   const { t, locale } = useLocale();
@@ -12,6 +13,14 @@ const UnderstandingDepression = () => {
   return (
     <>
       <SEOHead path="/blog/understanding-depression" />
+      <BlogArticleSchema
+        title={t("blog.depression.title") || "Understanding Depression: Signs, Causes, and Hope"}
+        description={t("blog.depression.intro") || "Depression is more than feeling sad. Learn about the signs, causes, and pathways to recovery."}
+        slug="understanding-depression"
+        datePublished="2025-02-10"
+        category="Mental Health"
+        readTimeMinutes={6}
+      />
       <main className="flex-1">
         <section className="hero-neural-bg py-20 md:py-28">
           <div className="container-custom max-w-3xl">
