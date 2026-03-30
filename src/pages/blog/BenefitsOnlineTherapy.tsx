@@ -20,6 +20,14 @@ const BenefitsOnlineTherapy = () => {
   return (
     <>
       <SEOHead path="/blog/benefits-online-therapy" />
+      <BlogArticleSchema
+        title={t("blog.online.title") || "The Benefits of Online Therapy"}
+        description={t("blog.online.intro") || "Online therapy has transformed mental health care. Discover why more people are choosing virtual sessions."}
+        slug="benefits-online-therapy"
+        datePublished="2025-01-25"
+        category="Guide"
+        readTimeMinutes={5}
+      />
       <main className="flex-1">
         <section className="hero-neural-bg py-20 md:py-28">
           <div className="container-custom max-w-3xl">
