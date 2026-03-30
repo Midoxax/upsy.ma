@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 
 const HowToSupportALovedOne = () => {
   const { t, locale } = useLocale();
@@ -12,6 +13,14 @@ const HowToSupportALovedOne = () => {
   return (
     <>
       <SEOHead path="/blog/how-to-support-a-loved-one" />
+      <BlogArticleSchema
+        title={t("blog.support.title") || "How to Support a Loved One with Mental Health Challenges"}
+        description={t("blog.support.intro") || "When someone you care about is struggling, knowing how to help can make a real difference."}
+        slug="how-to-support-a-loved-one"
+        datePublished="2025-02-15"
+        category="Guide"
+        readTimeMinutes={5}
+      />
       <main className="flex-1">
         <section className="hero-neural-bg py-20 md:py-28">
           <div className="container-custom max-w-3xl">

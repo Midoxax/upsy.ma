@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 import { ArrowRight, CheckCircle2, Search, Heart, Shield, Users } from "lucide-react";
 
 const FindRightPsychologist = () => {
@@ -12,6 +13,14 @@ const FindRightPsychologist = () => {
   return (
     <>
       <SEOHead path="/blog/find-right-psychologist" />
+      <BlogArticleSchema
+        title={t("blog.findPsych.title") || "How to Find the Right Psychologist for You"}
+        description={t("blog.findPsych.intro") || "Finding the right psychologist can feel overwhelming. This guide breaks down the process into simple, actionable steps."}
+        slug="find-right-psychologist"
+        datePublished="2025-01-15"
+        category="Guide"
+        readTimeMinutes={5}
+      />
       <main className="flex-1">
         {/* Hero */}
         <section className="hero-neural-bg py-20 md:py-28">

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 import { ArrowRight, AlertCircle, CheckCircle2, HelpCircle, TrendingUp, Heart } from "lucide-react";
 
 const DoINeedTherapy = () => {

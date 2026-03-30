@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 import { ArrowRight, Globe, Clock, Shield, Laptop, Heart } from "lucide-react";
 
 const BenefitsOnlineTherapy = () => {

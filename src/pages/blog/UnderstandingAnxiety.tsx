@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
+import BlogArticleSchema from "@/components/BlogArticleSchema";
 import { ArrowRight, AlertCircle, Brain, Heart, Shield } from "lucide-react";
 
 const UnderstandingAnxiety = () => {
@@ -12,6 +13,14 @@ const UnderstandingAnxiety = () => {
   return (
     <>
       <SEOHead path="/blog/understanding-anxiety" />
+      <BlogArticleSchema
+        title={t("blog.anxiety.title") || "Understanding Anxiety: What It Is and How to Manage It"}
+        description={t("blog.anxiety.intro") || "Anxiety is one of the most common mental health experiences. Learn what it really means and practical steps to manage it."}
+        slug="understanding-anxiety"
+        datePublished="2025-01-20"
+        category="Mental Health"
+        readTimeMinutes={6}
+      />
       <main className="flex-1">
         <section className="hero-neural-bg py-20 md:py-28">
           <div className="container-custom max-w-3xl">
