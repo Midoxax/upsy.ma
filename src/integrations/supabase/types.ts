@@ -1232,7 +1232,32 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_review_ratings: {
+        Row: {
+          created_at: string | null
+          psychologist_id: string | null
+          rating: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          psychologist_id?: string | null
+          rating?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          psychologist_id?: string | null
+          rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       create_admin_user: {
