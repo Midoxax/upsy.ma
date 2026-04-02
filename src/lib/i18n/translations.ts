@@ -1326,6 +1326,7 @@ export const translations = {
       createAccount: "Créer un compte",
       forgotPassword: "Mot de passe oublié ?",
       continueWithGoogle: "Continuer avec Google",
+      continueWithApple: "Continuer avec Apple",
       orContinueWith: "ou continuer par email",
       loginFailed: "Échec de la connexion",
       signupFailed: "Échec de l'inscription",
