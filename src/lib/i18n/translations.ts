@@ -236,6 +236,7 @@ export const translations = {
       enterEmailDesc: "Please enter your email address first.",
       checkEmail: "Check your email",
       checkEmailDesc: "A password reset link has been sent to your email.",
+      verifyEmailDesc: "We sent a verification link to your email. Please confirm before signing in.",
       signInRequired: "Sign In Required",
       signInRequiredDesc: "Please sign in to access your dashboard.",
       signIn: "Sign In",
