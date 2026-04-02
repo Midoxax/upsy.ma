@@ -1566,24 +1566,24 @@ export const translations = {
     },
     services: {
       intro: {
-        title: "Accompagnement Personnalisé alliant profondeur clinique et science de la performance.",
-        subtitle: "Chaque parcours est unique — nous adaptons la thérapie et les stratégies de performance pour vous aider à prospérer.",
+        title: "Des Protocoles. Pas des Forfaits.",
+        subtitle: "Chaque intervention est structurée autour de votre profil diagnostique. Mesurer d'abord. Puis entraîner.",
       },
       items: [
-        { title: "Diagnostic Initial", description: "Évaluation complète de 90 min, définition d'objectifs et plan personnalisé.", price: "700 MAD" },
-        { title: "Pack Performance & Résilience", description: "6 séances de 60 min : visualisation, routines pré-événement, maîtrise du stress.", price: "3 600 MAD" },
-        { title: "Pack Thérapie & Rétablissement", description: "10 séances de 60 min TCC/Schémas pour anxiété, traumatisme, addiction.", price: "5 500 MAD" },
-        { title: "Tests de Personnalité & Sérénité", description: "Outils psychométriques + 2 séances de retour de 60 min.", price: "1 800 MAD" },
-        { title: "Suivi Express en Ligne", description: "Séance de mise au point de 30 min (clients réguliers uniquement).", price: "300 MAD" },
+        { title: "Évaluation Diagnostique", description: "Intake structuré de 90 min. Métriques de base. Identifier ce qui dysfonctionne. Construire votre protocole.", price: "700 MAD" },
+        { title: "Protocole de Performance", description: "6×60 min. Visualisation. Routines pré-compétition. Inoculation au stress. Résultats mesurés.", price: "3 600 MAD" },
+        { title: "Protocole de Récupération Clinique", description: "10×60 min TCC/Schémas. Anxiété. Trauma. Addiction. Progression suivie.", price: "5 500 MAD" },
+        { title: "Profilage Psychométrique", description: "Instruments validés + 2×60 min de débriefing. Connaître votre système d'exploitation.", price: "1 800 MAD" },
+        { title: "Séance de Recalibration", description: "30 min de réglage ciblé. Clients existants uniquement. Ajuster ce qui doit l'être.", price: "300 MAD" },
       ],
       expectations: {
-        title: "À Quoi S'attendre",
-        list: ["Structure claire et objectifs mesurables", "Approches thérapeutiques fondées sur des preuves", "Séances bilingues (Anglais/Français/Arabe)", "Confidentialité et éthique totales", "Options flexibles en ligne et en clinique"],
+        title: "Le Processus",
+        list: ["Protocoles structurés avec KPIs mesurables", "Méthodes fondées sur les preuves. Zéro improvisation.", "Séances en anglais, français ou arabe", "Confidentialité totale. Éthique de grade clinique.", "En ligne ou en cabinet. À vous de choisir."],
       },
-      cta: "Commencer",
+      cta: "Lancer Votre Diagnostic",
       transition: {
-        title: "La performance ne s'arrête pas aux individus — découvrez comment U.Psy transforme les organisations.",
-        button: "Explorer les Solutions Institutionnelles",
+        title: "Les protocoles individuels règlent les problèmes individuels. Le dysfonctionnement systémique exige une intervention systémique.",
+        button: "Voir les Protocoles Institutionnels",
       },
     },
     contact: {
