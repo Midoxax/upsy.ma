@@ -2424,6 +2424,7 @@ export const translations = {
       enterEmailDesc: "يرجى إدخال بريدك الإلكتروني أولاً.",
       checkEmail: "تحقق من بريدك الإلكتروني",
       checkEmailDesc: "تم إرسال رابط إعادة تعيين كلمة المرور.",
+      verifyEmailDesc: "لقد أرسلنا رابط تحقق إلى بريدك الإلكتروني. يرجى التأكيد قبل تسجيل الدخول.",
       signInRequired: "تسجيل الدخول مطلوب",
       signInRequiredDesc: "يرجى تسجيل الدخول للوصول إلى لوحة التحكم.",
       signIn: "تسجيل الدخول",
