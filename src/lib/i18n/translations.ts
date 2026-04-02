@@ -2411,6 +2411,7 @@ export const translations = {
       createAccount: "إنشاء حساب",
       forgotPassword: "نسيت كلمة المرور؟",
       continueWithGoogle: "المتابعة مع جوجل",
+      continueWithApple: "المتابعة مع آبل",
       orContinueWith: "أو المتابعة بالبريد الإلكتروني",
       loginFailed: "فشل تسجيل الدخول",
       signupFailed: "فشل التسجيل",
