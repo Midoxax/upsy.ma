@@ -72,7 +72,7 @@ const Services = () => {
         <div className="text-center mb-20">
           <Button 
             size="lg" 
-            onClick={() => navigate('/contact')}
+            onClick={() => navigate('/get-matched')}
             className="hover-glow hover:scale-105 transition-transform"
           >
             {t('services.cta')}
