@@ -1339,6 +1339,7 @@ export const translations = {
       enterEmailDesc: "Veuillez d'abord entrer votre adresse e-mail.",
       checkEmail: "Vérifiez votre e-mail",
       checkEmailDesc: "Un lien de réinitialisation a été envoyé à votre e-mail.",
+      verifyEmailDesc: "Nous avons envoyé un lien de vérification à votre e-mail. Veuillez confirmer avant de vous connecter.",
       signInRequired: "Connexion requise",
       signInRequiredDesc: "Veuillez vous connecter pour accéder à votre tableau de bord.",
       signIn: "Se connecter",
