@@ -223,6 +223,7 @@ export const translations = {
       createAccount: "Create Account",
       forgotPassword: "Forgot Password?",
       continueWithGoogle: "Continue with Google",
+      continueWithApple: "Continue with Apple",
       orContinueWith: "or continue with email",
       loginFailed: "Login Failed",
       signupFailed: "Signup Failed",
