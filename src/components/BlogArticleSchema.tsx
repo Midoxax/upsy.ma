@@ -28,8 +28,11 @@ const BlogArticleSchema = ({
 
   useEffect(() => {
     const scriptId = `article-schema-${slug}`;
+    const breadcrumbScriptId = `breadcrumb-schema-${slug}`;
     const existing = document.getElementById(scriptId);
     if (existing) existing.remove();
+    const existingBreadcrumb = document.getElementById(breadcrumbScriptId);
+    if (existingBreadcrumb) existingBreadcrumb.remove();
 
     const schema = {
       '@context': 'https://schema.org',
@@ -69,11 +72,45 @@ const BlogArticleSchema = ({
     script.textContent = JSON.stringify(schema);
     document.head.appendChild(script);
 
+    const blogUrl = `${baseUrl}${localePath}/blog`;
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: `${baseUrl}${localePath || '/'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Blog',
+          item: blogUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: title,
+          item: articleUrl,
+        },
+      ],
+    };
+
+    const breadcrumbScript = document.createElement('script');
+    breadcrumbScript.id = breadcrumbScriptId;
+    breadcrumbScript.type = 'application/ld+json';
+    breadcrumbScript.textContent = JSON.stringify(breadcrumbSchema);
+    document.head.appendChild(breadcrumbScript);
+
     return () => {
       const el = document.getElementById(scriptId);
       if (el) el.remove();
+      const bEl = document.getElementById(breadcrumbScriptId);
+      if (bEl) bEl.remove();
     };
-  }, [title, description, slug, locale, articleUrl, datePublished, dateModified, wordCount, category]);
+  }, [title, description, slug, locale, localePath, articleUrl, datePublished, dateModified, wordCount, category]);
 
   return null;
 };
