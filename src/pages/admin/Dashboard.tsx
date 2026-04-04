@@ -2,18 +2,16 @@ import { Navigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import Header from "@/components/Header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import ApplicationsTable from "@/components/admin/ApplicationsTable";
 import PsychologistDirectory from "@/components/admin/PsychologistDirectory";
 import MatchingRequestsManager from "@/components/admin/MatchingRequestsManager";
 import SubscriptionsOverview from "@/components/admin/SubscriptionsOverview";
 import AdminStats from "@/components/admin/AdminStats";
 import TranslationManager from "@/components/admin/TranslationManager";
-import { useApplications } from "@/hooks/useApplications";
+import UserManagement from "@/components/admin/UserManagement";
+import AccreditationManager from "@/components/admin/AccreditationManager";
 
 const AdminDashboard = () => {
-  const { isAdmin, loading: authLoading, user } = useAdminAuth();
-  const { applications, isLoading, approveApplication, rejectApplication } = useApplications();
+  const { isAdmin, loading: authLoading } = useAdminAuth();
 
   if (authLoading) {
     return (
@@ -37,11 +35,12 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
+          <TabsList className="flex flex-wrap h-auto gap-1">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="applications">Pending Accreditation</TabsTrigger>
-            <TabsTrigger value="directory">Psychologist Directory</TabsTrigger>
-            <TabsTrigger value="matching">Matching Requests</TabsTrigger>
+            <TabsTrigger value="users">Users & Roles</TabsTrigger>
+            <TabsTrigger value="accreditation">Accreditation</TabsTrigger>
+            <TabsTrigger value="directory">Directory</TabsTrigger>
+            <TabsTrigger value="matching">Matching</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="translations">Translations</TabsTrigger>
           </TabsList>
@@ -50,26 +49,12 @@ const AdminDashboard = () => {
             <AdminStats />
           </TabsContent>
 
-          <TabsContent value="applications">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pending Accreditation</CardTitle>
-                <CardDescription>Review and approve psychologist applications</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : (
-                  <ApplicationsTable
-                    applications={applications}
-                    onApprove={approveApplication.mutate}
-                    onReject={rejectApplication.mutate}
-                  />
-                )}
-              </CardContent>
-            </Card>
+          <TabsContent value="users">
+            <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="accreditation">
+            <AccreditationManager />
           </TabsContent>
 
           <TabsContent value="directory">

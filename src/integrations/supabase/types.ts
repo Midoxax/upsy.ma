@@ -820,8 +820,10 @@ export type Database = {
       }
       psychologist_applications: {
         Row: {
+          accreditation_level: string
           accreditation_number: string | null
           created_at: string | null
+          document_urls: string[] | null
           email: string
           full_name: string
           id: string
@@ -835,8 +837,10 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          accreditation_level?: string
           accreditation_number?: string | null
           created_at?: string | null
+          document_urls?: string[] | null
           email: string
           full_name: string
           id?: string
@@ -850,8 +854,10 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          accreditation_level?: string
           accreditation_number?: string | null
           created_at?: string | null
+          document_urls?: string[] | null
           email?: string
           full_name?: string
           id?: string
@@ -898,6 +904,7 @@ export type Database = {
       }
       psychologist_profiles: {
         Row: {
+          accreditation_level: string | null
           bio: string | null
           calendly_url: string | null
           city: string | null
@@ -915,6 +922,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          accreditation_level?: string | null
           bio?: string | null
           calendly_url?: string | null
           city?: string | null
@@ -932,6 +940,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          accreditation_level?: string | null
           bio?: string | null
           calendly_url?: string | null
           city?: string | null
