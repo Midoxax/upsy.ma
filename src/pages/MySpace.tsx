@@ -4,9 +4,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
-// Lazy-load dashboards to avoid importing everything upfront
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Calendar, DollarSign, Users, CreditCard, Video, Award } from "lucide-react";
+import { User, Calendar, DollarSign, Users, CreditCard, Video, Award, FileText, BarChart3 } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
 import { PricingTab } from "@/components/dashboard/PricingTab";
@@ -14,6 +13,9 @@ import { LeadsTab } from "@/components/dashboard/LeadsTab";
 import { BillingTab } from "@/components/dashboard/BillingTab";
 import { SessionsTab } from "@/components/dashboard/SessionsTab";
 import CertificatesTab from "@/components/dashboard/CertificatesTab";
+import SessionNotesTab from "@/components/dashboard/SessionNotesTab";
+import AnalyticsTab from "@/components/dashboard/AnalyticsTab";
+import DocumentsTab from "@/components/dashboard/DocumentsTab";
 import PatientDashboard from "@/pages/PatientDashboard";
 import AthleteHub from "@/pages/AthleteHub";
 
@@ -21,32 +23,44 @@ const PsychologistDashboard = () => (
   <section className="section-spacing">
     <div className="container-custom">
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
-          <TabsTrigger value="profile" className="gap-2">
+        <TabsList className="flex flex-wrap h-auto gap-1">
+          <TabsTrigger value="profile" className="gap-1.5">
             <User className="h-4 w-4" />
             <span className="hidden sm:inline">Profile</span>
           </TabsTrigger>
-          <TabsTrigger value="sessions" className="gap-2">
+          <TabsTrigger value="sessions" className="gap-1.5">
             <Video className="h-4 w-4" />
             <span className="hidden sm:inline">Sessions</span>
           </TabsTrigger>
-          <TabsTrigger value="availability" className="gap-2">
+          <TabsTrigger value="clients" className="gap-1.5">
+            <Users className="h-4 w-4" />
+            <span className="hidden sm:inline">Clients</span>
+          </TabsTrigger>
+          <TabsTrigger value="notes" className="gap-1.5">
+            <FileText className="h-4 w-4" />
+            <span className="hidden sm:inline">Notes</span>
+          </TabsTrigger>
+          <TabsTrigger value="availability" className="gap-1.5">
             <Calendar className="h-4 w-4" />
             <span className="hidden sm:inline">Availability</span>
           </TabsTrigger>
-          <TabsTrigger value="pricing" className="gap-2">
+          <TabsTrigger value="pricing" className="gap-1.5">
             <DollarSign className="h-4 w-4" />
             <span className="hidden sm:inline">Pricing</span>
           </TabsTrigger>
-          <TabsTrigger value="leads" className="gap-2">
-            <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Leads</span>
+          <TabsTrigger value="analytics" className="gap-1.5">
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Analytics</span>
           </TabsTrigger>
-          <TabsTrigger value="certificates" className="gap-2">
+          <TabsTrigger value="documents" className="gap-1.5">
+            <FileText className="h-4 w-4" />
+            <span className="hidden sm:inline">Docs</span>
+          </TabsTrigger>
+          <TabsTrigger value="certificates" className="gap-1.5">
             <Award className="h-4 w-4" />
             <span className="hidden sm:inline">Certificates</span>
           </TabsTrigger>
-          <TabsTrigger value="billing" className="gap-2">
+          <TabsTrigger value="billing" className="gap-1.5">
             <CreditCard className="h-4 w-4" />
             <span className="hidden sm:inline">Billing</span>
           </TabsTrigger>
@@ -54,9 +68,12 @@ const PsychologistDashboard = () => (
 
         <TabsContent value="profile"><ProfileTab /></TabsContent>
         <TabsContent value="sessions"><SessionsTab /></TabsContent>
+        <TabsContent value="clients"><LeadsTab /></TabsContent>
+        <TabsContent value="notes"><SessionNotesTab /></TabsContent>
         <TabsContent value="availability"><AvailabilityTab /></TabsContent>
         <TabsContent value="pricing"><PricingTab /></TabsContent>
-        <TabsContent value="leads"><LeadsTab /></TabsContent>
+        <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
+        <TabsContent value="documents"><DocumentsTab /></TabsContent>
         <TabsContent value="certificates"><CertificatesTab /></TabsContent>
         <TabsContent value="billing"><BillingTab /></TabsContent>
       </Tabs>
@@ -101,7 +118,6 @@ const MySpace = () => {
       case "coach":
         return <AthleteHub />;
       case "organization":
-        // Organization dashboard — for now show patient dashboard with certificates
         return <PatientDashboard />;
       case "user":
       default:

@@ -6,6 +6,7 @@ import FeaturedPsychologistsSection from "@/components/home/FeaturedPsychologist
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import FounderSection from "@/components/home/FounderSection";
 import PillarsSection from "@/components/home/PillarsSection";
+import PathwaysSection from "@/components/home/PathwaysSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
@@ -96,13 +97,22 @@ const sections: SectionConfig[] = [
     narrativeConstraints: { pinPosition: "second" },
   },
   {
-    key: "how-it-works",
-    component: HowItWorksSection,
-    trackingId: "how_it_works",
+    key: "pathways",
+    component: PathwaysSection,
+    trackingId: "pathways",
     defaultIndex: 2,
     skeletonVariant: "cards",
     priorityByIntent: { EXPLORING: 0, READY_TO_ACT: 0, RESEARCHING: 0, SKEPTICAL: 0 },
     narrativeConstraints: { pinPosition: "third" },
+  },
+  {
+    key: "how-it-works",
+    component: HowItWorksSection,
+    trackingId: "how_it_works",
+    defaultIndex: 3,
+    skeletonVariant: "cards",
+    priorityByIntent: { EXPLORING: 1, READY_TO_ACT: 1, RESEARCHING: 1, SKEPTICAL: 1 },
+    narrativeConstraints: { mustAppearAfter: ["pathways"] },
   },
   {
     key: "self-assessment",
