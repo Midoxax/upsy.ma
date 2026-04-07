@@ -17,6 +17,7 @@ import SessionNotesTab from "@/components/dashboard/SessionNotesTab";
 import AnalyticsTab from "@/components/dashboard/AnalyticsTab";
 import DocumentsTab from "@/components/dashboard/DocumentsTab";
 import PatientDashboard from "@/pages/PatientDashboard";
+import OrganizationDashboard from "@/pages/OrganizationDashboard";
 import AthleteHub from "@/pages/AthleteHub";
 
 const PsychologistDashboard = () => (
@@ -118,7 +119,7 @@ const MySpace = () => {
       case "coach":
         return <AthleteHub />;
       case "organization":
-        return <PatientDashboard />;
+        return <OrganizationDashboard />;
       case "user":
       default:
         return <PatientDashboard />;
