@@ -504,6 +504,23 @@ export const translations = {
         title: "Individual protocols solve individual problems. Systemic dysfunction requires systemic intervention.",
         button: "View Institutional Protocols",
       },
+      methodsBand: {
+        heading: "Evidence-based & measurable",
+        subheading: "Rooted in research, tracked with precision",
+        methodsTitle: "Methods We Use",
+        metricsTitle: "How We Measure",
+        methods: [
+          { name: "CBT", description: "Cognitive Behavioral Therapy — Restructure thought patterns, build coping skills, proven for anxiety & depression" },
+          { name: "Schema Therapy", description: "Deep-rooted patterns & early experiences — Long-term change for personality & relationship issues" },
+          { name: "Sport/Performance Psychology", description: "Mental skills for high-pressure moments — Focus, resilience, clutch performance under stress" },
+        ],
+        metrics: [
+          { name: "GAD-7", description: "Generalized Anxiety Disorder 7-item scale — Standardized anxiety severity measurement" },
+          { name: "PHQ-9", description: "Patient Health Questionnaire — Depression severity and treatment response tracking" },
+          { name: "Routine Adherence", description: "Training & therapy protocol compliance — Consistency and engagement metrics" },
+          { name: "Return-to-Performance KPIs", description: "Sport & work readiness indicators — Competition/productivity recovery milestones" },
+        ],
+      },
     },
     contact: {
       hero: {
@@ -1589,6 +1606,23 @@ export const translations = {
         title: "Les protocoles individuels règlent les problèmes individuels. Le dysfonctionnement systémique exige une intervention systémique.",
         button: "Voir les Protocoles Institutionnels",
       },
+      methodsBand: {
+        heading: "Basé sur les preuves & mesurable",
+        subheading: "Ancré dans la recherche, suivi avec précision",
+        methodsTitle: "Nos Méthodes",
+        metricsTitle: "Comment Nous Mesurons",
+        methods: [
+          { name: "TCC", description: "Thérapie Cognitivo-Comportementale — Restructurer les schémas de pensée, développer des stratégies d'adaptation, prouvée pour l'anxiété et la dépression" },
+          { name: "Thérapie des Schémas", description: "Schémas profonds & expériences précoces — Changement durable pour les troubles de la personnalité et les problèmes relationnels" },
+          { name: "Psychologie du Sport/Performance", description: "Compétences mentales pour les moments de haute pression — Concentration, résilience, performance sous stress" },
+        ],
+        metrics: [
+          { name: "GAD-7", description: "Échelle d'anxiété généralisée à 7 items — Mesure standardisée de la sévérité de l'anxiété" },
+          { name: "PHQ-9", description: "Questionnaire de Santé du Patient — Suivi de la sévérité de la dépression et de la réponse au traitement" },
+          { name: "Adhérence au Programme", description: "Conformité aux protocoles de thérapie et d'entraînement — Métriques de consistance et d'engagement" },
+          { name: "KPIs de Retour à la Performance", description: "Indicateurs de préparation sportive et professionnelle — Jalons de récupération compétitive/productive" },
+        ],
+      },
     },
     contact: {
       hero: {
@@ -2673,6 +2707,23 @@ export const translations = {
       transition: {
         title: "البروتوكولات الفردية تحل المشاكل الفردية. الخلل المنظومي يتطلب تدخلاً منظومياً.",
         button: "عرض البروتوكولات المؤسسية",
+      },
+      methodsBand: {
+        heading: "قائم على الأدلة وقابل للقياس",
+        subheading: "متجذر في البحث، متتبع بدقة",
+        methodsTitle: "الأساليب المستخدمة",
+        metricsTitle: "كيف نقيس",
+        methods: [
+          { name: "العلاج المعرفي السلوكي", description: "العلاج المعرفي السلوكي — إعادة هيكلة أنماط التفكير، بناء مهارات التكيف، مثبت للقلق والاكتئاب" },
+          { name: "علاج المخططات", description: "أنماط عميقة وتجارب مبكرة — تغيير طويل الأمد لاضطرابات الشخصية ومشاكل العلاقات" },
+          { name: "علم نفس الرياضة/الأداء", description: "مهارات ذهنية للحظات الضغط العالي — التركيز، المرونة، الأداء تحت الضغط" },
+        ],
+        metrics: [
+          { name: "GAD-7", description: "مقياس اضطراب القلق العام المكون من 7 عناصر — قياس موحد لشدة القلق" },
+          { name: "PHQ-9", description: "استبيان صحة المريض — تتبع شدة الاكتئاب والاستجابة للعلاج" },
+          { name: "الالتزام بالبرنامج", description: "الامتثال لبروتوكولات العلاج والتدريب — مقاييس الاتساق والمشاركة" },
+          { name: "مؤشرات العودة للأداء", description: "مؤشرات الجاهزية الرياضية والمهنية — معالم التعافي التنافسي/الإنتاجي" },
+        ],
       },
     },
     contact: {

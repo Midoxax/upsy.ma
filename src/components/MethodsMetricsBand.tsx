@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { Info, CheckCircle2, BarChart3 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -10,41 +8,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useLocale } from "@/contexts/LocaleContext";
+import { translations } from "@/lib/i18n/translations";
 
 export const MethodsMetricsBand = () => {
-  const methods = [
-    {
-      name: "CBT",
-      description: "Cognitive Behavioral Therapy — Restructure thought patterns, build coping skills, proven for anxiety & depression"
-    },
-    {
-      name: "Schema Therapy",
-      description: "Deep-rooted patterns & early experiences — Long-term change for personality & relationship issues"
-    },
-    {
-      name: "Sport/Performance Psychology",
-      description: "Mental skills for high-pressure moments — Focus, resilience, clutch performance under stress"
-    }
-  ];
-
-  const metrics = [
-    {
-      name: "GAD-7",
-      description: "Generalized Anxiety Disorder 7-item scale — Standardized anxiety severity measurement"
-    },
-    {
-      name: "PHQ-9",
-      description: "Patient Health Questionnaire — Depression severity and treatment response tracking"
-    },
-    {
-      name: "Routine Adherence",
-      description: "Training & therapy protocol compliance — Consistency and engagement metrics"
-    },
-    {
-      name: "Return-to-Performance KPIs",
-      description: "Sport & work readiness indicators — Competition/productivity recovery milestones"
-    }
-  ];
+  const { locale } = useLocale();
+  const band = translations[locale].services.methodsBand;
 
   return (
     <section className="py-12 md:py-16 bg-accent/5 border-y border-accent/10">
@@ -54,10 +23,10 @@ export const MethodsMetricsBand = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full theme-accent theme-halo" />
-              <h3 className="text-h3 font-bold">Evidence-based & measurable</h3>
+              <h3 className="text-h3 font-bold">{band.heading}</h3>
             </div>
             <p className="text-body text-muted-foreground">
-              Rooted in research, tracked with precision
+              {band.subheading}
             </p>
           </div>
 
@@ -65,14 +34,14 @@ export const MethodsMetricsBand = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="w-5 h-5 theme-accent" strokeWidth={2} />
-              <h4 className="font-semibold text-foreground">Methods We Use</h4>
+              <h4 className="font-semibold text-foreground">{band.methodsTitle}</h4>
             </div>
             <div className="space-y-3">
-              {methods.map((method, index) => (
+              {band.methods.map((method, index) => (
                 <div key={index} className="group">
                   <div className="flex items-start gap-2">
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className="bg-background/50 border-accent/20 text-xs font-mono shrink-0"
                     >
                       {method.name}
@@ -109,14 +78,14 @@ export const MethodsMetricsBand = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="w-5 h-5 theme-accent" strokeWidth={2} />
-              <h4 className="font-semibold text-foreground">How We Measure</h4>
+              <h4 className="font-semibold text-foreground">{band.metricsTitle}</h4>
             </div>
             <div className="space-y-3">
-              {metrics.map((metric, index) => (
+              {band.metrics.map((metric, index) => (
                 <div key={index} className="group">
                   <div className="flex items-start gap-2">
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className="bg-background/50 border-accent/20 text-xs font-mono shrink-0"
                     >
                       {metric.name}
