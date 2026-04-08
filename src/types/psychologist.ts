@@ -21,6 +21,7 @@ export interface PsychologistProfile {
   city: string | null;
   gender: string | null;
   is_accredited: boolean;
+  accreditation_level: string | null;
   offers_online: boolean;
   offers_in_person: boolean;
   hourly_rate_mad: number | null;
