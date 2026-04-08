@@ -5,6 +5,22 @@ import { useNavigate } from "react-router-dom";
 import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 import { useLocale } from "@/contexts/LocaleContext";
 import { translations } from "@/lib/i18n/translations";
+import SEOHead from "@/components/SEOHead";
+
+const seoByLocale = {
+  en: {
+    title: "Clinical Services — CBT, EMDR, Schema Therapy & More | U.Psy",
+    description: "Evidence-based psychological services including CBT, EMDR, Schema Therapy, ACT & psychometric assessments (GAD-7, PHQ-9, WAIS-IV). Online & in-person across Morocco.",
+  },
+  fr: {
+    title: "Services Cliniques — TCC, EMDR, Thérapie des Schémas | U.Psy",
+    description: "Services psychologiques fondés sur les preuves : TCC, EMDR, Thérapie des Schémas, ACT et évaluations psychométriques (GAD-7, PHQ-9, WAIS-IV). En ligne et en présentiel au Maroc.",
+  },
+  ar: {
+    title: "الخدمات السريرية — العلاج المعرفي السلوكي، EMDR | U.Psy",
+    description: "خدمات نفسية مبنية على الأدلة تشمل العلاج المعرفي السلوكي، EMDR، علاج المخططات، ACT والتقييمات النفسية. عبر الإنترنت وحضورياً في المغرب.",
+  },
+} as const;
 
 const Services = () => {
   const navigate = useNavigate();
@@ -12,10 +28,11 @@ const Services = () => {
   
   const serviceItems = translations[locale].services.items;
   const expectationsList = translations[locale].services.expectations.list;
-
+  const seo = seoByLocale[locale];
 
   return (
     <main className="min-h-screen bg-background">
+      <SEOHead path="/services" title={seo.title} description={seo.description} />
       {/* Methods & Metrics Band */}
       <MethodsMetricsBand />
 
