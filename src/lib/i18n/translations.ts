@@ -793,6 +793,9 @@ export const translations = {
     testimonials: {
       title: "Real Experiences, Real Impact",
       subtitle: "People use UPsy to take their first step, find clarity, and connect with the right support.",
+      t1: { name: "Amina B.", role: "Client", text: "U.Psy helped me find the right psychologist in just a few days. The process was seamless and confidential." },
+      t2: { name: "Youssef K.", role: "Psychologist", text: "The platform gave me visibility and connected me with clients who truly needed my expertise in cognitive therapy." },
+      t3: { name: "Sara M.", role: "Client", text: "I was hesitant about online therapy, but the experience was incredibly professional and comfortable." },
     },
     pathways: {
       title: "How Can We Help You?",
@@ -1908,6 +1911,9 @@ export const translations = {
     testimonials: {
       title: "Expériences Réelles, Impact Réel",
       subtitle: "Des personnes utilisent UPsy pour faire leur premier pas, trouver de la clarté et se connecter au bon soutien.",
+      t1: { name: "Amina B.", role: "Cliente", text: "U.Psy m'a aidée à trouver le bon psychologue en quelques jours. Le processus était fluide et confidentiel." },
+      t2: { name: "Youssef K.", role: "Psychologue", text: "La plateforme m'a donné de la visibilité et m'a connecté avec des clients qui avaient vraiment besoin de mon expertise en thérapie cognitive." },
+      t3: { name: "Sara M.", role: "Cliente", text: "J'hésitais à propos de la thérapie en ligne, mais l'expérience était incroyablement professionnelle et confortable." },
     },
     pathways: {
       title: "Comment pouvons-nous vous aider ?",
@@ -3023,6 +3029,9 @@ export const translations = {
     testimonials: {
       title: "تجارب حقيقية، تأثير حقيقي",
       subtitle: "يستخدم الناس UPsy لاتخاذ خطوتهم الأولى وإيجاد الوضوح والتواصل مع الدعم المناسب.",
+      t1: { name: "أمينة ب.", role: "عميلة", text: "ساعدني U.Psy في العثور على الأخصائي النفسي المناسب في أيام قليلة. كانت العملية سلسة وسرية." },
+      t2: { name: "يوسف ك.", role: "أخصائي نفسي", text: "منحتني المنصة رؤية واضحة وربطتني بعملاء يحتاجون حقاً إلى خبرتي في العلاج المعرفي." },
+      t3: { name: "سارة م.", role: "عميلة", text: "كنت مترددة بشأن العلاج عبر الإنترنت، لكن التجربة كانت احترافية ومريحة بشكل لا يصدق." },
     },
     pathways: {
       title: "كيف يمكننا مساعدتك؟",
