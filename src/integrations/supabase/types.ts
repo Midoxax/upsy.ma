@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_chat_history: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_conversations: {
         Row: {
           created_at: string | null
@@ -278,8 +305,10 @@ export type Database = {
           day_of_week: number
           end_time: string
           id: string
+          is_active: boolean | null
           is_available: boolean
           psychologist_id: string
+          session_duration_minutes: number | null
           start_time: string
         }
         Insert: {
@@ -287,8 +316,10 @@ export type Database = {
           day_of_week: number
           end_time: string
           id?: string
+          is_active?: boolean | null
           is_available?: boolean
           psychologist_id: string
+          session_duration_minutes?: number | null
           start_time: string
         }
         Update: {
@@ -296,13 +327,71 @@ export type Database = {
           day_of_week?: number
           end_time?: string
           id?: string
+          is_active?: boolean | null
           is_available?: boolean
           psychologist_id?: string
+          session_duration_minutes?: number | null
           start_time?: string
         }
         Relationships: [
           {
             foreignKeyName: "availability_slots_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          amount_mad: number | null
+          created_at: string | null
+          duration_minutes: number
+          id: string
+          patient_id: string
+          patient_notes: string | null
+          payment_status: string | null
+          psychologist_id: string
+          scheduled_at: string
+          session_type: string
+          status: string
+          updated_at: string | null
+          video_room_id: string | null
+        }
+        Insert: {
+          amount_mad?: number | null
+          created_at?: string | null
+          duration_minutes?: number
+          id?: string
+          patient_id: string
+          patient_notes?: string | null
+          payment_status?: string | null
+          psychologist_id: string
+          scheduled_at: string
+          session_type?: string
+          status?: string
+          updated_at?: string | null
+          video_room_id?: string | null
+        }
+        Update: {
+          amount_mad?: number | null
+          created_at?: string | null
+          duration_minutes?: number
+          id?: string
+          patient_id?: string
+          patient_notes?: string | null
+          payment_status?: string | null
+          psychologist_id?: string
+          scheduled_at?: string
+          session_type?: string
+          status?: string
+          updated_at?: string | null
+          video_room_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_psychologist_id_fkey"
             columns: ["psychologist_id"]
             isOneToOne: false
             referencedRelation: "psychologist_profiles"
@@ -613,6 +702,72 @@ export type Database = {
           },
         ]
       }
+      gamification_badges: {
+        Row: {
+          created_at: string | null
+          criteria: Json | null
+          description: string | null
+          description_fr: string | null
+          icon: string | null
+          name: string
+          name_fr: string | null
+          rarity: string
+          slug: string
+          xp_reward: number
+        }
+        Insert: {
+          created_at?: string | null
+          criteria?: Json | null
+          description?: string | null
+          description_fr?: string | null
+          icon?: string | null
+          name: string
+          name_fr?: string | null
+          rarity?: string
+          slug: string
+          xp_reward?: number
+        }
+        Update: {
+          created_at?: string | null
+          criteria?: Json | null
+          description?: string | null
+          description_fr?: string | null
+          icon?: string | null
+          name?: string
+          name_fr?: string | null
+          rarity?: string
+          slug?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      gamification_levels: {
+        Row: {
+          color: string
+          created_at: string | null
+          level: number
+          name: string
+          name_fr: string | null
+          xp_required: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string | null
+          level: number
+          name: string
+          name_fr?: string | null
+          xp_required?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          level?: number
+          name?: string
+          name_fr?: string | null
+          xp_required?: number
+        }
+        Relationships: []
+      }
       journal_entries: {
         Row: {
           content: string
@@ -750,6 +905,72 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_accounts: {
+        Row: {
+          billing_cycle: string | null
+          city: string | null
+          contact_email: string
+          contact_phone: string | null
+          country: string | null
+          created_at: string | null
+          id: string
+          industry: string | null
+          logo_url: string | null
+          monthly_price_mad: number | null
+          name: string
+          owner_id: string
+          plan_type: string
+          seats_total: number
+          seats_used: number
+          size_range: string | null
+          subscription_status: string
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          billing_cycle?: string | null
+          city?: string | null
+          contact_email: string
+          contact_phone?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          logo_url?: string | null
+          monthly_price_mad?: number | null
+          name: string
+          owner_id: string
+          plan_type?: string
+          seats_total?: number
+          seats_used?: number
+          size_range?: string | null
+          subscription_status?: string
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          billing_cycle?: string | null
+          city?: string | null
+          contact_email?: string
+          contact_phone?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          logo_url?: string | null
+          monthly_price_mad?: number | null
+          name?: string
+          owner_id?: string
+          plan_type?: string
+          seats_total?: number
+          seats_used?: number
+          size_range?: string | null
+          subscription_status?: string
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       organization_diagnostics: {
         Row: {
           completed_at: string | null
@@ -790,6 +1011,124 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organization_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_invoices: {
+        Row: {
+          created_at: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string
+          notes: string | null
+          org_id: string
+          paid_at: string | null
+          period_end: string
+          period_start: string
+          seats_billed: number
+          status: string
+          subtotal_mad: number
+          tax_mad: number | null
+          tax_rate: number | null
+          total_mad: number | null
+          unit_price_mad: number
+        }
+        Insert: {
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          notes?: string | null
+          org_id: string
+          paid_at?: string | null
+          period_end: string
+          period_start: string
+          seats_billed: number
+          status?: string
+          subtotal_mad: number
+          tax_mad?: number | null
+          tax_rate?: number | null
+          total_mad?: number | null
+          unit_price_mad: number
+        }
+        Update: {
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          notes?: string | null
+          org_id?: string
+          paid_at?: string | null
+          period_end?: string
+          period_start?: string
+          seats_billed?: number
+          status?: string
+          subtotal_mad?: number
+          tax_mad?: number | null
+          tax_rate?: number | null
+          total_mad?: number | null
+          unit_price_mad?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invoices_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_members: {
+        Row: {
+          email: string
+          full_name: string | null
+          id: string
+          invite_token: string | null
+          invited_at: string | null
+          joined_at: string | null
+          org_id: string
+          role: string
+          sessions_limit: number | null
+          sessions_used: number | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          email: string
+          full_name?: string | null
+          id?: string
+          invite_token?: string | null
+          invited_at?: string | null
+          joined_at?: string | null
+          org_id: string
+          role?: string
+          sessions_limit?: number | null
+          sessions_used?: number | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          email?: string
+          full_name?: string | null
+          id?: string
+          invite_token?: string | null
+          invited_at?: string | null
+          joined_at?: string | null
+          org_id?: string
+          role?: string
+          sessions_limit?: number | null
+          sessions_used?: number | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -1365,6 +1704,68 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_slug: string
+          earned_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_slug: string
+          earned_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_slug?: string
+          earned_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_slug_fkey"
+            columns: ["badge_slug"]
+            isOneToOne: false
+            referencedRelation: "gamification_badges"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      user_progress: {
+        Row: {
+          created_at: string | null
+          last_activity_at: string | null
+          streak_best: number
+          streak_days: number
+          updated_at: string | null
+          user_id: string
+          xp_this_week: number
+          xp_total: number
+        }
+        Insert: {
+          created_at?: string | null
+          last_activity_at?: string | null
+          streak_best?: number
+          streak_days?: number
+          updated_at?: string | null
+          user_id: string
+          xp_this_week?: number
+          xp_total?: number
+        }
+        Update: {
+          created_at?: string | null
+          last_activity_at?: string | null
+          streak_best?: number
+          streak_days?: number
+          updated_at?: string | null
+          user_id?: string
+          xp_this_week?: number
+          xp_total?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1386,8 +1787,126 @@ export type Database = {
         }
         Relationships: []
       }
+      wellness_programs: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_weeks: number | null
+          id: string
+          is_active: boolean | null
+          org_id: string
+          program_type: string
+          psychologist_id: string | null
+          sessions_included: number | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          id?: string
+          is_active?: boolean | null
+          org_id: string
+          program_type?: string
+          psychologist_id?: string | null
+          sessions_included?: number | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          id?: string
+          is_active?: boolean | null
+          org_id?: string
+          program_type?: string
+          psychologist_id?: string | null
+          sessions_included?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wellness_programs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wellness_programs_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
+      admin_platform_stats: {
+        Row: {
+          accredited_psychologists: number | null
+          active_psychologists: number | null
+          bookings_last_30d: number | null
+          completed_sessions: number | null
+          new_users_last_30d: number | null
+          pending_bookings: number | null
+          total_bookings: number | null
+          total_gross_revenue_mad: number | null
+          total_platform_revenue_mad: number | null
+          total_users: number | null
+          upcoming_sessions: number | null
+        }
+        Relationships: []
+      }
+      bookings_with_details: {
+        Row: {
+          amount_mad: number | null
+          created_at: string | null
+          duration_minutes: number | null
+          id: string | null
+          patient_id: string | null
+          patient_name: string | null
+          patient_notes: string | null
+          payment_status: string | null
+          psychologist_id: string | null
+          psychologist_name: string | null
+          scheduled_at: string | null
+          session_type: string | null
+          status: string | null
+          updated_at: string | null
+          video_room_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_usage_summary: {
+        Row: {
+          active_members: number | null
+          avg_sessions_per_member: number | null
+          org_id: string | null
+          pending_invites: number | null
+          sessions_completed: number | null
+          sessions_this_month: number | null
+          total_sessions_booked: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       public_review_ratings: {
         Row: {
           created_at: string | null
@@ -1421,12 +1940,29 @@ export type Database = {
         Returns: Json
       }
       generate_slug: { Args: { id: string; name: string }; Returns: string }
+      get_available_slots: {
+        Args: { p_date: string; p_psychologist_id: string }
+        Returns: {
+          is_available: boolean
+          slot_start: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      invite_org_member: {
+        Args: {
+          p_email: string
+          p_name?: string
+          p_org_id: string
+          p_role?: string
+          p_sessions_limit?: number
+        }
+        Returns: string
       }
       search_psychologists:
         | {
