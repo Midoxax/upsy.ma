@@ -123,10 +123,10 @@ const PsychologistProfile = () => {
 
       <BookingWidget
         psychologistId={psychologist.id}
-        calendlyUrl={psychologist.calendly_url}
-        hourlyRate={psychologist.hourly_rate_mad}
-        isAccredited={psychologist.is_accredited ?? false}
-        onBookClick={scrollToBooking}
+        psychologistName={psychologist.full_name}
+        hourlyRate={psychologist.hourly_rate_mad ?? undefined}
+        offersOnline={psychologist.offers_online ?? true}
+        offersInPerson={psychologist.offers_in_person ?? false}
       />
 
       {/* ── PREMIUM HERO ── */}
