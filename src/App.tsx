@@ -57,6 +57,10 @@ import MentalHealthAtWork from "./pages/blog/MentalHealthAtWork";
 import UnderstandingDepression from "./pages/blog/UnderstandingDepression";
 import HowToSupportALovedOne from "./pages/blog/HowToSupportALovedOne";
 import MindfulnessForBeginners from "./pages/blog/MindfulnessForBeginners";
+import FreeScore from "./pages/FreeScore";
+import Invite from "./pages/Invite";
+import ForAthletes from "./pages/funnels/ForAthletes";
+import ForOrganizations from "./pages/funnels/ForOrganizations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -115,10 +119,12 @@ const AppRoutes = () => (
     <Route path="blog/understanding-depression" element={<PageTransition><UnderstandingDepression /></PageTransition>} />
     <Route path="blog/how-to-support-a-loved-one" element={<PageTransition><HowToSupportALovedOne /></PageTransition>} />
     <Route path="blog/mindfulness-for-beginners" element={<PageTransition><MindfulnessForBeginners /></PageTransition>} />
+    <Route path="free-score" element={<PageTransition><FreeScore /></PageTransition>} />
+    <Route path="invite/:code" element={<PageTransition><Invite /></PageTransition>} />
+    <Route path="for-athletes" element={<PageTransition><ForAthletes /></PageTransition>} />
+    <Route path="for-organizations" element={<PageTransition><ForOrganizations /></PageTransition>} />
   </>
 );
-
-const AnimatedRoutes = () => {
   const location = useLocation();
 
   // Update body data-theme attribute based on current route
