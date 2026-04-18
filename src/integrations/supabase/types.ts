@@ -1995,6 +1995,7 @@ export type Database = {
       }
     }
     Functions: {
+      compute_mps: { Args: { _user_id: string }; Returns: Json }
       create_admin_user: {
         Args: { _email: string; _password: string }
         Returns: Json

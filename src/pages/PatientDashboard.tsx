@@ -18,6 +18,11 @@ import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
 import CertificatesTab from "@/components/dashboard/CertificatesTab";
 import JournalTab from "@/components/dashboard/JournalTab";
 import DocumentsTab from "@/components/dashboard/DocumentsTab";
+import TodaysStateCard from "@/components/dashboard/TodaysStateCard";
+import MentalPerformanceScore from "@/components/dashboard/MentalPerformanceScore";
+import SessionsTimeline from "@/components/dashboard/SessionsTimeline";
+import RecommendationsRail from "@/components/dashboard/RecommendationsRail";
+import { useNudges } from "@/hooks/useNudges";
 
 interface MoodEntry {
   id: string;
@@ -40,6 +45,8 @@ const PatientDashboard = () => {
   const [notes, setNotes] = useState("");
   const [assessmentResults, setAssessmentResults] = useState<any[]>([]);
   const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+  useNudges();
 
   const MOOD_ICONS = [
     { score: 1, icon: Frown, label: t('mood.veryLow'), color: "text-destructive" },
@@ -156,6 +163,18 @@ const PatientDashboard = () => {
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-8">
+              {/* Phase 3: Today's state + MPS */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                <TodaysStateCard onLogged={() => setRefreshKey((k) => k + 1)} />
+                <MentalPerformanceScore refreshKey={refreshKey} />
+              </div>
+
+              {/* Phase 3: Sessions timeline + recommendations */}
+              <div className="grid lg:grid-cols-[1fr_1.2fr] gap-6">
+                <SessionsTimeline />
+                <RecommendationsRail />
+              </div>
+
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
