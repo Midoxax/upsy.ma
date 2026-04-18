@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { ArrowRight, Sparkles } from "lucide-react";
+import logo from "@/assets/logo.webp";
 
 // ── Editorial hero — single column, bold typography, quiet visuals ───────────
 
@@ -38,20 +39,19 @@ const HeroSection = () => {
 
       <div className="container-custom relative z-10 w-full py-24 md:py-32">
         <div className="max-w-5xl mx-auto text-center space-y-10">
-          {/* Eyebrow */}
+          {/* Brand mark */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             className="flex justify-center"
           >
-            <span className="inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/70 border border-border/80 bg-background/60 backdrop-blur-sm rounded-full px-4 py-2">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-              </span>
-              {t("hero.eyebrow") || "Performance Psychology System · Morocco"}
-            </span>
+            <img
+              src={logo}
+              alt="U.Psy"
+              className="h-16 md:h-20 w-auto dark:brightness-110"
+              style={{ filter: "drop-shadow(0 2px 8px hsl(var(--primary) / 0.15))" }}
+            />
           </motion.div>
 
           {/* Headline — editorial, large, refined */}
