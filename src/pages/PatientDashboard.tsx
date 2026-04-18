@@ -24,6 +24,7 @@ import SessionsTimeline from "@/components/dashboard/SessionsTimeline";
 import RecommendationsRail from "@/components/dashboard/RecommendationsRail";
 import CrisisModal from "@/components/dashboard/CrisisModal";
 import { GamificationPanel } from "@/components/GamificationPanel";
+import ReferralCard from "@/components/dashboard/ReferralCard";
 import { useNudges } from "@/hooks/useNudges";
 import { useCrisisScreening } from "@/hooks/useCrisisScreening";
 
@@ -181,8 +182,11 @@ const PatientDashboard = () => {
                 <RecommendationsRail />
               </div>
 
-              {/* Phase 3: Gamification (discreet) */}
-              <GamificationPanel />
+              {/* Phase 3: Gamification (discreet) + Referral loop */}
+              <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6">
+                <GamificationPanel />
+                <ReferralCard />
+              </div>
 
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
