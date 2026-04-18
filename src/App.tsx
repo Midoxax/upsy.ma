@@ -125,6 +125,8 @@ const AppRoutes = () => (
     <Route path="for-organizations" element={<PageTransition><ForOrganizations /></PageTransition>} />
   </>
 );
+
+const AnimatedRoutes = () => {
   const location = useLocation();
 
   // Update body data-theme attribute based on current route
