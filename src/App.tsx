@@ -10,6 +10,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import DashboardErrorFallback from "@/components/DashboardErrorFallback";
+import RoleRouter from "@/components/RoleRouter";
+import SpecialistDashboard from "@/pages/SpecialistDashboard";
+import OrganizationDashboard from "@/pages/OrganizationDashboard";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { stripLocalePrefix } from "@/lib/i18n/utils";
@@ -89,7 +93,10 @@ const AppRoutes = () => (
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
     <Route path="reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
     <Route path="get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
-    <Route path="dashboard" element={<ProtectedRoute><PageTransition><PatientDashboard /></PageTransition></ProtectedRoute>} />
+    <Route path="dashboard" element={<ProtectedRoute><RoleRouter /></ProtectedRoute>} />
+    <Route path="dashboard/client" element={<ProtectedRoute><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><PatientDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
+    <Route path="dashboard/specialist" element={<ProtectedRoute role="psychologist"><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><SpecialistDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
+    <Route path="dashboard/organization" element={<ProtectedRoute role="organization"><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><OrganizationDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
     <Route path="athlete-hub" element={<ProtectedRoute><PageTransition><AthleteHub /></PageTransition></ProtectedRoute>} />
     <Route path="assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
     <Route path="ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
