@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Users, BookOpen, BarChart3, UserCheck, CreditCard, FileText } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, BarChart3, UserCheck, CreditCard, FileText, Activity } from "lucide-react";
 import OrgOverviewTab from "@/components/organization/OrgOverviewTab";
 import OrgUsersTab from "@/components/organization/OrgUsersTab";
 import OrgProgramsTab from "@/components/organization/OrgProgramsTab";
@@ -8,6 +8,7 @@ import OrgReportsTab from "@/components/organization/OrgReportsTab";
 import OrgPsychologistsTab from "@/components/organization/OrgPsychologistsTab";
 import OrgAnalyticsTab from "@/components/organization/OrgAnalyticsTab";
 import OrgBillingTab from "@/components/organization/OrgBillingTab";
+import OrgPulseTab from "@/components/organization/OrgPulseTab";
 
 const OrganizationDashboard = () => {
   const { user } = useAuth();
@@ -20,6 +21,10 @@ const OrganizationDashboard = () => {
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="pulse" className="gap-1.5">
+              <Activity className="h-4 w-4" />
+              <span className="hidden sm:inline">Pulse</span>
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-1.5">
               <Users className="h-4 w-4" />
@@ -48,6 +53,7 @@ const OrganizationDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview"><OrgOverviewTab /></TabsContent>
+          <TabsContent value="pulse"><OrgPulseTab /></TabsContent>
           <TabsContent value="users"><OrgUsersTab /></TabsContent>
           <TabsContent value="programs"><OrgProgramsTab /></TabsContent>
           <TabsContent value="psychologists"><OrgPsychologistsTab /></TabsContent>
