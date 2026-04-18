@@ -935,21 +935,166 @@ export type Database = {
         }
         Relationships: []
       }
+      org_aggregate_reports: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          org_id: string
+          page_count: number | null
+          period_end: string | null
+          period_start: string | null
+          report_type: string
+          requested_by: string
+          status: string
+          storage_path: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          org_id: string
+          page_count?: number | null
+          period_end?: string | null
+          period_start?: string | null
+          report_type: string
+          requested_by: string
+          status?: string
+          storage_path?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          org_id?: string
+          page_count?: number | null
+          period_end?: string | null
+          period_start?: string | null
+          report_type?: string
+          requested_by?: string
+          status?: string
+          storage_path?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_aggregate_reports_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_pulse_responses: {
+        Row: {
+          id: string
+          mood_score: number
+          org_id: string
+          sentiment_text: string | null
+          stress_level: number
+          submission_token: string
+          submitted_at: string
+          survey_id: string
+          workload_level: number
+        }
+        Insert: {
+          id?: string
+          mood_score: number
+          org_id: string
+          sentiment_text?: string | null
+          stress_level: number
+          submission_token: string
+          submitted_at?: string
+          survey_id: string
+          workload_level: number
+        }
+        Update: {
+          id?: string
+          mood_score?: number
+          org_id?: string
+          sentiment_text?: string | null
+          stress_level?: number
+          submission_token?: string
+          submitted_at?: string
+          survey_id?: string
+          workload_level?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_pulse_responses_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "org_pulse_surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_pulse_surveys: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          org_id: string
+          starts_at: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          org_id: string
+          starts_at?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          org_id?: string
+          starts_at?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_pulse_surveys_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_accounts: {
         Row: {
+          billing_address: string | null
           billing_cycle: string | null
           city: string | null
           contact_email: string
           contact_phone: string | null
           country: string | null
           created_at: string | null
+          ice: string | null
           id: string
+          if_number: string | null
           industry: string | null
           logo_url: string | null
           monthly_price_mad: number | null
           name: string
           owner_id: string
           plan_type: string
+          rc_number: string | null
           seats_total: number
           seats_used: number
           size_range: string | null
@@ -958,19 +1103,23 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          billing_address?: string | null
           billing_cycle?: string | null
           city?: string | null
           contact_email: string
           contact_phone?: string | null
           country?: string | null
           created_at?: string | null
+          ice?: string | null
           id?: string
+          if_number?: string | null
           industry?: string | null
           logo_url?: string | null
           monthly_price_mad?: number | null
           name: string
           owner_id: string
           plan_type?: string
+          rc_number?: string | null
           seats_total?: number
           seats_used?: number
           size_range?: string | null
@@ -979,19 +1128,23 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          billing_address?: string | null
           billing_cycle?: string | null
           city?: string | null
           contact_email?: string
           contact_phone?: string | null
           country?: string | null
           created_at?: string | null
+          ice?: string | null
           id?: string
+          if_number?: string | null
           industry?: string | null
           logo_url?: string | null
           monthly_price_mad?: number | null
           name?: string
           owner_id?: string
           plan_type?: string
+          rc_number?: string | null
           seats_total?: number
           seats_used?: number
           size_range?: string | null
@@ -2024,6 +2177,10 @@ export type Database = {
           p_sessions_limit?: number
         }
         Returns: string
+      }
+      org_pulse_aggregate: {
+        Args: { _org_id: string; _survey_id?: string }
+        Returns: Json
       }
       search_psychologists:
         | {
