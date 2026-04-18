@@ -1,17 +1,13 @@
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, Calendar, TrendingUp, Shield } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const mockReports = [
-  { id: "1", title: "Q1 2026 Mental Health Report", type: "quarterly", date: "2026-03-31", status: "ready", pages: 12 },
-  { id: "2", title: "Burnout Risk Assessment — Engineering", type: "diagnostic", date: "2026-03-15", status: "ready", pages: 8 },
-  { id: "3", title: "Program Impact: Stress Management", type: "program", date: "2026-02-28", status: "ready", pages: 6 },
-  { id: "4", title: "Q4 2025 Mental Health Report", type: "quarterly", date: "2025-12-31", status: "ready", pages: 14 },
-  { id: "5", title: "Annual Wellbeing Summary 2025", type: "annual", date: "2025-12-31", status: "processing", pages: 24 },
-];
+import { toast } from "sonner";
 
 const typeColors: Record<string, string> = {
   quarterly: "bg-primary/10 text-primary border-primary/20",
