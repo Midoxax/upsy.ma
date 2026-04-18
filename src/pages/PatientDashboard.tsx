@@ -179,6 +179,9 @@ const PatientDashboard = () => {
                 <RecommendationsRail />
               </div>
 
+              {/* Phase 3: Gamification (discreet) */}
+              <GamificationPanel />
+
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
