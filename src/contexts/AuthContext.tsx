@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
@@ -13,10 +14,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Idle timeouts: clinical/admin roles auto-logout after 30 min, regular users after 24h.
+const PRIVILEGED_IDLE_MS = 30 * 60 * 1000;
+const DEFAULT_IDLE_MS = 24 * 60 * 60 * 1000;
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const idleTimerRef = useRef<number | null>(null);
+  const idleLimitRef = useRef<number>(DEFAULT_IDLE_MS);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -37,6 +44,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Idle-timeout watcher. Resets on user activity; signs out after the limit.
+  useEffect(() => {
+    if (!user) {
+      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = null;
+      return;
+    }
+
+    let cancelled = false;
+
+    const computeLimit = async () => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      if (cancelled) return;
+      const roles = error ? [] : (data ?? []).map((r) => r.role as string);
+      const privileged = roles.includes("admin") || roles.includes("psychologist");
+      idleLimitRef.current = privileged ? PRIVILEGED_IDLE_MS : DEFAULT_IDLE_MS;
+      resetTimer();
+    };
+
+    const resetTimer = () => {
+      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = window.setTimeout(async () => {
+        await supabase.auth.signOut();
+        toast.info("You were signed out due to inactivity.");
+      }, idleLimitRef.current);
+    };
+
+    const events: (keyof WindowEventMap)[] = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "scroll",
+    ];
+    events.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
+
+    computeLimit();
+
+    return () => {
+      cancelled = true;
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = null;
+    };
+  }, [user]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
