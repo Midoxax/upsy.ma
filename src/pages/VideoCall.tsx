@@ -5,6 +5,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert } from "lucide-react";
 
+// Allow joining the room from T-10min until T+duration+5min.
+const JOIN_EARLY_MS = 10 * 60 * 1000;
+const JOIN_LATE_BUFFER_MS = 5 * 60 * 1000;
+
 const VideoCall = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { user } = useAuth();
@@ -32,15 +36,31 @@ const VideoCall = () => {
         return;
       }
 
-      // Verify the user is a participant
+      // Verify the user is a participant.
       if (data.client_id !== user.id && data.psychologist_id !== user.id) {
         setError("You are not authorized to join this session.");
         setLoading(false);
         return;
       }
 
-      if (data.status !== "confirmed") {
-        setError("This session is not confirmed.");
+      // Status must be active.
+      if (!["confirmed", "scheduled", "in_progress"].includes(data.status)) {
+        setError("This session is not active.");
+        setLoading(false);
+        return;
+      }
+
+      // Time-window check: only allow joining near the scheduled time.
+      const startsAt = new Date(data.date_time).getTime();
+      const duration = (data.duration_minutes ?? 50) * 60 * 1000;
+      const now = Date.now();
+      if (now < startsAt - JOIN_EARLY_MS) {
+        setError("This session has not opened yet. The room unlocks 10 minutes before the start time.");
+        setLoading(false);
+        return;
+      }
+      if (now > startsAt + duration + JOIN_LATE_BUFFER_MS) {
+        setError("This session has ended.");
         setLoading(false);
         return;
       }
