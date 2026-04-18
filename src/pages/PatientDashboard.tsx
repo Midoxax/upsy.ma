@@ -125,6 +125,8 @@ const PatientDashboard = () => {
 
   return (
     <div className="min-h-screen">
+      <CrisisModal open={crisis.open} onOpenChange={crisis.setOpen} riskLevel={crisis.risk} />
+
       {/* Hero */}
       <section className="hero-neural-bg relative py-8">
         <div className="container-custom relative z-10">
