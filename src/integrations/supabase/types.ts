@@ -299,6 +299,36 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       availability_slots: {
         Row: {
           created_at: string | null
@@ -1310,6 +1340,30 @@ export type Database = {
         }
         Relationships: []
       }
+      psychologist_encryption_keys: {
+        Row: {
+          created_at: string
+          id: string
+          psychologist_id: string
+          rotated_at: string | null
+          vault_secret_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          psychologist_id: string
+          rotated_at?: string | null
+          vault_secret_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          psychologist_id?: string
+          rotated_at?: string | null
+          vault_secret_id?: string
+        }
+        Relationships: []
+      }
       psychologist_languages: {
         Row: {
           language_id: string
@@ -1506,6 +1560,8 @@ export type Database = {
         Row: {
           content: string
           created_at: string | null
+          encrypted_content: string | null
+          encryption_key_id: string | null
           id: string
           is_private: boolean | null
           note_type: string | null
@@ -1516,6 +1572,8 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string | null
+          encrypted_content?: string | null
+          encryption_key_id?: string | null
           id?: string
           is_private?: boolean | null
           note_type?: string | null
@@ -1526,6 +1584,8 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string | null
+          encrypted_content?: string | null
+          encryption_key_id?: string | null
           id?: string
           is_private?: boolean | null
           note_type?: string | null
