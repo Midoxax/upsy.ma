@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
+import SEOHead from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -144,10 +144,7 @@ export default function FreeScore() {
 
   return (
     <>
-      <Helmet>
-        <title>{t.title} — U.Psy</title>
-        <meta name="description" content={t.subtitle} />
-      </Helmet>
+      <SEOHead path="/free-score" title={`${t.title} — U.Psy`} description={t.subtitle} />
       <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
         <Card className="max-w-xl w-full glass-card">
           <CardHeader>

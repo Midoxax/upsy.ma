@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Helmet } from "react-helmet-async";
+import SEOHead from "@/components/SEOHead";
 
 export default function Invite() {
   const { code } = useParams<{ code: string }>();
@@ -28,9 +28,7 @@ export default function Invite() {
 
   return (
     <>
-      <Helmet>
-        <title>You're invited — U.Psy</title>
-      </Helmet>
+      <SEOHead path="/invite" title="You're invited — U.Psy" description="Accept your invitation to U.Psy." />
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <Card className="max-w-md w-full glass-card">
           <CardHeader>

@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, BarChart3, ShieldCheck, ArrowRight } from "lucide-react";
@@ -7,11 +7,11 @@ import { Link } from "react-router-dom";
 export default function ForOrganizations() {
   return (
     <>
-      <Helmet>
-        <title>Workplace Mental Health — U.Psy for Organizations</title>
-        <meta name="description" content="Anonymized wellbeing analytics, EAP-grade clinical care, and Morocco-compliant invoicing for forward-thinking employers." />
-        <link rel="canonical" href="https://upsy.ma/for-organizations" />
-      </Helmet>
+      <SEOHead
+        path="/for-organizations"
+        title="Workplace Mental Health — U.Psy for Organizations"
+        description="Anonymized wellbeing analytics, EAP-grade clinical care, and Morocco-compliant invoicing for forward-thinking employers."
+      />
       <main className="min-h-screen bg-background">
         <section className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-5xl md:text-6xl font-display font-bold mb-4">A healthier team is a higher-performing team.</h1>

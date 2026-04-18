@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy, Target, Brain, ArrowRight } from "lucide-react";
@@ -7,18 +7,11 @@ import { Link } from "react-router-dom";
 export default function ForAthletes() {
   return (
     <>
-      <Helmet>
-        <title>Performance Psychology for Athletes — U.Psy</title>
-        <meta name="description" content="Mental performance coaching for elite athletes in Morocco. Focus, resilience, recovery — backed by sport psychologists." />
-        <link rel="canonical" href="https://upsy.ma/for-athletes" />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Service",
-          name: "Sport Psychology — U.Psy",
-          areaServed: "MA",
-          provider: { "@type": "Organization", name: "U.Psy" },
-        })}</script>
-      </Helmet>
+      <SEOHead
+        path="/for-athletes"
+        title="Performance Psychology for Athletes — U.Psy"
+        description="Mental performance coaching for elite athletes in Morocco. Focus, resilience, recovery — backed by sport psychologists."
+      />
       <main className="min-h-screen bg-background">
         <section className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-5xl md:text-6xl font-display font-bold mb-4">Train your mind. Win the moment.</h1>
