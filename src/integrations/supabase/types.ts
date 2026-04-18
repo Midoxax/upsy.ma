@@ -798,6 +798,60 @@ export type Database = {
         }
         Relationships: []
       }
+      growth_leads: {
+        Row: {
+          consent_marketing: boolean
+          converted_user_id: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          ip_hash: string | null
+          locale: string | null
+          nurture_stage: string | null
+          phone: string | null
+          score_breakdown: Json | null
+          score_total: number | null
+          source: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          consent_marketing?: boolean
+          converted_user_id?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          ip_hash?: string | null
+          locale?: string | null
+          nurture_stage?: string | null
+          phone?: string | null
+          score_breakdown?: Json | null
+          score_total?: number | null
+          source?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          consent_marketing?: boolean
+          converted_user_id?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          ip_hash?: string | null
+          locale?: string | null
+          nurture_stage?: string | null
+          phone?: string | null
+          score_breakdown?: Json | null
+          score_total?: number | null
+          source?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       journal_entries: {
         Row: {
           content: string
@@ -1664,6 +1718,42 @@ export type Database = {
           },
         ]
       }
+      referrals: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          referee_email: string | null
+          referee_user_id: string | null
+          referrer_id: string
+          reward_granted_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          referee_email?: string | null
+          referee_user_id?: string | null
+          referrer_id: string
+          reward_granted_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          referee_email?: string | null
+          referee_user_id?: string | null
+          referrer_id?: string
+          reward_granted_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           client_id: string
@@ -2153,6 +2243,7 @@ export type Database = {
         Args: { _email: string; _password: string }
         Returns: Json
       }
+      generate_referral_code: { Args: never; Returns: string }
       generate_slug: { Args: { id: string; name: string }; Returns: string }
       get_available_slots: {
         Args: { p_date: string; p_psychologist_id: string }
