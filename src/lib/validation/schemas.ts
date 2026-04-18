@@ -4,13 +4,15 @@
  */
 import { z } from "zod";
 
-// Strip HTML tags / script-like content
-const safeText = (max: number) =>
+// Reject obvious script injection attempts
+const noScriptRegex = /<\s*script|<\s*\/\s*script|javascript:/i;
+const safeText = (max: number, min = 0) =>
   z
     .string()
     .trim()
+    .min(min)
     .max(max)
-    .refine((v) => !/<\s*script|<\s*\/\s*script|javascript:/i.test(v), {
+    .refine((v) => !noScriptRegex.test(v), {
       message: "Invalid characters detected",
     });
 
@@ -24,14 +26,14 @@ export const phoneSchema = z
   .or(z.literal(""));
 
 export const contactFormSchema = z.object({
-  name: safeText(100).min(1, "Name required"),
+  name: safeText(100, 1),
   email: emailSchema,
   phone: phoneSchema,
-  message: safeText(2000).min(10, "Message too short"),
+  message: safeText(2000, 10),
 });
 
 export const authSignUpSchema = z.object({
-  fullName: safeText(100).min(2),
+  fullName: safeText(100, 2),
   email: emailSchema,
   password: z
     .string()
@@ -56,7 +58,7 @@ export const moodEntrySchema = z.object({
 });
 
 export const matchingRequestSchema = z.object({
-  name: safeText(100).min(2),
+  name: safeText(100, 2),
   email: emailSchema,
   phone: phoneSchema,
   specialty_needed: z.string().uuid(),
@@ -68,7 +70,7 @@ export const matchingRequestSchema = z.object({
 });
 
 export const psychologistApplicationSchema = z.object({
-  full_name: safeText(100).min(2),
+  full_name: safeText(100, 2),
   email: emailSchema,
   phone: phoneSchema,
   qualifications: safeText(3000).optional(),
