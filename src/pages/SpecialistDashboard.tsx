@@ -29,6 +29,8 @@ import DocumentsTab from "@/components/dashboard/DocumentsTab";
 import EarningsTab from "@/components/dashboard/EarningsTab";
 import JournalTab from "@/components/dashboard/JournalTab";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
+import SpecialistBurnoutCard from "@/components/dashboard/SpecialistBurnoutCard";
+import SmartSchedulingCard from "@/components/dashboard/SmartSchedulingCard";
 
 const SpecialistDashboard = () => {
   return (
@@ -120,6 +122,9 @@ const SpecialistDashboard = () => {
                 <Link to="/ai-assistant">Open Nour</Link>
               </Button>
             </Card>
+
+            <SpecialistBurnoutCard />
+            <SmartSchedulingCard />
 
             <Card className="p-5">
               <h3 className="font-semibold text-foreground mb-2">Quick links</h3>
