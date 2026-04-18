@@ -12,6 +12,7 @@ import {
   FileText, Plus, Loader2, Calendar, User, Pencil, Trash2,
 } from "lucide-react";
 import { format } from "date-fns";
+import AISummaryButton from "@/components/dashboard/AISummaryButton";
 
 interface SessionNote {
   id: string;
@@ -217,9 +218,12 @@ const SessionNotesTab = () => {
                     {note.session?.date_time ? format(new Date(note.session.date_time), "MMM d, yyyy") : format(new Date(note.created_at), "MMM d, yyyy")}
                   </span>
                 </div>
-                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteNote(note.id)}>
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <AISummaryButton notes={note.content} />
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteNote(note.id)}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </div>
               <p className="text-sm text-muted-foreground whitespace-pre-line">{note.content}</p>
             </div>
