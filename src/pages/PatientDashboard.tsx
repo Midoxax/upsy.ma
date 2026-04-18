@@ -22,7 +22,10 @@ import TodaysStateCard from "@/components/dashboard/TodaysStateCard";
 import MentalPerformanceScore from "@/components/dashboard/MentalPerformanceScore";
 import SessionsTimeline from "@/components/dashboard/SessionsTimeline";
 import RecommendationsRail from "@/components/dashboard/RecommendationsRail";
+import CrisisModal from "@/components/dashboard/CrisisModal";
+import { GamificationPanel } from "@/components/GamificationPanel";
 import { useNudges } from "@/hooks/useNudges";
+import { useCrisisScreening } from "@/hooks/useCrisisScreening";
 
 interface MoodEntry {
   id: string;
@@ -47,6 +50,7 @@ const PatientDashboard = () => {
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   useNudges();
+  const crisis = useCrisisScreening();
 
   const MOOD_ICONS = [
     { score: 1, icon: Frown, label: t('mood.veryLow'), color: "text-destructive" },
