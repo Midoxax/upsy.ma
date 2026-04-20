@@ -1249,6 +1249,10 @@ export const translations = {
       licensedPsychologists: "Psychologues agréés",
       secureTelehealth: "Infrastructure sécurisée",
       evidenceBasedCare: "Méthodes fondées sur les preuves",
+      talkToNour: "Parler à Nour · IA",
+      statPsychologists: "Psychologues vérifiés",
+      statMatch: "Pour trouver votre match",
+      statSatisfaction: "Satisfaction patient",
     },
     common: {
       ctaFindPsychologist: "Trouver un psychologue",
@@ -2405,6 +2409,12 @@ export const translations = {
       licensedPsychologists: "أخصائيون مرخصون",
       secureTelehealth: "بنية تحتية آمنة",
       evidenceBasedCare: "مناهج مبنية على الأدلة",
+      talkToNour: "تحدث مع نور · ذكاء اصطناعي",
+      statPsychologists: "أخصائيون موثقون",
+      statMatch: "للعثور على المطابقة",
+      statSatisfaction: "رضا المرضى",
+      backToBlog: "Back to blog",
+      wellness: "Wellness",
     },
     common: {
       ctaFindPsychologist: "ابحث عن طبيب نفسي",
