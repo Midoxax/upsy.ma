@@ -76,8 +76,8 @@ export function BreadcrumbWrapper() {
   const backLink = crumbs.length > 1 ? crumbs[crumbs.length - 2].href : '/';
 
   return (
-    <div className="bg-u-bg border-b border-u-gray-700/30">
-      <div className="container-custom pt-4 pb-8">
+    <div className="bg-background/60 backdrop-blur-sm">
+      <div className="container-custom py-2">
         <Breadcrumb>
           <BreadcrumbList>
             {showBackButton && (
