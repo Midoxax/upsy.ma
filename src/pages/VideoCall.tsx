@@ -107,13 +107,15 @@ const VideoCall = () => {
     async (eventType: string, metadata?: Record<string, unknown>) => {
       if (!user || !sessionId) return;
       try {
-        await supabase.from("session_events").insert({
-          booking_id: sessionData?.booking_id ?? null,
-          session_id: sessionId,
-          user_id: user.id,
-          event_type: eventType,
-          metadata: metadata ?? null,
-        });
+        await supabase.from("session_events").insert([
+          {
+            booking_id: sessionData?.booking_id ?? null,
+            session_id: sessionId,
+            user_id: user.id,
+            event_type: eventType,
+            metadata: (metadata ?? null) as any,
+          },
+        ]);
       } catch (e) {
         // non-blocking
         console.warn("session_events insert failed", e);
