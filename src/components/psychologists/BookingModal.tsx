@@ -316,6 +316,18 @@ const BookingModal = ({
               <span className="text-primary font-bold text-lg">{hourlyRate} MAD</span>
             </div>
           )}
+          {hourlyRate && typeof depositPercentage === "number" && depositPercentage > 0 && depositPercentage < 100 && (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Deposit due now ({depositPercentage}%)</span>
+                <span className="text-foreground font-semibold">{Math.round(hourlyRate * depositPercentage / 100)} MAD</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Balance after session</span>
+                <span className="text-muted-foreground">{Math.round(hourlyRate * (1 - depositPercentage / 100))} MAD</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
