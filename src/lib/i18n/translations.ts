@@ -2413,8 +2413,6 @@ export const translations = {
       statPsychologists: "أخصائيون موثقون",
       statMatch: "للعثور على المطابقة",
       statSatisfaction: "رضا المرضى",
-      backToBlog: "Back to blog",
-      wellness: "Wellness",
     },
     common: {
       ctaFindPsychologist: "ابحث عن طبيب نفسي",
@@ -3322,6 +3320,8 @@ export const translations = {
       mentalHealth: "الصحة النفسية",
       indexTitle: "مدونة الصحة النفسية",
       indexSubtitle: "أدلة عملية ورؤى وموارد لمساعدتك على فهم صحتك النفسية واتخاذ إجراءات ذات معنى.",
+      backToBlog: "العودة إلى المدونة",
+      wellness: "الرفاهية",
       findPsych: {
         title: "كيف تجد الأخصائي النفسي المناسب لك",
         intro: "قد يبدو العثور على الأخصائي المناسب أمراً مرهقاً. هذا الدليل يقسم العملية إلى خطوات بسيطة وعملية.",
