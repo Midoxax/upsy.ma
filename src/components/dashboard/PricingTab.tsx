@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { usePsychologistProfile, useUpdateProfile } from "@/hooks/usePsychologistDashboard";
-import { Loader2, Save, DollarSign } from "lucide-react";
+import { Loader2, Save, DollarSign, Percent } from "lucide-react";
 
 export const PricingTab = () => {
   const { toast } = useToast();
@@ -13,12 +16,26 @@ export const PricingTab = () => {
   const updateProfile = useUpdateProfile();
 
   const [hourlyRate, setHourlyRate] = useState("");
+  const [depositPct, setDepositPct] = useState<number>(50);
 
-  // Sync with profile data
+  const { data: pricing } = useQuery({
+    queryKey: ["platform-pricing-active"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("platform_pricing_config")
+        .select("min_session_price_mad, max_session_price_mad, commission_rate, vat_rate, deposit_percentage")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
   useEffect(() => {
-    if (profile?.hourly_rate_mad) {
-      setHourlyRate(profile.hourly_rate_mad.toString());
-    }
+    if (profile?.hourly_rate_mad) setHourlyRate(profile.hourly_rate_mad.toString());
+    if (typeof (profile as any)?.deposit_percentage === "number") setDepositPct((profile as any).deposit_percentage);
   }, [profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,13 +46,15 @@ export const PricingTab = () => {
       if (isNaN(rate) || rate < 0) {
         throw new Error("Please enter a valid hourly rate");
       }
+      if (pricing) {
+        if (rate < Number(pricing.min_session_price_mad) || rate > Number(pricing.max_session_price_mad)) {
+          throw new Error(`Rate must be between ${pricing.min_session_price_mad} and ${pricing.max_session_price_mad} MAD`);
+        }
+      }
 
-      await updateProfile.mutateAsync({ hourly_rate_mad: rate });
+      await updateProfile.mutateAsync({ hourly_rate_mad: rate, deposit_percentage: depositPct });
 
-      toast({
-        title: "Pricing Updated",
-        description: "Your session fees have been saved.",
-      });
+      toast({ title: "Pricing Updated", description: "Your session fees have been saved." });
     } catch (error) {
       toast({
         title: "Update Failed",
@@ -61,6 +80,12 @@ export const PricingTab = () => {
     ninetyMin: hourlyRate ? Math.round(parseFloat(hourlyRate) * 1.5) : 0,
   };
 
+  const rateNum = parseFloat(hourlyRate || "0");
+  const depositAmt = Math.round(rateNum * (depositPct / 100));
+  const balanceAmt = Math.max(0, rateNum - depositAmt);
+  const commissionPct = Number(pricing?.commission_rate ?? 20);
+  const netToYou = Math.round(rateNum * (1 - commissionPct / 100));
+
   return (
     <Card className="bg-surface border-border">
       <CardHeader>
@@ -77,7 +102,8 @@ export const PricingTab = () => {
             <Input
               id="hourly_rate"
               type="number"
-              min="0"
+              min={pricing?.min_session_price_mad ?? 0}
+              max={pricing?.max_session_price_mad ?? 5000}
               step="50"
               value={hourlyRate}
               onChange={(e) => setHourlyRate(e.target.value)}
@@ -85,9 +111,53 @@ export const PricingTab = () => {
               className="bg-background"
             />
             <p className="text-sm text-muted-foreground">
-              Your base rate for a 60-minute session in Moroccan Dirhams
+              Your base rate for a 60-minute session.
+              {pricing && (
+                <> Allowed range: <span className="text-foreground">{pricing.min_session_price_mad}–{pricing.max_session_price_mad} MAD</span>.</>
+              )}
             </p>
           </div>
+
+          <div className="space-y-3 p-4 rounded-lg bg-background border border-border">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2">
+                <Percent className="h-4 w-4 text-primary" />
+                Deposit at booking
+              </Label>
+              <span className="text-lg font-bold text-primary">{depositPct}%</span>
+            </div>
+            <Slider
+              value={[depositPct]}
+              onValueChange={(v) => setDepositPct(v[0])}
+              min={0}
+              max={100}
+              step={5}
+            />
+            <p className="text-xs text-muted-foreground">
+              The patient pays this % when booking. Balance is captured after the session.
+            </p>
+            {rateNum > 0 && (
+              <div className="grid grid-cols-2 gap-2 pt-2 text-sm">
+                <div className="p-2 rounded bg-surface">
+                  <p className="text-xs text-muted-foreground">Deposit collected</p>
+                  <p className="font-semibold text-foreground">{depositAmt} MAD</p>
+                </div>
+                <div className="p-2 rounded bg-surface">
+                  <p className="text-xs text-muted-foreground">Balance after session</p>
+                  <p className="font-semibold text-foreground">{balanceAmt} MAD</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {rateNum > 0 && (
+            <div className="p-4 bg-background rounded-lg border border-border space-y-1 text-sm">
+              <p className="text-xs text-muted-foreground">Platform commission ({commissionPct}%)</p>
+              <p className="font-medium">{Math.round(rateNum * commissionPct / 100)} MAD per session</p>
+              <p className="text-xs text-muted-foreground pt-2">Net to you per 60-min session</p>
+              <p className="text-lg font-bold text-primary">{netToYou} MAD</p>
+            </div>
+          )}
 
           {hourlyRate && (
             <div className="p-4 bg-background rounded-lg space-y-3">

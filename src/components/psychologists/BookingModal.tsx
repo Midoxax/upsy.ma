@@ -46,6 +46,7 @@ interface BookingModalProps {
   offersOnline?: boolean;
   offersInPerson?: boolean;
   city?: string | null;
+  depositPercentage?: number | null;
 }
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -61,6 +62,7 @@ const BookingModal = ({
   offersOnline,
   offersInPerson,
   city,
+  depositPercentage,
 }: BookingModalProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -133,22 +135,29 @@ const BookingModal = ({
       const dateTime = new Date(selectedDate);
       dateTime.setHours(hours, minutes, 0, 0);
 
-      const videoRoomId =
-        sessionType === "online"
-          ? `upsy-${psychologistId.slice(0, 8)}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
-          : null;
-
-      const { error } = await supabase.from("sessions").insert({
-        client_id: user.id,
-        psychologist_id: psychologistId,
-        date_time: dateTime.toISOString(),
-        session_type: sessionType,
-        notes: notes || null,
-        status: "confirmed",
-        video_room_id: videoRoomId,
+      // Step 1: create booking + pending deposit transaction (mock provider)
+      const createRes = await supabase.functions.invoke("create-booking-payment", {
+        body: {
+          psychologistId,
+          scheduledAt: dateTime.toISOString(),
+          durationMinutes: 50,
+          sessionType,
+          patientNotes: notes || undefined,
+        },
       });
+      if (createRes.error) throw new Error(createRes.error.message);
+      const { transactionId, breakdown } = createRes.data as { transactionId: string; breakdown: any };
 
-      if (error) throw error;
+      // Step 2: simulate the payment webhook (mock — would be real PSP callback in prod)
+      const webhookRes = await supabase.functions.invoke("simulate-payment-webhook", {
+        body: { transactionId, outcome: "succeeded" },
+      });
+      if (webhookRes.error) throw new Error(webhookRes.error.message);
+
+      toast({
+        title: "Deposit paid (mock)",
+        description: `${breakdown.deposit_amount_mad} MAD captured · Balance ${breakdown.balance_amount_mad} MAD due after session`,
+      });
       setStep("success");
     } catch (err: any) {
       console.error(err);
@@ -306,6 +315,18 @@ const BookingModal = ({
               <span className="text-muted-foreground">{t('booking.sessionFee')}</span>
               <span className="text-primary font-bold text-lg">{hourlyRate} MAD</span>
             </div>
+          )}
+          {hourlyRate && typeof depositPercentage === "number" && depositPercentage > 0 && depositPercentage < 100 && (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Deposit due now ({depositPercentage}%)</span>
+                <span className="text-foreground font-semibold">{Math.round(hourlyRate * depositPercentage / 100)} MAD</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Balance after session</span>
+                <span className="text-muted-foreground">{Math.round(hourlyRate * (1 - depositPercentage / 100))} MAD</span>
+              </div>
+            </>
           )}
         </div>
       </div>
