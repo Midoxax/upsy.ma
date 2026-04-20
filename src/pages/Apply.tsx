@@ -5,14 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 
-const formSchema = z.object({
-  full_name: z.string().min(2).max(100),
-  email: z.string().email().max(255),
-  phone: z.string().optional(),
-  qualifications: z.string().max(1000).optional(),
-  accreditation_number: z.string().max(100).optional(),
-});
-
 const Apply = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
