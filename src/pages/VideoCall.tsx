@@ -1,13 +1,39 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert } from "lucide-react";
+import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff } from "lucide-react";
+import { toast } from "sonner";
+
+declare global {
+  interface Window {
+    JitsiMeetExternalAPI?: any;
+  }
+}
 
 // Allow joining the room from T-10min until T+duration+5min.
 const JOIN_EARLY_MS = 10 * 60 * 1000;
 const JOIN_LATE_BUFFER_MS = 5 * 60 * 1000;
+const JITSI_DOMAIN = "meet.jit.si";
+const JITSI_SCRIPT_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
+
+const loadJitsiScript = (): Promise<void> =>
+  new Promise((resolve, reject) => {
+    if (window.JitsiMeetExternalAPI) return resolve();
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${JITSI_SCRIPT_SRC}"]`);
+    if (existing) {
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", () => reject(new Error("Failed to load Jitsi")));
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = JITSI_SCRIPT_SRC;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error("Failed to load Jitsi"));
+    document.body.appendChild(s);
+  });
 
 const VideoCall = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
