@@ -1415,6 +1415,93 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_pricing_config: {
+        Row: {
+          commission_rate: number
+          created_at: string
+          currency: string
+          deposit_percentage: number
+          id: string
+          is_active: boolean
+          max_session_price_mad: number
+          min_session_price_mad: number
+          notes: string | null
+          updated_at: string
+          updated_by: string | null
+          vat_rate: number
+        }
+        Insert: {
+          commission_rate?: number
+          created_at?: string
+          currency?: string
+          deposit_percentage?: number
+          id?: string
+          is_active?: boolean
+          max_session_price_mad?: number
+          min_session_price_mad?: number
+          notes?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vat_rate?: number
+        }
+        Update: {
+          commission_rate?: number
+          created_at?: string
+          currency?: string
+          deposit_percentage?: number
+          id?: string
+          is_active?: boolean
+          max_session_price_mad?: number
+          min_session_price_mad?: number
+          notes?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vat_rate?: number
+        }
+        Relationships: []
+      }
+      platform_pricing_history: {
+        Row: {
+          change_reason: string | null
+          changed_at: string
+          changed_by: string | null
+          commission_rate: number
+          config_id: string
+          currency: string
+          deposit_percentage: number
+          id: string
+          max_session_price_mad: number
+          min_session_price_mad: number
+          vat_rate: number
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_at?: string
+          changed_by?: string | null
+          commission_rate: number
+          config_id: string
+          currency: string
+          deposit_percentage: number
+          id?: string
+          max_session_price_mad: number
+          min_session_price_mad: number
+          vat_rate: number
+        }
+        Update: {
+          change_reason?: string | null
+          changed_at?: string
+          changed_by?: string | null
+          commission_rate?: number
+          config_id?: string
+          currency?: string
+          deposit_percentage?: number
+          id?: string
+          max_session_price_mad?: number
+          min_session_price_mad?: number
+          vat_rate?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
