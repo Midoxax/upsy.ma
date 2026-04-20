@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      accreditation_decisions: {
+        Row: {
+          application_id: string
+          created_at: string
+          decided_by: string | null
+          decision: string
+          id: string
+          level_assigned: string | null
+          metadata: Json | null
+          reason: string | null
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          decided_by?: string | null
+          decision: string
+          id?: string
+          level_assigned?: string | null
+          metadata?: Json | null
+          reason?: string | null
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          decided_by?: string | null
+          decision?: string
+          id?: string
+          level_assigned?: string | null
+          metadata?: Json | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accreditation_decisions_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_chat_history: {
         Row: {
           content: string
@@ -1584,53 +1625,149 @@ export type Database = {
         Row: {
           accreditation_level: string
           accreditation_number: string | null
+          auto_check_flags: Json | null
+          auto_check_status: string | null
+          auto_checked_at: string | null
+          bio_long: string | null
+          bio_short: string | null
+          city: string | null
+          country: string | null
           created_at: string | null
+          date_of_birth: string | null
+          desired_hourly_rate_mad: number | null
+          doc_auto_entrepreneur_url: string | null
+          doc_cin_url: string | null
+          doc_cv_url: string | null
+          doc_diploma_url: string | null
+          doc_insurance_url: string | null
+          doc_license_morocco_url: string | null
+          doc_order_registration_url: string | null
+          doc_rib_url: string | null
+          doc_specialty_certs_urls: string[] | null
           document_urls: string[] | null
           email: string
           full_name: string
+          gender: string | null
           id: string
+          intro_video_url: string | null
+          languages: string[] | null
           notes: string | null
+          offers_in_person: boolean | null
+          offers_online: boolean | null
           phone: string | null
+          photo_url: string | null
+          populations_served: string[] | null
           qualifications: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          revision_notes: string | null
+          revision_requested_at: string | null
+          specialties_requested: string[] | null
           status: string
           submitted_at: string | null
+          suggested_level: string | null
+          therapy_approaches_requested: string[] | null
           updated_at: string | null
+          user_id: string | null
+          years_experience: number | null
         }
         Insert: {
           accreditation_level?: string
           accreditation_number?: string | null
+          auto_check_flags?: Json | null
+          auto_check_status?: string | null
+          auto_checked_at?: string | null
+          bio_long?: string | null
+          bio_short?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
+          desired_hourly_rate_mad?: number | null
+          doc_auto_entrepreneur_url?: string | null
+          doc_cin_url?: string | null
+          doc_cv_url?: string | null
+          doc_diploma_url?: string | null
+          doc_insurance_url?: string | null
+          doc_license_morocco_url?: string | null
+          doc_order_registration_url?: string | null
+          doc_rib_url?: string | null
+          doc_specialty_certs_urls?: string[] | null
           document_urls?: string[] | null
           email: string
           full_name: string
+          gender?: string | null
           id?: string
+          intro_video_url?: string | null
+          languages?: string[] | null
           notes?: string | null
+          offers_in_person?: boolean | null
+          offers_online?: boolean | null
           phone?: string | null
+          photo_url?: string | null
+          populations_served?: string[] | null
           qualifications?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          revision_notes?: string | null
+          revision_requested_at?: string | null
+          specialties_requested?: string[] | null
           status?: string
           submitted_at?: string | null
+          suggested_level?: string | null
+          therapy_approaches_requested?: string[] | null
           updated_at?: string | null
+          user_id?: string | null
+          years_experience?: number | null
         }
         Update: {
           accreditation_level?: string
           accreditation_number?: string | null
+          auto_check_flags?: Json | null
+          auto_check_status?: string | null
+          auto_checked_at?: string | null
+          bio_long?: string | null
+          bio_short?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
+          desired_hourly_rate_mad?: number | null
+          doc_auto_entrepreneur_url?: string | null
+          doc_cin_url?: string | null
+          doc_cv_url?: string | null
+          doc_diploma_url?: string | null
+          doc_insurance_url?: string | null
+          doc_license_morocco_url?: string | null
+          doc_order_registration_url?: string | null
+          doc_rib_url?: string | null
+          doc_specialty_certs_urls?: string[] | null
           document_urls?: string[] | null
           email?: string
           full_name?: string
+          gender?: string | null
           id?: string
+          intro_video_url?: string | null
+          languages?: string[] | null
           notes?: string | null
+          offers_in_person?: boolean | null
+          offers_online?: boolean | null
           phone?: string | null
+          photo_url?: string | null
+          populations_served?: string[] | null
           qualifications?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          revision_notes?: string | null
+          revision_requested_at?: string | null
+          specialties_requested?: string[] | null
           status?: string
           submitted_at?: string | null
+          suggested_level?: string | null
+          therapy_approaches_requested?: string[] | null
           updated_at?: string | null
+          user_id?: string | null
+          years_experience?: number | null
         }
         Relationships: []
       }
