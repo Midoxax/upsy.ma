@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation, Outlet } from "react-router-
 import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import PageTransition from "@/components/PageTransition";
+import ScrollToTop from "@/components/ScrollToTop";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
@@ -175,6 +176,7 @@ const App = () => (
               <ErrorBoundary>
                 <div className="min-h-screen flex flex-col bg-background">
                   <Header />
+                  <ScrollToTop />
                   <BreadcrumbWrapper />
                   <AnimatedRoutes />
                   <Footer />
