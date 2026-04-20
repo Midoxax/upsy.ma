@@ -535,6 +535,7 @@ const AdminDashboard = () => {
               { value: "bookings", label: "Bookings", icon: Calendar },
               { value: "users", label: "Users", icon: Shield },
               { value: "accreditation", label: "Accreditation", icon: Award },
+              { value: "pricing", label: "Pricing", icon: DollarSign },
               { value: "translations", label: "Translations", icon: Globe },
             ].map(({ value, label, icon: Icon }) => (
               <TabsTrigger key={value} value={value} className="gap-1.5 text-xs">
@@ -549,6 +550,7 @@ const AdminDashboard = () => {
           <TabsContent value="bookings"><BookingsTab /></TabsContent>
           <TabsContent value="users"><UsersTab /></TabsContent>
           <TabsContent value="accreditation"><AccreditationManager /></TabsContent>
+          <TabsContent value="pricing"><PricingControl /></TabsContent>
           <TabsContent value="translations"><TranslationManager /></TabsContent>
         </Tabs>
       </main>
