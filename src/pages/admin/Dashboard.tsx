@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import AccreditationManager from "@/components/admin/AccreditationManager";
 import TranslationManager from "@/components/admin/TranslationManager";
+import PricingControl from "@/components/admin/PricingControl";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
 
