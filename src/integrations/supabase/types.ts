@@ -1249,6 +1249,95 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_applications: {
+        Row: {
+          approved_org_id: string | null
+          city: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          country: string | null
+          created_at: string
+          desired_seats: number | null
+          ice: string | null
+          id: string
+          if_number: string | null
+          industry: string | null
+          message: string | null
+          organization_name: string
+          rc_number: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          size_range: string | null
+          status: string
+          updated_at: string
+          use_case: string | null
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          approved_org_id?: string | null
+          city?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          country?: string | null
+          created_at?: string
+          desired_seats?: number | null
+          ice?: string | null
+          id?: string
+          if_number?: string | null
+          industry?: string | null
+          message?: string | null
+          organization_name: string
+          rc_number?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_range?: string | null
+          status?: string
+          updated_at?: string
+          use_case?: string | null
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          approved_org_id?: string | null
+          city?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          country?: string | null
+          created_at?: string
+          desired_seats?: number | null
+          ice?: string | null
+          id?: string
+          if_number?: string | null
+          industry?: string | null
+          message?: string | null
+          organization_name?: string
+          rc_number?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_range?: string | null
+          status?: string
+          updated_at?: string
+          use_case?: string | null
+          user_id?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_applications_approved_org_id_fkey"
+            columns: ["approved_org_id"]
+            isOneToOne: false
+            referencedRelation: "organization_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_diagnostics: {
         Row: {
           completed_at: string | null

@@ -9,7 +9,7 @@ import {
   Clock, AlertCircle, Search, ChevronDown, MoreVertical,
   UserCheck, UserX, Eye, Zap, Globe, BookOpen, Award, BarChart3,
   ArrowUpRight, ArrowDownRight, Loader2, Bell, Settings, Database,
-  Shield, MessageSquare, RefreshCw,
+  Shield, MessageSquare, RefreshCw, Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ import AccreditationManager from "@/components/admin/AccreditationManager";
 import TranslationManager from "@/components/admin/TranslationManager";
 import PricingControl from "@/components/admin/PricingControl";
 import TransactionsTab from "@/components/admin/TransactionsTab";
+import OrgApplicationsManager from "@/components/admin/OrgApplicationsManager";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
 
@@ -536,6 +537,7 @@ const AdminDashboard = () => {
               { value: "bookings", label: "Bookings", icon: Calendar },
               { value: "users", label: "Users", icon: Shield },
               { value: "accreditation", label: "Accreditation", icon: Award },
+              { value: "org-applications", label: "Org. Apps", icon: Building2 as any },
               { value: "pricing", label: "Pricing", icon: DollarSign },
             { value: "transactions", label: "Transactions", icon: Database },
               { value: "translations", label: "Translations", icon: Globe },
@@ -552,6 +554,7 @@ const AdminDashboard = () => {
           <TabsContent value="bookings"><BookingsTab /></TabsContent>
           <TabsContent value="users"><UsersTab /></TabsContent>
           <TabsContent value="accreditation"><AccreditationManager /></TabsContent>
+          <TabsContent value="org-applications"><OrgApplicationsManager /></TabsContent>
           <TabsContent value="pricing"><PricingControl /></TabsContent>
           <TabsContent value="transactions"><TransactionsTab /></TabsContent>
           <TabsContent value="translations"><TranslationManager /></TabsContent>
