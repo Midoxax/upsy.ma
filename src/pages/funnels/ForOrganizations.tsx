@@ -19,8 +19,8 @@ export default function ForOrganizations() {
             Anonymized wellbeing analytics, certified clinical care, and CNDP-compliant reporting.
           </p>
           <div className="flex gap-3 justify-center">
-            <Button asChild size="lg"><Link to="/services/consulting-for-organizations">Request a proposal</Link></Button>
-            <Button asChild size="lg" variant="outline"><Link to="/dashboard/organization">Org dashboard <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
+            <Button asChild size="lg"><Link to="/apply/organization">Apply as organization</Link></Button>
+            <Button asChild size="lg" variant="outline"><Link to="/services/consulting-for-organizations">Request a proposal <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
           </div>
         </section>
         <section className="container mx-auto px-4 py-16 grid md:grid-cols-3 gap-6">
