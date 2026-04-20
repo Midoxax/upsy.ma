@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { usePsychologistProfile, useUpdateProfile } from "@/hooks/usePsychologistDashboard";
-import { Loader2, Save, DollarSign } from "lucide-react";
+import { Loader2, Save, DollarSign, Percent } from "lucide-react";
 
 export const PricingTab = () => {
   const { toast } = useToast();
@@ -13,12 +16,26 @@ export const PricingTab = () => {
   const updateProfile = useUpdateProfile();
 
   const [hourlyRate, setHourlyRate] = useState("");
+  const [depositPct, setDepositPct] = useState<number>(50);
 
-  // Sync with profile data
+  const { data: pricing } = useQuery({
+    queryKey: ["platform-pricing-active"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("platform_pricing_config")
+        .select("min_session_price_mad, max_session_price_mad, commission_rate, vat_rate, deposit_percentage")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
   useEffect(() => {
-    if (profile?.hourly_rate_mad) {
-      setHourlyRate(profile.hourly_rate_mad.toString());
-    }
+    if (profile?.hourly_rate_mad) setHourlyRate(profile.hourly_rate_mad.toString());
+    if (typeof (profile as any)?.deposit_percentage === "number") setDepositPct((profile as any).deposit_percentage);
   }, [profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,13 +46,15 @@ export const PricingTab = () => {
       if (isNaN(rate) || rate < 0) {
         throw new Error("Please enter a valid hourly rate");
       }
+      if (pricing) {
+        if (rate < Number(pricing.min_session_price_mad) || rate > Number(pricing.max_session_price_mad)) {
+          throw new Error(`Rate must be between ${pricing.min_session_price_mad} and ${pricing.max_session_price_mad} MAD`);
+        }
+      }
 
-      await updateProfile.mutateAsync({ hourly_rate_mad: rate });
+      await updateProfile.mutateAsync({ hourly_rate_mad: rate, deposit_percentage: depositPct });
 
-      toast({
-        title: "Pricing Updated",
-        description: "Your session fees have been saved.",
-      });
+      toast({ title: "Pricing Updated", description: "Your session fees have been saved." });
     } catch (error) {
       toast({
         title: "Update Failed",
