@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ApprovalModal from "./ApprovalModal";
 import RejectionModal from "./RejectionModal";
+import { AccreditationDocsPanel } from "./AccreditationDocsPanel";
 
 type AccreditationLevel = "provisional" | "verified" | "accredited";
 
@@ -343,25 +344,7 @@ const AccreditationManager = () => {
                 </div>
               </div>
 
-              {((detailApp as any).document_urls || []).length > 0 && (
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Uploaded Documents</p>
-                  <div className="space-y-1">
-                    {((detailApp as any).document_urls as string[]).map((url, i) => (
-                      <a
-                        key={i}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm text-primary hover:underline"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                        Document {i + 1}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <AccreditationDocsPanel application={detailApp} />
             </div>
           )}
           <DialogFooter>
