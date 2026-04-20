@@ -102,6 +102,105 @@ const VideoCall = () => {
     loadSession();
   }, [user, sessionId]);
 
+  // Log a session event (best-effort).
+  const logEvent = useCallback(
+    async (eventType: string, metadata?: Record<string, unknown>) => {
+      if (!user || !sessionId) return;
+      try {
+        await supabase.from("session_events").insert({
+          booking_id: sessionData?.booking_id ?? null,
+          session_id: sessionId,
+          user_id: user.id,
+          event_type: eventType,
+          metadata: metadata ?? null,
+        });
+      } catch (e) {
+        // non-blocking
+        console.warn("session_events insert failed", e);
+      }
+    },
+    [user, sessionId, sessionData],
+  );
+
+  // Mount Jitsi External API once we have a roomId
+  useEffect(() => {
+    if (!roomId || !user || !containerRef.current) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        await loadJitsiScript();
+        if (cancelled || !containerRef.current || !window.JitsiMeetExternalAPI) return;
+
+        const displayName = user.user_metadata?.full_name || user.email || "Participant";
+        const api = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, {
+          roomName: roomId,
+          parentNode: containerRef.current,
+          width: "100%",
+          height: "100%",
+          userInfo: { displayName, email: user.email ?? undefined },
+          configOverwrite: {
+            prejoinPageEnabled: true,
+            startWithAudioMuted: true,
+            startWithVideoMuted: false,
+            disableDeepLinking: true,
+            enableClosePage: false,
+            requireDisplayName: true,
+          },
+          interfaceConfigOverwrite: {
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_WATERMARK_FOR_GUESTS: false,
+            DEFAULT_BACKGROUND: "#0F0F0F",
+            TOOLBAR_BUTTONS: [
+              "microphone", "camera", "desktop", "fullscreen",
+              "fodeviceselection", "hangup", "chat", "raisehand",
+              "videoquality", "tileview", "settings",
+            ],
+          },
+        });
+        apiRef.current = api;
+
+        api.addListener("videoConferenceJoined", () => {
+          setConnectionState("connected");
+          setEmbedReady(true);
+          logEvent("joined");
+        });
+        api.addListener("videoConferenceLeft", () => {
+          setConnectionState("disconnected");
+          logEvent("left");
+          toast("Session ended");
+          setTimeout(() => navigate("/dashboard"), 800);
+        });
+        api.addListener("readyToClose", () => {
+          navigate("/dashboard");
+        });
+      } catch (e) {
+        console.error(e);
+        setError("Could not load the meeting room. Please check your connection and retry.");
+        logEvent("connection_failed", { reason: (e as Error).message });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      try {
+        apiRef.current?.dispose();
+      } catch {
+        /* ignore */
+      }
+      apiRef.current = null;
+    };
+  }, [roomId, user, navigate, logEvent]);
+
+  const handleLeave = () => {
+    try {
+      apiRef.current?.executeCommand("hangup");
+    } catch {
+      /* ignore */
+    }
+    navigate("/dashboard");
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
