@@ -46,6 +46,7 @@ interface BookingModalProps {
   offersOnline?: boolean;
   offersInPerson?: boolean;
   city?: string | null;
+  depositPercentage?: number | null;
 }
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -61,6 +62,7 @@ const BookingModal = ({
   offersOnline,
   offersInPerson,
   city,
+  depositPercentage,
 }: BookingModalProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
