@@ -1456,6 +1456,129 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_payouts: {
+        Row: {
+          commission_mad: number
+          created_at: string
+          gross_mad: number
+          id: string
+          net_mad: number
+          notes: string | null
+          paid_at: string | null
+          payout_method: string | null
+          payout_reference: string | null
+          period_end: string
+          period_start: string
+          psychologist_id: string
+          status: string
+          transaction_count: number
+          updated_at: string
+          vat_mad: number
+        }
+        Insert: {
+          commission_mad?: number
+          created_at?: string
+          gross_mad?: number
+          id?: string
+          net_mad?: number
+          notes?: string | null
+          paid_at?: string | null
+          payout_method?: string | null
+          payout_reference?: string | null
+          period_end: string
+          period_start: string
+          psychologist_id: string
+          status?: string
+          transaction_count?: number
+          updated_at?: string
+          vat_mad?: number
+        }
+        Update: {
+          commission_mad?: number
+          created_at?: string
+          gross_mad?: number
+          id?: string
+          net_mad?: number
+          notes?: string | null
+          paid_at?: string | null
+          payout_method?: string | null
+          payout_reference?: string | null
+          period_end?: string
+          period_start?: string
+          psychologist_id?: string
+          status?: string
+          transaction_count?: number
+          updated_at?: string
+          vat_mad?: number
+        }
+        Relationships: []
+      }
+      payment_transactions: {
+        Row: {
+          amount_mad: number
+          booking_id: string
+          commission_mad: number
+          created_at: string
+          currency: string
+          failure_reason: string | null
+          id: string
+          net_to_psychologist_mad: number
+          paid_at: string | null
+          patient_id: string
+          provider: string
+          provider_metadata: Json | null
+          provider_payment_id: string | null
+          psychologist_id: string
+          refunded_at: string | null
+          status: string
+          transaction_type: string
+          updated_at: string
+          vat_mad: number
+        }
+        Insert: {
+          amount_mad: number
+          booking_id: string
+          commission_mad?: number
+          created_at?: string
+          currency?: string
+          failure_reason?: string | null
+          id?: string
+          net_to_psychologist_mad?: number
+          paid_at?: string | null
+          patient_id: string
+          provider?: string
+          provider_metadata?: Json | null
+          provider_payment_id?: string | null
+          psychologist_id: string
+          refunded_at?: string | null
+          status?: string
+          transaction_type: string
+          updated_at?: string
+          vat_mad?: number
+        }
+        Update: {
+          amount_mad?: number
+          booking_id?: string
+          commission_mad?: number
+          created_at?: string
+          currency?: string
+          failure_reason?: string | null
+          id?: string
+          net_to_psychologist_mad?: number
+          paid_at?: string | null
+          patient_id?: string
+          provider?: string
+          provider_metadata?: Json | null
+          provider_payment_id?: string | null
+          psychologist_id?: string
+          refunded_at?: string | null
+          status?: string
+          transaction_type?: string
+          updated_at?: string
+          vat_mad?: number
+        }
+        Relationships: []
+      }
       platform_pricing_config: {
         Row: {
           commission_rate: number
@@ -1832,6 +1955,7 @@ export type Database = {
           calendly_url: string | null
           city: string | null
           created_at: string | null
+          deposit_percentage: number
           full_name: string
           gender: string | null
           hourly_rate_mad: number | null
@@ -1850,6 +1974,7 @@ export type Database = {
           calendly_url?: string | null
           city?: string | null
           created_at?: string | null
+          deposit_percentage?: number
           full_name: string
           gender?: string | null
           hourly_rate_mad?: number | null
@@ -1868,6 +1993,7 @@ export type Database = {
           calendly_url?: string | null
           city?: string | null
           created_at?: string | null
+          deposit_percentage?: number
           full_name?: string
           gender?: string | null
           hourly_rate_mad?: number | null
