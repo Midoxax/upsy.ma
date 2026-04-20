@@ -239,10 +239,6 @@ const VideoCall = () => {
     );
   }
 
-  // Build Jitsi Meet URL with config
-  const displayName = encodeURIComponent(user.user_metadata?.full_name || user.email || "Participant");
-  const jitsiUrl = `https://meet.jit.si/${roomId}#config.prejoinPageEnabled=true&config.startWithAudioMuted=true&config.startWithVideoMuted=false&userInfo.displayName="${displayName}"`;
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Bar */}
@@ -256,26 +252,37 @@ const VideoCall = () => {
             <span className="text-sm font-medium text-foreground">
               Session with {sessionData?.psychologist?.full_name || "Psychologist"}
             </span>
+            <span className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
+              {connectionState === "connected" ? (
+                <><Wifi className="h-3 w-3 text-primary" /> Connected</>
+              ) : connectionState === "connecting" ? (
+                <><Loader2 className="h-3 w-3 animate-spin" /> Connecting…</>
+              ) : (
+                <><WifiOff className="h-3 w-3 text-destructive" /> Disconnected</>
+              )}
+            </span>
           </div>
         </div>
         <Button
           variant="destructive"
           size="sm"
-          onClick={() => navigate("/dashboard")}
+          onClick={handleLeave}
         >
           <PhoneOff className="h-4 w-4 mr-1" /> Leave
         </Button>
       </div>
 
-      {/* Jitsi iframe */}
+      {/* Jitsi External API mount */}
       <div className="flex-1 relative bg-black">
-        <iframe
-          ref={iframeRef}
-          src={jitsiUrl}
-          className="w-full h-full absolute inset-0"
-          allow="camera; microphone; fullscreen; display-capture; autoplay; clipboard-write"
-          style={{ border: "none" }}
-        />
+        {!embedReady && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/80 text-white">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <p className="text-sm">Preparing your secure room…</p>
+            </div>
+          </div>
+        )}
+        <div ref={containerRef} className="w-full h-full absolute inset-0" />
       </div>
     </div>
   );
