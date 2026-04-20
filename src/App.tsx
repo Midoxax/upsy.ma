@@ -37,6 +37,7 @@ import PsychologistProfile from "./pages/PsychologistProfile";
 import Auth from "./pages/Auth";
 import MySpace from "./pages/MySpace";
 import Apply from "./pages/Apply";
+import ApplyWizard from "./pages/apply/ApplyWizard";
 import GetMatched from "./pages/GetMatched";
 import PatientDashboard from "./pages/PatientDashboard";
 import AthleteHub from "./pages/AthleteHub";
@@ -96,6 +97,7 @@ const AppRoutes = () => (
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
+    <Route path="apply/wizard" element={<ProtectedRoute><PageTransition><ApplyWizard /></PageTransition></ProtectedRoute>} />
     <Route path="reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
     <Route path="auth/mfa-setup" element={<ProtectedRoute><PageTransition><MfaSetup /></PageTransition></ProtectedRoute>} />
     <Route path="get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
