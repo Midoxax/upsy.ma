@@ -2668,6 +2668,14 @@ export type Database = {
         Args: { _org_id: string; _survey_id?: string }
         Returns: Json
       }
+      resolve_referral_code: {
+        Args: { _code: string }
+        Returns: {
+          code: string
+          referrer_id: string
+          status: string
+        }[]
+      }
       search_psychologists:
         | {
             Args: {
