@@ -39,11 +39,14 @@ const VideoCall = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const apiRef = useRef<any>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
+  const [embedReady, setEmbedReady] = useState(false);
+  const [connectionState, setConnectionState] = useState<"connecting" | "connected" | "disconnected">("connecting");
 
   useEffect(() => {
     if (!user || !sessionId) return;
