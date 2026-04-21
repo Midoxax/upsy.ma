@@ -261,6 +261,7 @@ export const SessionsTab = () => {
         clientId={anamnesisFor.clientId}
         clientName={anamnesisFor.name}
         psychologistId={user.id}
+        isTherapistView
       />
     )}
     </>
