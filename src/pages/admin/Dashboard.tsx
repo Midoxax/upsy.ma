@@ -271,7 +271,7 @@ const PsychologistsTab = () => {
         </div>
         <ExportCsvButton
           filename="psychologists.csv"
-          rows={() => filtered.map((p: any) => ({
+          rows={filtered.map((p: any) => ({
             id: p.id, name: p.full_name, city: p.city, rate: p.hourly_rate_mad,
             published: p.is_published, accredited: p.is_accredited, level: p.accreditation_level,
           }))}
