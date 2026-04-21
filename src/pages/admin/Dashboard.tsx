@@ -233,6 +233,7 @@ const PSY_STATUS_STYLES: Record<string, string> = {
 
 const PsychologistsTab = () => {
   const [search, setSearch] = useState("");
+  const [editId, setEditId] = useState<string | null>(null);
   const { data: psychologists = [], isLoading } = useAllPsychologists();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -268,6 +269,13 @@ const PsychologistsTab = () => {
             className="pl-9 bg-surface"
           />
         </div>
+        <ExportCsvButton
+          filename="psychologists.csv"
+          rows={() => filtered.map((p: any) => ({
+            id: p.id, name: p.full_name, city: p.city, rate: p.hourly_rate_mad,
+            published: p.is_published, accredited: p.is_accredited, level: p.accreditation_level,
+          }))}
+        />
       </div>
 
       {isLoading ? (
