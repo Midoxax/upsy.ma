@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useActiveView } from "@/hooks/useActiveView";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 
@@ -46,7 +47,8 @@ const CalmLoadingState = () => (
 
 const RoleRouter = () => {
   const { user, loading: authLoading } = useAuth();
-  const { primaryRole, loading: roleLoading } = useUserRole();
+  const { primaryRole, loading: roleLoading, isAdmin, roles } = useUserRole();
+  const { activeView } = useActiveView();
   const location = useLocation();
 
   useEffect(() => {
@@ -62,6 +64,17 @@ const RoleRouter = () => {
 
   if (!user) {
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
+  }
+
+  // View-as override (admins or multi-role users only)
+  const canOverride = isAdmin || roles.length >= 2;
+  if (canOverride && activeView !== "auto") {
+    switch (activeView) {
+      case "admin": return <Navigate to="/admin" replace />;
+      case "specialist": return <Navigate to="/dashboard/specialist" replace />;
+      case "client": return <Navigate to="/dashboard/client" replace />;
+      case "organization": return <Navigate to="/dashboard/organization" replace />;
+    }
   }
 
   switch (primaryRole) {
