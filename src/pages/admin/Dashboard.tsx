@@ -599,6 +599,8 @@ const AdminDashboard = () => {
               { value: "pricing", label: "Pricing", icon: DollarSign },
             { value: "transactions", label: "Transactions", icon: Database },
               { value: "translations", label: "Translations", icon: Globe },
+              { value: "learning", label: "Learning Hub", icon: BookOpen },
+              { value: "live-views", label: "Live views", icon: Eye },
             ].map(({ value, label, icon: Icon }) => (
               <TabsTrigger key={value} value={value} className="gap-1.5 text-xs">
                 <Icon className="h-3.5 w-3.5" />
@@ -621,6 +623,8 @@ const AdminDashboard = () => {
               <TranslationManager />
             </div>
           </TabsContent>
+          <TabsContent value="learning"><LearningHubManager /></TabsContent>
+          <TabsContent value="live-views"><RolePreviewFrame /></TabsContent>
         </Tabs>
       </main>
       <CommandPalette onTabChange={setActiveTab} />
