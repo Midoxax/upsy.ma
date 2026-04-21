@@ -235,10 +235,10 @@ export const AvailabilityTab = () => {
           ) : view === "template" ? (
             <>
               {slots.length === 0 && (
-                <div className="mb-4 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
-                  <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                <div className="mb-4 flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                  <AlertCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div className="text-sm">
-                    <p className="font-medium text-amber-700 dark:text-amber-400">
+                    <p className="font-medium text-foreground">
                       Set your weekly hours first
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
