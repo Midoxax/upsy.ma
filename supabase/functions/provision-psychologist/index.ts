@@ -2,313 +2,315 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { buildApprovalEmail } from "../_shared/email-templates/accreditation/approval.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Input validation schema
 const ProvisionRequestSchema = z.object({
   applicationId: z.string().uuid("Invalid application ID format"),
-  adminUserId: z.string().uuid("Invalid admin user ID format")
+  adminUserId: z.string().uuid("Invalid admin user ID format"),
 });
 
-interface ProvisionRequest {
-  applicationId: string;
-  adminUserId: string;
+type StepName =
+  | "auth_user"
+  | "role_upsert"
+  | "profile_insert"
+  | "subscription_insert"
+  | "application_update"
+  | "email_send";
+
+interface StepRecord {
+  step: StepName;
+  ok: boolean;
+  ms: number;
+  skipped?: boolean;
+  error?: string;
 }
 
-// Error sanitization utility
-function sanitizeError(error: any): string {
-  const errorMap: Record<string, string> = {
-    'duplicate key': 'A record with this information already exists',
-    'email already exists': 'Email address is already registered',
-    'foreign key': 'Referenced resource not found',
-    'not null': 'Required field is missing',
-    'invalid input': 'Invalid data provided',
-    'connection': 'Service temporarily unavailable',
-    'unauthorized': 'Authentication required',
-  };
-  
-  const errorMsg = error.message?.toLowerCase() || '';
-  for (const [key, message] of Object.entries(errorMap)) {
-    if (errorMsg.includes(key)) {
-      return message;
-    }
+function logEvent(payload: Record<string, unknown>) {
+  console.log(JSON.stringify({ event: "provision", ...payload }));
+}
+
+async function timed<T>(step: StepName, fn: () => Promise<T>, steps: StepRecord[]): Promise<T> {
+  const t0 = Date.now();
+  try {
+    const r = await fn();
+    steps.push({ step, ok: true, ms: Date.now() - t0 });
+    return r;
+  } catch (e: any) {
+    steps.push({ step, ok: false, ms: Date.now() - t0, error: e?.message || String(e) });
+    throw e;
   }
-  
-  return 'Failed to provision psychologist account';
+}
+
+function errorCodeForStep(step: StepName | null): string {
+  switch (step) {
+    case "auth_user": return "AUTH_CREATE_FAILED";
+    case "role_upsert": return "ROLE_UPSERT_FAILED";
+    case "profile_insert": return "PROFILE_INSERT_FAILED";
+    case "subscription_insert": return "SUBSCRIPTION_INSERT_FAILED";
+    case "application_update": return "APP_UPDATE_FAILED";
+    case "email_send": return "EMAIL_SEND_FAILED";
+    default: return "UNKNOWN";
+  }
 }
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const startedAt = Date.now();
+  const steps: StepRecord[] = [];
+  let applicationId: string | null = null;
+  let adminUserId: string | null = null;
+  let userId: string | null = null;
+  let isNewUser = false;
+  let alreadyProvisioned = false;
+  let partial = false;
+  let lastStep: StepName | null = null;
+  let attemptId: string | null = null;
+
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+  );
+
+  async function recordAttempt(status: "success" | "failure" | "partial", errorCode?: string, errorMessage?: string) {
+    try {
+      const { data, error } = await supabase
+        .from("provisioning_attempts")
+        .insert({
+          application_id: applicationId,
+          admin_user_id: adminUserId,
+          user_id: userId,
+          status,
+          reused_existing_user: !isNewUser && !!userId,
+          already_provisioned: alreadyProvisioned,
+          error_code: errorCode || null,
+          error_message: errorMessage || null,
+          duration_ms: Date.now() - startedAt,
+          steps,
+        })
+        .select("id")
+        .single();
+      if (error) console.error("attempt insert failed", error);
+      attemptId = data?.id ?? null;
+    } catch (e) {
+      console.error("attempt insert exception", e);
+    }
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    const raw = await req.json();
+    const parsed = ProvisionRequestSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ success: false, errorCode: "VALIDATION", error: "Invalid request data", details: parsed.error.errors.map(e => e.message) }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    applicationId = parsed.data.applicationId;
+    adminUserId = parsed.data.adminUserId;
 
-    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    logEvent({ phase: "start", applicationId, adminUserId });
 
-    // Validate input
-    const rawBody = await req.json();
-    let validatedInput: ProvisionRequest;
-    
-    try {
-      validatedInput = ProvisionRequestSchema.parse(rawBody);
-    } catch (validationError) {
-      if (validationError instanceof z.ZodError) {
-        console.warn("Validation error:", validationError.errors);
-        return new Response(
-          JSON.stringify({ 
-            success: false,
-            error: 'Invalid request data',
-            details: validationError.errors.map(e => e.message)
-          }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      throw validationError;
+    // Verify admin
+    const { data: adminRole, error: roleErr } = await supabase
+      .from("user_roles").select("role")
+      .eq("user_id", adminUserId).eq("role", "admin").maybeSingle();
+    if (roleErr || !adminRole) {
+      return new Response(
+        JSON.stringify({ success: false, errorCode: "UNAUTHORIZED", error: "Admin role required" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
-    const { applicationId, adminUserId } = validatedInput;
+    // Fetch application
+    const { data: application, error: appErr } = await supabase
+      .from("psychologist_applications").select("*").eq("id", applicationId).single();
+    if (appErr || !application) throw new Error("Application not found");
 
-    console.log("Starting provisioning for application:", applicationId);
-
-    // 1. Verify admin role
-    const { data: adminRole, error: roleError } = await supabaseClient
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", adminUserId)
-      .eq("role", "admin")
-      .single();
-
-    if (roleError || !adminRole) {
-      throw new Error("Unauthorized: Admin role required");
-    }
-
-    // 2. Fetch application
-    const { data: application, error: appError } = await supabaseClient
-      .from("psychologist_applications")
-      .select("*")
-      .eq("id", applicationId)
-      .single();
-
-    if (appError || !application) {
-      throw new Error("Application not found");
-    }
-
-    if (application.status !== "pending") {
-      throw new Error(`Application already ${application.status}`);
-    }
-
-    // 3. Generate temporary password (only used if we create a new account)
     const tempPassword = crypto.randomUUID().substring(0, 16);
 
-    // 4. Create or reuse auth user
-    let userId: string | null = null;
-    let isNewUser = false;
-
-    const { data: createdUser, error: authError } = await supabaseClient.auth.admin.createUser({
-      email: application.email,
-      password: tempPassword,
-      email_confirm: true,
-      user_metadata: { full_name: application.full_name },
-    });
-
-    if (createdUser?.user) {
-      userId = createdUser.user.id;
-      isNewUser = true;
+    // ======== STEP 1: auth user ========
+    lastStep = "auth_user";
+    if (application.user_id) {
+      // already linked → reuse
+      userId = application.user_id;
+      isNewUser = false;
+      steps.push({ step: "auth_user", ok: true, ms: 0, skipped: true });
     } else {
-      const msg = authError?.message?.toLowerCase() || "";
-      const alreadyExists =
-        msg.includes("already been registered") ||
-        msg.includes("already exists") ||
-        (authError as any)?.code === "email_exists";
-
-      if (!alreadyExists) {
-        console.error("Auth user creation failed:", {
-          timestamp: new Date().toISOString(),
-          error: authError?.message,
+      await timed("auth_user", async () => {
+        const { data: created, error } = await supabase.auth.admin.createUser({
           email: application.email,
+          password: tempPassword,
+          email_confirm: true,
+          user_metadata: { full_name: application.full_name },
         });
-        throw new Error("Failed to create user account");
-      }
-
-      // Reuse linked account when the applicant already has one
-      if (application.user_id) {
-        userId = application.user_id;
-      }
-
-      // Fallback for self-approval / existing admin account with same email
-      if (!userId) {
-        const { data: adminUserData, error: adminUserError } = await supabaseClient.auth.admin.getUserById(adminUserId);
-        if (adminUserError) {
-          console.error("getUserById error:", adminUserError);
-          throw new Error("Failed to look up existing user");
+        if (created?.user) {
+          userId = created.user.id;
+          isNewUser = true;
+          return;
         }
+        const msg = error?.message?.toLowerCase() || "";
+        const exists = msg.includes("already") || (error as any)?.code === "email_exists";
+        if (!exists) throw new Error(error?.message || "auth create failed");
 
-        const adminEmail = adminUserData.user?.email?.toLowerCase();
-        if (adminEmail && adminEmail === application.email.toLowerCase()) {
+        // Self-approval fallback: admin email == applicant email
+        const { data: adminUserData } = await supabase.auth.admin.getUserById(adminUserId!);
+        if (adminUserData.user?.email?.toLowerCase() === application.email.toLowerCase()) {
           userId = adminUserId;
+          isNewUser = false;
+          return;
         }
-      }
-
-      if (!userId) throw new Error("Existing user lookup failed");
-      console.log("Reusing existing auth user:", userId);
+        throw new Error("Email already exists but no linked user_id; cannot resolve safely");
+      }, steps);
     }
 
-    console.log(isNewUser ? "Auth user created:" : "Auth user reused:", userId);
+    if (!userId) throw new Error("Failed to resolve user id");
 
-    try {
-      // 5. Assign psychologist role (idempotent)
-      const { error: roleInsertError } = await supabaseClient
-        .from("user_roles")
-        .upsert(
+    // Pre-flight: check what already exists
+    const [{ data: existingRole }, { data: existingProfile }, { data: existingSub }] = await Promise.all([
+      supabase.from("user_roles").select("user_id").eq("user_id", userId).eq("role", "psychologist").maybeSingle(),
+      supabase.from("psychologist_profiles").select("id").eq("id", userId).maybeSingle(),
+      supabase.from("subscriptions").select("id").eq("psychologist_id", userId).maybeSingle(),
+    ]);
+
+    const wasFullyProvisioned =
+      application.status === "approved" && existingRole && existingProfile && existingSub;
+    if (wasFullyProvisioned) {
+      alreadyProvisioned = true;
+      logEvent({ phase: "already_provisioned", applicationId, userId });
+      await recordAttempt("success");
+      return new Response(
+        JSON.stringify({ success: true, alreadyProvisioned: true, userId, attemptId, steps }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // ======== STEP 2: role ========
+    lastStep = "role_upsert";
+    if (existingRole) {
+      steps.push({ step: "role_upsert", ok: true, ms: 0, skipped: true });
+    } else {
+      await timed("role_upsert", async () => {
+        const { error } = await supabase.from("user_roles").upsert(
           { user_id: userId, role: "psychologist" },
-          { onConflict: "user_id,role", ignoreDuplicates: true }
+          { onConflict: "user_id,role", ignoreDuplicates: true },
         );
-      if (roleInsertError) {
-        console.error("Role assignment error:", roleInsertError);
-        throw roleInsertError;
-      }
+        if (error) throw error;
+      }, steps);
+    }
 
-      // 6. Create psychologist profile if missing
-      const { data: existingProfile } = await supabaseClient
-        .from("psychologist_profiles")
-        .select("id")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if (!existingProfile) {
-        const { error: profileError } = await supabaseClient
-          .from("psychologist_profiles")
-          .insert({
+    // ======== STEP 3: profile ========
+    lastStep = "profile_insert";
+    if (existingProfile) {
+      steps.push({ step: "profile_insert", ok: true, ms: 0, skipped: true });
+    } else {
+      try {
+        await timed("profile_insert", async () => {
+          const { error } = await supabase.from("psychologist_profiles").insert({
             id: userId,
             full_name: application.full_name,
             is_accredited: !!application.accreditation_number,
             is_published: false,
           });
-        if (profileError) {
-          console.error("Profile creation error:", profileError);
-          throw profileError;
+          if (error) throw error;
+        }, steps);
+      } catch (e) {
+        // Rollback: only delete auth user if WE created it this call
+        if (isNewUser && userId) {
+          await supabase.auth.admin.deleteUser(userId);
+          logEvent({ phase: "rollback_auth_user", userId });
         }
+        throw e;
       }
+    }
 
-      // 7. Create free subscription if missing
-      const { data: existingSub } = await supabaseClient
-        .from("subscriptions")
-        .select("id")
-        .eq("psychologist_id", userId)
-        .maybeSingle();
+    // ======== STEP 4: subscription ========
+    lastStep = "subscription_insert";
+    if (existingSub) {
+      steps.push({ step: "subscription_insert", ok: true, ms: 0, skipped: true });
+    } else {
+      await timed("subscription_insert", async () => {
+        const { error } = await supabase.from("subscriptions").insert({
+          psychologist_id: userId, plan_type: "free", status: "active",
+        });
+        if (error) throw error;
+      }, steps);
+    }
 
-      if (!existingSub) {
-        const { error: subError } = await supabaseClient
-          .from("subscriptions")
-          .insert({
-            psychologist_id: userId,
-            plan_type: "free",
-            status: "active",
-          });
-        if (subError) {
-          console.error("Subscription creation error:", subError);
-          throw subError;
-        }
-      }
-
-      // 8. Update application status
-      const { error: updateError } = await supabaseClient
-        .from("psychologist_applications")
-        .update({
+    // ======== STEP 5: application update ========
+    lastStep = "application_update";
+    if (application.status !== "approved") {
+      await timed("application_update", async () => {
+        const { error } = await supabase.from("psychologist_applications").update({
           status: "approved",
           reviewed_at: new Date().toISOString(),
           reviewed_by: adminUserId,
-        })
-        .eq("id", applicationId);
-
-      if (updateError) {
-        console.error("Application update error:", updateError);
-        throw updateError;
-      }
-
-      // 9. Send welcome email
-      const loginUrl = `${Deno.env.get("SUPABASE_URL")?.replace("https://", "https://")}/auth`;
-
-      const credentialsBlock = isNewUser
-        ? `<p>Your account is ready. Use these credentials to log in:</p>
-           <ul>
-             <li><strong>Email:</strong> ${application.email}</li>
-             <li><strong>Temporary Password:</strong> ${tempPassword}</li>
-           </ul>`
-        : `<p>Your existing account (${application.email}) has been upgraded with psychologist access. Use your current password to log in — or reset it from the login page.</p>`;
-
-      const { error: emailError } = await resend.emails.send({
-        from: "Psychologie <onboarding@resend.dev>",
-        to: [application.email],
-        subject: "Welcome to Psychologie - Your Account is Ready",
-        html: `
-          <h1>Welcome, ${application.full_name}!</h1>
-          <p>Congratulations! Your application has been approved.</p>
-          ${credentialsBlock}
-          <p><a href="${loginUrl}">Click here to log in</a></p>
-          <h3>Next Steps:</h3>
-          <ol>
-            <li>Complete your profile (bio, photo, specialties, languages)</li>
-            <li>Set your availability and Calendly booking link</li>
-            <li>Configure your hourly rate</li>
-            <li>Publish your profile to appear in the directory</li>
-          </ol>
-          <p>Welcome to the team!</p>
-        `,
-      });
-
-      if (emailError) {
-        console.error("Email sending error:", emailError);
-        // Don't throw - account is created, just log the error
-      }
-
-      console.log("Provisioning completed successfully for:", userId);
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: "Psychologist provisioned successfully",
-          userId,
-          reusedExistingUser: !isNewUser,
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    } catch (provisionError) {
-      // Only rollback the auth user if WE created it in this call
-      console.error("Provisioning error:", provisionError);
-      if (isNewUser && userId) {
-        await supabaseClient.auth.admin.deleteUser(userId);
-      }
-      throw provisionError;
+          user_id: userId,
+        }).eq("id", applicationId);
+        if (error) throw error;
+      }, steps);
+    } else {
+      steps.push({ step: "application_update", ok: true, ms: 0, skipped: true });
+      partial = true; // we recovered missing pieces on an already-approved app
     }
-  } catch (error: any) {
-    // Log full error details server-side for debugging
-    console.error("Error in provision-psychologist:", {
-      timestamp: new Date().toISOString(),
-      error: error.message,
-      stack: error.stack,
-      name: error.name
-    });
-    
-    // Return sanitized error to client
+
+    // ======== STEP 6: email ========
+    lastStep = "email_send";
+    try {
+      await timed("email_send", async () => {
+        const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+        const supaUrl = Deno.env.get("SUPABASE_URL") || "";
+        const loginUrl = supaUrl.replace(/^https:\/\/([^.]+)\.supabase\.co.*/i, "https://$1.lovable.app/auth") || "https://upsy.ma/auth";
+        const { subject, html } = buildApprovalEmail({
+          locale: application.preferred_locale,
+          fullName: application.full_name,
+          email: application.email,
+          loginUrl,
+          isNewUser,
+          tempPassword: isNewUser ? tempPassword : undefined,
+        });
+        const { error } = await resend.emails.send({
+          from: "U.Psy <onboarding@resend.dev>",
+          to: [application.email],
+          subject,
+          html,
+        });
+        if (error) throw error;
+      }, steps);
+    } catch (e: any) {
+      // email failure is non-fatal — record as partial
+      partial = true;
+      logEvent({ phase: "email_failed_nonfatal", applicationId, error: e?.message });
+    }
+
+    const finalStatus: "success" | "partial" = partial ? "partial" : "success";
+    await recordAttempt(finalStatus);
+    logEvent({ phase: "done", applicationId, userId, status: finalStatus, isNewUser, ms: Date.now() - startedAt });
+
     return new Response(
       JSON.stringify({
-        success: false,
-        error: sanitizeError(error),
+        success: true,
+        userId,
+        reusedExistingUser: !isNewUser,
+        partial,
+        attemptId,
+        steps,
       }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  } catch (e: any) {
+    const errorCode = errorCodeForStep(lastStep);
+    const errorMessage = e?.message || String(e);
+    logEvent({ phase: "failure", applicationId, lastStep, errorCode, errorMessage });
+    await recordAttempt("failure", errorCode, errorMessage);
+    return new Response(
+      JSON.stringify({ success: false, errorCode, error: errorMessage, attemptId, steps }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });

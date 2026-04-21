@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import ApprovalModal from "./ApprovalModal";
 import RejectionModal from "./RejectionModal";
 import { AccreditationDocsPanel } from "./AccreditationDocsPanel";
+import ProvisioningAuditTab from "./ProvisioningAuditTab";
 
 type AccreditationLevel = "provisional" | "verified" | "accredited";
 
@@ -345,6 +346,7 @@ const AccreditationManager = () => {
               </div>
 
               <AccreditationDocsPanel application={detailApp} />
+              <ProvisioningAuditTab applicationId={detailApp.id} />
             </div>
           )}
           <DialogFooter>
@@ -413,6 +415,7 @@ const AccreditationManager = () => {
             }}
             applicantEmail={selectedApp.email}
             applicantName={selectedApp.full_name}
+            applicationId={selectedApp.id}
           />
           <RejectionModal
             open={showRejection}

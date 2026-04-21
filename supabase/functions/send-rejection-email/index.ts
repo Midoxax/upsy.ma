@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { buildRejectionEmail } from "../_shared/email-templates/accreditation/rejection.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -142,19 +143,16 @@ serve(async (req) => {
     }
 
     // 4. Send rejection email (reason is already HTML-escaped)
+    const { subject, html } = buildRejectionEmail({
+      locale: (application as any).preferred_locale,
+      fullName: application.full_name,
+      reason,
+    });
     const { error: emailError } = await resend.emails.send({
-      from: "Psychologie <onboarding@resend.dev>",
+      from: "U.Psy <onboarding@resend.dev>",
       to: [application.email],
-      subject: "Update on Your Application - Psychologie",
-      html: `
-        <h1>Thank you for your interest, ${application.full_name}</h1>
-        <p>Thank you for applying to join Psychologie's network of professionals.</p>
-        <p>After careful review, we regret to inform you that we are unable to approve your application at this time.</p>
-        ${reason ? `<p><strong>Feedback:</strong> ${reason}</p>` : ""}
-        <p>We encourage you to reapply in the future as our needs and requirements evolve.</p>
-        <p>If you have any questions, please don't hesitate to reach out.</p>
-        <p>Best regards,<br>The Psychologie Team</p>
-      `,
+      subject,
+      html,
     });
 
     if (emailError) {
