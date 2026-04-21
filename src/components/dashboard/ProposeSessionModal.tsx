@@ -185,6 +185,72 @@ export const ProposeSessionModal = ({
     }
   };
 
+  const computeLinkScheduledAt = (): string | null => {
+    const now = Date.now();
+    if (quickWhen === "now") return new Date(now + 60 * 1000).toISOString();
+    if (quickWhen === "15") return new Date(now + 15 * 60 * 1000).toISOString();
+    if (quickWhen === "60") return new Date(now + 60 * 60 * 1000).toISOString();
+    if (date && time) {
+      const d = new Date(`${date}T${time}`);
+      return isNaN(d.getTime()) ? null : d.toISOString();
+    }
+    return null;
+  };
+
+  const handleSendLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!clientEmail) {
+      toast({
+        title: "Missing email",
+        description: "Please provide the client's email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const scheduled_at = computeLinkScheduledAt();
+    if (!scheduled_at) {
+      toast({
+        title: "Pick a time",
+        description: "Choose Now, +15 min, +1 hour, or a custom date/time.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try {
+      const res = await sendLink.mutateAsync({
+        client_email: clientEmail.trim().toLowerCase(),
+        client_name: clientName.trim() || undefined,
+        scheduled_at,
+        duration_minutes: parseInt(duration, 10),
+        notes: notes.trim() || undefined,
+      });
+      toast({
+        title: "Meeting link sent",
+        description: `Sent to ${clientEmail}. The session is confirmed.`,
+        action: res.join_url ? (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              navigator.clipboard?.writeText(res.join_url);
+              toast({ title: "Link copied", description: "Paste it anywhere." });
+            }}
+          >
+            <Copy className="h-3.5 w-3.5 mr-1" /> Copy link
+          </Button>
+        ) : undefined,
+      });
+      reset();
+      onOpenChange(false);
+    } catch (err: any) {
+      toast({
+        title: "Could not send meeting link",
+        description: err?.message ?? "Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
