@@ -444,6 +444,7 @@ const BookingsTab = () => {
           </table>
         </div>
       )}
+      <BookingDetailDrawer bookingId={openId} onClose={() => setOpenId(null)} />
     </div>
   );
 };
@@ -452,6 +453,7 @@ const BookingsTab = () => {
 
 const UsersTab = () => {
   const [search, setSearch] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
   const { data: users = [], isLoading } = useAllUsers();
 
   const filtered = users.filter((u: any) =>
@@ -460,13 +462,22 @@ const UsersTab = () => {
 
   return (
     <div className="space-y-4">
-      <div className="relative max-w-xs">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search users..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 bg-surface"
+      <div className="flex gap-3">
+        <div className="relative max-w-xs flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search users..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 bg-surface"
+          />
+        </div>
+        <ExportCsvButton
+          filename="users.csv"
+          rows={filtered.map((u: any) => ({
+            id: u.id, name: u.full_name, city: u.city, phone: u.phone,
+            joined: u.created_at, suspended: u.is_suspended,
+          }))}
         />
       </div>
 
