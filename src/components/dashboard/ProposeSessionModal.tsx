@@ -256,15 +256,31 @@ export const ProposeSessionModal = ({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CalendarPlus className="h-5 w-5 text-primary" />
-            Propose a session
+            {mode === "link" ? (
+              <Video className="h-5 w-5 text-primary" />
+            ) : (
+              <CalendarPlus className="h-5 w-5 text-primary" />
+            )}
+            {mode === "link" ? "Send meeting link" : "Propose a session"}
           </DialogTitle>
           <DialogDescription>
-            Send your client a meeting invitation. They'll receive an email with
-            an Accept / Decline link, and see it in their dashboard.
+            {mode === "link"
+              ? "Create an instant confirmed video session and email the join link — no client confirmation needed."
+              : "Send your client a meeting invitation. They'll receive an email with an Accept / Decline link, and see it in their dashboard."}
           </DialogDescription>
         </DialogHeader>
 
+        <Tabs value={mode} onValueChange={(v) => setMode(v as "propose" | "link")} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="propose">
+              <CalendarPlus className="h-3.5 w-3.5 mr-1.5" /> Propose
+            </TabsTrigger>
+            <TabsTrigger value="link">
+              <Video className="h-3.5 w-3.5 mr-1.5" /> Send link directly
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="propose" className="mt-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -408,6 +424,134 @@ export const ProposeSessionModal = ({
             </Button>
           </DialogFooter>
         </form>
+          </TabsContent>
+
+          <TabsContent value="link" className="mt-4">
+            <form onSubmit={handleSendLink} className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="link-client-name">Client name</Label>
+                  <Input
+                    id="link-client-name"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    placeholder="Optional"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="link-client-email">Client email *</Label>
+                  <Input
+                    id="link-client-email"
+                    type="email"
+                    value={clientEmail}
+                    onChange={(e) => setClientEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>When *</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  {([
+                    { v: "now", label: "Now" },
+                    { v: "15", label: "+15 min" },
+                    { v: "60", label: "+1 hour" },
+                    { v: "custom", label: "Custom" },
+                  ] as const).map((opt) => (
+                    <Button
+                      key={opt.v}
+                      type="button"
+                      size="sm"
+                      variant={quickWhen === opt.v ? "default" : "outline"}
+                      onClick={() => setQuickWhen(opt.v)}
+                    >
+                      {opt.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {quickWhen === "custom" && (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="link-date">Date *</Label>
+                    <Input
+                      id="link-date"
+                      type="date"
+                      value={date}
+                      min={minDate}
+                      onChange={(e) => setDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="link-time">Time *</Label>
+                    <Input
+                      id="link-time"
+                      type="time"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="link-duration">Duration</Label>
+                <Select value={duration} onValueChange={setDuration}>
+                  <SelectTrigger id="link-duration">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 minutes</SelectItem>
+                    <SelectItem value="45">45 minutes</SelectItem>
+                    <SelectItem value="50">50 minutes</SelectItem>
+                    <SelectItem value="60">60 minutes</SelectItem>
+                    <SelectItem value="90">90 minutes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="link-notes">Note for client (optional)</Label>
+                <Textarea
+                  id="link-notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Looking forward to our session…"
+                  rows={2}
+                  maxLength={500}
+                />
+              </div>
+
+              <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
+                <Video className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                <span>
+                  The session will be auto-confirmed and a secure video room created.
+                  Your client receives a single "Join session" link — no Accept/Decline.
+                </span>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onOpenChange(false)}
+                  disabled={sendLink.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={sendLink.isPending}>
+                  {sendLink.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  <Video className="mr-2 h-4 w-4" />
+                  Send meeting link
+                </Button>
+              </DialogFooter>
+            </form>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
