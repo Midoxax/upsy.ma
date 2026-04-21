@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Save, RotateCcw, Check, Globe } from "lucide-react";
+import { Search, Save, RotateCcw, Check, Globe, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 type Locale = "en" | "fr" | "ar";
@@ -37,6 +38,7 @@ const TranslationManager = () => {
   const [overrides, setOverrides] = useState<Record<string, Record<string, string>>>({});
   const [pendingChanges, setPendingChanges] = useState<Record<string, Record<string, string>>>({});
   const [saving, setSaving] = useState(false);
+  const [missingOnly, setMissingOnly] = useState(false);
 
   // Build flat entries from static translations
   const allEntries = useMemo<FlatEntry[]>(() => {
@@ -74,16 +76,35 @@ const TranslationManager = () => {
 
   // Filter entries
   const filtered = useMemo(() => {
-    if (!search.trim()) return allEntries;
-    const q = search.toLowerCase();
-    return allEntries.filter(
-      (e) =>
-        e.key.toLowerCase().includes(q) ||
-        e.en.toLowerCase().includes(q) ||
-        e.fr.toLowerCase().includes(q) ||
-        e.ar.toLowerCase().includes(q)
-    );
-  }, [allEntries, search]);
+    let list = allEntries;
+    if (missingOnly) {
+      list = list.filter((e) => {
+        // Missing if static value is empty AND no override exists for the active locale
+        const hasStatic = !!e[activeLocale]?.trim();
+        const hasOverride = !!overrides[activeLocale]?.[e.key]?.trim() || !!pendingChanges[activeLocale]?.[e.key]?.trim();
+        return !hasStatic && !hasOverride;
+      });
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (e) =>
+          e.key.toLowerCase().includes(q) ||
+          e.en.toLowerCase().includes(q) ||
+          e.fr.toLowerCase().includes(q) ||
+          e.ar.toLowerCase().includes(q),
+      );
+    }
+    return list;
+  }, [allEntries, search, missingOnly, activeLocale, overrides, pendingChanges]);
+
+  const missingCount = useMemo(() => {
+    return allEntries.filter((e) => {
+      const hasStatic = !!e[activeLocale]?.trim();
+      const hasOverride = !!overrides[activeLocale]?.[e.key]?.trim() || !!pendingChanges[activeLocale]?.[e.key]?.trim();
+      return !hasStatic && !hasOverride;
+    }).length;
+  }, [allEntries, activeLocale, overrides, pendingChanges]);
 
   // Group by top-level namespace
   const grouped = useMemo(() => {
@@ -215,6 +236,35 @@ const TranslationManager = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
           />
+        </div>
+
+        {/* Filter chips */}
+        <div className="flex flex-wrap gap-2 items-center">
+          <button
+            type="button"
+            onClick={() => setMissingOnly(false)}
+            className={cn(
+              "text-xs px-3 py-1.5 rounded-full border transition-all",
+              !missingOnly
+                ? "bg-primary text-primary-foreground border-primary"
+                : "border-border text-muted-foreground hover:border-primary/40",
+            )}
+          >
+            All ({allEntries.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMissingOnly(true)}
+            className={cn(
+              "text-xs px-3 py-1.5 rounded-full border transition-all inline-flex items-center gap-1.5",
+              missingOnly
+                ? "bg-amber-500 text-white border-amber-500"
+                : "border-border text-muted-foreground hover:border-amber-500/40",
+            )}
+          >
+            <AlertCircle className="h-3 w-3" />
+            Missing in {activeLocale.toUpperCase()} ({missingCount})
+          </button>
         </div>
 
         {/* Locale Tabs */}

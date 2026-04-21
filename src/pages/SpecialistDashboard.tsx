@@ -31,6 +31,7 @@ import JournalTab from "@/components/dashboard/JournalTab";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
 import SpecialistBurnoutCard from "@/components/dashboard/SpecialistBurnoutCard";
 import SmartSchedulingCard from "@/components/dashboard/SmartSchedulingCard";
+import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
 
 const SpecialistDashboard = () => {
   return (
@@ -125,6 +126,7 @@ const SpecialistDashboard = () => {
 
             <SpecialistBurnoutCard />
             <SmartSchedulingCard />
+            <ContinueLearningCard path="clinical-cpd" />
 
             <Card className="p-5">
               <h3 className="font-semibold text-foreground mb-2">Quick links</h3>

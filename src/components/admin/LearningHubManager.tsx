@@ -3,7 +3,7 @@ import { useAdminCourses } from "@/hooks/admin/useAdminCourses";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Loader2, Plus, Search, BookOpen } from "lucide-react";
+import { Loader2, Plus, Search, BookOpen, AlertCircle, RefreshCw } from "lucide-react";
 import CourseEditDrawer from "./CourseEditDrawer";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ const PATH_STYLE: Record<string, string> = {
 };
 
 export default function LearningHubManager() {
-  const { data: courses = [], isLoading } = useAdminCourses();
+  const { data: courses = [], isLoading, isError, error, refetch, isFetching } = useAdminCourses();
   const [editing, setEditing] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -55,7 +55,24 @@ export default function LearningHubManager() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+        <div className="flex flex-col items-center gap-3 py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <p className="text-xs text-muted-foreground">Loading courses…</p>
+        </div>
+      ) : isError ? (
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 space-y-3">
+          <div className="flex items-center gap-2 text-destructive">
+            <AlertCircle className="h-5 w-5" />
+            <h3 className="font-semibold text-sm">Couldn't load courses</h3>
+          </div>
+          <p className="text-xs text-muted-foreground break-words">
+            {(error as Error)?.message ?? "Unknown error. Check your connection or RLS policies."}
+          </p>
+          <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
+            <RefreshCw className={cn("h-3.5 w-3.5 mr-1.5", isFetching && "animate-spin")} />
+            Retry
+          </Button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 border border-dashed rounded-2xl">
           <BookOpen className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
