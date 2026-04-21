@@ -349,6 +349,7 @@ const PsychologistsTab = () => {
           </table>
         </div>
       )}
+      <PsychologistEditDrawer psychologistId={editId} onClose={() => setEditId(null)} />
     </div>
   );
 };
