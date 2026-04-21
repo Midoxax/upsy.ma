@@ -4,14 +4,20 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const Apply = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { locale } = useLocale();
 
   useEffect(() => {
-    if (!loading && user) navigate("/apply/wizard", { replace: true });
-  }, [loading, user, navigate]);
+    if (!loading && user) {
+      const loc = (locale || "fr").slice(0, 2);
+      try { sessionStorage.setItem("apply.preferred_locale", loc); } catch {}
+      navigate("/apply/wizard", { replace: true });
+    }
+  }, [loading, user, navigate, locale]);
 
   if (loading) {
     return <div className="flex justify-center py-32"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
