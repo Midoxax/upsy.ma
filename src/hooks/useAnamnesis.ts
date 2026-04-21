@@ -104,6 +104,17 @@ export const useAnamnesis = (clientId?: string, psychologistId?: string | null, 
     return save({ consent_given: true, consent_at: new Date().toISOString() });
   }, [save]);
 
+  const markReviewed = useCallback(async (notes?: string) => {
+    const patch: Partial<AnamnesisData> = {
+      status: "reviewed",
+      reviewed_at: new Date().toISOString(),
+    };
+    if (notes && notes.trim()) {
+      (patch as any).goals = { ...(data?.goals || {}), review_notes: notes.trim() };
+    }
+    return save(patch);
+  }, [save, data]);
+
   const progress = (() => {
     if (!data) return 0;
     const sections: AnamnesisSection[] = [
@@ -114,5 +125,5 @@ export const useAnamnesis = (clientId?: string, psychologistId?: string | null, 
     return Math.round((filled / sections.length) * 100);
   })();
 
-  return { data, loading, saving, save, autoSave, complete, giveConsent, reload: load, progress };
+  return { data, loading, saving, save, autoSave, complete, giveConsent, markReviewed, reload: load, progress };
 };
