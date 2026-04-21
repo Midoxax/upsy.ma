@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, isPast } from "date-fns";
+import { useState as useStateReact } from "react";
+import AnamnesisDrawer from "@/components/anamnesis/AnamnesisDrawer";
+import { ClipboardList } from "lucide-react";
 
 interface Session {
   id: string;
@@ -36,6 +39,7 @@ export const SessionsTab = () => {
   const { user } = useAuth();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [anamnesisFor, setAnamnesisFor] = useStateReact<{ clientId: string; name?: string } | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -154,6 +158,14 @@ export const SessionsTab = () => {
               </Link>
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setAnamnesisFor({ clientId: s.client_id, name: s.client_profile?.full_name || undefined })}
+            title="Open clinical anamnesis"
+          >
+            <ClipboardList className="h-3.5 w-3.5 mr-1" /> Anamnesis
+          </Button>
           {showActions && s.status === "confirmed" && (
             <>
               <Button
