@@ -15,6 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
+import PendingInvitationsCard from "@/components/dashboard/PendingInvitationsCard";
 import AnamnesisCard from "@/components/dashboard/AnamnesisCard";
 import CertificatesTab from "@/components/dashboard/CertificatesTab";
 import JournalTab from "@/components/dashboard/JournalTab";
@@ -310,6 +311,9 @@ const PatientDashboard = () => {
 
               {/* Upcoming Sessions */}
               <UpcomingSessionsCard />
+
+              {/* Pending session invitations from psychologists */}
+              <PendingInvitationsCard />
 
               {/* Clinical Intake */}
               <AnamnesisCard />

@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLeads, useUpdateLead } from "@/hooks/usePsychologistDashboard";
-import { Loader2, Users, Mail, Phone } from "lucide-react";
+import { Loader2, Users, Mail, Phone, CalendarPlus } from "lucide-react";
 import { format } from "date-fns";
+import { useState } from "react";
+import ProposeSessionModal from "@/components/dashboard/ProposeSessionModal";
 
 const statusColors = {
   pending: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30",
@@ -24,6 +26,7 @@ export const LeadsTab = () => {
   const { toast } = useToast();
   const { data: leads = [], isLoading } = useLeads();
   const updateLead = useUpdateLead();
+  const [proposeFor, setProposeFor] = useState<{ email: string; name: string } | null>(null);
 
   const handleStatusUpdate = async (leadId: string, newStatus: string) => {
     try {
@@ -124,12 +127,28 @@ export const LeadsTab = () => {
                       <SelectItem value="declined">Declined</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      setProposeFor({ email: lead.client_email, name: lead.client_name })
+                    }
+                  >
+                    <CalendarPlus className="h-4 w-4 mr-1" />
+                    Propose session
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </CardContent>
+      <ProposeSessionModal
+        open={!!proposeFor}
+        onOpenChange={(o) => !o && setProposeFor(null)}
+        defaultEmail={proposeFor?.email ?? ""}
+        defaultName={proposeFor?.name ?? ""}
+      />
     </Card>
   );
 };

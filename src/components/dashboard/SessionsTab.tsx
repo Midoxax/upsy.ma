@@ -21,7 +21,8 @@ import { Link } from "react-router-dom";
 import { format, isPast } from "date-fns";
 import { useState as useStateReact } from "react";
 import AnamnesisDrawer from "@/components/anamnesis/AnamnesisDrawer";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, CalendarPlus } from "lucide-react";
+import ProposeSessionModal from "@/components/dashboard/ProposeSessionModal";
 
 interface Session {
   id: string;
