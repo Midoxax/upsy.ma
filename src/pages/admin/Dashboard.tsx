@@ -366,6 +366,7 @@ const BOOKING_STATUS_STYLES: Record<string, string> = {
 
 const BookingsTab = () => {
   const [filter, setFilter] = useState("all");
+  const [openId, setOpenId] = useState<string | null>(null);
   const { data: bookings = [], isLoading } = useAllBookings();
 
   const filtered = bookings.filter((b: any) =>
@@ -389,6 +390,16 @@ const BookingsTab = () => {
             {s}
           </button>
         ))}
+        <div className="ml-auto">
+          <ExportCsvButton
+            filename="bookings.csv"
+            rows={filtered.map((b: any) => ({
+              id: b.id, when: b.scheduled_at, patient: b.patient_name,
+              psychologist: b.psychologist_name, status: b.status,
+              payment: b.payment_status, amount_mad: b.amount_mad,
+            }))}
+          />
+        </div>
       </div>
 
       {isLoading ? (
@@ -407,7 +418,7 @@ const BookingsTab = () => {
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((b: any) => (
-                <tr key={b.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={b.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setOpenId(b.id)}>
                   <td className="px-4 py-3 font-medium">{b.patient_name ?? "–"}</td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{b.psychologist_name ?? "–"}</td>
                   <td className="px-4 py-3 text-muted-foreground">
