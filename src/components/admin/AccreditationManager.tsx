@@ -1,46 +1,46 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { Shield, FileCheck, ExternalLink, ChevronUp, Eye } from "lucide-react";
+import { Shield, FileCheck, Eye, Search, RefreshCw, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import { format } from "date-fns";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import ApprovalModal from "./ApprovalModal";
 import RejectionModal from "./RejectionModal";
-import { AccreditationDocsPanel } from "./AccreditationDocsPanel";
-import ProvisioningAuditTab from "./ProvisioningAuditTab";
+import AccreditationDrawer from "./AccreditationDrawer";
+import AccreditationKpiRow, { KpiFilter } from "./AccreditationKpiRow";
+import ExportCsvButton from "./ExportCsvButton";
+import { useRetryProvisioning } from "@/hooks/admin/useAdminMutations";
 
 type AccreditationLevel = "provisional" | "verified" | "accredited";
 
 const LEVEL_CONFIG: Record<AccreditationLevel, { label: string; color: "outline" | "secondary" | "default"; icon: string }> = {
   provisional: { label: "Provisional", color: "outline", icon: "🔵" },
-  verified: { label: "Verified", color: "secondary", icon: "🟡" },
-  accredited: { label: "Accredited", color: "default", icon: "🟢" },
+  verified:    { label: "Verified",    color: "secondary", icon: "🟡" },
+  accredited:  { label: "Accredited",  color: "default", icon: "🟢" },
 };
-
-const LEVEL_ORDER: AccreditationLevel[] = ["provisional", "verified", "accredited"];
 
 const AccreditationManager = () => {
   const { toast } = useToast();
   const { user } = useAdminAuth();
   const queryClient = useQueryClient();
-  const [detailApp, setDetailApp] = useState<any>(null);
-  const [upgradeApp, setUpgradeApp] = useState<any>(null);
-  const [upgradeLevel, setUpgradeLevel] = useState<AccreditationLevel>("verified");
-  const [upgradeNotes, setUpgradeNotes] = useState("");
+  const retry = useRetryProvisioning();
+
+  const [drawerApp, setDrawerApp] = useState<any>(null);
   const [showApproval, setShowApproval] = useState(false);
   const [showRejection, setShowRejection] = useState(false);
   const [selectedApp, setSelectedApp] = useState<any>(null);
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [filter, setFilter] = useState<KpiFilter>("all");
+  const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const { data: applications = [], isLoading } = useQuery({
     queryKey: ["accreditation-applications"],
@@ -50,9 +50,54 @@ const AccreditationManager = () => {
         .select("*")
         .order("submitted_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
   });
+
+  // Latest provisioning attempt per application
+  const { data: lastAttempts = {} } = useQuery({
+    queryKey: ["last-attempts-per-app"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("provisioning_attempts" as any)
+        .select("application_id,status,error_code,error_message,duration_ms,created_at")
+        .order("created_at", { ascending: false })
+        .limit(500);
+      if (error) throw error;
+      const map: Record<string, any> = {};
+      for (const row of (data ?? []) as any[]) {
+        if (!map[row.application_id]) map[row.application_id] = row;
+      }
+      return map;
+    },
+  });
+
+  const counts = useMemo(() => {
+    const c = { pending: 0, approved: 0, rejected: 0, failed: 0 };
+    for (const a of applications) {
+      if (a.status === "pending") c.pending++;
+      else if (a.status === "approved") c.approved++;
+      else if (a.status === "rejected") c.rejected++;
+      const last = (lastAttempts as any)[a.id];
+      if (last && last.status !== "success") c.failed++;
+    }
+    return c;
+  }, [applications, lastAttempts]);
+
+  const filtered = useMemo(() => {
+    return applications.filter((a) => {
+      const last = (lastAttempts as any)[a.id];
+      const matchesFilter =
+        filter === "all" ||
+        (filter === "failed" ? last && last.status !== "success" : a.status === filter);
+      const q = search.trim().toLowerCase();
+      const matchesSearch =
+        !q ||
+        a.full_name?.toLowerCase().includes(q) ||
+        a.email?.toLowerCase().includes(q);
+      return matchesFilter && matchesSearch;
+    });
+  }, [applications, filter, search, lastAttempts]);
 
   const approveApplication = useMutation({
     mutationFn: async ({ applicationId, adminUserId }: { applicationId: string; adminUserId: string }) => {
@@ -65,21 +110,17 @@ const AccreditationManager = () => {
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["accreditation-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["last-attempts-per-app"] });
       queryClient.invalidateQueries({ queryKey: ["admin-stats-enhanced"] });
-      queryClient.invalidateQueries({ queryKey: ["provisioning-attempts"] });
       const desc = data?.alreadyProvisioned
-        ? "Account was already fully provisioned — no changes needed."
+        ? "Account already fully provisioned — no changes needed."
         : data?.reusedExistingUser
         ? "✅ Reused existing user account and finished missing steps."
         : "✅ New user account created and welcome email sent.";
       toast({ title: "Approved", description: desc });
     },
     onError: (e: Error) =>
-      toast({
-        title: "Provisioning failed",
-        description: e.message + " — Open the application drawer to inspect the audit trail and retry.",
-        variant: "destructive",
-      }),
+      toast({ title: "Provisioning failed", description: e.message, variant: "destructive" }),
   });
 
   const rejectApplication = useMutation({
@@ -98,57 +139,87 @@ const AccreditationManager = () => {
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
-  const upgradeAccreditation = useMutation({
-    mutationFn: async ({ applicationId, level, notes }: { applicationId: string; level: AccreditationLevel; notes: string }) => {
-      // Update application
-      const { error: appErr } = await supabase
+  const inlineLevelChange = useMutation({
+    mutationFn: async ({ id, level }: { id: string; level: AccreditationLevel }) => {
+      const { error } = await supabase
         .from("psychologist_applications")
-        .update({ accreditation_level: level, notes })
-        .eq("id", applicationId);
-      if (appErr) throw appErr;
-
-      // If approved, also update psychologist profile
-      const app = applications.find(a => a.id === applicationId);
-      if (app?.status === "approved") {
-        // Find the psychologist profile by email match
-        const { data: profiles } = await supabase
-          .from("psychologist_profiles")
-          .select("id")
-          .limit(1000);
-
-        // Update accreditation on profile if it exists
-        if (profiles && profiles.length > 0) {
-          // We update by the fact that the profile was created from this application
-          const { error: profErr } = await supabase
-            .from("psychologist_profiles")
-            .update({
-              accreditation_level: level,
-              is_accredited: level === "accredited",
-            })
-            .eq("full_name", app.full_name);
-          // Non-critical if profile not found
-        }
-      }
+        .update({ accreditation_level: level })
+        .eq("id", id);
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accreditation-applications"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-stats-enhanced"] });
-      toast({ title: "Level Updated", description: "Accreditation level upgraded successfully." });
-      setUpgradeApp(null);
-      setUpgradeNotes("");
+      toast({ title: "Level updated" });
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
-  const filtered = applications.filter(a => filter === "all" || a.status === filter);
+  /* ---------- Bulk actions ---------- */
+  const toggleAll = (on: boolean) => {
+    setSelectedIds(on ? new Set(filtered.map((a) => a.id)) : new Set());
+  };
+  const toggleOne = (id: string, on: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (on) next.add(id); else next.delete(id);
+      return next;
+    });
+  };
+
+  const bulkApprove = async () => {
+    if (!user) return;
+    const targets = filtered.filter((a) => selectedIds.has(a.id) && a.status === "pending");
+    if (!targets.length) {
+      toast({ title: "Nothing to approve", description: "Select pending applications first." });
+      return;
+    }
+    let ok = 0, fail = 0;
+    for (const t of targets) {
+      try {
+        await approveApplication.mutateAsync({ applicationId: t.id, adminUserId: user.id });
+        ok++;
+      } catch { fail++; }
+    }
+    setSelectedIds(new Set());
+    toast({ title: "Bulk approve done", description: `${ok} ok · ${fail} failed` });
+  };
+
+  const bulkRetry = async () => {
+    if (!user) return;
+    const targets = filtered.filter((a) => {
+      const last = (lastAttempts as any)[a.id];
+      return selectedIds.has(a.id) && last && last.status !== "success";
+    });
+    if (!targets.length) {
+      toast({ title: "Nothing to retry" });
+      return;
+    }
+    let ok = 0, fail = 0;
+    for (const t of targets) {
+      try {
+        await retry.mutateAsync({ applicationId: t.id, adminUserId: user.id });
+        ok++;
+      } catch { fail++; }
+    }
+    setSelectedIds(new Set());
+    toast({ title: "Bulk retry done", description: `${ok} ok · ${fail} failed` });
+  };
+
+  const csvRows = filtered.map((a) => ({
+    name: a.full_name,
+    email: a.email,
+    status: a.status,
+    level: a.accreditation_level || "provisional",
+    submitted_at: a.submitted_at,
+    last_attempt_status: (lastAttempts as any)[a.id]?.status ?? "—",
+    last_attempt_error: (lastAttempts as any)[a.id]?.error_code ?? "",
+  }));
 
   const getStatusBadge = (status: string) => {
     const map: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      pending: "outline",
-      approved: "default",
-      rejected: "destructive",
+      pending: "outline", approved: "default", rejected: "destructive",
     };
-    return <Badge variant={map[status] || "outline"}>{status}</Badge>;
+    return <Badge variant={map[status] || "outline"} className="capitalize">{status}</Badge>;
   };
 
   const getLevelBadge = (level: AccreditationLevel) => {
@@ -156,149 +227,165 @@ const AccreditationManager = () => {
     return <Badge variant={cfg.color}>{cfg.icon} {cfg.label}</Badge>;
   };
 
-  const getNextLevel = (current: AccreditationLevel): AccreditationLevel | null => {
-    const idx = LEVEL_ORDER.indexOf(current);
-    return idx < LEVEL_ORDER.length - 1 ? LEVEL_ORDER[idx + 1] : null;
+  const renderAttemptIcon = (app: any) => {
+    const last = (lastAttempts as any)[app.id];
+    if (!last) return <span className="text-xs text-muted-foreground">—</span>;
+    if (last.status === "success") return <CheckCircle2 className="h-4 w-4 text-green-500" aria-label="ok" />;
+    if (last.status === "partial") return <AlertTriangle className="h-4 w-4 text-amber-500" aria-label="partial" />;
+    return <XCircle className="h-4 w-4 text-red-500" aria-label="failed" />;
   };
+
+  const allSelected = filtered.length > 0 && filtered.every((a) => selectedIds.has(a.id));
+  const someSelected = selectedIds.size > 0;
 
   return (
     <>
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                Accreditation Management
+                Accreditation Workspace
               </CardTitle>
               <CardDescription>
-                Review applications, manage documents, and upgrade accreditation levels (Provisional → Verified → Accredited)
+                Review applications, manage documents, and audit provisioning. Click a KPI to filter.
               </CardDescription>
             </div>
-            <Select value={filter} onValueChange={(v) => setFilter(v as any)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <ExportCsvButton filename={`accreditation-${filter}`} rows={csvRows} />
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ["accreditation-applications"] });
+                  queryClient.invalidateQueries({ queryKey: ["last-attempts-per-app"] });
+                }}
+                className="gap-1.5"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Refresh
+              </Button>
+            </div>
           </div>
         </CardHeader>
-        <CardContent>
-          {/* Accreditation Path Visual */}
-          <div className="mb-6 p-4 rounded-lg border border-border bg-muted/30">
-            <h4 className="text-sm font-semibold mb-3">Accreditation Path</h4>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-background border">
-                <span>🔵</span>
-                <div>
-                  <p className="text-sm font-medium">Provisional</p>
-                  <p className="text-xs text-muted-foreground">Application submitted</p>
-                </div>
-              </div>
-              <span className="hidden sm:block text-muted-foreground">→</span>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-background border">
-                <span>🟡</span>
-                <div>
-                  <p className="text-sm font-medium">Verified</p>
-                  <p className="text-xs text-muted-foreground">Documents reviewed</p>
-                </div>
-              </div>
-              <span className="hidden sm:block text-muted-foreground">→</span>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-background border border-primary/30">
-                <span>🟢</span>
-                <div>
-                  <p className="text-sm font-medium">Accredited</p>
-                  <p className="text-xs text-muted-foreground">Fully accredited</p>
-                </div>
-              </div>
+        <CardContent className="space-y-4">
+          <AccreditationKpiRow counts={counts} active={filter} onChange={setFilter} />
+
+          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search name or email…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 bg-surface"
+              />
             </div>
+            {someSelected && (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">{selectedIds.size} selected</Badge>
+                <Button size="sm" onClick={bulkApprove} disabled={approveApplication.isPending}>
+                  Bulk approve pending
+                </Button>
+                <Button size="sm" variant="outline" onClick={bulkRetry} disabled={retry.isPending}>
+                  <RefreshCw className={`h-3 w-3 mr-1 ${retry.isPending ? "animate-spin" : ""}`} />
+                  Bulk retry failed
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>Clear</Button>
+              </div>
+            )}
           </div>
 
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
           ) : filtered.length === 0 ? (
             <EmptyState
               icon={FileCheck}
-              title="No Applications"
-              description="No applications match the current filter."
+              title={filter === "pending" ? "No pending applications" : "No applications"}
+              description={filter === "pending" ? "Everything is handled — view the approved psychologists tab." : "Adjust the filter or search to find applications."}
             />
           ) : (
             <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-8">
+                      <Checkbox checked={allSelected} onCheckedChange={(v) => toggleAll(!!v)} aria-label="Select all" />
+                    </TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
+                    <TableHead className="hidden md:table-cell">Email</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Level</TableHead>
-                    <TableHead>Docs</TableHead>
-                    <TableHead>Submitted</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="text-center">Last attempt</TableHead>
+                    <TableHead className="hidden lg:table-cell">Submitted</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((app) => {
                     const level = (app.accreditation_level || "provisional") as AccreditationLevel;
-                    const nextLevel = getNextLevel(level);
-                    const docUrls = (app as any).document_urls || [];
-
                     return (
-                      <TableRow key={app.id}>
-                        <TableCell className="font-medium">{app.full_name}</TableCell>
-                        <TableCell className="text-sm">{app.email}</TableCell>
-                        <TableCell>{getStatusBadge(app.status)}</TableCell>
-                        <TableCell>{getLevelBadge(level)}</TableCell>
+                      <TableRow key={app.id} className="align-middle">
                         <TableCell>
-                          {docUrls.length > 0 ? (
-                            <Badge variant="secondary" className="text-xs">
-                              {docUrls.length} file(s)
-                            </Badge>
+                          <Checkbox
+                            checked={selectedIds.has(app.id)}
+                            onCheckedChange={(v) => toggleOne(app.id, !!v)}
+                            aria-label={`Select ${app.full_name}`}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">{app.full_name}</TableCell>
+                        <TableCell className="text-sm hidden md:table-cell">{app.email}</TableCell>
+                        <TableCell>{getStatusBadge(app.status)}</TableCell>
+                        <TableCell>
+                          {app.status === "approved" ? (
+                            <Select
+                              value={level}
+                              onValueChange={(v) => inlineLevelChange.mutate({ id: app.id, level: v as AccreditationLevel })}
+                            >
+                              <SelectTrigger className="h-7 w-[140px] text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="provisional">🔵 Provisional</SelectItem>
+                                <SelectItem value="verified">🟡 Verified</SelectItem>
+                                <SelectItem value="accredited">🟢 Accredited</SelectItem>
+                              </SelectContent>
+                            </Select>
                           ) : (
-                            <span className="text-xs text-muted-foreground">None</span>
+                            getLevelBadge(level)
                           )}
                         </TableCell>
-                        <TableCell className="text-sm">
+                        <TableCell className="text-center">{renderAttemptIcon(app)}</TableCell>
+                        <TableCell className="text-sm hidden lg:table-cell">
                           {app.submitted_at ? format(new Date(app.submitted_at), "MMM d, yyyy") : "—"}
                         </TableCell>
                         <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            <Button size="sm" variant="ghost" onClick={() => setDetailApp(app)}>
-                              <Eye className="h-3 w-3" />
+                          <div className="flex flex-wrap gap-1 justify-end">
+                            <Button size="sm" variant="ghost" onClick={() => setDrawerApp(app)} title="Open details">
+                              <Eye className="h-3.5 w-3.5" />
                             </Button>
                             {app.status === "pending" && (
                               <>
-                                <Button size="sm" variant="default" onClick={() => {
-                                  setSelectedApp(app);
-                                  setShowApproval(true);
-                                }}>
+                                <Button size="sm" variant="default" onClick={() => { setSelectedApp(app); setShowApproval(true); }}>
                                   Approve
                                 </Button>
-                                <Button size="sm" variant="destructive" onClick={() => {
-                                  setSelectedApp(app);
-                                  setShowRejection(true);
-                                }}>
+                                <Button size="sm" variant="destructive" onClick={() => { setSelectedApp(app); setShowRejection(true); }}>
                                   Reject
                                 </Button>
                               </>
                             )}
-                            {app.status === "approved" && nextLevel && (
+                            {(lastAttempts as any)[app.id]?.status && (lastAttempts as any)[app.id].status !== "success" && user && (
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => {
-                                  setUpgradeApp(app);
-                                  setUpgradeLevel(nextLevel);
-                                }}
+                                onClick={() => retry.mutate({ applicationId: app.id, adminUserId: user.id })}
+                                disabled={retry.isPending}
+                                title="Retry provisioning"
                               >
-                                <ChevronUp className="mr-1 h-3 w-3" />
-                                Upgrade
+                                <RefreshCw className={`h-3.5 w-3.5 ${retry.isPending ? "animate-spin" : ""}`} />
                               </Button>
                             )}
                           </div>
@@ -313,136 +400,34 @@ const AccreditationManager = () => {
         </CardContent>
       </Card>
 
-      {/* Detail Modal */}
-      <Dialog open={!!detailApp} onOpenChange={() => setDetailApp(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Application Details</DialogTitle>
-          </DialogHeader>
-          {detailApp && (
-            <div className="space-y-4 py-2">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Name</p>
-                  <p className="font-medium">{detailApp.full_name}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Email</p>
-                  <p className="font-medium">{detailApp.email}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Phone</p>
-                  <p className="font-medium">{detailApp.phone || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Accreditation #</p>
-                  <p className="font-medium">{detailApp.accreditation_number || "—"}</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-muted-foreground">Qualifications</p>
-                  <p className="font-medium">{detailApp.qualifications || "—"}</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-muted-foreground">Notes</p>
-                  <p className="font-medium">{detailApp.notes || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Status</p>
-                  {getStatusBadge(detailApp.status)}
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Accreditation Level</p>
-                  {getLevelBadge(detailApp.accreditation_level || "provisional")}
-                </div>
-              </div>
+      <AccreditationDrawer application={drawerApp} onClose={() => setDrawerApp(null)} />
 
-              <AccreditationDocsPanel application={detailApp} />
-              <ProvisioningAuditTab applicationId={detailApp.id} />
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDetailApp(null)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ApprovalModal
+        open={showApproval}
+        onClose={() => { setShowApproval(false); setSelectedApp(null); }}
+        applicationId={selectedApp?.id}
+        applicantName={selectedApp?.full_name}
+        applicantEmail={selectedApp?.email}
+        onConfirm={async () => {
+          if (!selectedApp || !user) return;
+          await approveApplication.mutateAsync({ applicationId: selectedApp.id, adminUserId: user.id });
+          setShowApproval(false);
+          setSelectedApp(null);
+        }}
+      />
 
-      {/* Upgrade Modal */}
-      <Dialog open={!!upgradeApp} onOpenChange={() => setUpgradeApp(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Upgrade Accreditation Level</DialogTitle>
-            <DialogDescription>
-              Upgrade {upgradeApp?.full_name} to a higher accreditation level.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>New Level</Label>
-              <Select value={upgradeLevel} onValueChange={(v) => setUpgradeLevel(v as AccreditationLevel)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="verified">🟡 Verified</SelectItem>
-                  <SelectItem value="accredited">🟢 Accredited</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Admin Notes</Label>
-              <Textarea
-                value={upgradeNotes}
-                onChange={(e) => setUpgradeNotes(e.target.value)}
-                placeholder="Reason for upgrade, documents reviewed..."
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setUpgradeApp(null)}>Cancel</Button>
-            <Button onClick={() => upgradeApp && upgradeAccreditation.mutate({
-              applicationId: upgradeApp.id,
-              level: upgradeLevel,
-              notes: upgradeNotes,
-            })}>
-              Confirm Upgrade
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Approval/Rejection Modals */}
-      {selectedApp && (
-        <>
-          <ApprovalModal
-            open={showApproval}
-            onClose={() => setShowApproval(false)}
-            onConfirm={() => {
-              if (user) {
-                approveApplication.mutate({ applicationId: selectedApp.id, adminUserId: user.id });
-                setShowApproval(false);
-                setSelectedApp(null);
-              }
-            }}
-            applicantEmail={selectedApp.email}
-            applicantName={selectedApp.full_name}
-            applicationId={selectedApp.id}
-          />
-          <RejectionModal
-            open={showRejection}
-            onClose={() => setShowRejection(false)}
-            onConfirm={(reason) => {
-              if (user) {
-                rejectApplication.mutate({ applicationId: selectedApp.id, adminUserId: user.id, reason });
-                setShowRejection(false);
-                setSelectedApp(null);
-              }
-            }}
-            applicantEmail={selectedApp.email}
-            applicantName={selectedApp.full_name}
-          />
-        </>
-      )}
+      <RejectionModal
+        open={showRejection}
+        onClose={() => { setShowRejection(false); setSelectedApp(null); }}
+        applicantName={selectedApp?.full_name}
+        applicantEmail={selectedApp?.email}
+        onConfirm={async (reason) => {
+          if (!selectedApp || !user) return;
+          await rejectApplication.mutateAsync({ applicationId: selectedApp.id, adminUserId: user.id, reason });
+          setShowRejection(false);
+          setSelectedApp(null);
+        }}
+      />
     </>
   );
 };

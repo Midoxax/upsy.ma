@@ -23,6 +23,8 @@ import AnamnesisCopyEditor from "@/components/admin/AnamnesisCopyEditor";
 import PricingControl from "@/components/admin/PricingControl";
 import TransactionsTab from "@/components/admin/TransactionsTab";
 import OrgApplicationsManager from "@/components/admin/OrgApplicationsManager";
+import CommandPalette from "@/components/admin/CommandPalette";
+import ExportCsvButton from "@/components/admin/ExportCsvButton";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
 
@@ -491,6 +493,7 @@ const AdminDashboard = () => {
   const { isAdmin, loading: authLoading } = useAdminAuth();
   const { data: pending = [] } = usePendingApplications();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("overview");
 
   if (authLoading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -518,6 +521,19 @@ const AdminDashboard = () => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => {
+                  const ev = new KeyboardEvent("keydown", { key: "k", ctrlKey: true });
+                  window.dispatchEvent(ev);
+                }}
+                className="text-xs gap-1.5 hidden sm:inline-flex"
+                title="Open command palette (Ctrl+K)"
+              >
+                <Search className="h-3.5 w-3.5" />
+                Search… <kbd className="ml-1 text-[10px] opacity-60">⌘K</kbd>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => queryClient.invalidateQueries()}
                 className="text-xs gap-1.5"
               >
@@ -530,7 +546,7 @@ const AdminDashboard = () => {
       </div>
 
       <main className="container-custom py-8">
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="flex flex-wrap h-auto gap-1 bg-surface border border-border p-1 rounded-xl">
             {[
               { value: "overview", label: "Overview", icon: BarChart3 },
@@ -566,6 +582,7 @@ const AdminDashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+      <CommandPalette onTabChange={setActiveTab} />
     </div>
   );
 };
