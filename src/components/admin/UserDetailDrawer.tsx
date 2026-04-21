@@ -31,11 +31,10 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
     queryKey: ["admin-user-detail", userId],
     queryFn: async () => {
       if (!userId) return null;
-      const [profile, roles, bookings, emailRow] = await Promise.all([
+      const [profile, roles, bookings] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
         supabase.from("bookings").select("id, scheduled_at, status, amount_mad").eq("patient_id", userId).order("scheduled_at", { ascending: false }).limit(5),
-        supabase.rpc("admin_list_users_rich" as any, { _search: null, _limit: 1, _user_id: userId }).then(() => ({ data: null })).catch(() => ({ data: null })),
       ]);
       if (profile.error) throw profile.error;
       return {
@@ -81,7 +80,6 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
   const assignRole = useAssignRole();
   const revokeRole = useRevokeRole();
   const suspend = useSuspendUser();
-
   const saveProfile = async () => {
     if (!userId) return;
     const { error } = await supabase.from("profiles").update(form).eq("id", userId);
@@ -89,13 +87,6 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
     toast.success("Profile saved");
     qc.invalidateQueries({ queryKey: ["admin-users"] });
     qc.invalidateQueries({ queryKey: ["admin-users-rich"] });
-  };
-
-  const sendReset = async () => {
-    if (!user?.profile) return;
-    const { data: u } = await supabase.auth.admin?.getUserById?.(userId!) ?? { data: null };
-    // Fallback: use updateUserById not available client-side; use resetPasswordForEmail with email if known
-    toast.info("Ask user to use 'Forgot password' on login screen");
   };
 
   return (
