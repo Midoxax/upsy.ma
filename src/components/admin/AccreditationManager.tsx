@@ -414,7 +414,6 @@ const AccreditationManager = () => {
           setShowApproval(false);
           setSelectedApp(null);
         }}
-        loading={approveApplication.isPending}
       />
 
       <RejectionModal
@@ -428,7 +427,6 @@ const AccreditationManager = () => {
           setShowRejection(false);
           setSelectedApp(null);
         }}
-        loading={rejectApplication.isPending}
       />
     </>
   );
