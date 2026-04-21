@@ -1878,7 +1878,10 @@ export type Database = {
           date_of_birth: string | null
           full_name: string | null
           id: string
+          is_suspended: boolean
           phone: string | null
+          suspended_at: string | null
+          suspended_reason: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1889,7 +1892,10 @@ export type Database = {
           date_of_birth?: string | null
           full_name?: string | null
           id: string
+          is_suspended?: boolean
           phone?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1900,7 +1906,10 @@ export type Database = {
           date_of_birth?: string | null
           full_name?: string | null
           id?: string
+          is_suspended?: boolean
           phone?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -2884,6 +2893,45 @@ export type Database = {
       }
     }
     Functions: {
+      admin_assign_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: Json
+      }
+      admin_cancel_booking: {
+        Args: { _booking_id: string; _reason?: string }
+        Returns: Json
+      }
+      admin_list_users: {
+        Args: { _limit?: number; _search?: string }
+        Returns: {
+          avatar_url: string
+          city: string
+          created_at: string
+          full_name: string
+          id: string
+          is_suspended: boolean
+          phone: string
+          roles: string[]
+        }[]
+      }
+      admin_refund_booking: {
+        Args: { _booking_id: string; _reason?: string }
+        Returns: Json
+      }
+      admin_revoke_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: Json
+      }
+      admin_set_user_suspended: {
+        Args: { _reason?: string; _suspended: boolean; _user_id: string }
+        Returns: Json
+      }
       compute_mps: { Args: { _user_id: string }; Returns: Json }
       create_admin_user: {
         Args: { _email: string; _password: string }
