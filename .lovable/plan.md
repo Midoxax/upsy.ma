@@ -1,125 +1,117 @@
 
 
-## Admin Dashboard Polish — Easier Manipulation & Editing
+## Admin power-up: account control, embedded role views, clickable everything, Learning & Performance Hub
 
-Make every admin tab actionable end-to-end: edit, suspend, cancel, reassign, export, jump-to. Tighten the Accreditation tab into a clean, audit-ready workspace.
-
----
-
-### 1. Global admin shell
-- **Command palette** (`⌘K` / `Ctrl+K`) — instant search across users, psychologists, bookings, applications. Selecting a result opens the right tab + detail drawer.
-- **Sticky toolbar** keeps Refresh, Export CSV, and a "Pending actions" pill (count of pending apps + pending bookings + failed provisionings) that deep-links to filtered views.
-- **Toast → Undo** for destructive actions (suspend user, cancel booking) with 5s undo window.
+You already have detail drawers for Users, Psychologists and Bookings — clicking any row opens them. The pain points are: (1) the drawer entry isn't obvious, (2) the Users drawer only shows profile/roles/suspend (no email, no password reset, no quick status switches inline), (3) you can't preview the Specialist/Client/Org dashboards from inside the admin console, and (4) the Learning & Performance Hub is just a Skool teaser page with no admin CRUD. This plan fixes all four.
 
 ---
 
-### 2. Users tab — fully editable
-Replace the read-only list with a real management table:
-- Columns: avatar+name, email, **roles** (chips), city, joined, last seen.
-- Row actions menu: **Edit profile**, **Manage roles** (add/remove admin/psychologist/athlete/coach/organization via `user_roles` upserts), **Send password reset**, **Suspend / Reactivate**, **Impersonate (View as)**, **Delete**.
-- Side drawer "User details": profile fields editable inline, role chips with add/remove, recent bookings, recent assessments, audit-log tail.
-- Bulk select → bulk role assign / bulk export CSV.
-- Filter chips: All / Admins / Psychologists / Clients / Orgs / Suspended.
+### 1. Make every row obviously clickable + add inline status controls
 
----
+**Users tab**
+- Add visible affordance: hover row → "Open" button on the right + chevron icon, plus a `Manage` button in a new Actions column.
+- New columns: **Email**, **Roles** (chips), **Status** pill (Active / Suspended / Pending verification), **Last seen**.
+- Inline row actions (no drawer needed): toggle Suspend/Reactivate, quick "Add admin" / "Add psychologist" role from a dropdown, "Send password reset" (calls `supabase.auth.resetPasswordForEmail`).
+- Filter chips: All · Admins · Psychologists · Clients · Orgs · Suspended · Unverified.
+- Bulk select → bulk suspend, bulk role assign, bulk CSV.
 
-### 3. Psychologists tab — full CRUD + accreditation inline
-- Add columns: accreditation level pill, # bookings, # reviews, avg rating.
-- Row actions: **View public profile** (new tab), **Edit** (drawer with all profile fields: bio, rate, city, specialties, languages, gender, online/in-person), **Toggle publish**, **Set accreditation level** inline (provisional/verified/accredited), **Reset photo**, **Delete profile**.
-- Specialties/languages multi-select editor in drawer (writes to junction tables).
-- Filter chips: All / Published / Unpublished / Accredited / Missing photo / Missing bio.
-- Bulk publish/unpublish.
+**Psychologists tab**
+- Add `Manage` button + visible chevron on each row. Add columns: **Bookings count**, **Avg rating**, **Accreditation level pill**.
+- Inline actions: publish/unpublish toggle (already there, made larger), inline accreditation-level dropdown, "View public profile ↗".
 
----
+**Bookings tab**
+- Same affordance pattern. Add inline status menu (Confirm / Complete / Cancel / Refund) directly on the row, drawer for full edit.
 
-### 4. Bookings tab — operational controls
-- Row actions: **View details** (drawer with patient + psychologist + notes + payment status), **Mark completed**, **Mark no-show**, **Cancel** (with reason), **Reschedule** (date/time picker), **Refund** (mark `payment_status='refunded'`), **Open video room**.
-- Add date-range picker + psychologist filter + payment-status filter.
-- Quick stats strip above table: today's sessions, this week, pending payments.
-- Export filtered set to CSV.
+### 2. Expand the User drawer (full account control)
 
----
+Replace the current 4-tab drawer with a richer one:
+- **Profile**: editable name, email (read-only with "Send change-email link"), city, phone, bio, locale, avatar.
+- **Roles**: chips with + / × (already present, kept).
+- **Status**: Active / Suspended / Locked dropdown with reason field, plus "Force sign-out", "Send password reset email", "Resend verification email".
+- **Activity**: recent bookings, recent assessments, recent journal/mood counts, last 10 audit-log entries for this user.
+- **Danger zone**: delete profile (admin RPC, with confirm).
 
-### 5. Accreditation tab — neat & clear (the priority)
-Redesign into one focused workspace:
+New admin-only RPCs: `admin_force_signout(_user_id)`, `admin_send_password_reset(_email)`, `admin_resend_verification(_email)` — all `SECURITY DEFINER`, write to `audit_log`.
+
+### 3. Dashboard-on-dashboard (admin can preview every role view)
+
+Add a new **"Live views"** tab in the admin console that embeds the actual role dashboards inside the admin shell so you don't have to leave `/admin`:
 
 ```text
-┌─ KPIs ────────────────────────────────────────────────────────┐
-│  Pending 4   Approved 27   Rejected 3   Provisioning fails 1 │
-│  (each clickable → filters table)                             │
-└───────────────────────────────────────────────────────────────┘
-┌─ Filters: status · level · search name/email ────────────────┐
-└───────────────────────────────────────────────────────────────┘
-┌─ Table: Avatar · Name · Email · Status · Level · Docs · ───┐
-│         Last attempt (✓/⚠/✗) · Submitted · Actions          │
-└───────────────────────────────────────────────────────────────┘
+[Tab: Live views]
+  Sub-tabs:
+    ┌── Specialist view ── Client view ── Organization view ── Athlete view ──┐
+    │  <iframe-free embed: imports SpecialistDashboard / PatientDashboard /   │
+    │  OrganizationDashboard / AthleteHub directly, wrapped in a              │
+    │  ViewAsContext that forces the chosen role for read-only preview>        │
 ```
 
-- **Side drawer** (replaces cramped modal) with 4 tabs:
-  1. **Application** — all fields, editable notes, preferred locale.
-  2. **Documents** — `AccreditationDocsPanel` with download/preview.
-  3. **Provisioning Audit** — `ProvisioningAuditTab` timeline (already exists), plus a clear **Retry provisioning** button when last attempt failed.
-  4. **Decisions** — log of approve/reject/upgrade events from `accreditation_decisions`.
-- **Result banner per row** under failed rows: red strip with `errorCode`, `errorMessage`, **Retry** button → re-invokes `provision-psychologist`.
-- **Bulk actions**: bulk approve pending, bulk retry failed.
-- **Inline level upgrade** dropdown on approved rows (no modal needed for simple upgrades).
-- **Empty states** with explicit next-step CTA ("No pending applications — view approved psychologists →").
+Mechanism:
+- New `AdminPreviewProvider` that overrides `useUserRole().primaryRole` for the subtree (no real session swap, no DB writes — read-only flag carried through React context).
+- Each preview shows a top banner "Viewing as <Role> — read-only preview" with a "Stop preview" button.
+- Bonus: row-level `Impersonate (preview)` action on the Users tab opens that user's data in the matching role view (still read-only).
 
----
+This complements the existing `ViewAsSwitcher` (which navigates away) by keeping you inside the admin console.
 
-### 6. Org Applications tab
-- Row actions: **Approve** (creates `organization_accounts` row, links owner), **Reject** (with reason), **View** drawer with all submitted fields + contact CTA buttons (email, WhatsApp).
-- Status filter chips and search.
+### 4. Click-anywhere on Psychologist → full editor
 
----
+Already wired: clicking a psychologist row opens `PsychologistEditDrawer`. We will:
+- Make the affordance obvious (chevron, hover `Open` button).
+- Extend the drawer with: photo upload, specialties + languages multi-select, therapy approaches, availability shortcut link, accreditation level + revoke, "View public profile" button, recent bookings + reviews, "Suspend account" mirror (same RPC as user suspend).
+- Add a `Reviews` tab inside the drawer to read/hide individual reviews.
 
-### 7. Pricing & Transactions
-- Pricing: add "Save & log change" confirmation, show last-3 changes inline (uses existing `platform_pricing_history`).
-- Transactions: add date range, status filter, **Mark refunded** action, CSV export.
+### 5. Develop the Learning & Performance Hub (admin + client side)
 
----
+Today `/skool` and `/resources` show static content while `courses` and `course_modules` tables already exist with public RLS. We will turn them into a managed product:
 
-### 8. Translations
-- Keep `AnamnesisCopyEditor` + `TranslationManager`. Add a **"Missing translations"** filter chip that surfaces keys present in EN but missing in FR or AR. Add **"Copy from EN"** button per row.
+**New admin tab: "Learning Hub"**
+- CRUD for `courses` (title, category, difficulty, duration, thumbnail upload, publish toggle).
+- CRUD for `course_modules` (drag-to-reorder, video URL, content, duration).
+- Enrollment stats per course (count, completion rate, avg progress) read from `course_enrollments`.
+- "Issue certificate template" link per course.
+
+**Client side improvements**
+- New page `/learn` (rename Skool to a Hub landing) listing published courses from DB grouped by category, with progress bars from `course_enrollments`.
+- New page `/learn/:slug` showing modules in order, marking completion, awarding XP via existing gamification hooks, generating certificate via `generate-certificate` edge function on full completion.
+- Patient + Athlete dashboards get a "Continue learning" card linking to `/learn` with the current in-progress course.
+
+**Performance dimension (athletes/specialists)**
+- Add `learning_path` field on `courses` to tag content as `mental-health` | `performance` | `clinical-cpd`.
+- Athlete Hub shows only `performance` paths; Specialist Dashboard shows only `clinical-cpd` paths (CPD credits tracked in `certificates`).
 
 ---
 
 ### Technical changes
 
-**New components**
-- `src/components/admin/CommandPalette.tsx` — `⌘K` global search (uses existing `cmdk` via `command.tsx`).
-- `src/components/admin/UserDetailDrawer.tsx` — edit profile, manage roles, view activity.
-- `src/components/admin/PsychologistEditDrawer.tsx` — full profile editor incl. specialties/languages.
-- `src/components/admin/BookingDetailDrawer.tsx` — view/cancel/reschedule/refund.
-- `src/components/admin/AccreditationDrawer.tsx` — 4-tab side drawer replacing the current Dialog.
-- `src/components/admin/ProvisioningResultBanner.tsx` — per-row status banner with Retry.
-- `src/components/admin/AccreditationKpiRow.tsx` — clickable KPI cards.
-- `src/components/admin/ExportCsvButton.tsx` — generic CSV exporter.
+**DB / RPC**
+- `admin_force_signout`, `admin_send_password_reset`, `admin_resend_verification`, `admin_delete_profile` (SECURITY DEFINER, admin-only, audit-logged).
+- `admin_update_booking_status(_booking_id, _new_status)` for inline row actions.
+- `admin_hide_review(_review_id, _reason)`.
+- Add column `courses.learning_path text default 'mental-health'` and `courses.slug text unique`.
+- View `admin_users_rich` (joins `profiles` + `user_roles` array + email from `auth.users` via SECURITY DEFINER RPC `admin_list_users_rich`) so the Users tab can show email + roles in one query.
 
-**Updated**
-- `src/pages/admin/Dashboard.tsx` — mount CommandPalette; add Pending-actions pill; wire new tab toolbars.
-- `src/components/admin/AccreditationManager.tsx` — KPI row, filters refactor, drawer instead of dialog, retry banners, bulk actions, inline level upgrade.
-- Users / Psychologists / Bookings tab components — extracted into their own files for clarity and to host new drawers + actions.
+**New / updated components**
+- `src/pages/admin/Dashboard.tsx`: add **Live views** tab, **Learning Hub** tab; restyle row actions.
+- `src/components/admin/AdminPreviewProvider.tsx` + `RolePreviewFrame.tsx`: embedded read-only role views.
+- `src/components/admin/UsersTab.tsx` (extracted): chips, filters, inline actions.
+- `src/components/admin/UserDetailDrawer.tsx`: add Status tab (force sign-out, password reset, resend verification, delete), Activity tab with audit-log tail, locale + avatar editing.
+- `src/components/admin/PsychologistEditDrawer.tsx`: add Reviews tab, photo upload, suspend mirror, public-profile link.
+- `src/components/admin/LearningHubManager.tsx` + `CourseEditDrawer.tsx` + `ModuleListEditor.tsx`.
+- `src/pages/Learn.tsx` + `src/pages/LearnCourse.tsx` (replaces hardcoded Skool/Resources sections that can't manage content).
+- `src/components/dashboard/ContinueLearningCard.tsx` (mounted in Patient + Athlete dashboards).
 
-**New hooks**
-- `useAdminUsers` (with role-aware joins), `useUpdateUserRole`, `useSuspendUser`, `useImpersonate`.
-- `useUpdatePsychologistProfile`, `useUpdatePsychologistRelations` (specialties/languages).
-- `useCancelBooking`, `useRescheduleBooking`, `useRefundBooking`.
-- `useRetryProvisioning` (re-invokes edge function and refetches `provisioning_attempts`).
-
-**DB / RPC additions**
-- Migration: enable admin to suspend a user — add `profiles.is_suspended boolean default false` + RLS clause blocking suspended users from session-creating actions.
-- RPC `admin_assign_role(_user_id uuid, _role app_role)` and `admin_revoke_role(...)` (SECURITY DEFINER, admin-only).
-- RPC `admin_cancel_booking(_booking_id uuid, _reason text)` updates status + writes to `audit_log`.
-- Index on `provisioning_attempts(application_id, created_at desc)` (already in earlier migration — verify).
+**Hooks**
+- `useAdminUsersRich`, `useAdminCourses`, `useAdminCourseModules`, `useEnrollments`, `useForceSignout`, `useSendPasswordReset`, `useResendVerification`.
 
 **Security**
-- Every new mutation goes through admin-only RPC or RLS-checked update.
-- `audit_log` row written for: role change, suspend/reactivate, booking cancel/refund, accreditation upgrade, provisioning retry, profile delete.
-- Impersonation = "View as" only (read-only flag in `useActiveView`), never a real session swap.
+- All new mutations behind admin RPCs or RLS.
+- Preview mode is enforced in React context only — no service-role calls, no DB writes from preview frames; mutations are disabled and inputs become read-only.
+- Audit-log row for every admin action: role change, suspend, reset email, course publish, module delete.
 
-**Out of scope (next pass)**
-- Real-time presence indicator on user rows.
-- Charts/analytics tab redesign.
-- Bulk email composer.
+---
+
+### Out of scope (next pass)
+- Real impersonation tokens (true session swap).
+- Live cohort progress charts in the Learning Hub.
+- AI-generated module quizzes.
 
