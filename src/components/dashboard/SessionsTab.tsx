@@ -253,5 +253,15 @@ export const SessionsTab = () => {
         </Tabs>
       </CardContent>
     </Card>
+    {anamnesisFor && user && (
+      <AnamnesisDrawer
+        open={!!anamnesisFor}
+        onOpenChange={(v) => !v && setAnamnesisFor(null)}
+        clientId={anamnesisFor.clientId}
+        clientName={anamnesisFor.name}
+        psychologistId={user.id}
+      />
+    )}
+    </>
   );
 };
