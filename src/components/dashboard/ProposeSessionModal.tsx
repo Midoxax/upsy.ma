@@ -267,6 +267,30 @@ export const ProposeSessionModal = ({
             les données personnelles sont protégées.
           </p>
 
+          {slotCheck.status !== "idle" && (
+            <div
+              className={
+                "flex items-center gap-2 rounded-lg border px-3 py-2 text-xs " +
+                (slotCheck.status === "ok"
+                  ? "border-green-500/30 bg-green-500/10 text-green-600"
+                  : slotCheck.status === "checking"
+                  ? "border-border bg-muted/40 text-muted-foreground"
+                  : "border-destructive/30 bg-destructive/10 text-destructive")
+              }
+            >
+              {slotCheck.status === "ok" && <CheckCircle2 className="h-3.5 w-3.5" />}
+              {slotCheck.status === "checking" && (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              )}
+              {slotCheck.status === "bad" && <AlertTriangle className="h-3.5 w-3.5" />}
+              <span>
+                {slotCheck.status === "ok" && "Slot is available ✓"}
+                {slotCheck.status === "checking" && "Checking availability…"}
+                {slotCheck.status === "bad" && reasonMessage(slotCheck.reason)}
+              </span>
+            </div>
+          )}
+
           <DialogFooter>
             <Button
               type="button"
@@ -276,7 +300,14 @@ export const ProposeSessionModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={propose.isPending}>
+            <Button
+              type="submit"
+              disabled={
+                propose.isPending ||
+                slotCheck.status === "checking" ||
+                slotCheck.status === "bad"
+              }
+            >
               {propose.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
