@@ -788,6 +788,8 @@ export type Database = {
           duration_hours: number | null
           id: string
           is_published: boolean | null
+          learning_path: string
+          slug: string
           thumbnail_url: string | null
           title: string
         }
@@ -799,6 +801,8 @@ export type Database = {
           duration_hours?: number | null
           id?: string
           is_published?: boolean | null
+          learning_path?: string
+          slug: string
           thumbnail_url?: string | null
           title: string
         }
@@ -810,6 +814,8 @@ export type Database = {
           duration_hours?: number | null
           id?: string
           is_published?: boolean | null
+          learning_path?: string
+          slug?: string
           thumbnail_url?: string | null
           title?: string
         }
@@ -2904,6 +2910,12 @@ export type Database = {
         Args: { _booking_id: string; _reason?: string }
         Returns: Json
       }
+      admin_delete_profile: { Args: { _user_id: string }; Returns: Json }
+      admin_force_signout: { Args: { _user_id: string }; Returns: Json }
+      admin_hide_review: {
+        Args: { _reason?: string; _review_id: string }
+        Returns: Json
+      }
       admin_list_users: {
         Args: { _limit?: number; _search?: string }
         Returns: {
@@ -2916,6 +2928,27 @@ export type Database = {
           phone: string
           roles: string[]
         }[]
+      }
+      admin_list_users_rich: {
+        Args: { _limit?: number; _search?: string }
+        Returns: {
+          avatar_url: string
+          city: string
+          created_at: string
+          email: string
+          email_confirmed_at: string
+          full_name: string
+          id: string
+          is_suspended: boolean
+          last_sign_in_at: string
+          phone: string
+          roles: string[]
+          suspended_reason: string
+        }[]
+      }
+      admin_log_password_reset: {
+        Args: { _email: string; _user_id: string }
+        Returns: Json
       }
       admin_refund_booking: {
         Args: { _booking_id: string; _reason?: string }
@@ -2932,6 +2965,11 @@ export type Database = {
         Args: { _reason?: string; _suspended: boolean; _user_id: string }
         Returns: Json
       }
+      admin_update_booking_status: {
+        Args: { _booking_id: string; _new_status: string }
+        Returns: Json
+      }
+      admin_user_activity: { Args: { _user_id: string }; Returns: Json }
       compute_mps: { Args: { _user_id: string }; Returns: Json }
       create_admin_user: {
         Args: { _email: string; _password: string }
