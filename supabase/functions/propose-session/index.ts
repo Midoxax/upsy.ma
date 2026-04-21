@@ -108,17 +108,44 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Conflict check: any non-cancelled booking at exact same time for this psychologist
-    const { data: conflict } = await admin
-      .from("bookings")
-      .select("id")
-      .eq("psychologist_id", psychologistId)
-      .eq("scheduled_at", body.scheduled_at)
-      .not("status", "in", "(cancelled,declined)")
-      .maybeSingle();
-    if (conflict) {
+    // Slot validation: in-future + inside availability window + no overlapping booking
+    const { data: slotCheck, error: slotErr } = await admin.rpc("check_proposal_slot", {
+      _psy: psychologistId,
+      _start: body.scheduled_at,
+      _duration: body.duration_minutes,
+    });
+    if (slotErr) {
+      console.error("[propose-session] slot check error", slotErr);
       return new Response(
-        JSON.stringify({ error: "You already have a booking at that time" }),
+        JSON.stringify({ error: "Could not validate slot" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    const check = slotCheck as { ok: boolean; reason?: string } | null;
+    if (!check?.ok) {
+      const reason = check?.reason ?? "invalid_slot";
+      const messages: Record<string, string> = {
+        too_soon: "The session must be at least 1 hour in the future.",
+        outside_availability:
+          "This time falls outside your configured availability. Update your weekly hours or pick another time.",
+        slot_conflict:
+          "You already have a booking that overlaps with this time.",
+        invalid_input: "Invalid slot.",
+      };
+      // Audit the rejection
+      await admin.from("audit_log").insert({
+        user_id: psychologistId,
+        action: "proposal.rejected_validation",
+        resource_type: "bookings",
+        metadata: {
+          scheduled_at: body.scheduled_at,
+          duration_minutes: body.duration_minutes,
+          reason,
+          client_email: body.client_email,
+        },
+      });
+      return new Response(
+        JSON.stringify({ error: messages[reason] ?? "Invalid slot", reason }),
         { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
