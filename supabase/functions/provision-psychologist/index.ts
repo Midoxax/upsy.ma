@@ -139,23 +139,23 @@ serve(async (req) => {
         throw new Error("Failed to create user account");
       }
 
-      // Look up existing user by email
-      let page = 1;
-      while (page <= 20 && !userId) {
-        const { data: list, error: listErr } = await supabaseClient.auth.admin.listUsers({
-          page,
-          perPage: 200,
-        });
-        if (listErr) {
-          console.error("listUsers error:", listErr);
+      // Reuse linked account when the applicant already has one
+      if (application.user_id) {
+        userId = application.user_id;
+      }
+
+      // Fallback for self-approval / existing admin account with same email
+      if (!userId) {
+        const { data: adminUserData, error: adminUserError } = await supabaseClient.auth.admin.getUserById(adminUserId);
+        if (adminUserError) {
+          console.error("getUserById error:", adminUserError);
           throw new Error("Failed to look up existing user");
         }
-        const match = list.users.find(
-          (u) => (u.email || "").toLowerCase() === application.email.toLowerCase()
-        );
-        if (match) userId = match.id;
-        if (list.users.length < 200) break;
-        page++;
+
+        const adminEmail = adminUserData.user?.email?.toLowerCase();
+        if (adminEmail && adminEmail === application.email.toLowerCase()) {
+          userId = adminUserId;
+        }
       }
 
       if (!userId) throw new Error("Existing user lookup failed");
