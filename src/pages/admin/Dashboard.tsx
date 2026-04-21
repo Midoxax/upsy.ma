@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import AccreditationManager from "@/components/admin/AccreditationManager";
 import TranslationManager from "@/components/admin/TranslationManager";
+import AnamnesisCopyEditor from "@/components/admin/AnamnesisCopyEditor";
 import PricingControl from "@/components/admin/PricingControl";
 import TransactionsTab from "@/components/admin/TransactionsTab";
 import OrgApplicationsManager from "@/components/admin/OrgApplicationsManager";
@@ -557,7 +558,12 @@ const AdminDashboard = () => {
           <TabsContent value="org-applications"><OrgApplicationsManager /></TabsContent>
           <TabsContent value="pricing"><PricingControl /></TabsContent>
           <TabsContent value="transactions"><TransactionsTab /></TabsContent>
-          <TabsContent value="translations"><TranslationManager /></TabsContent>
+          <TabsContent value="translations">
+            <div className="space-y-6">
+              <AnamnesisCopyEditor />
+              <TranslationManager />
+            </div>
+          </TabsContent>
         </Tabs>
       </main>
     </div>
