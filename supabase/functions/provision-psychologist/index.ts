@@ -106,71 +106,118 @@ serve(async (req) => {
       throw new Error(`Application already ${application.status}`);
     }
 
-    // 3. Generate temporary password
+    // 3. Generate temporary password (only used if we create a new account)
     const tempPassword = crypto.randomUUID().substring(0, 16);
 
-    // 4. Create auth user
-    const { data: authUser, error: authError } = await supabaseClient.auth.admin.createUser({
+    // 4. Create or reuse auth user
+    let userId: string | null = null;
+    let isNewUser = false;
+
+    const { data: createdUser, error: authError } = await supabaseClient.auth.admin.createUser({
       email: application.email,
       password: tempPassword,
       email_confirm: true,
-      user_metadata: {
-        full_name: application.full_name,
-      },
+      user_metadata: { full_name: application.full_name },
     });
 
-    if (authError || !authUser.user) {
-      console.error("Auth user creation failed:", {
-        timestamp: new Date().toISOString(),
-        error: authError?.message,
-        email: application.email
-      });
-      throw new Error("Failed to create user account");
+    if (createdUser?.user) {
+      userId = createdUser.user.id;
+      isNewUser = true;
+    } else {
+      const msg = authError?.message?.toLowerCase() || "";
+      const alreadyExists =
+        msg.includes("already been registered") ||
+        msg.includes("already exists") ||
+        (authError as any)?.code === "email_exists";
+
+      if (!alreadyExists) {
+        console.error("Auth user creation failed:", {
+          timestamp: new Date().toISOString(),
+          error: authError?.message,
+          email: application.email,
+        });
+        throw new Error("Failed to create user account");
+      }
+
+      // Look up existing user by email
+      let page = 1;
+      while (page <= 20 && !userId) {
+        const { data: list, error: listErr } = await supabaseClient.auth.admin.listUsers({
+          page,
+          perPage: 200,
+        });
+        if (listErr) {
+          console.error("listUsers error:", listErr);
+          throw new Error("Failed to look up existing user");
+        }
+        const match = list.users.find(
+          (u) => (u.email || "").toLowerCase() === application.email.toLowerCase()
+        );
+        if (match) userId = match.id;
+        if (list.users.length < 200) break;
+        page++;
+      }
+
+      if (!userId) throw new Error("Existing user lookup failed");
+      console.log("Reusing existing auth user:", userId);
     }
 
-    console.log("Auth user created:", authUser.user.id);
+    console.log(isNewUser ? "Auth user created:" : "Auth user reused:", userId);
 
     try {
-      // 5. Assign psychologist role
+      // 5. Assign psychologist role (idempotent)
       const { error: roleInsertError } = await supabaseClient
         .from("user_roles")
-        .insert({
-          user_id: authUser.user.id,
-          role: "psychologist",
-        });
-
+        .upsert(
+          { user_id: userId, role: "psychologist" },
+          { onConflict: "user_id,role", ignoreDuplicates: true }
+        );
       if (roleInsertError) {
         console.error("Role assignment error:", roleInsertError);
         throw roleInsertError;
       }
 
-      // 6. Create psychologist profile
-      const { error: profileError } = await supabaseClient
+      // 6. Create psychologist profile if missing
+      const { data: existingProfile } = await supabaseClient
         .from("psychologist_profiles")
-        .insert({
-          id: authUser.user.id,
-          full_name: application.full_name,
-          is_accredited: !!application.accreditation_number,
-          is_published: false,
-        });
+        .select("id")
+        .eq("id", userId)
+        .maybeSingle();
 
-      if (profileError) {
-        console.error("Profile creation error:", profileError);
-        throw profileError;
+      if (!existingProfile) {
+        const { error: profileError } = await supabaseClient
+          .from("psychologist_profiles")
+          .insert({
+            id: userId,
+            full_name: application.full_name,
+            is_accredited: !!application.accreditation_number,
+            is_published: false,
+          });
+        if (profileError) {
+          console.error("Profile creation error:", profileError);
+          throw profileError;
+        }
       }
 
-      // 7. Create free subscription
-      const { error: subError } = await supabaseClient
+      // 7. Create free subscription if missing
+      const { data: existingSub } = await supabaseClient
         .from("subscriptions")
-        .insert({
-          psychologist_id: authUser.user.id,
-          plan_type: "free",
-          status: "active",
-        });
+        .select("id")
+        .eq("psychologist_id", userId)
+        .maybeSingle();
 
-      if (subError) {
-        console.error("Subscription creation error:", subError);
-        throw subError;
+      if (!existingSub) {
+        const { error: subError } = await supabaseClient
+          .from("subscriptions")
+          .insert({
+            psychologist_id: userId,
+            plan_type: "free",
+            status: "active",
+          });
+        if (subError) {
+          console.error("Subscription creation error:", subError);
+          throw subError;
+        }
       }
 
       // 8. Update application status
@@ -190,7 +237,15 @@ serve(async (req) => {
 
       // 9. Send welcome email
       const loginUrl = `${Deno.env.get("SUPABASE_URL")?.replace("https://", "https://")}/auth`;
-      
+
+      const credentialsBlock = isNewUser
+        ? `<p>Your account is ready. Use these credentials to log in:</p>
+           <ul>
+             <li><strong>Email:</strong> ${application.email}</li>
+             <li><strong>Temporary Password:</strong> ${tempPassword}</li>
+           </ul>`
+        : `<p>Your existing account (${application.email}) has been upgraded with psychologist access. Use your current password to log in — or reset it from the login page.</p>`;
+
       const { error: emailError } = await resend.emails.send({
         from: "Psychologie <onboarding@resend.dev>",
         to: [application.email],
@@ -198,11 +253,7 @@ serve(async (req) => {
         html: `
           <h1>Welcome, ${application.full_name}!</h1>
           <p>Congratulations! Your application has been approved.</p>
-          <p>Your account is ready. Use these credentials to log in:</p>
-          <ul>
-            <li><strong>Email:</strong> ${application.email}</li>
-            <li><strong>Temporary Password:</strong> ${tempPassword}</li>
-          </ul>
+          ${credentialsBlock}
           <p><a href="${loginUrl}">Click here to log in</a></p>
           <h3>Next Steps:</h3>
           <ol>
@@ -220,22 +271,23 @@ serve(async (req) => {
         // Don't throw - account is created, just log the error
       }
 
-      console.log("Provisioning completed successfully for:", authUser.user.id);
+      console.log("Provisioning completed successfully for:", userId);
 
       return new Response(
         JSON.stringify({
           success: true,
           message: "Psychologist provisioned successfully",
-          userId: authUser.user.id,
+          userId,
+          reusedExistingUser: !isNewUser,
         }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     } catch (provisionError) {
-      // Rollback: Delete auth user if provisioning fails
-      console.error("Provisioning error, rolling back:", provisionError);
-      await supabaseClient.auth.admin.deleteUser(authUser.user.id);
+      // Only rollback the auth user if WE created it in this call
+      console.error("Provisioning error:", provisionError);
+      if (isNewUser && userId) {
+        await supabaseClient.auth.admin.deleteUser(userId);
+      }
       throw provisionError;
     }
   } catch (error: any) {
