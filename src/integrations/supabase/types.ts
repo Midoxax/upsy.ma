@@ -138,6 +138,45 @@ export type Database = {
           },
         ]
       }
+      anamnesis_reminders: {
+        Row: {
+          anamnesis_id: string | null
+          booking_id: string | null
+          channel: string
+          client_id: string
+          created_at: string
+          due_at: string
+          error_message: string | null
+          id: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          anamnesis_id?: string | null
+          booking_id?: string | null
+          channel?: string
+          client_id: string
+          created_at?: string
+          due_at: string
+          error_message?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          anamnesis_id?: string | null
+          booking_id?: string | null
+          channel?: string
+          client_id?: string
+          created_at?: string
+          due_at?: string
+          error_message?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       assessment_questions: {
         Row: {
           assessment_id: string
@@ -1254,6 +1293,9 @@ export type Database = {
           monthly_price_mad: number | null
           name: string
           owner_id: string
+          pdf_logo_url: string | null
+          pdf_primary_color: string | null
+          pdf_signature_label: string | null
           plan_type: string
           rc_number: string | null
           seats_total: number
@@ -1279,6 +1321,9 @@ export type Database = {
           monthly_price_mad?: number | null
           name: string
           owner_id: string
+          pdf_logo_url?: string | null
+          pdf_primary_color?: string | null
+          pdf_signature_label?: string | null
           plan_type?: string
           rc_number?: string | null
           seats_total?: number
@@ -1304,6 +1349,9 @@ export type Database = {
           monthly_price_mad?: number | null
           name?: string
           owner_id?: string
+          pdf_logo_url?: string | null
+          pdf_primary_color?: string | null
+          pdf_signature_label?: string | null
           plan_type?: string
           rc_number?: string | null
           seats_total?: number
@@ -1899,6 +1947,51 @@ export type Database = {
         }
         Relationships: []
       }
+      provisioning_attempts: {
+        Row: {
+          admin_user_id: string | null
+          already_provisioned: boolean
+          application_id: string
+          created_at: string
+          duration_ms: number | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          reused_existing_user: boolean
+          status: string
+          steps: Json
+          user_id: string | null
+        }
+        Insert: {
+          admin_user_id?: string | null
+          already_provisioned?: boolean
+          application_id: string
+          created_at?: string
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          reused_existing_user?: boolean
+          status: string
+          steps?: Json
+          user_id?: string | null
+        }
+        Update: {
+          admin_user_id?: string | null
+          already_provisioned?: boolean
+          application_id?: string
+          created_at?: string
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          reused_existing_user?: boolean
+          status?: string
+          steps?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       psychologist_applications: {
         Row: {
           accreditation_level: string
@@ -1935,6 +2028,7 @@ export type Database = {
           phone: string | null
           photo_url: string | null
           populations_served: string[] | null
+          preferred_locale: string
           qualifications: string | null
           reviewed_at: string | null
           reviewed_by: string | null
@@ -1984,6 +2078,7 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           populations_served?: string[] | null
+          preferred_locale?: string
           qualifications?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -2033,6 +2128,7 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           populations_served?: string[] | null
+          preferred_locale?: string
           qualifications?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -2808,6 +2904,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      inspect_provisioning_state: {
+        Args: { _application_id: string }
+        Returns: Json
       }
       invite_org_member: {
         Args: {
