@@ -18,9 +18,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useProposeSession } from "@/hooks/useProposeSession";
-import { Loader2, CalendarPlus, CheckCircle2, AlertTriangle } from "lucide-react";
+import { useSendMeetingLink } from "@/hooks/useSendMeetingLink";
+import {
+  Loader2,
+  CalendarPlus,
+  CheckCircle2,
+  AlertTriangle,
+  Video,
+  Copy,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
@@ -28,6 +37,7 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   defaultEmail?: string;
   defaultName?: string;
+  defaultMode?: "propose" | "link";
 }
 
 export const ProposeSessionModal = ({
@@ -35,9 +45,16 @@ export const ProposeSessionModal = ({
   onOpenChange,
   defaultEmail = "",
   defaultName = "",
+  defaultMode = "propose",
 }: Props) => {
   const { toast } = useToast();
   const propose = useProposeSession();
+  const sendLink = useSendMeetingLink();
+  const [mode, setMode] = useState<"propose" | "link">(defaultMode);
+
+  useEffect(() => {
+    if (open) setMode(defaultMode);
+  }, [open, defaultMode]);
 
   const [clientEmail, setClientEmail] = useState(defaultEmail);
   const [clientName, setClientName] = useState(defaultName);
@@ -46,9 +63,18 @@ export const ProposeSessionModal = ({
   const [duration, setDuration] = useState("50");
   const [type, setType] = useState<"video" | "in_person" | "phone">("video");
   const [notes, setNotes] = useState("");
+  const [quickWhen, setQuickWhen] = useState<"now" | "15" | "60" | "custom">("now");
   const [slotCheck, setSlotCheck] = useState<
     { status: "idle" | "checking" | "ok" | "bad"; reason?: string }
   >({ status: "idle" });
+
+  // Sync defaults when modal opens
+  useEffect(() => {
+    if (open) {
+      setClientEmail(defaultEmail);
+      setClientName(defaultName);
+    }
+  }, [open, defaultEmail, defaultName]);
 
   const minDate = useMemo(() => {
     const d = new Date();
@@ -112,6 +138,7 @@ export const ProposeSessionModal = ({
     setDuration("50");
     setType("video");
     setNotes("");
+    setQuickWhen("now");
     setSlotCheck({ status: "idle" });
   };
 
