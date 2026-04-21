@@ -41,6 +41,7 @@ export const SessionsTab = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [anamnesisFor, setAnamnesisFor] = useStateReact<{ clientId: string; name?: string } | null>(null);
+  const [proposeOpen, setProposeOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -203,10 +204,16 @@ export const SessionsTab = () => {
     <>
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-primary" />
-          Sessions
-        </CardTitle>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Sessions
+          </CardTitle>
+          <Button size="sm" onClick={() => setProposeOpen(true)}>
+            <CalendarPlus className="h-4 w-4 mr-1" />
+            Propose session
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="upcoming" className="space-y-4">
@@ -265,6 +272,7 @@ export const SessionsTab = () => {
         isTherapistView
       />
     )}
+    <ProposeSessionModal open={proposeOpen} onOpenChange={setProposeOpen} />
     </>
   );
 };
