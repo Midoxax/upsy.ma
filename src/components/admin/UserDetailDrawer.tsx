@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAssignRole, useRevokeRole, useSuspendUser } from "@/hooks/admin/useAdminMutations";
-import { Loader2, Shield, ShieldOff, UserX, UserCheck, X, Plus, Mail } from "lucide-react";
+import { useForceSignout, useSendPasswordReset, useDeleteProfile, useAdminUserActivity } from "@/hooks/admin/useAdminAccount";
+import { Loader2, Shield, ShieldOff, UserX, UserCheck, X, Plus, Mail, LogOut, KeyRound, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -45,6 +46,22 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
     enabled: open,
   });
 
+  // Fetch email + last sign in via the rich list
+  const { data: richList } = useQuery({
+    queryKey: ["admin-user-rich-single", userId],
+    enabled: open,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_list_users_rich" as any, { _search: null, _limit: 200 });
+      if (error) return null;
+      return (data as any[])?.find((u) => u.id === userId) ?? null;
+    },
+  });
+
+  const activity = useAdminUserActivity(userId);
+  const forceSignout = useForceSignout();
+  const sendReset = useSendPasswordReset();
+  const deleteProfile = useDeleteProfile();
+
   const [form, setForm] = useState({ full_name: "", city: "", phone: "", bio: "" });
   const [newRole, setNewRole] = useState<AppRole>("user");
   const [suspendReason, setSuspendReason] = useState("");
@@ -63,7 +80,6 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
   const assignRole = useAssignRole();
   const revokeRole = useRevokeRole();
   const suspend = useSuspendUser();
-
   const saveProfile = async () => {
     if (!userId) return;
     const { error } = await supabase.from("profiles").update(form).eq("id", userId);
@@ -73,19 +89,22 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
     qc.invalidateQueries({ queryKey: ["admin-users-rich"] });
   };
 
-  const sendReset = async () => {
-    if (!user?.profile) return;
-    const { data: u } = await supabase.auth.admin?.getUserById?.(userId!) ?? { data: null };
-    // Fallback: use updateUserById not available client-side; use resetPasswordForEmail with email if known
-    toast.info("Ask user to use 'Forgot password' on login screen");
-  };
-
   return (
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle>User details</SheetTitle>
-          <SheetDescription>{userId}</SheetDescription>
+          <SheetDescription className="flex items-center gap-2 flex-wrap">
+            {richList?.email && (
+              <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {richList.email}</span>
+            )}
+            {richList?.last_sign_in_at && (
+              <span className="text-xs">· last seen {format(new Date(richList.last_sign_in_at), "PP")}</span>
+            )}
+            {!richList?.email_confirmed_at && richList && (
+              <Badge variant="outline" className="text-[10px]">Unverified</Badge>
+            )}
+          </SheetDescription>
         </SheetHeader>
 
         {isLoading || !user ? (
@@ -97,6 +116,7 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
               <TabsTrigger value="roles">Roles</TabsTrigger>
               <TabsTrigger value="activity">Activity</TabsTrigger>
               <TabsTrigger value="moderation">Moderation</TabsTrigger>
+              <TabsTrigger value="status">Status</TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile" className="space-y-4 mt-4">
@@ -157,6 +177,25 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
                   <span className="text-muted-foreground">{b.status} · {b.amount_mad ?? 0} MAD</span>
                 </div>
               ))}
+              {activity.data && (
+                <div className="grid grid-cols-2 gap-2 pt-3 text-xs text-muted-foreground">
+                  <div className="rounded-lg border p-2"><div className="text-foreground font-semibold">{activity.data.journals_30d}</div>journals (30d)</div>
+                  <div className="rounded-lg border p-2"><div className="text-foreground font-semibold">{activity.data.moods_30d}</div>moods (30d)</div>
+                </div>
+              )}
+              {activity.data?.audit_tail && activity.data.audit_tail.length > 0 && (
+                <div className="pt-3">
+                  <h4 className="text-sm font-semibold mb-2">Recent audit events</h4>
+                  <div className="space-y-1">
+                    {activity.data.audit_tail.slice(0, 10).map((a: any) => (
+                      <div key={a.id} className="text-xs flex justify-between border rounded px-2 py-1">
+                        <span>{a.action} · {a.resource_type}</span>
+                        <span className="text-muted-foreground">{format(new Date(a.created_at), "PP p")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="moderation" className="space-y-4 mt-4">
@@ -194,6 +233,43 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
                   {user.profile?.is_suspended
                     ? <><UserCheck className="h-4 w-4 mr-1" /> Reactivate</>
                     : <><UserX className="h-4 w-4 mr-1" /> Suspend account</>}
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="status" className="space-y-3 mt-4">
+              <div className="rounded-lg border p-4 space-y-3">
+                <h4 className="text-sm font-semibold">Account actions</h4>
+                <div className="grid gap-2">
+                  <Button
+                    variant="outline" size="sm" className="justify-start"
+                    disabled={!richList?.email || sendReset.isPending}
+                    onClick={() => sendReset.mutate({ userId: userId!, email: richList!.email! })}
+                  >
+                    <KeyRound className="h-4 w-4 mr-2" /> Send password reset email
+                  </Button>
+                  <Button
+                    variant="outline" size="sm" className="justify-start"
+                    disabled={forceSignout.isPending}
+                    onClick={() => forceSignout.mutate(userId!)}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" /> Force sign-out (all sessions)
+                  </Button>
+                </div>
+              </div>
+              <div className="rounded-lg border border-destructive/40 p-4 space-y-2">
+                <h4 className="text-sm font-semibold text-destructive">Danger zone</h4>
+                <p className="text-xs text-muted-foreground">Permanently delete this user's profile and revoke all roles. The auth account remains and can re-onboard.</p>
+                <Button
+                  variant="destructive" size="sm"
+                  disabled={deleteProfile.isPending}
+                  onClick={() => {
+                    if (confirm("Delete this profile? This cannot be undone.")) {
+                      deleteProfile.mutate(userId!, { onSuccess: () => onClose() });
+                    }
+                  }}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" /> Delete profile
                 </Button>
               </div>
             </TabsContent>

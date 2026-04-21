@@ -26,6 +26,7 @@ import RecommendationsRail from "@/components/dashboard/RecommendationsRail";
 import CrisisModal from "@/components/dashboard/CrisisModal";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import ReferralCard from "@/components/dashboard/ReferralCard";
+import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
 import { useNudges } from "@/hooks/useNudges";
 import { useCrisisScreening } from "@/hooks/useCrisisScreening";
 
@@ -312,6 +313,9 @@ const PatientDashboard = () => {
 
               {/* Clinical Intake */}
               <AnamnesisCard />
+
+              {/* Continue learning */}
+              <ContinueLearningCard path="mental-health" />
 
               {/* Assessments + Courses */}
               <div className="grid md:grid-cols-2 gap-6">
