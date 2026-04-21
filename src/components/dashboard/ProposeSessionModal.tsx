@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useProposeSession } from "@/hooks/useProposeSession";
-import { Loader2, CalendarPlus } from "lucide-react";
+import { Loader2, CalendarPlus, CheckCircle2, AlertTriangle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   open: boolean;
@@ -45,12 +46,63 @@ export const ProposeSessionModal = ({
   const [duration, setDuration] = useState("50");
   const [type, setType] = useState<"video" | "in_person" | "phone">("video");
   const [notes, setNotes] = useState("");
+  const [slotCheck, setSlotCheck] = useState<
+    { status: "idle" | "checking" | "ok" | "bad"; reason?: string }
+  >({ status: "idle" });
 
   const minDate = useMemo(() => {
     const d = new Date();
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     return d.toISOString().slice(0, 10);
   }, []);
+
+  const scheduledAtIso = useMemo(() => {
+    if (!date || !time) return null;
+    const iso = new Date(`${date}T${time}`);
+    return isNaN(iso.getTime()) ? null : iso.toISOString();
+  }, [date, time]);
+
+  // Live slot validation via RPC
+  useEffect(() => {
+    if (!scheduledAtIso) {
+      setSlotCheck({ status: "idle" });
+      return;
+    }
+    let cancelled = false;
+    setSlotCheck({ status: "checking" });
+    const run = async () => {
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) return;
+      const { data, error } = await supabase.rpc("check_proposal_slot", {
+        _psy: auth.user.id,
+        _start: scheduledAtIso,
+        _duration: parseInt(duration, 10),
+      });
+      if (cancelled) return;
+      if (error) {
+        setSlotCheck({ status: "bad", reason: "check_failed" });
+        return;
+      }
+      const res = data as { ok: boolean; reason?: string } | null;
+      if (res?.ok) setSlotCheck({ status: "ok" });
+      else setSlotCheck({ status: "bad", reason: res?.reason });
+    };
+    const t = setTimeout(run, 250);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [scheduledAtIso, duration]);
+
+  const reasonMessage = (r?: string) => {
+    switch (r) {
+      case "too_soon":
+        return "Must be at least 1 hour in the future.";
+      case "outside_availability":
+        return "Outside your configured weekly availability.";
+      case "slot_conflict":
+        return "Overlaps with an existing booking.";
+      default:
+        return "This slot can't be used.";
+    }
+  };
 
   const reset = () => {
     setClientEmail(defaultEmail);
@@ -60,6 +112,7 @@ export const ProposeSessionModal = ({
     setDuration("50");
     setType("video");
     setNotes("");
+    setSlotCheck({ status: "idle" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -214,6 +267,30 @@ export const ProposeSessionModal = ({
             les données personnelles sont protégées.
           </p>
 
+          {slotCheck.status !== "idle" && (
+            <div
+              className={
+                "flex items-center gap-2 rounded-lg border px-3 py-2 text-xs " +
+                (slotCheck.status === "ok"
+                  ? "border-green-500/30 bg-green-500/10 text-green-600"
+                  : slotCheck.status === "checking"
+                  ? "border-border bg-muted/40 text-muted-foreground"
+                  : "border-destructive/30 bg-destructive/10 text-destructive")
+              }
+            >
+              {slotCheck.status === "ok" && <CheckCircle2 className="h-3.5 w-3.5" />}
+              {slotCheck.status === "checking" && (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              )}
+              {slotCheck.status === "bad" && <AlertTriangle className="h-3.5 w-3.5" />}
+              <span>
+                {slotCheck.status === "ok" && "Slot is available ✓"}
+                {slotCheck.status === "checking" && "Checking availability…"}
+                {slotCheck.status === "bad" && reasonMessage(slotCheck.reason)}
+              </span>
+            </div>
+          )}
+
           <DialogFooter>
             <Button
               type="button"
@@ -223,7 +300,14 @@ export const ProposeSessionModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={propose.isPending}>
+            <Button
+              type="submit"
+              disabled={
+                propose.isPending ||
+                slotCheck.status === "checking" ||
+                slotCheck.status === "bad"
+              }
+            >
               {propose.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}

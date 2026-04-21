@@ -2985,6 +2985,10 @@ export type Database = {
         Returns: Json
       }
       admin_user_activity: { Args: { _user_id: string }; Returns: Json }
+      check_proposal_slot: {
+        Args: { _duration: number; _psy: string; _start: string }
+        Returns: Json
+      }
       compute_mps: { Args: { _user_id: string }; Returns: Json }
       create_admin_user: {
         Args: { _email: string; _password: string }
@@ -3023,6 +3027,10 @@ export type Database = {
       org_pulse_aggregate: {
         Args: { _org_id: string; _survey_id?: string }
         Returns: Json
+      }
+      replace_availability_for_day: {
+        Args: { _day: number; _ranges: Json }
+        Returns: undefined
       }
       resolve_referral_code: {
         Args: { _code: string }
