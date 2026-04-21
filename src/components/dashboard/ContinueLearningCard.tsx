@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, ArrowRight } from "lucide-react";
+import { BookOpen, ArrowRight, PlayCircle } from "lucide-react";
 
 export default function ContinueLearningCard({ path }: { path?: "mental-health" | "performance" | "clinical-cpd" }) {
   const { user } = useAuth();
@@ -19,12 +19,26 @@ export default function ContinueLearningCard({ path }: { path?: "mental-health" 
         .order("started_at", { ascending: false })
         .limit(5);
       const list = (enrs ?? []).filter((e: any) => !path || e.courses?.learning_path === path);
-      return list[0] ?? null;
+      const enr = list[0];
+      if (!enr) return null;
+      // Find next module = first not in completed_modules, ordered by order_index
+      const { data: modules } = await supabase
+        .from("course_modules")
+        .select("id, title, order_index")
+        .eq("course_id", enr.course_id)
+        .order("order_index", { ascending: true });
+      const completed = new Set<string>(enr.completed_modules ?? []);
+      const total = modules?.length ?? 0;
+      const completedCount = (modules ?? []).filter((m) => completed.has(m.id)).length;
+      const nextModule = (modules ?? []).find((m) => !completed.has(m.id)) ?? null;
+      return { enrollment: enr, nextModule, total, completedCount };
     },
   });
 
   if (!data) return null;
-  const c = (data as any).courses;
+  const { enrollment, nextModule, total, completedCount } = data as any;
+  const c = enrollment.courses;
+  const pct = Math.round(Number(enrollment.progress_percent ?? 0));
   return (
     <Link
       to={`/learn/${c.slug}`}
@@ -40,8 +54,18 @@ export default function ContinueLearningCard({ path }: { path?: "mental-health" 
         </div>
         <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
       </div>
-      <Progress value={Number((data as any).progress_percent ?? 0)} className="h-1.5" />
-      <p className="text-[10px] text-muted-foreground mt-1">{Math.round(Number((data as any).progress_percent ?? 0))}% complete</p>
+      <Progress value={pct} className="h-1.5" />
+      <div className="flex items-center justify-between mt-1.5 gap-2">
+        <p className="text-[10px] text-muted-foreground">
+          {pct}% complete{total > 0 ? ` · ${completedCount}/${total} lessons` : ""}
+        </p>
+        {nextModule && (
+          <span className="text-[10px] text-primary inline-flex items-center gap-1 truncate max-w-[60%]">
+            <PlayCircle className="h-3 w-3 shrink-0" />
+            <span className="truncate">{nextModule.title}</span>
+          </span>
+        )}
+      </div>
     </Link>
   );
 }

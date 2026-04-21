@@ -1,7 +1,8 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, Component, ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Loader2 } from "lucide-react";
+import { Eye, Loader2, AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { AdminPreviewProvider } from "./AdminPreviewProvider";
 
 const SpecialistDashboard = lazy(() => import("@/pages/SpecialistDashboard"));
@@ -10,6 +11,44 @@ const OrganizationDashboard = lazy(() => import("@/pages/OrganizationDashboard")
 const AthleteHub = lazy(() => import("@/pages/AthleteHub"));
 
 type Role = "psychologist" | "user" | "organization" | "athlete";
+
+class PreviewErrorBoundary extends Component<
+  { children: ReactNode; label: string; resetKey: string | number },
+  { error: Error | null }
+> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  componentDidCatch(error: Error) {
+    console.error("[RolePreviewFrame]", error);
+  }
+  componentDidUpdate(prev: { resetKey: string | number }) {
+    if (prev.resetKey !== this.props.resetKey && this.state.error) {
+      this.setState({ error: null });
+    }
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="p-8 space-y-4">
+          <div className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            <h3 className="font-semibold">Failed to render {this.props.label} view</h3>
+          </div>
+          <pre className="text-xs bg-muted p-3 rounded-lg overflow-auto max-h-48 whitespace-pre-wrap break-words">
+            {this.state.error.message}
+            {this.state.error.stack ? "\n\n" + this.state.error.stack.split("\n").slice(0, 6).join("\n") : ""}
+          </pre>
+          <Button size="sm" variant="outline" onClick={() => this.setState({ error: null })}>
+            <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Retry
+          </Button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const VIEWS: Array<{ value: Role; label: string; Component: any }> = [
   { value: "psychologist", label: "Specialist", Component: SpecialistDashboard },
@@ -54,15 +93,18 @@ export default function RolePreviewFrame() {
               </div>
               <div className="bg-background">
                 <AdminPreviewProvider role={value}>
-                  <Suspense
-                    fallback={
-                      <div className="flex justify-center py-20">
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                      </div>
-                    }
-                  >
-                    <Component />
-                  </Suspense>
+                  <PreviewErrorBoundary label={label} resetKey={value}>
+                    <Suspense
+                      fallback={
+                        <div className="flex flex-col items-center gap-3 py-20">
+                          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                          <p className="text-xs text-muted-foreground">Loading {label} view…</p>
+                        </div>
+                      }
+                    >
+                      <Component />
+                    </Suspense>
+                  </PreviewErrorBoundary>
                 </AdminPreviewProvider>
               </div>
             </div>
