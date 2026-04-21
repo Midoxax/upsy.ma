@@ -69,6 +69,7 @@ import NotFound from "./pages/NotFound";
 import Learn from "./pages/Learn";
 import LearnCourse from "./pages/LearnCourse";
 import BookingResponse from "./pages/BookingResponse";
+import BookRedirect from "./pages/BookRedirect";
 
 const queryClient = new QueryClient();
 
@@ -136,6 +137,7 @@ const AppRoutes = () => (
     <Route path="learn" element={<PageTransition><Learn /></PageTransition>} />
     <Route path="learn/:slug" element={<PageTransition><LearnCourse /></PageTransition>} />
     <Route path="booking/respond/:token" element={<PageTransition><BookingResponse /></PageTransition>} />
+    <Route path="b/:slug" element={<BookRedirect />} />
   </>
 );
 

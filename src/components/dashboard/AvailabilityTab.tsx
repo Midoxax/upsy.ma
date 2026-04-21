@@ -14,6 +14,7 @@ import {
   Eye,
   Settings2,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { usePsychologistSlots, usePsychologistBookings } from "@/hooks/useBooking";
 import { supabase } from "@/integrations/supabase/client";
