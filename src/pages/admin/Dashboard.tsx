@@ -495,7 +495,7 @@ const UsersTab = () => {
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((u: any) => (
-                <tr key={u.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={u.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setOpenId(u.id)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {u.avatar_url ? (
@@ -505,7 +505,10 @@ const UsersTab = () => {
                           {u.full_name?.slice(0, 2).toUpperCase() ?? "?"}
                         </div>
                       )}
-                      <span className="font-medium">{u.full_name ?? "Anonymous"}</span>
+                      <div>
+                        <span className="font-medium">{u.full_name ?? "Anonymous"}</span>
+                        {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{u.city ?? "–"}</td>
@@ -518,6 +521,7 @@ const UsersTab = () => {
           </table>
         </div>
       )}
+      <UserDetailDrawer userId={openId} onClose={() => setOpenId(null)} />
     </div>
   );
 };
