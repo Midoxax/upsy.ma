@@ -11,6 +11,7 @@ import { useSpecialties, useLanguages } from "@/hooks/usePsychologists";
 import { Loader2, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { ShareBookingLinkCard } from "@/components/dashboard/ShareBookingLinkCard";
 
 export const ProfileTab = () => {
   const { toast } = useToast();
@@ -139,6 +140,12 @@ export const ProfileTab = () => {
         <CardDescription>Update your professional profile details</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="mb-6">
+          <ShareBookingLinkCard
+            slug={(profile as any)?.slug}
+            isPublished={(profile as any)?.is_published}
+          />
+        </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">

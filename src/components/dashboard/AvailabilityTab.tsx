@@ -14,6 +14,7 @@ import {
   Eye,
   Settings2,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { usePsychologistSlots, usePsychologistBookings } from "@/hooks/useBooking";
 import { supabase } from "@/integrations/supabase/client";
@@ -233,6 +234,20 @@ export const AvailabilityTab = () => {
             </div>
           ) : view === "template" ? (
             <>
+              {slots.length === 0 && (
+                <div className="mb-4 flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                  <AlertCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <div className="text-sm">
+                    <p className="font-medium text-foreground">
+                      Set your weekly hours first
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Clients can't book an empty calendar — add at least one time range below,
+                      then share your booking link from the Profile tab.
+                    </p>
+                  </div>
+                </div>
+              )}
               <div className="space-y-3">
                 {DAYS.map((label, day) => {
                   const ranges = draft[day];

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { usePsychologistProfile } from "@/hooks/usePsychologistProfile";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix } from "@/lib/i18n/utils";
@@ -25,6 +25,7 @@ const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const PsychologistProfile = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const { data: psychologist, isLoading, error } = usePsychologistProfile(id!);
   const { t, locale } = useLocale();
   const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
@@ -78,6 +79,18 @@ const PsychologistProfile = () => {
     }
   }, [psychologist]);
 
+  // Auto-open the booking widget when arriving via a shared "?book=1" link
+  useEffect(() => {
+    if (!psychologist) return;
+    if (searchParams.get("book") !== "1") return;
+    const t = setTimeout(() => {
+      setIsBookingModalOpen(true);
+      const el = document.getElementById("booking-widget");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 200);
+    return () => clearTimeout(t);
+  }, [psychologist, searchParams]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -121,13 +134,15 @@ const PsychologistProfile = () => {
     <div className="min-h-screen pb-24 lg:pb-8 bg-background">
       <SEOHead path={`/psychologists/${psychologist.slug}`} />
 
-      <BookingWidget
-        psychologistId={psychologist.id}
-        psychologistName={psychologist.full_name}
-        hourlyRate={psychologist.hourly_rate_mad ?? undefined}
-        offersOnline={psychologist.offers_online ?? true}
-        offersInPerson={psychologist.offers_in_person ?? false}
-      />
+      <div id="booking-widget">
+        <BookingWidget
+          psychologistId={psychologist.id}
+          psychologistName={psychologist.full_name}
+          hourlyRate={psychologist.hourly_rate_mad ?? undefined}
+          offersOnline={psychologist.offers_online ?? true}
+          offersInPerson={psychologist.offers_in_person ?? false}
+        />
+      </div>
 
       {/* ── PREMIUM HERO ── */}
       <section className="relative overflow-hidden">
