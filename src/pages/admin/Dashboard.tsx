@@ -25,6 +25,10 @@ import TransactionsTab from "@/components/admin/TransactionsTab";
 import OrgApplicationsManager from "@/components/admin/OrgApplicationsManager";
 import CommandPalette from "@/components/admin/CommandPalette";
 import ExportCsvButton from "@/components/admin/ExportCsvButton";
+import UserDetailDrawer from "@/components/admin/UserDetailDrawer";
+import PsychologistEditDrawer from "@/components/admin/PsychologistEditDrawer";
+import BookingDetailDrawer from "@/components/admin/BookingDetailDrawer";
+import { rowsToCsv, downloadCsv } from "@/lib/admin/csv";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
 
@@ -229,6 +233,7 @@ const PSY_STATUS_STYLES: Record<string, string> = {
 
 const PsychologistsTab = () => {
   const [search, setSearch] = useState("");
+  const [editId, setEditId] = useState<string | null>(null);
   const { data: psychologists = [], isLoading } = useAllPsychologists();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -264,6 +269,13 @@ const PsychologistsTab = () => {
             className="pl-9 bg-surface"
           />
         </div>
+        <ExportCsvButton
+          filename="psychologists.csv"
+          rows={filtered.map((p: any) => ({
+            id: p.id, name: p.full_name, city: p.city, rate: p.hourly_rate_mad,
+            published: p.is_published, accredited: p.is_accredited, level: p.accreditation_level,
+          }))}
+        />
       </div>
 
       {isLoading ? (
@@ -282,7 +294,7 @@ const PsychologistsTab = () => {
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((p: any) => (
-                <tr key={p.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={p.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setEditId(p.id)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {p.photo_url ? (
@@ -318,7 +330,7 @@ const PsychologistsTab = () => {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => togglePublish.mutate({ id: p.id, published: !p.is_published })}
+                      onClick={(e) => { e.stopPropagation(); togglePublish.mutate({ id: p.id, published: !p.is_published }); }}
                       className="text-xs"
                     >
                       {p.is_published ? <UserX className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
@@ -337,6 +349,7 @@ const PsychologistsTab = () => {
           </table>
         </div>
       )}
+      <PsychologistEditDrawer psychologistId={editId} onClose={() => setEditId(null)} />
     </div>
   );
 };
@@ -353,6 +366,7 @@ const BOOKING_STATUS_STYLES: Record<string, string> = {
 
 const BookingsTab = () => {
   const [filter, setFilter] = useState("all");
+  const [openId, setOpenId] = useState<string | null>(null);
   const { data: bookings = [], isLoading } = useAllBookings();
 
   const filtered = bookings.filter((b: any) =>
@@ -376,6 +390,16 @@ const BookingsTab = () => {
             {s}
           </button>
         ))}
+        <div className="ml-auto">
+          <ExportCsvButton
+            filename="bookings.csv"
+            rows={filtered.map((b: any) => ({
+              id: b.id, when: b.scheduled_at, patient: b.patient_name,
+              psychologist: b.psychologist_name, status: b.status,
+              payment: b.payment_status, amount_mad: b.amount_mad,
+            }))}
+          />
+        </div>
       </div>
 
       {isLoading ? (
@@ -394,7 +418,7 @@ const BookingsTab = () => {
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((b: any) => (
-                <tr key={b.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={b.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setOpenId(b.id)}>
                   <td className="px-4 py-3 font-medium">{b.patient_name ?? "–"}</td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{b.psychologist_name ?? "–"}</td>
                   <td className="px-4 py-3 text-muted-foreground">
@@ -420,6 +444,7 @@ const BookingsTab = () => {
           </table>
         </div>
       )}
+      <BookingDetailDrawer bookingId={openId} onClose={() => setOpenId(null)} />
     </div>
   );
 };
@@ -428,6 +453,7 @@ const BookingsTab = () => {
 
 const UsersTab = () => {
   const [search, setSearch] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
   const { data: users = [], isLoading } = useAllUsers();
 
   const filtered = users.filter((u: any) =>
@@ -436,13 +462,22 @@ const UsersTab = () => {
 
   return (
     <div className="space-y-4">
-      <div className="relative max-w-xs">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search users..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 bg-surface"
+      <div className="flex gap-3">
+        <div className="relative max-w-xs flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search users..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 bg-surface"
+          />
+        </div>
+        <ExportCsvButton
+          filename="users.csv"
+          rows={filtered.map((u: any) => ({
+            id: u.id, name: u.full_name, city: u.city, phone: u.phone,
+            joined: u.created_at, suspended: u.is_suspended,
+          }))}
         />
       </div>
 
@@ -460,7 +495,7 @@ const UsersTab = () => {
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((u: any) => (
-                <tr key={u.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={u.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setOpenId(u.id)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {u.avatar_url ? (
@@ -470,7 +505,10 @@ const UsersTab = () => {
                           {u.full_name?.slice(0, 2).toUpperCase() ?? "?"}
                         </div>
                       )}
-                      <span className="font-medium">{u.full_name ?? "Anonymous"}</span>
+                      <div>
+                        <span className="font-medium">{u.full_name ?? "Anonymous"}</span>
+                        {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{u.city ?? "–"}</td>
@@ -483,6 +521,7 @@ const UsersTab = () => {
           </table>
         </div>
       )}
+      <UserDetailDrawer userId={openId} onClose={() => setOpenId(null)} />
     </div>
   );
 };

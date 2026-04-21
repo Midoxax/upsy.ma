@@ -1,0 +1,205 @@
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAssignRole, useRevokeRole, useSuspendUser } from "@/hooks/admin/useAdminMutations";
+import { Loader2, Shield, ShieldOff, UserX, UserCheck, X, Plus, Mail } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
+const ROLES: AppRole[] = ["admin", "psychologist", "user", "athlete", "coach", "organization"];
+
+interface Props {
+  userId: string | null;
+  onClose: () => void;
+}
+
+export default function UserDetailDrawer({ userId, onClose }: Props) {
+  const qc = useQueryClient();
+  const open = !!userId;
+
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["admin-user-detail", userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const [profile, roles, bookings] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", userId),
+        supabase.from("bookings").select("id, scheduled_at, status, amount_mad").eq("patient_id", userId).order("scheduled_at", { ascending: false }).limit(5),
+      ]);
+      if (profile.error) throw profile.error;
+      return {
+        profile: profile.data,
+        roles: (roles.data ?? []).map((r) => r.role as AppRole),
+        bookings: bookings.data ?? [],
+      };
+    },
+    enabled: open,
+  });
+
+  const [form, setForm] = useState({ full_name: "", city: "", phone: "", bio: "" });
+  const [newRole, setNewRole] = useState<AppRole>("user");
+  const [suspendReason, setSuspendReason] = useState("");
+
+  useEffect(() => {
+    if (user?.profile) {
+      setForm({
+        full_name: user.profile.full_name ?? "",
+        city: user.profile.city ?? "",
+        phone: user.profile.phone ?? "",
+        bio: user.profile.bio ?? "",
+      });
+    }
+  }, [user?.profile?.id]);
+
+  const assignRole = useAssignRole();
+  const revokeRole = useRevokeRole();
+  const suspend = useSuspendUser();
+
+  const saveProfile = async () => {
+    if (!userId) return;
+    const { error } = await supabase.from("profiles").update(form).eq("id", userId);
+    if (error) return toast.error(error.message);
+    toast.success("Profile saved");
+    qc.invalidateQueries({ queryKey: ["admin-users"] });
+    qc.invalidateQueries({ queryKey: ["admin-users-rich"] });
+  };
+
+  const sendReset = async () => {
+    if (!user?.profile) return;
+    const { data: u } = await supabase.auth.admin?.getUserById?.(userId!) ?? { data: null };
+    // Fallback: use updateUserById not available client-side; use resetPasswordForEmail with email if known
+    toast.info("Ask user to use 'Forgot password' on login screen");
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>User details</SheetTitle>
+          <SheetDescription>{userId}</SheetDescription>
+        </SheetHeader>
+
+        {isLoading || !user ? (
+          <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin" /></div>
+        ) : (
+          <Tabs defaultValue="profile" className="mt-6">
+            <TabsList>
+              <TabsTrigger value="profile">Profile</TabsTrigger>
+              <TabsTrigger value="roles">Roles</TabsTrigger>
+              <TabsTrigger value="activity">Activity</TabsTrigger>
+              <TabsTrigger value="moderation">Moderation</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="profile" className="space-y-4 mt-4">
+              <div className="space-y-2"><Label>Full name</Label><Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2"><Label>City</Label><Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Phone</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+              </div>
+              <div className="space-y-2"><Label>Bio</Label><Input value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} /></div>
+              <div className="text-xs text-muted-foreground">Created {user.profile?.created_at && format(new Date(user.profile.created_at), "PPp")}</div>
+              <Button onClick={saveProfile}>Save profile</Button>
+            </TabsContent>
+
+            <TabsContent value="roles" className="space-y-4 mt-4">
+              <div className="flex flex-wrap gap-2">
+                {user.roles.length === 0 && <span className="text-sm text-muted-foreground">No roles assigned.</span>}
+                {user.roles.map((r) => (
+                  <Badge key={r} variant="secondary" className="gap-1.5 pr-1">
+                    {r}
+                    <button
+                      onClick={() => revokeRole.mutate({ userId: userId!, role: r }, {
+                        onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-user-detail", userId] }),
+                      })}
+                      className="hover:bg-destructive/20 rounded p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Select value={newRole} onValueChange={(v) => setNewRole(v as AppRole)}>
+                  <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {ROLES.filter((r) => !user.roles.includes(r)).map((r) => (
+                      <SelectItem key={r} value={r}>{r}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={() => assignRole.mutate({ userId: userId!, role: newRole }, {
+                    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-user-detail", userId] }),
+                  })}
+                >
+                  <Plus className="h-4 w-4 mr-1" /> Assign
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="activity" className="space-y-3 mt-4">
+              <h4 className="text-sm font-semibold">Recent bookings</h4>
+              {user.bookings.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No bookings.</p>
+              ) : user.bookings.map((b: any) => (
+                <div key={b.id} className="flex justify-between text-sm border rounded-lg p-2">
+                  <span>{format(new Date(b.scheduled_at), "PP p")}</span>
+                  <span className="text-muted-foreground">{b.status} · {b.amount_mad ?? 0} MAD</span>
+                </div>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="moderation" className="space-y-4 mt-4">
+              <div className="rounded-lg border p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-sm">Account status</p>
+                    <p className="text-xs text-muted-foreground">
+                      {user.profile?.is_suspended
+                        ? `Suspended${user.profile.suspended_reason ? `: ${user.profile.suspended_reason}` : ""}`
+                        : "Active"}
+                    </p>
+                  </div>
+                  <Badge variant={user.profile?.is_suspended ? "destructive" : "secondary"}>
+                    {user.profile?.is_suspended ? "Suspended" : "Active"}
+                  </Badge>
+                </div>
+                {!user.profile?.is_suspended && (
+                  <div className="space-y-2">
+                    <Label className="text-xs">Reason (optional)</Label>
+                    <Input value={suspendReason} onChange={(e) => setSuspendReason(e.target.value)} placeholder="Spam, abuse…" />
+                  </div>
+                )}
+                <Button
+                  variant={user.profile?.is_suspended ? "secondary" : "destructive"}
+                  size="sm"
+                  onClick={() => suspend.mutate({
+                    userId: userId!,
+                    suspended: !user.profile?.is_suspended,
+                    reason: suspendReason || undefined,
+                  }, {
+                    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-user-detail", userId] }),
+                  })}
+                >
+                  {user.profile?.is_suspended
+                    ? <><UserCheck className="h-4 w-4 mr-1" /> Reactivate</>
+                    : <><UserX className="h-4 w-4 mr-1" /> Suspend account</>}
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+}
