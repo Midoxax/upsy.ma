@@ -9,6 +9,7 @@ import logo from "@/assets/logo.webp";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
 import InstallAppButton from "@/components/pwa/InstallAppButton";
+import ViewAsSwitcher from "@/components/ViewAsSwitcher";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -117,6 +118,7 @@ const Header = () => {
             <ThemeToggle />
             <LanguageSwitcher className="mr-1" />
             <InstallAppButton variant="ghost" size="sm" label="" className="hidden xl:inline-flex" />
+            {user && <ViewAsSwitcher compact />}
             {user ? (
               <Button variant="primary" size="sm" asChild>
                 <Link to={addLocalePrefix('/my-space', locale)}>
