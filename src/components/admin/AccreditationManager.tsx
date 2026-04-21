@@ -63,12 +63,23 @@ const AccreditationManager = () => {
       if (!data.success) throw new Error(data.error || "Provisioning failed");
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["accreditation-applications"] });
       queryClient.invalidateQueries({ queryKey: ["admin-stats-enhanced"] });
-      toast({ title: "Approved", description: "Psychologist provisioned successfully." });
+      queryClient.invalidateQueries({ queryKey: ["provisioning-attempts"] });
+      const desc = data?.alreadyProvisioned
+        ? "Account was already fully provisioned — no changes needed."
+        : data?.reusedExistingUser
+        ? "✅ Reused existing user account and finished missing steps."
+        : "✅ New user account created and welcome email sent.";
+      toast({ title: "Approved", description: desc });
     },
-    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+    onError: (e: Error) =>
+      toast({
+        title: "Provisioning failed",
+        description: e.message + " — Open the application drawer to inspect the audit trail and retry.",
+        variant: "destructive",
+      }),
   });
 
   const rejectApplication = useMutation({
