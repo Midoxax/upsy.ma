@@ -1,82 +1,57 @@
 
 
-## Two things you're asking about — and how to add the missing piece
+## Wire up the proposal system end-to-end
 
-### 1. Setting your available hours (already built — here's where)
+Most of this is already built (modal, hooks, card, response page, RPC). The gaps: **server-side collision/availability validation** and an **upgraded Availability UI** with multi-range entry + booker preview. Plan covers all six asks; existing pieces are marked ✅.
 
-Sign in as a psychologist → **My Space** → **Availability** tab. You'll see a 7-day grid (Sun → Sat).
+### 1. Propose-session validation (gap → build)
+Update `supabase/functions/propose-session/index.ts` to reject the request before insert if:
+- The proposed `scheduled_at` weekday/time falls **outside** any active `availability_slots` row for the psychologist (compare `day_of_week` + `start_time`/`end_time` in the psychologist's local TZ, default `Africa/Casablanca`).
+- The `[scheduled_at, scheduled_at + duration]` window **overlaps** any existing booking for the same psychologist with status in `('proposed','pending','confirmed')`. Use a single SQL check with `tstzrange` overlap (`&&`).
+- The slot is in the past or less than 1h away.
 
-For each day:
-- Click **+ Add slot**
-- Pick a **start** and **end** time (e.g. 09:00 → 12:00)
-- Save
+Return structured 4xx errors (`outside_availability`, `slot_conflict`, `too_soon`) so the modal can show a clear toast. Mirror the same checks client-side in `ProposeSessionModal` for instant feedback (disable Send button, show inline reason).
 
-Each saved range becomes a recurring weekly window. Patients only see times that fall inside these windows when they open your booking widget. You can stack multiple ranges per day (e.g. 09:00–12:00 and 15:00–18:00) and delete any with the trash icon.
+Add a new RPC `check_proposal_slot(_psy uuid, _start timestamptz, _duration int)` returning `{ ok, reason }` so the modal can call it on every date/time change for a live "Available ✓ / Conflict ✗" indicator.
 
-That part is fully working today via the `availability_slots` table and the `get_available_slots` RPC.
+### 2. Availability UI upgrade (gap → rebuild `AvailabilityTab`)
+Replace the current list with a **week grid** that supports rapid multi-range entry:
 
-### 2. What's missing: psychologist-initiated meeting invitations
-
-Right now, only the **patient** can create a booking. A psychologist cannot proactively say "let's meet Tuesday at 4pm" and send the client a confirmation. We'll add that.
-
-**New feature: "Propose a session" from the psychologist dashboard**
-
-Where it lives:
-- New button **"Propose session"** in the Sessions tab header and on each client row in the Leads tab.
-- New button **"Schedule with…"** on the Availability tab.
-
-Flow:
 ```text
-Psychologist → "Propose session"
-   ├── Pick a client (dropdown of past patients + leads + free email entry)
-   ├── Pick date + time (calendar + time picker, defaults to next free slot)
-   ├── Duration (30 / 45 / 50 / 60 min)
-   ├── Type (video / in-person / phone)
-   ├── Optional note ("Follow-up on last week's exercise")
-   └── Send
-        ↓
-   • Booking row created with status='proposed', payment_status='unpaid'
-   • Email sent to client with Accept / Decline links
-   • Client sees it in their dashboard under "Pending invitations"
-   • On Accept → status='confirmed', video room ID generated
-   • On Decline → status='cancelled' with reason
+┌──────┬─────────────────────────────────────────────┐
+│ Mon  │ [09:00–12:00] [14:00–18:00]  [+ Add range]  │
+│ Tue  │ [10:00–13:00]                [+ Add range]  │
+│ Wed  │ (no availability)            [+ Add range]  │
+│ ...  │                                             │
+└──────┴─────────────────────────────────────────────┘
+[Copy Mon → all weekdays]   [Clear week]
 ```
 
-What gets built:
+Features:
+- Inline range chips with start/end time inputs and a delete (✕) button.
+- "+ Add range" button per day → appends a default 09:00–10:00 row.
+- "Copy Mon → all weekdays" duplicates Monday's ranges to Tue–Fri.
+- **Preview drawer** on the right showing the next 14 days with computed bookable 50-min slots from `get_available_slots` so the psychologist sees exactly what clients will see. Toggle between "What clients see" and "My week template".
+- Validation: end must be > start, ranges per day cannot overlap (highlight in red).
+- Single "Save changes" button → diff against DB and run insert/update/delete in one transaction via a new `replace_availability_for_day(_day smallint, _ranges jsonb)` RPC to keep it atomic.
 
-**Database (migration)**
-- Extend `bookings.status` to allow `proposed` and `declined` (currently uses pending/confirmed/completed/cancelled/no_show).
-- Add columns: `proposed_by` (uuid, who initiated), `proposal_token` (text, for the email accept/decline link), `proposal_expires_at` (timestamptz, default 72h).
-- RLS update: psychologists can `INSERT` bookings where they are the `psychologist_id` and `status='proposed'`.
-- Trigger to auto-generate `video_room_id` when a `video` booking flips to `confirmed`.
+### 3. ✅ Already built (verify wiring)
+- **Propose-session modal + button** in `SessionsTab.tsx` and `LeadsTab.tsx`.
+- **Pending invitations card** mounted on `PatientDashboard.tsx` (`PendingInvitationsCard.tsx`).
+- **`/booking/respond/:token` page** registered in `App.tsx` → `BookingResponse.tsx` calling `respond_to_proposal` RPC.
 
-**Edge function: `propose-session`**
-- Validates the slot doesn't collide with existing bookings or fall outside availability.
-- Resolves the patient (existing user by email, or creates a `growth_leads` row if they're not signed up yet).
-- Inserts the booking with `status='proposed'`.
-- Sends a branded email (maroon template, EN/FR/AR depending on client locale) with Accept and Decline buttons that hit `/booking/respond/:token`.
+Quick QA pass after step 1+2 ships:
+- Confirm the route renders for an anon visitor (RLS already allows token-based reads).
+- Confirm the patient card refreshes after `respond_to_proposal` via React Query invalidation on `pending-invitations` and `upcoming-sessions`.
+- Confirm the email link in `propose-session` points to `${SITE_URL}/booking/respond/${token}`.
 
-**Edge function: `respond-to-proposal`** (public, token-gated)
-- Verifies token + expiry.
-- Sets status to `confirmed` or `cancelled`.
-- If confirmed and the recipient has no account, redirects them to signup with a link-on-signup token so the booking attaches to their new user.
+### Technical notes
+- New migration: `check_proposal_slot` RPC + `replace_availability_for_day` RPC + index on `bookings(psychologist_id, scheduled_at)` if missing.
+- All time math in the edge function uses `Africa/Casablanca` (no per-psychologist TZ field exists yet — out of scope to add).
+- Audit log row written for every availability replace and every proposal validation rejection.
 
-**UI components**
-- `src/components/dashboard/ProposeSessionModal.tsx` — the form (client picker, date/time, duration, type, note).
-- `src/components/dashboard/PendingInvitationsCard.tsx` — shown on the **Patient Dashboard** so clients see and accept pending proposals in-app (no email click needed).
-- New page `src/pages/BookingResponse.tsx` at `/booking/respond/:token` for the email-link flow.
-- "Propose session" button added to `SessionsTab.tsx` and an entry on each row of `LeadsTab.tsx`.
-
-**Hooks**
-- `useProposeSession` — wraps the edge function call.
-- `usePendingInvitations` — patient-side list of `bookings` with `status='proposed'`.
-- `useRespondToProposal` — accept/decline.
-
-**Email**
-- New template `supabase/functions/_shared/email-templates/session-proposal.tsx` — maroon brand, includes psychologist name+photo, date/time, duration, Accept/Decline buttons, 72h expiry note, Law 09-08 privacy footer.
-
-### Out of scope (next pass)
-- Recurring proposals (weekly series).
-- Calendar sync (.ics file attachment).
-- WhatsApp delivery of the invite (waiting on WhatsApp Business API integration).
+### Out of scope
+- Per-psychologist timezone setting.
+- iCal export of availability.
+- Drag-to-resize range chips.
 
