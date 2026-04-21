@@ -66,6 +66,8 @@ import Invite from "./pages/Invite";
 import ForAthletes from "./pages/funnels/ForAthletes";
 import ForOrganizations from "./pages/funnels/ForOrganizations";
 import NotFound from "./pages/NotFound";
+import Learn from "./pages/Learn";
+import LearnCourse from "./pages/LearnCourse";
 
 const queryClient = new QueryClient();
 
@@ -130,6 +132,8 @@ const AppRoutes = () => (
     <Route path="invite/:code" element={<PageTransition><Invite /></PageTransition>} />
     <Route path="for-athletes" element={<PageTransition><ForAthletes /></PageTransition>} />
     <Route path="for-organizations" element={<PageTransition><ForOrganizations /></PageTransition>} />
+    <Route path="learn" element={<PageTransition><Learn /></PageTransition>} />
+    <Route path="learn/:slug" element={<PageTransition><LearnCourse /></PageTransition>} />
   </>
 );
 

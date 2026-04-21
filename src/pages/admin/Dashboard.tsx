@@ -28,6 +28,8 @@ import ExportCsvButton from "@/components/admin/ExportCsvButton";
 import UserDetailDrawer from "@/components/admin/UserDetailDrawer";
 import PsychologistEditDrawer from "@/components/admin/PsychologistEditDrawer";
 import BookingDetailDrawer from "@/components/admin/BookingDetailDrawer";
+import RolePreviewFrame from "@/components/admin/RolePreviewFrame";
+import LearningHubManager from "@/components/admin/LearningHubManager";
 import { rowsToCsv, downloadCsv } from "@/lib/admin/csv";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
