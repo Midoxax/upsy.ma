@@ -42,6 +42,7 @@ export const SessionsTab = () => {
   const [loading, setLoading] = useState(true);
   const [anamnesisFor, setAnamnesisFor] = useStateReact<{ clientId: string; name?: string } | null>(null);
   const [proposeOpen, setProposeOpen] = useState(false);
+  const [linkOpen, setLinkOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -209,10 +210,16 @@ export const SessionsTab = () => {
             <Calendar className="h-5 w-5 text-primary" />
             Sessions
           </CardTitle>
-          <Button size="sm" onClick={() => setProposeOpen(true)}>
-            <CalendarPlus className="h-4 w-4 mr-1" />
-            Propose session
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => setProposeOpen(true)}>
+              <CalendarPlus className="h-4 w-4 mr-1" />
+              Propose session
+            </Button>
+            <Button size="sm" onClick={() => setLinkOpen(true)}>
+              <Video className="h-4 w-4 mr-1" />
+              Send meeting link
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -273,6 +280,7 @@ export const SessionsTab = () => {
       />
     )}
     <ProposeSessionModal open={proposeOpen} onOpenChange={setProposeOpen} />
+    <ProposeSessionModal open={linkOpen} onOpenChange={setLinkOpen} defaultMode="link" />
     </>
   );
 };

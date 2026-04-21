@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLeads, useUpdateLead } from "@/hooks/usePsychologistDashboard";
-import { Loader2, Users, Mail, Phone, CalendarPlus } from "lucide-react";
+import { Loader2, Users, Mail, Phone, CalendarPlus, Video } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 import ProposeSessionModal from "@/components/dashboard/ProposeSessionModal";
@@ -27,6 +27,7 @@ export const LeadsTab = () => {
   const { data: leads = [], isLoading } = useLeads();
   const updateLead = useUpdateLead();
   const [proposeFor, setProposeFor] = useState<{ email: string; name: string } | null>(null);
+  const [linkFor, setLinkFor] = useState<{ email: string; name: string } | null>(null);
 
   const handleStatusUpdate = async (leadId: string, newStatus: string) => {
     try {
@@ -137,6 +138,15 @@ export const LeadsTab = () => {
                     <CalendarPlus className="h-4 w-4 mr-1" />
                     Propose session
                   </Button>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      setLinkFor({ email: lead.client_email, name: lead.client_name })
+                    }
+                  >
+                    <Video className="h-4 w-4 mr-1" />
+                    Send meeting link
+                  </Button>
                 </div>
               </div>
             ))}
@@ -148,6 +158,13 @@ export const LeadsTab = () => {
         onOpenChange={(o) => !o && setProposeFor(null)}
         defaultEmail={proposeFor?.email ?? ""}
         defaultName={proposeFor?.name ?? ""}
+      />
+      <ProposeSessionModal
+        open={!!linkFor}
+        onOpenChange={(o) => !o && setLinkFor(null)}
+        defaultEmail={linkFor?.email ?? ""}
+        defaultName={linkFor?.name ?? ""}
+        defaultMode="link"
       />
     </Card>
   );
