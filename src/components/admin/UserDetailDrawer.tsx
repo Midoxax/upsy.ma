@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAssignRole, useRevokeRole, useSuspendUser } from "@/hooks/admin/useAdminMutations";
-import { Loader2, Shield, ShieldOff, UserX, UserCheck, X, Plus, Mail } from "lucide-react";
+import { useForceSignout, useSendPasswordReset, useDeleteProfile, useAdminUserActivity } from "@/hooks/admin/useAdminAccount";
+import { Loader2, Shield, ShieldOff, UserX, UserCheck, X, Plus, Mail, LogOut, KeyRound, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -30,10 +31,11 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
     queryKey: ["admin-user-detail", userId],
     queryFn: async () => {
       if (!userId) return null;
-      const [profile, roles, bookings] = await Promise.all([
+      const [profile, roles, bookings, emailRow] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
         supabase.from("bookings").select("id, scheduled_at, status, amount_mad").eq("patient_id", userId).order("scheduled_at", { ascending: false }).limit(5),
+        supabase.rpc("admin_list_users_rich" as any, { _search: null, _limit: 1, _user_id: userId }).then(() => ({ data: null })).catch(() => ({ data: null })),
       ]);
       if (profile.error) throw profile.error;
       return {
@@ -44,6 +46,22 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
     },
     enabled: open,
   });
+
+  // Fetch email + last sign in via the rich list
+  const { data: richList } = useQuery({
+    queryKey: ["admin-user-rich-single", userId],
+    enabled: open,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_list_users_rich" as any, { _search: null, _limit: 200 });
+      if (error) return null;
+      return (data as any[])?.find((u) => u.id === userId) ?? null;
+    },
+  });
+
+  const activity = useAdminUserActivity(userId);
+  const forceSignout = useForceSignout();
+  const sendReset = useSendPasswordReset();
+  const deleteProfile = useDeleteProfile();
 
   const [form, setForm] = useState({ full_name: "", city: "", phone: "", bio: "" });
   const [newRole, setNewRole] = useState<AppRole>("user");
