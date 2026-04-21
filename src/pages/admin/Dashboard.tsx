@@ -25,6 +25,10 @@ import TransactionsTab from "@/components/admin/TransactionsTab";
 import OrgApplicationsManager from "@/components/admin/OrgApplicationsManager";
 import CommandPalette from "@/components/admin/CommandPalette";
 import ExportCsvButton from "@/components/admin/ExportCsvButton";
+import UserDetailDrawer from "@/components/admin/UserDetailDrawer";
+import PsychologistEditDrawer from "@/components/admin/PsychologistEditDrawer";
+import BookingDetailDrawer from "@/components/admin/BookingDetailDrawer";
+import { rowsToCsv, downloadCsv } from "@/lib/admin/csv";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
 
