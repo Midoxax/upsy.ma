@@ -457,11 +457,16 @@ export type Database = {
         Row: {
           amount_mad: number | null
           created_at: string | null
+          decline_reason: string | null
           duration_minutes: number
           id: string
+          patient_email: string | null
           patient_id: string
           patient_notes: string | null
           payment_status: string | null
+          proposal_expires_at: string | null
+          proposal_token: string | null
+          proposed_by: string | null
           psychologist_id: string
           scheduled_at: string
           session_type: string
@@ -472,11 +477,16 @@ export type Database = {
         Insert: {
           amount_mad?: number | null
           created_at?: string | null
+          decline_reason?: string | null
           duration_minutes?: number
           id?: string
+          patient_email?: string | null
           patient_id: string
           patient_notes?: string | null
           payment_status?: string | null
+          proposal_expires_at?: string | null
+          proposal_token?: string | null
+          proposed_by?: string | null
           psychologist_id: string
           scheduled_at: string
           session_type?: string
@@ -487,11 +497,16 @@ export type Database = {
         Update: {
           amount_mad?: number | null
           created_at?: string | null
+          decline_reason?: string | null
           duration_minutes?: number
           id?: string
+          patient_email?: string | null
           patient_id?: string
           patient_notes?: string | null
           payment_status?: string | null
+          proposal_expires_at?: string | null
+          proposal_token?: string | null
+          proposed_by?: string | null
           psychologist_id?: string
           scheduled_at?: string
           session_type?: string
@@ -3016,6 +3031,10 @@ export type Database = {
           referrer_id: string
           status: string
         }[]
+      }
+      respond_to_proposal: {
+        Args: { _action: string; _reason?: string; _token: string }
+        Returns: Json
       }
       search_psychologists:
         | {
