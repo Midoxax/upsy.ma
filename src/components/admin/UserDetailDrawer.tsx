@@ -177,6 +177,25 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
                   <span className="text-muted-foreground">{b.status} · {b.amount_mad ?? 0} MAD</span>
                 </div>
               ))}
+              {activity.data && (
+                <div className="grid grid-cols-2 gap-2 pt-3 text-xs text-muted-foreground">
+                  <div className="rounded-lg border p-2"><div className="text-foreground font-semibold">{activity.data.journals_30d}</div>journals (30d)</div>
+                  <div className="rounded-lg border p-2"><div className="text-foreground font-semibold">{activity.data.moods_30d}</div>moods (30d)</div>
+                </div>
+              )}
+              {activity.data?.audit_tail && activity.data.audit_tail.length > 0 && (
+                <div className="pt-3">
+                  <h4 className="text-sm font-semibold mb-2">Recent audit events</h4>
+                  <div className="space-y-1">
+                    {activity.data.audit_tail.slice(0, 10).map((a: any) => (
+                      <div key={a.id} className="text-xs flex justify-between border rounded px-2 py-1">
+                        <span>{a.action} · {a.resource_type}</span>
+                        <span className="text-muted-foreground">{format(new Date(a.created_at), "PP p")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="moderation" className="space-y-4 mt-4">
@@ -214,6 +233,43 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
                   {user.profile?.is_suspended
                     ? <><UserCheck className="h-4 w-4 mr-1" /> Reactivate</>
                     : <><UserX className="h-4 w-4 mr-1" /> Suspend account</>}
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="status" className="space-y-3 mt-4">
+              <div className="rounded-lg border p-4 space-y-3">
+                <h4 className="text-sm font-semibold">Account actions</h4>
+                <div className="grid gap-2">
+                  <Button
+                    variant="outline" size="sm" className="justify-start"
+                    disabled={!richList?.email || sendReset.isPending}
+                    onClick={() => sendReset.mutate({ userId: userId!, email: richList!.email! })}
+                  >
+                    <KeyRound className="h-4 w-4 mr-2" /> Send password reset email
+                  </Button>
+                  <Button
+                    variant="outline" size="sm" className="justify-start"
+                    disabled={forceSignout.isPending}
+                    onClick={() => forceSignout.mutate(userId!)}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" /> Force sign-out (all sessions)
+                  </Button>
+                </div>
+              </div>
+              <div className="rounded-lg border border-destructive/40 p-4 space-y-2">
+                <h4 className="text-sm font-semibold text-destructive">Danger zone</h4>
+                <p className="text-xs text-muted-foreground">Permanently delete this user's profile and revoke all roles. The auth account remains and can re-onboard.</p>
+                <Button
+                  variant="destructive" size="sm"
+                  disabled={deleteProfile.isPending}
+                  onClick={() => {
+                    if (confirm("Delete this profile? This cannot be undone.")) {
+                      deleteProfile.mutate(userId!, { onSuccess: () => onClose() });
+                    }
+                  }}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" /> Delete profile
                 </Button>
               </div>
             </TabsContent>
