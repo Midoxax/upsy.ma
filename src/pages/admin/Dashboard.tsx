@@ -294,7 +294,7 @@ const PsychologistsTab = () => {
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((p: any) => (
-                <tr key={p.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={p.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setEditId(p.id)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {p.photo_url ? (
@@ -330,7 +330,7 @@ const PsychologistsTab = () => {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => togglePublish.mutate({ id: p.id, published: !p.is_published })}
+                      onClick={(e) => { e.stopPropagation(); togglePublish.mutate({ id: p.id, published: !p.is_published }); }}
                       className="text-xs"
                     >
                       {p.is_published ? <UserX className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
