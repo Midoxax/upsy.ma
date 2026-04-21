@@ -23,6 +23,8 @@ import AnamnesisCopyEditor from "@/components/admin/AnamnesisCopyEditor";
 import PricingControl from "@/components/admin/PricingControl";
 import TransactionsTab from "@/components/admin/TransactionsTab";
 import OrgApplicationsManager from "@/components/admin/OrgApplicationsManager";
+import CommandPalette from "@/components/admin/CommandPalette";
+import ExportCsvButton from "@/components/admin/ExportCsvButton";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
 
