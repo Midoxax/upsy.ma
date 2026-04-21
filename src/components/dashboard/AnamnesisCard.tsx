@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useEffect, useState as useStateAlias } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, ChevronRight, Download } from "lucide-react";
+import { ClipboardList, ChevronRight, Download, Bell, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAnamnesis } from "@/hooks/useAnamnesis";
 import AnamnesisDrawer from "@/components/anamnesis/AnamnesisDrawer";
 import { useLocale } from "@/contexts/LocaleContext";
 import jsPDF from "jspdf";
+import { supabase } from "@/integrations/supabase/client";
 
 const AnamnesisCard = () => {
   const { user } = useAuth();
