@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Calendar, Plus, Trash2, Save, Clock } from "lucide-react";
-import { usePsychologistSlots, useUpsertSlot, useDeleteSlot, usePsychologistBookings } from "@/hooks/useBooking";
+import {
+  Loader2,
+  Calendar,
+  Plus,
+  Trash2,
+  Save,
+  Clock,
+  Copy,
+  Eye,
+  Settings2,
+  X,
+} from "lucide-react";
+import { usePsychologistSlots, usePsychologistBookings } from "@/hooks/useBooking";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")}:00`);
 
 const STATUS_STYLES: Record<string, string> = {
   pending:   "bg-amber-500/15 text-amber-600 border-amber-500/30",
@@ -17,130 +30,331 @@ const STATUS_STYLES: Record<string, string> = {
   completed: "bg-green-500/15 text-green-600 border-green-500/30",
   cancelled: "bg-red-500/15 text-red-500 border-red-500/30",
   no_show:   "bg-gray-500/15 text-gray-500 border-gray-500/30",
+  proposed:  "bg-purple-500/15 text-purple-600 border-purple-500/30",
 };
+
+type Range = { start: string; end: string };
+type WeekMap = Record<number, Range[]>;
+
+const emptyWeek = (): WeekMap => ({ 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] });
+
+const toHHMM = (t: string) => t.slice(0, 5);
+
+function rangesOverlap(a: Range, b: Range) {
+  return a.start < b.end && b.start < a.end;
+}
+
+function dayHasInvalidRange(ranges: Range[]): boolean {
+  for (let i = 0; i < ranges.length; i++) {
+    const r = ranges[i];
+    if (!r.start || !r.end || r.end <= r.start) return true;
+    for (let j = i + 1; j < ranges.length; j++) {
+      if (rangesOverlap(r, ranges[j])) return true;
+    }
+  }
+  return false;
+}
 
 export const AvailabilityTab = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { data: slots = [], isLoading: slotsLoading } = usePsychologistSlots();
   const { data: bookings = [], isLoading: bookingsLoading } = usePsychologistBookings();
-  const upsertSlot = useUpsertSlot();
-  const deleteSlot = useDeleteSlot();
-
-  const [addingDay, setAddingDay] = useState<number | null>(null);
-  const [newStart, setNewStart] = useState("09:00");
-  const [newEnd, setNewEnd] = useState("10:00");
 
   const upcomingBookings = bookings.filter(
     (b) => new Date(b.scheduled_at) >= new Date() && b.status !== "cancelled"
   );
 
-  const slotsByDay = DAYS.map((_, i) => slots.filter((s) => s.day_of_week === i));
+  // Local draft ranges, initialised from the DB
+  const [draft, setDraft] = useState<WeekMap>(emptyWeek());
+  const [dirty, setDirty] = useState<Record<number, boolean>>({});
+  const [saving, setSaving] = useState<number | null>(null);
+  const [savingAll, setSavingAll] = useState(false);
+  const [view, setView] = useState<"template" | "preview">("template");
 
-  const handleAddSlot = async (day: number) => {
-    if (newStart >= newEnd) {
-      toast({ title: "Invalid time", description: "End time must be after start time", variant: "destructive" });
+  useEffect(() => {
+    const next = emptyWeek();
+    for (const s of slots) {
+      next[s.day_of_week] = [
+        ...next[s.day_of_week],
+        { start: toHHMM(s.start_time), end: toHHMM(s.end_time) },
+      ];
+    }
+    for (const k of Object.keys(next)) {
+      next[Number(k)].sort((a, b) => a.start.localeCompare(b.start));
+    }
+    setDraft(next);
+    setDirty({});
+  }, [slots]);
+
+  const markDirty = (day: number) => setDirty((d) => ({ ...d, [day]: true }));
+
+  const updateRange = (day: number, idx: number, patch: Partial<Range>) => {
+    setDraft((d) => ({
+      ...d,
+      [day]: d[day].map((r, i) => (i === idx ? { ...r, ...patch } : r)),
+    }));
+    markDirty(day);
+  };
+
+  const addRange = (day: number) => {
+    setDraft((d) => ({
+      ...d,
+      [day]: [...d[day], { start: "09:00", end: "10:00" }],
+    }));
+    markDirty(day);
+  };
+
+  const removeRange = (day: number, idx: number) => {
+    setDraft((d) => ({
+      ...d,
+      [day]: d[day].filter((_, i) => i !== idx),
+    }));
+    markDirty(day);
+  };
+
+  const copyMondayToWeekdays = () => {
+    const monday = draft[1] ?? [];
+    setDraft((d) => ({
+      ...d,
+      2: [...monday],
+      3: [...monday],
+      4: [...monday],
+      5: [...monday],
+    }));
+    setDirty((dd) => ({ ...dd, 2: true, 3: true, 4: true, 5: true }));
+    toast({ title: "Copied Monday to Tue–Fri" });
+  };
+
+  const clearWeek = () => {
+    setDraft(emptyWeek());
+    setDirty({ 0: true, 1: true, 2: true, 3: true, 4: true, 5: true, 6: true });
+  };
+
+  const saveDay = async (day: number) => {
+    const ranges = draft[day];
+    if (dayHasInvalidRange(ranges)) {
+      toast({
+        title: "Invalid ranges",
+        description: "End must be after start and ranges cannot overlap.",
+        variant: "destructive",
+      });
       return;
     }
+    setSaving(day);
     try {
-      await upsertSlot.mutateAsync({
-        day_of_week: day,
-        start_time: newStart,
-        end_time: newEnd,
-        session_duration_minutes: 50,
-        is_active: true,
+      const { error } = await supabase.rpc("replace_availability_for_day", {
+        _day: day,
+        _ranges: ranges.map((r) => ({ start: r.start, end: r.end })) as any,
       });
-      toast({ title: "Slot added" });
-      setAddingDay(null);
-    } catch (e) {
-      toast({ title: "Failed to add slot", description: (e as Error).message, variant: "destructive" });
+      if (error) throw error;
+      setDirty((d) => ({ ...d, [day]: false }));
+      queryClient.invalidateQueries({ queryKey: ["psy-slots"] });
+      toast({ title: `Saved ${DAYS[day]}` });
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e?.message, variant: "destructive" });
+    } finally {
+      setSaving(null);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const saveAll = async () => {
+    setSavingAll(true);
     try {
-      await deleteSlot.mutateAsync(id);
-      toast({ title: "Slot removed" });
-    } catch (e) {
-      toast({ title: "Error", description: (e as Error).message, variant: "destructive" });
+      for (let day = 0; day < 7; day++) {
+        if (!dirty[day]) continue;
+        if (dayHasInvalidRange(draft[day])) {
+          throw new Error(`${DAYS[day]}: ranges are invalid`);
+        }
+        const { error } = await supabase.rpc("replace_availability_for_day", {
+          _day: day,
+          _ranges: draft[day].map((r) => ({ start: r.start, end: r.end })) as any,
+        });
+        if (error) throw error;
+      }
+      setDirty({});
+      queryClient.invalidateQueries({ queryKey: ["psy-slots"] });
+      toast({ title: "All changes saved" });
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e?.message, variant: "destructive" });
+    } finally {
+      setSavingAll(false);
     }
   };
+
+  const anyDirty = Object.values(dirty).some(Boolean);
+  const invalidDays = useMemo(
+    () =>
+      Object.fromEntries(
+        [0, 1, 2, 3, 4, 5, 6].map((d) => [d, dayHasInvalidRange(draft[d])]),
+      ) as Record<number, boolean>,
+    [draft],
+  );
 
   return (
     <div className="space-y-6">
       <Card className="bg-surface border-border">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            Weekly availability
-          </CardTitle>
-          <CardDescription>
-            Set the recurring time slots when you're available for sessions.
-          </CardDescription>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Weekly availability
+              </CardTitle>
+              <CardDescription>
+                Add multiple time ranges per day. Clients can only book inside these windows.
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant={view === "template" ? "default" : "outline"}
+                onClick={() => setView("template")}
+              >
+                <Settings2 className="h-3.5 w-3.5 mr-1.5" />
+                My week
+              </Button>
+              <Button
+                size="sm"
+                variant={view === "preview" ? "default" : "outline"}
+                onClick={() => setView("preview")}
+              >
+                <Eye className="h-3.5 w-3.5 mr-1.5" />
+                What clients see
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {slotsLoading ? (
             <div className="flex justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
-          ) : (
-            <div className="space-y-3">
-              {DAYS.map((day, dayIndex) => (
-                <div key={day} className="flex items-start gap-4 py-3 border-b border-border/50 last:border-0">
-                  <div className="w-12 text-sm font-medium text-muted-foreground pt-1">{day}</div>
-                  <div className="flex-1 flex flex-wrap gap-2">
-                    {slotsByDay[dayIndex].map((slot) => (
-                      <div
-                        key={slot.id}
-                        className="flex items-center gap-2 bg-primary/8 border border-primary/20 text-primary rounded-lg px-3 py-1.5 text-sm"
-                      >
-                        <Clock className="h-3 w-3" />
-                        {slot.start_time.slice(0, 5)} – {slot.end_time.slice(0, 5)}
+          ) : view === "template" ? (
+            <>
+              <div className="space-y-3">
+                {DAYS.map((label, day) => {
+                  const ranges = draft[day];
+                  const invalid = invalidDays[day];
+                  return (
+                    <div
+                      key={day}
+                      className="flex items-start gap-4 py-3 border-b border-border/50 last:border-0"
+                    >
+                      <div className="w-12 text-sm font-medium text-muted-foreground pt-2">
+                        {label}
+                      </div>
+                      <div className="flex-1 flex flex-wrap items-center gap-2">
+                        {ranges.length === 0 && (
+                          <span className="text-xs text-muted-foreground italic">
+                            (no availability)
+                          </span>
+                        )}
+                        {ranges.map((r, idx) => {
+                          const bad =
+                            !r.start || !r.end || r.end <= r.start ||
+                            ranges.some((o, i) => i !== idx && rangesOverlap(r, o));
+                          return (
+                            <div
+                              key={idx}
+                              className={cn(
+                                "flex items-center gap-1.5 rounded-lg border px-2 py-1 text-sm",
+                                bad
+                                  ? "border-destructive/50 bg-destructive/10"
+                                  : "border-primary/20 bg-primary/5",
+                              )}
+                            >
+                              <Clock className="h-3 w-3 text-muted-foreground" />
+                              <input
+                                type="time"
+                                value={r.start}
+                                onChange={(e) =>
+                                  updateRange(day, idx, { start: e.target.value })
+                                }
+                                className="bg-transparent outline-none text-xs w-[70px]"
+                              />
+                              <span className="text-muted-foreground text-xs">–</span>
+                              <input
+                                type="time"
+                                value={r.end}
+                                onChange={(e) =>
+                                  updateRange(day, idx, { end: e.target.value })
+                                }
+                                className="bg-transparent outline-none text-xs w-[70px]"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeRange(day, idx)}
+                                className="ml-1 text-muted-foreground hover:text-destructive"
+                                aria-label="Remove range"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </div>
+                          );
+                        })}
                         <button
-                          onClick={() => handleDelete(slot.id)}
-                          className="text-primary/50 hover:text-destructive transition-colors ml-1"
+                          type="button"
+                          onClick={() => addRange(day)}
+                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary border border-dashed border-border hover:border-primary/40 rounded-lg px-3 py-1.5 transition-all"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Plus className="h-3 w-3" />
+                          Add range
                         </button>
+                        {dirty[day] && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => saveDay(day)}
+                            disabled={saving === day || invalid}
+                          >
+                            {saving === day ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <>
+                                <Save className="h-3 w-3 mr-1" />
+                                Save
+                              </>
+                            )}
+                          </Button>
+                        )}
                       </div>
-                    ))}
+                    </div>
+                  );
+                })}
+              </div>
 
-                    {addingDay === dayIndex ? (
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={newStart}
-                          onChange={(e) => setNewStart(e.target.value)}
-                          className="text-sm rounded-lg border border-border bg-background px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
-                        >
-                          {HOURS.map((h) => <option key={h}>{h}</option>)}
-                        </select>
-                        <span className="text-muted-foreground text-xs">to</span>
-                        <select
-                          value={newEnd}
-                          onChange={(e) => setNewEnd(e.target.value)}
-                          className="text-sm rounded-lg border border-border bg-background px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
-                        >
-                          {HOURS.filter((h) => h > newStart).map((h) => <option key={h}>{h}</option>)}
-                        </select>
-                        <Button size="sm" onClick={() => handleAddSlot(dayIndex)} disabled={upsertSlot.isPending}>
-                          {upsertSlot.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => setAddingDay(null)}>
-                          Cancel
-                        </Button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => { setAddingDay(dayIndex); setNewStart("09:00"); setNewEnd("10:00"); }}
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary border border-dashed border-border hover:border-primary/40 rounded-lg px-3 py-1.5 transition-all"
-                      >
-                        <Plus className="h-3 w-3" />
-                        Add slot
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <Button size="sm" variant="outline" onClick={copyMondayToWeekdays}>
+                  <Copy className="h-3.5 w-3.5 mr-1.5" />
+                  Copy Mon → Tue–Fri
+                </Button>
+                <Button size="sm" variant="ghost" onClick={clearWeek}>
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                  Clear week
+                </Button>
+                <div className="flex-1" />
+                <Button
+                  size="sm"
+                  onClick={saveAll}
+                  disabled={!anyDirty || savingAll}
+                >
+                  {savingAll ? (
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                  ) : (
+                    <Save className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Save all changes
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                Times are interpreted in <strong>Africa/Casablanca</strong>. Overlapping
+                ranges are highlighted in red and cannot be saved.
+              </p>
+            </>
+          ) : (
+            <ClientPreview psychologistId={user?.id ?? ""} />
           )}
         </CardContent>
       </Card>
@@ -214,3 +428,103 @@ export const AvailabilityTab = () => {
     </div>
   );
 };
+
+// ── Preview: next 14 days of bookable slots, as clients would see ────────────
+function ClientPreview({ psychologistId }: { psychologistId: string }) {
+  const [rows, setRows] = useState<
+    { date: Date; slots: { slot_start: string; is_available: boolean }[] }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (!psychologistId) return;
+      setLoading(true);
+      const out: typeof rows = [];
+      for (let i = 0; i < 14; i++) {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + i);
+        const dateStr = format(d, "yyyy-MM-dd");
+        const { data } = await supabase.rpc("get_available_slots", {
+          p_psychologist_id: psychologistId,
+          p_date: dateStr,
+        });
+        out.push({
+          date: d,
+          slots: ((data ?? []) as any[]).filter((s) => s.is_available),
+        });
+      }
+      if (!cancelled) {
+        setRows(out);
+        setLoading(false);
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [psychologistId]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-10">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const totalSlots = rows.reduce((n, r) => n + r.slots.length, 0);
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-muted-foreground">
+        Showing the next 14 days ({totalSlots} bookable slots) — exactly what
+        clients see on your profile.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {rows.map((r) => (
+          <div
+            key={r.date.toISOString()}
+            className="rounded-lg border border-border bg-background p-3"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">{format(r.date, "EEE d MMM")}</p>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-xs",
+                  r.slots.length === 0 && "text-muted-foreground",
+                )}
+              >
+                {r.slots.length} slot{r.slots.length === 1 ? "" : "s"}
+              </Badge>
+            </div>
+            {r.slots.length === 0 ? (
+              <p className="text-xs text-muted-foreground italic">
+                No availability
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-1">
+                {r.slots.slice(0, 10).map((s) => (
+                  <span
+                    key={s.slot_start}
+                    className="text-xs rounded-md bg-primary/10 text-primary px-2 py-0.5"
+                  >
+                    {format(new Date(s.slot_start), "HH:mm")}
+                  </span>
+                ))}
+                {r.slots.length > 10 && (
+                  <span className="text-xs text-muted-foreground">
+                    +{r.slots.length - 10}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
