@@ -94,7 +94,17 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle>User details</SheetTitle>
-          <SheetDescription>{userId}</SheetDescription>
+          <SheetDescription className="flex items-center gap-2 flex-wrap">
+            {richList?.email && (
+              <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {richList.email}</span>
+            )}
+            {richList?.last_sign_in_at && (
+              <span className="text-xs">· last seen {format(new Date(richList.last_sign_in_at), "PP")}</span>
+            )}
+            {!richList?.email_confirmed_at && richList && (
+              <Badge variant="outline" className="text-[10px]">Unverified</Badge>
+            )}
+          </SheetDescription>
         </SheetHeader>
 
         {isLoading || !user ? (
@@ -106,6 +116,7 @@ export default function UserDetailDrawer({ userId, onClose }: Props) {
               <TabsTrigger value="roles">Roles</TabsTrigger>
               <TabsTrigger value="activity">Activity</TabsTrigger>
               <TabsTrigger value="moderation">Moderation</TabsTrigger>
+              <TabsTrigger value="status">Status</TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile" className="space-y-4 mt-4">
