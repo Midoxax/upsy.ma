@@ -512,6 +512,72 @@ export type Database = {
         }
         Relationships: []
       }
+      client_anamneses: {
+        Row: {
+          booking_id: string | null
+          client_id: string
+          completed_at: string | null
+          consent_at: string | null
+          consent_given: boolean
+          created_at: string
+          goals: Json
+          history_family: Json
+          history_personal: Json
+          id: string
+          identity: Json
+          lifestyle: Json
+          medical: Json
+          presenting_complaint: Json
+          psychologist_id: string | null
+          reviewed_at: string | null
+          risk_screening: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booking_id?: string | null
+          client_id: string
+          completed_at?: string | null
+          consent_at?: string | null
+          consent_given?: boolean
+          created_at?: string
+          goals?: Json
+          history_family?: Json
+          history_personal?: Json
+          id?: string
+          identity?: Json
+          lifestyle?: Json
+          medical?: Json
+          presenting_complaint?: Json
+          psychologist_id?: string | null
+          reviewed_at?: string | null
+          risk_screening?: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string | null
+          client_id?: string
+          completed_at?: string | null
+          consent_at?: string | null
+          consent_given?: boolean
+          created_at?: string
+          goals?: Json
+          history_family?: Json
+          history_personal?: Json
+          id?: string
+          identity?: Json
+          lifestyle?: Json
+          medical?: Json
+          presenting_complaint?: Json
+          psychologist_id?: string | null
+          reviewed_at?: string | null
+          risk_screening?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       client_matching_requests: {
         Row: {
           budget_max: number | null
