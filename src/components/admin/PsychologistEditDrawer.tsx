@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ExternalLink, X } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, ExternalLink, X, Star, Trash2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { useSetAccreditationLevel, useTogglePsychologistPublish } from "@/hooks/admin/useAdminMutations";
 
@@ -115,7 +116,14 @@ export default function PsychologistEditDrawer({ psychologistId, onClose }: Prop
         {isLoading || !data ? (
           <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin" /></div>
         ) : (
-          <div className="space-y-5 mt-6">
+          <Tabs defaultValue="profile" className="mt-6">
+            <TabsList>
+              <TabsTrigger value="profile">Profile</TabsTrigger>
+              <TabsTrigger value="reviews" className="gap-1.5">
+                <Star className="h-3.5 w-3.5" /> Reviews
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="profile" className="space-y-5 mt-4">
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div className="flex items-center gap-2">
                 <Switch checked={form.is_published} onCheckedChange={(v) => {
@@ -223,9 +231,109 @@ export default function PsychologistEditDrawer({ psychologistId, onClose }: Prop
               <Button variant="ghost" onClick={onClose}>Close</Button>
               <Button onClick={save}>Save changes</Button>
             </div>
-          </div>
+            </TabsContent>
+            <TabsContent value="reviews" className="mt-4">
+              <ReviewsPanel psychologistId={psychologistId!} />
+            </TabsContent>
+          </Tabs>
         )}
       </SheetContent>
     </Sheet>
+  );
+}
+
+function ReviewsPanel({ psychologistId }: { psychologistId: string }) {
+  const qc = useQueryClient();
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["admin-psy-reviews", psychologistId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("id, rating, comment, created_at, client_id, session_id")
+        .eq("psychologist_id", psychologistId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this review? This action cannot be undone.")) return;
+    const { error } = await supabase.from("reviews").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Review deleted");
+    qc.invalidateQueries({ queryKey: ["admin-psy-reviews", psychologistId] });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm space-y-2">
+        <p className="text-destructive font-medium">Couldn't load reviews</p>
+        <p className="text-xs text-muted-foreground">{(error as Error)?.message}</p>
+        <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
+      </div>
+    );
+  }
+
+  const reviews = data ?? [];
+  const avg = reviews.length
+    ? (reviews.reduce((s, r) => s + (r.rating ?? 0), 0) / reviews.length).toFixed(1)
+    : "—";
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between rounded-lg border bg-surface p-3">
+        <div className="flex items-center gap-2 text-sm">
+          <MessageSquare className="h-4 w-4 text-primary" />
+          <span className="font-medium">{reviews.length} review{reviews.length !== 1 ? "s" : ""}</span>
+        </div>
+        <div className="flex items-center gap-1 text-sm">
+          <Star className="h-4 w-4 fill-primary text-primary" />
+          <span className="font-semibold">{avg}</span>
+          <span className="text-muted-foreground text-xs">/ 5</span>
+        </div>
+      </div>
+
+      {reviews.length === 0 ? (
+        <div className="text-center py-12 border border-dashed rounded-lg">
+          <Star className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+          <p className="text-sm text-muted-foreground">No reviews yet.</p>
+        </div>
+      ) : (
+        <ul className="space-y-2">
+          {reviews.map((r) => (
+            <li key={r.id} className="rounded-lg border bg-card p-3 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-3.5 w-3.5 ${
+                        i < (r.rating ?? 0) ? "fill-primary text-primary" : "text-muted-foreground/30"
+                      }`}
+                    />
+                  ))}
+                  <span className="text-xs text-muted-foreground ml-2">
+                    {new Date(r.created_at!).toLocaleDateString()}
+                  </span>
+                </div>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleDelete(r.id)} title="Delete review">
+                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                </Button>
+              </div>
+              {r.comment && <p className="text-sm text-foreground/90 whitespace-pre-wrap">{r.comment}</p>}
+              <p className="text-[10px] text-muted-foreground font-mono">Client: {r.client_id?.slice(0, 8)}…</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
