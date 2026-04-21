@@ -14,6 +14,7 @@ import {
   Dumbbell, Wind, Timer, BarChart3,
 } from "lucide-react";
 import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis } from "recharts";
+import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
 
 const AthleteHub = () => {
   const { user } = useAuth();
@@ -167,6 +168,9 @@ const AthleteHub = () => {
 
           {/* CTA */}
           <div className="grid md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <ContinueLearningCard path="performance" />
+            </div>
             <Link to={addLocalePrefix("/assessments", locale)} className="glass-card p-6 text-center group hover:shadow-glass-hover transition-all">
               <BarChart3 className="w-8 h-8 text-u-clinical mx-auto mb-3 group-hover:scale-110 transition-transform" />
               <p className="font-semibold text-foreground">{t('athleteHubPage.takeAssessment')}</p>
