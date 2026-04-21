@@ -213,6 +213,9 @@ const Header = () => {
                   <ThemeToggle />
                   <LanguageSwitcher />
                 </div>
+                <div className="px-3">
+                  <InstallAppButton variant="outline" size="sm" className="w-full" label="Install U.Psy app" />
+                </div>
                 {user ? (
                   <Button variant="primary" size="sm" asChild>
                     <Link to={addLocalePrefix('/my-space', locale)} onClick={() => setIsMobileMenuOpen(false)}>
