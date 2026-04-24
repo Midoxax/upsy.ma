@@ -79,6 +79,30 @@ serve(async (req) => {
   }
 
   try {
+    // Verify caller via JWT (do NOT trust adminUserId from body)
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(
+      authHeader.replace("Bearer ", ""),
+    );
+    if (claimsErr || !claimsData?.claims?.sub) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    const adminUserId = claimsData.claims.sub as string;
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -88,7 +112,7 @@ serve(async (req) => {
 
     // Validate and sanitize input
     const rawBody = await req.json();
-    const { applicationId, adminUserId, reason } = validateRequest(rawBody);
+    const { applicationId, reason } = validateRequest(rawBody);
 
     console.log("Processing rejection for application:", applicationId);
 
