@@ -118,10 +118,15 @@ Deno.serve(async (req) => {
     }
 
     const email = body.client_email.trim().toLowerCase();
-    const { data: existingUsers } = await admin.auth.admin.listUsers();
-    const existingUser = existingUsers.users.find(
-      (u) => u.email?.toLowerCase() === email,
-    );
+    // NOTE: auth.admin.listUsers() crashes with NULL confirmation_token rows
+    // ("converting NULL to string is unsupported") — query the table directly.
+    const { data: existingRows } = await admin
+      .schema("auth")
+      .from("users")
+      .select("id,email")
+      .ilike("email", email)
+      .limit(1);
+    const existingUser = existingRows?.[0] as { id: string; email: string } | undefined;
 
     const { data: booking, error: insertErr } = await admin
       .from("bookings")

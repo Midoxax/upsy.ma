@@ -152,10 +152,15 @@ Deno.serve(async (req) => {
 
     // Resolve client: existing user by email, else null patient_id (token-based)
     const email = body.client_email.trim().toLowerCase();
-    const { data: existingUsers } = await admin.auth.admin.listUsers();
-    const existing = existingUsers.users.find(
-      (u) => u.email?.toLowerCase() === email,
-    );
+    // NOTE: auth.admin.listUsers() crashes with NULL confirmation_token rows
+    // ("converting NULL to string is unsupported") — query the table directly.
+    const { data: existingRows } = await admin
+      .schema("auth")
+      .from("users")
+      .select("id,email")
+      .ilike("email", email)
+      .limit(1);
+    const existing = existingRows?.[0] as { id: string; email: string } | undefined;
     const patientId = existing?.id ?? psychologistId; // placeholder when unknown; RLS uses patient_email too
 
     const proposalToken = genToken();

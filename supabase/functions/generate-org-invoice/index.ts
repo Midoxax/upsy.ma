@@ -5,6 +5,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Escape any string we interpolate into the invoice HTML to prevent stored XSS
+// from malicious org-supplied fields (name, billing address, tax IDs, etc.).
+function escapeHtml(s: unknown): string {
+  if (s === null || s === undefined) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Moroccan TVA-compliant invoice generator (HTML → returned as text/html for client-side print)
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -42,7 +54,7 @@ Deno.serve(async (req) => {
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Facture ${invoice.invoice_number}</title>
+<title>Facture ${escapeHtml(invoice.invoice_number)}</title>
 <style>
   body { font-family: -apple-system, system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 2rem; color: #1a1a1a; }
   .header { display: flex; justify-content: space-between; border-bottom: 3px solid #6B1F2A; padding-bottom: 1rem; margin-bottom: 2rem; }
@@ -67,7 +79,7 @@ Deno.serve(async (req) => {
     </div>
     <div class="meta">
       <div><strong>FACTURE</strong></div>
-      <div>${invoice.invoice_number}</div>
+      <div>${escapeHtml(invoice.invoice_number)}</div>
       <div>Date : ${new Date(invoice.created_at!).toLocaleDateString("fr-MA")}</div>
       ${invoice.due_date ? `<div>Échéance : ${new Date(invoice.due_date).toLocaleDateString("fr-MA")}</div>` : ""}
     </div>
@@ -84,11 +96,11 @@ Deno.serve(async (req) => {
     </div>
     <div class="block">
       <h3>Client</h3>
-      <div><strong>${org?.name ?? ""}</strong></div>
-      <div>${org?.billing_address ?? org?.city ?? ""}</div>
-      ${org?.ice ? `<div>ICE : ${org.ice}</div>` : ""}
-      ${org?.if_number ? `<div>IF : ${org.if_number}</div>` : ""}
-      ${org?.rc_number ? `<div>RC : ${org.rc_number}</div>` : ""}
+      <div><strong>${escapeHtml(org?.name)}</strong></div>
+      <div>${escapeHtml(org?.billing_address ?? org?.city)}</div>
+      ${org?.ice ? `<div>ICE : ${escapeHtml(org.ice)}</div>` : ""}
+      ${org?.if_number ? `<div>IF : ${escapeHtml(org.if_number)}</div>` : ""}
+      ${org?.rc_number ? `<div>RC : ${escapeHtml(org.rc_number)}</div>` : ""}
     </div>
   </div>
 
@@ -98,7 +110,7 @@ Deno.serve(async (req) => {
     </thead>
     <tbody>
       <tr>
-        <td>Plan ${org?.plan_type ?? "Enterprise"} — Période du ${new Date(invoice.period_start).toLocaleDateString("fr-MA")} au ${new Date(invoice.period_end).toLocaleDateString("fr-MA")}</td>
+        <td>Plan ${escapeHtml(org?.plan_type ?? "Enterprise")} — Période du ${new Date(invoice.period_start).toLocaleDateString("fr-MA")} au ${new Date(invoice.period_end).toLocaleDateString("fr-MA")}</td>
         <td style="text-align:right">${invoice.seats_billed}</td>
         <td style="text-align:right">${fmt(Number(invoice.unit_price_mad))} MAD</td>
         <td style="text-align:right">${fmt(Number(invoice.subtotal_mad))} MAD</td>

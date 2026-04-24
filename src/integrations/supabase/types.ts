@@ -3003,6 +3003,19 @@ export type Database = {
           slot_start: string
         }[]
       }
+      get_booking_by_token: {
+        Args: { _token: string }
+        Returns: {
+          duration_minutes: number
+          id: string
+          patient_notes: string
+          proposal_expires_at: string
+          psychologist_id: string
+          scheduled_at: string
+          session_type: string
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
