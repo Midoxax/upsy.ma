@@ -12,6 +12,7 @@ import { Loader2, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { ShareBookingLinkCard } from "@/components/dashboard/ShareBookingLinkCard";
+import { PhotoUploader } from "@/components/dashboard/PhotoUploader";
 
 export const ProfileTab = () => {
   const { toast } = useToast();
@@ -172,14 +173,10 @@ export const ProfileTab = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="photo_url">Photo URL</Label>
-            <Input
-              id="photo_url"
-              type="url"
+            <Label>Profile photo</Label>
+            <PhotoUploader
               value={formData.photo_url}
-              onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-              placeholder="https://example.com/photo.jpg"
-              className="bg-background"
+              onChange={(url) => setFormData({ ...formData, photo_url: url ?? "" })}
             />
           </div>
 
