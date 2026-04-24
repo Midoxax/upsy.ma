@@ -107,12 +107,12 @@ export const respondToProposalByToken = async (
 };
 
 export const fetchProposalByToken = async (token: string) => {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("id, scheduled_at, duration_minutes, session_type, patient_notes, psychologist_id, proposal_expires_at, status")
-    .eq("proposal_token", token)
-    .maybeSingle();
+  // Use the secure RPC instead of direct table read — the public RLS policy was
+  // removed because it leaked every active proposal. The RPC returns only the
+  // row matching this token (and only if not expired).
+  const { data: rows, error } = await supabase.rpc("get_booking_by_token" as any, { _token: token });
   if (error) throw error;
+  const data = Array.isArray(rows) ? (rows[0] as any) : null;
   if (!data) return null;
   const { data: psy } = await supabase
     .from("psychologist_profiles")
