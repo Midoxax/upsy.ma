@@ -11,7 +11,6 @@ const corsHeaders = {
 
 const ProvisionRequestSchema = z.object({
   applicationId: z.string().uuid("Invalid application ID format"),
-  adminUserId: z.string().uuid("Invalid admin user ID format"),
 });
 
 type StepName =
@@ -103,6 +102,30 @@ serve(async (req) => {
   }
 
   try {
+    // Verify caller via JWT (do NOT trust adminUserId from body)
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ success: false, errorCode: "UNAUTHORIZED", error: "Missing authorization" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(
+      authHeader.replace("Bearer ", ""),
+    );
+    if (claimsErr || !claimsData?.claims?.sub) {
+      return new Response(
+        JSON.stringify({ success: false, errorCode: "UNAUTHORIZED", error: "Invalid token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    adminUserId = claimsData.claims.sub as string;
+
     const raw = await req.json();
     const parsed = ProvisionRequestSchema.safeParse(raw);
     if (!parsed.success) {
@@ -112,7 +135,6 @@ serve(async (req) => {
       );
     }
     applicationId = parsed.data.applicationId;
-    adminUserId = parsed.data.adminUserId;
 
     logEvent({ phase: "start", applicationId, adminUserId });
 

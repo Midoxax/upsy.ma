@@ -130,9 +130,9 @@ export const useRescheduleBooking = () => {
 export const useRetryProvisioning = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ applicationId, adminUserId }: { applicationId: string; adminUserId: string }) => {
+    mutationFn: async ({ applicationId }: { applicationId: string; adminUserId?: string }) => {
       const { data, error } = await supabase.functions.invoke("provision-psychologist", {
-        body: { applicationId, adminUserId },
+        body: { applicationId },
       });
       if (error) throw error;
       return data;
