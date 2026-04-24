@@ -13,7 +13,6 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-
 
 interface RejectionRequest {
   applicationId: string;
-  adminUserId: string;
   reason?: string;
 }
 
@@ -23,16 +22,11 @@ function validateRequest(body: unknown): RejectionRequest {
     throw new Error("Invalid request body");
   }
 
-  const { applicationId, adminUserId, reason } = body as Record<string, unknown>;
+  const { applicationId, reason } = body as Record<string, unknown>;
 
   // Validate applicationId
   if (!applicationId || typeof applicationId !== 'string' || !UUID_REGEX.test(applicationId)) {
     throw new Error("Invalid application ID format");
-  }
-
-  // Validate adminUserId
-  if (!adminUserId || typeof adminUserId !== 'string' || !UUID_REGEX.test(adminUserId)) {
-    throw new Error("Invalid admin user ID format");
   }
 
   // Validate and sanitize reason (optional)
@@ -53,7 +47,6 @@ function validateRequest(body: unknown): RejectionRequest {
 
   return {
     applicationId: applicationId.trim(),
-    adminUserId: adminUserId.trim(),
     reason: sanitizedReason,
   };
 }
