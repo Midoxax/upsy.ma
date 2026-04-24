@@ -100,9 +100,9 @@ const AccreditationManager = () => {
   }, [applications, filter, search, lastAttempts]);
 
   const approveApplication = useMutation({
-    mutationFn: async ({ applicationId, adminUserId }: { applicationId: string; adminUserId: string }) => {
+    mutationFn: async ({ applicationId }: { applicationId: string; adminUserId?: string }) => {
       const { data, error } = await supabase.functions.invoke("provision-psychologist", {
-        body: { applicationId, adminUserId },
+        body: { applicationId },
       });
       if (error) throw error;
       if (!data.success) throw new Error(data.error || "Provisioning failed");
@@ -124,9 +124,9 @@ const AccreditationManager = () => {
   });
 
   const rejectApplication = useMutation({
-    mutationFn: async ({ applicationId, adminUserId, reason }: { applicationId: string; adminUserId: string; reason?: string }) => {
+    mutationFn: async ({ applicationId, reason }: { applicationId: string; adminUserId?: string; reason?: string }) => {
       const { data, error } = await supabase.functions.invoke("send-rejection-email", {
-        body: { applicationId, adminUserId, reason },
+        body: { applicationId, reason },
       });
       if (error) throw error;
       if (!data.success) throw new Error(data.error || "Rejection failed");
