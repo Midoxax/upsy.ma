@@ -1,64 +1,67 @@
 
+## Two things in one go
 
-## Add "Send video meeting invitation" — instant Jitsi link, no scheduling needed
+### Part 1 — Why the photo upload doesn't work, and the fix
 
-Today the psychologist has two options: a **scheduled proposal** (client gets Accept/Decline email, must confirm) or a **booking link** (client picks their own slot). Neither covers the "let's meet right now" or "let's meet at 3pm, here's the link, no confirmation needed" use case.
+**Root cause.** In the **specialist dashboard → Profile tab**, the "Photo" field is a plain text input asking for a `https://...` URL. There is no file picker, no upload, no storage write. So unless the psychologist already has their photo hosted somewhere on the public internet, there's no way to add one — pasting a local file path or trying to drop a file does nothing.
 
-This adds a third option: a **one-click meeting invite** that creates a confirmed booking with a Jitsi room and emails the client a join link.
+Meanwhile, the **application wizard** (`/apply`) already has a working photo uploader (`DocUploader` → `useAccreditationUpload` → `accreditation-docs` bucket). The dashboard just never got the equivalent.
 
-### Where it lives
-- New button **"Send meeting link"** in `SessionsTab` header (next to existing "Propose session").
-- Same button on each row of `LeadsTab` and on the existing client list in `MatchingRequestsManager`.
-- Inside the existing `ProposeSessionModal`, add a tab toggle at the top:
-  - **Propose** (current flow — needs Accept/Decline)
-  - **Send link directly** (new — auto-confirmed)
+**Fix — make the dashboard photo field a real upload.**
 
-### Flow
-```text
-Psychologist → "Send meeting link"
-   ├── Pick client (email or existing patient)
-   ├── Pick when: [Now] [In 15 min] [In 1 hour] [Custom date/time]
-   ├── Duration (30/45/60 min)
-   └── Send
-        ↓
-   • Booking row created with status='confirmed', session_type='video'
-   • Existing trigger ensure_video_room_on_confirm generates the Jitsi room
-   • Email sent to client with a single big "Join the session" button
-   • Link points to /video/:roomId (existing VideoCall page)
-   • Psychologist sees it instantly in Sessions tab as confirmed
-```
+1. **New public bucket `psychologist-photos`** (migration):
+   - Public read (so photos render on profile pages and search cards without signed URLs).
+   - Authenticated insert/update/delete restricted to the owner — path must start with `auth.uid()/...`.
+   - Max 5 MB, JPG/PNG/WebP only (enforced client-side; matches existing photo limits).
 
-### What gets built
+2. **New `PhotoUploader` component** (`src/components/dashboard/PhotoUploader.tsx`):
+   - Square avatar preview + "Change photo" / "Remove" buttons.
+   - File picker → uploads to `psychologist-photos/{user_id}/profile-{timestamp}.{ext}` → writes the **public URL** back to `psychologist_profiles.photo_url`.
+   - Shows progress bar during upload, toast on success/error.
+   - Replaces the existing photo (deletes the old object) when a new one is uploaded.
 
-**Edge function: `send-meeting-link`** (new, mirrors `propose-session`)
-- Same auth + slot validation as `propose-session` (calls `check_proposal_slot` RPC) but with the "1 hour minimum" rule relaxed to "5 minutes" so "Now" and "In 15 min" work.
-- Inserts the booking with `status='confirmed'`, `payment_status='comp'` (free internal session), `session_type='video'`.
-- Trigger fires → `video_room_id` populated automatically.
-- Sends a Lovable transactional email using new template `meeting-link-invitation` with the Jitsi join URL.
+3. **Wire it into `ProfileTab.tsx`**:
+   - Replace the "Photo URL" `<Input type="url">` block with `<PhotoUploader value={formData.photo_url} onChange={(url) => setFormData({ ...formData, photo_url: url })} />`.
+   - Keep the saved URL in the same `photo_url` column — no schema change needed, no impact on directory/profile pages.
 
-**Email template: `meeting-link-invitation.tsx`**
-- React Email component, maroon brand, EN/FR/AR.
-- Shows: psychologist name + photo, date/time (or "Now"), duration, **single "Join session" button** linking to `https://upsy.ma/video/{video_room_id}`.
-- Footer: Law 09-08 privacy notice, "Link active until session ends", quick-help contact.
+4. **Backfill convenience**: if the psychologist already has a photo from the application (`accreditation-docs/.../photo-*.jpg`), the existing flow still copies that URL into `photo_url` at provisioning time — unchanged.
 
-**Hook: `useSendMeetingLink`**
-- Wraps the edge function. On success: invalidate `upcoming-sessions` and `sessions-list` queries, toast "Meeting link sent to {email}", optionally copy link to clipboard.
+That's it. After this, a psychologist clicks **"Change photo" → picks a file → done**, no external image hosting required.
 
-**UI additions**
-- `ProposeSessionModal.tsx` — add the **Propose / Send link directly** tab toggle at the top. The "Send link directly" tab reuses 80% of the form (client + duration), swaps the date picker for the quick-time chooser (`Now / +15m / +1h / Custom`), and changes the submit handler to call `useSendMeetingLink`.
-- `SessionsTab.tsx` and `LeadsTab.tsx` — add `defaultMode="link"` prop so the new buttons open the modal pre-set to the "Send link directly" tab.
-- Optional **"Copy join link"** secondary button in the success toast so the psychologist can also paste it into WhatsApp manually.
+---
 
-### Why this is different from the existing flows
-| Flow | Client confirms? | Time to meet | Best for |
-|---|---|---|---|
-| **Booking link (`/b/:slug`)** | Client picks slot | Self-serve | Cold leads, async invites |
-| **Propose session** | Yes (email Accept/Decline) | Future, planned | Follow-ups, agreed-on times |
-| **Send meeting link (NEW)** | No (auto-confirmed) | Now or near-future | Active conversations, urgent sessions, established clients |
+### Part 2 — How to make changes without coming back to Lovable every time
+
+You have **three** options depending on what you want to change. They are not mutually exclusive.
+
+**A. In-app admin tools you already have** (recommended for content/config — zero engineering needed):
+- `/admin` → **Translation Manager**: edit any French/English/Arabic text on the site live (titles, CTAs, body copy). No deploy.
+- `/admin` → **Pricing Control**: change commission rate, deposit %, VAT, min/max session price.
+- `/admin` → **Learning Hub Manager**: add/edit courses and modules.
+- `/admin` → **Anamnesis Copy Editor**: tweak intake-form questions.
+- `/admin` → **Psychologist Directory**: edit any psychologist's profile, publish/unpublish, change accreditation level.
+- `/admin` → **Applications**: approve/reject/provision accounts.
+- Each psychologist's own dashboard already lets them edit their bio, photo (after this fix), pricing, availability, etc., without you touching anything.
+
+**B. Connect your GitHub repo** (recommended for code changes from an external editor):
+- Lovable → project settings → **GitHub integration** → connects this project to a repo you own.
+- After that you can edit code in **VS Code, Cursor, GitHub Codespaces, or directly on github.com**, push commits, and Lovable picks them up automatically. Conversely, anything Lovable changes shows up as commits in your repo.
+- This is how most teams stop "always returning to Lovable" — they treat Lovable as one of several editors, not the only one.
+
+**C. Custom domain + CI** (for a fully self-managed deployment):
+- You already have `upsy.ma` connected. Once GitHub is wired up (option B), you can deploy from your own pipeline (Vercel, Netlify, Cloudflare Pages) instead of Lovable's hosting if you ever want full control. Cloud (Supabase) stays the same — only the frontend deploy target changes.
+
+For day-to-day text/pricing/profile edits, option **A** is enough and instant. For real code changes, option **B** is what you want.
+
+---
+
+### Files to create / edit (Part 1 only)
+
+- **NEW** `supabase/migrations/<ts>_psychologist_photos_bucket.sql` — create public bucket + RLS policies.
+- **NEW** `src/components/dashboard/PhotoUploader.tsx` — avatar upload component.
+- **EDIT** `src/components/dashboard/ProfileTab.tsx` — swap URL input for `<PhotoUploader>`.
 
 ### Out of scope
-- Phone/in-person meeting links (only video supported in this flow).
-- WhatsApp auto-send of the join link (waiting on Meta API integration — manual copy button is the workaround).
-- Recurring weekly meeting invites.
-- SMS delivery.
-
+- Cropping / centering UI (we keep it simple: upload as-is, square preview).
+- Migrating existing `accreditation-docs` photos into the new bucket (they keep working via signed URLs already returned by the provisioning flow).
+- Building an external "headless CMS" — option A above already covers the editable-content use case.
