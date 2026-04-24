@@ -1,67 +1,127 @@
+# Platform QA — 5 personas
 
-## Two things in one go
+I'll run a structured audit of the platform from 5 viewpoints: **Client**, **Specialist (psychologist)**, **Business (organization)**, **Admin**, **HIPAA/privacy reviewer**, and **Security hacker**. Each persona has a clear test list, and I already have a baseline of confirmed issues from the latest security scan + Supabase auth logs.
 
-### Part 1 — Why the photo upload doesn't work, and the fix
+## What "test" means here
 
-**Root cause.** In the **specialist dashboard → Profile tab**, the "Photo" field is a plain text input asking for a `https://...` URL. There is no file picker, no upload, no storage write. So unless the psychologist already has their photo hosted somewhere on the public internet, there's no way to add one — pasting a local file path or trying to drop a file does nothing.
+I will not click through the live UI as a real user (browser automation is reserved for explicit interactive testing). Instead I'll do a **deep code + database + logs audit per persona**, then deliver:
 
-Meanwhile, the **application wizard** (`/apply`) already has a working photo uploader (`DocUploader` → `useAccreditationUpload` → `accreditation-docs` bucket). The dashboard just never got the equivalent.
-
-**Fix — make the dashboard photo field a real upload.**
-
-1. **New public bucket `psychologist-photos`** (migration):
-   - Public read (so photos render on profile pages and search cards without signed URLs).
-   - Authenticated insert/update/delete restricted to the owner — path must start with `auth.uid()/...`.
-   - Max 5 MB, JPG/PNG/WebP only (enforced client-side; matches existing photo limits).
-
-2. **New `PhotoUploader` component** (`src/components/dashboard/PhotoUploader.tsx`):
-   - Square avatar preview + "Change photo" / "Remove" buttons.
-   - File picker → uploads to `psychologist-photos/{user_id}/profile-{timestamp}.{ext}` → writes the **public URL** back to `psychologist_profiles.photo_url`.
-   - Shows progress bar during upload, toast on success/error.
-   - Replaces the existing photo (deletes the old object) when a new one is uploaded.
-
-3. **Wire it into `ProfileTab.tsx`**:
-   - Replace the "Photo URL" `<Input type="url">` block with `<PhotoUploader value={formData.photo_url} onChange={(url) => setFormData({ ...formData, photo_url: url })} />`.
-   - Keep the saved URL in the same `photo_url` column — no schema change needed, no impact on directory/profile pages.
-
-4. **Backfill convenience**: if the psychologist already has a photo from the application (`accreditation-docs/.../photo-*.jpg`), the existing flow still copies that URL into `photo_url` at provisioning time — unchanged.
-
-That's it. After this, a psychologist clicks **"Change photo" → picks a file → done**, no external image hosting required.
+1. A pass/fail checklist per role
+2. A prioritized list of bugs / risks found
+3. Fixes implemented for the critical ones (security + the broken admin user list)
+4. A short list of items that need your decision before I change them
 
 ---
 
-### Part 2 — How to make changes without coming back to Lovable every time
+## Already-confirmed issues (from scan + logs)
 
-You have **three** options depending on what you want to change. They are not mutually exclusive.
+Three are critical and I'll fix them in this pass:
 
-**A. In-app admin tools you already have** (recommended for content/config — zero engineering needed):
-- `/admin` → **Translation Manager**: edit any French/English/Arabic text on the site live (titles, CTAs, body copy). No deploy.
-- `/admin` → **Pricing Control**: change commission rate, deposit %, VAT, min/max session price.
-- `/admin` → **Learning Hub Manager**: add/edit courses and modules.
-- `/admin` → **Anamnesis Copy Editor**: tweak intake-form questions.
-- `/admin` → **Psychologist Directory**: edit any psychologist's profile, publish/unpublish, change accreditation level.
-- `/admin` → **Applications**: approve/reject/provision accounts.
-- Each psychologist's own dashboard already lets them edit their bio, photo (after this fix), pricing, availability, etc., without you touching anything.
+1. **`recommend` edge function leaks any user's mood/stress data** — accepts `user_id` from request body, queries `mood_entries` with service role. Anyone can pull any patient's mental health timeline.  *(HIPAA + Security)*
+2. **`bookings` RLS policy "Public token holders can read proposal"** — returns every active proposal to anyone, not just the row matching their token. Exposes patient emails, notes, payment status. *(HIPAA + Security)*
+3. **Admin user list is broken in production** — auth log shows `GET /admin/users → 500: converting NULL to string is unsupported (confirmation_token)`. Admin "Users" tab can't load. *(Admin)*
 
-**B. Connect your GitHub repo** (recommended for code changes from an external editor):
-- Lovable → project settings → **GitHub integration** → connects this project to a repo you own.
-- After that you can edit code in **VS Code, Cursor, GitHub Codespaces, or directly on github.com**, push commits, and Lovable picks them up automatically. Conversely, anything Lovable changes shows up as commits in your repo.
-- This is how most teams stop "always returning to Lovable" — they treat Lovable as one of several editors, not the only one.
-
-**C. Custom domain + CI** (for a fully self-managed deployment):
-- You already have `upsy.ma` connected. Once GitHub is wired up (option B), you can deploy from your own pipeline (Vercel, Netlify, Cloudflare Pages) instead of Lovable's hosting if you ever want full control. Cloud (Supabase) stays the same — only the frontend deploy target changes.
-
-For day-to-day text/pricing/profile edits, option **A** is enough and instant. For real code changes, option **B** is what you want.
+Plus two warns:
+4. **Stored XSS in org invoice HTML** — org fields (`name`, `billing_address`, `ice`, etc.) interpolated unescaped, then rendered via `document.write`. Malicious org → script in admin's browser. *(Security + Admin)*
+5. **`org_pulse_responses`** has no SELECT policy for org owners — owners can't read their own survey results without going through `org_pulse_aggregate` RPC. Confirm intent, otherwise add owner policy. *(Business)*
 
 ---
 
-### Files to create / edit (Part 1 only)
+## Persona test matrix
 
-- **NEW** `supabase/migrations/<ts>_psychologist_photos_bucket.sql` — create public bucket + RLS policies.
-- **NEW** `src/components/dashboard/PhotoUploader.tsx` — avatar upload component.
-- **EDIT** `src/components/dashboard/ProfileTab.tsx` — swap URL input for `<PhotoUploader>`.
+### 1. Client (patient)
+Flows audited from code:
+- Signup / Google sign-in / email verification (`Auth.tsx`, `AuthContext`)
+- Browse psychologists, filters, profile page, booking widget
+- Booking flow + payment (`create-booking-payment`, `simulate-payment-webhook`)
+- Booking proposal accept/decline via email link (`/booking/respond/:token`, `BookRedirect`)
+- Patient dashboard: mood, journal, anamnesis, sessions, video call
+- Crisis screening, AI assistant (Nour), assessments
+- Idle auto-logout (24h default)
 
-### Out of scope
-- Cropping / centering UI (we keep it simple: upload as-is, square preview).
-- Migrating existing `accreditation-docs` photos into the new bucket (they keep working via signed URLs already returned by the provisioning flow).
-- Building an external "headless CMS" — option A above already covers the editable-content use case.
+### 2. Specialist (psychologist)
+- Apply wizard + accreditation docs upload
+- Provisioning after approval (`provision-psychologist`)
+- Profile tab + new **photo uploader** (just shipped)
+- Availability tab (replace_availability_for_day)
+- Leads, Sessions, Session notes (encrypt/decrypt), Earnings, Pricing
+- Propose session + Send meeting link (just shipped)
+- Share booking link card (just shipped)
+- Idle logout 30 min (privileged role)
+
+### 3. Business (organization)
+- Apply as organization, invite members (`invite_org_member` — recently hardened)
+- Org dashboard: overview, users, programs, billing, branding, pulse, reports, analytics
+- Generate invoice PDF/HTML
+- Pulse survey k-anonymity (≥5 responses) — already enforced in RPC ✅
+
+### 4. Admin
+- Admin dashboard, applications queue, approve/reject + email
+- User management (search, suspend, force sign-out, assign roles, delete)
+- Pricing control, accreditation manager, transactions, subscriptions
+- Translation manager, learning hub, matching requests, org applications
+- Audit log
+
+### 5. HIPAA / privacy reviewer
+- PHI tables: `session_notes` (encrypted), `mood_entries`, `journal_entries`, `assessment_results`, `anamnesis_*`, `crisis_*`
+- RLS coverage on all PHI
+- Audit logging on sensitive changes (`log_sensitive_change` trigger)
+- Encryption at rest for notes (`encrypt-note`/`decrypt-note` + pgsodium)
+- Data subject rights (Moroccan Law 09-08 notice present ✅)
+- Idle timeout for clinical roles (30 min ✅)
+- Email verification before login (no anon signups ✅)
+
+### 6. Security hacker (red-team checklist)
+- Edge functions accepting trusted IDs from body without JWT check
+- RLS policies with overly permissive `USING (true)` or token-leak patterns
+- Direct service-role usage in user-facing functions
+- XSS via `document.write` / `dangerouslySetInnerHTML`
+- IDOR on `/booking/respond/:token`, `/b/:slug`, `/session/:id`
+- Storage bucket policies (`psychologist-photos`, `accreditation-docs`, `user-documents`)
+- Rate limiting on auth + sensitive RPCs
+- Open CORS on edge functions
+- SQL injection via `execute_sql`-style RPCs (none expected)
+
+---
+
+## What I'll fix in this pass
+
+**Critical (no questions asked):**
+
+1. **`recommend` edge function** → require `Authorization` header, derive `user.id` from `auth.getClaims()`, drop service-role client, ignore body `user_id`.
+2. **Booking proposal RLS** → drop the broad public policy. Replace with a SECURITY DEFINER RPC `get_booking_by_token(_token text)` that returns only the matching row and only if not expired. Update `BookingResponse.tsx` to call the RPC.
+3. **Admin users 500** → root cause is `supabase.auth.admin.listUsers()` choking on NULL `confirmation_token` from a Postgres driver mismatch. Fix by switching the admin user list to `admin_list_users_rich` (already exists, queries `auth.users` directly via SQL) instead of the `auth.admin.listUsers()` JS call. Verify all admin user-management surfaces use it.
+4. **Org invoice XSS** → add `escapeHtml()` in `generate-org-invoice` and wrap every interpolated org field. Mirror the pattern from `generate-certificate`.
+
+**Warn (also fixed in same pass):**
+
+5. **Org pulse owner read** → add SELECT policy on `org_pulse_responses` allowing org owners to read their org's rows (raw responses are still anonymous because `user_id` is nullable). Or, if you prefer aggregate-only, leave as-is and I'll just document it.
+
+**Audit deliverable (no code change, just a report):**
+
+6. Per-persona pass/fail list with everything else I checked (storage policies, IDOR surfaces, RLS coverage, idle timeout, CORS, etc.).
+
+---
+
+## Out of scope for this pass
+
+- Live click-through testing in the browser (will do only if you explicitly ask)
+- Penetration testing tools (Burp, ZAP) against the live deployment
+- Load / rate-limit testing
+- Mobile-device testing
+- Re-auditing the items already fixed in the previous security pass (admin function auth, invite_org_member ownership, pricing config RLS) unless the new audit surfaces a regression
+
+---
+
+## Files I expect to touch
+
+- `supabase/functions/recommend/index.ts`
+- `supabase/functions/generate-org-invoice/index.ts`
+- `src/pages/BookingResponse.tsx` (and possibly `BookRedirect.tsx`)
+- `src/components/admin/UserManagement.tsx` + any hook that calls `auth.admin.listUsers()`
+- New migration:
+  - drop + replace booking proposal token policy
+  - create `get_booking_by_token` RPC
+  - add owner SELECT policy on `org_pulse_responses` (pending your call)
+
+After the fixes I'll mark the corresponding security findings as resolved and post the full per-persona QA report in chat.
