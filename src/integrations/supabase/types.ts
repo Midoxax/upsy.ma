@@ -899,6 +899,24 @@ export type Database = {
           },
         ]
       }
+      edge_rate_limits: {
+        Row: {
+          count: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       gamification_badges: {
         Row: {
           created_at: string | null
@@ -2985,6 +3003,10 @@ export type Database = {
         Returns: Json
       }
       admin_user_activity: { Args: { _user_id: string }; Returns: Json }
+      check_and_increment_rate_limit: {
+        Args: { _key: string; _max: number; _window_seconds: number }
+        Returns: boolean
+      }
       check_proposal_slot: {
         Args: { _duration: number; _psy: string; _start: string }
         Returns: Json
