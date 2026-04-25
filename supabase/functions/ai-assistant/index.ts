@@ -57,6 +57,31 @@ serve(async (req) => {
       });
     }
 
+    // Per-user + per-IP throttling (ad-hoc DB-backed limiter; backend has no
+    // shared rate-limit primitive yet).
+    const ip = (req.headers.get("x-forwarded-for") ?? "")
+      .split(",")[0]
+      .trim() || "unknown";
+    const adminLimiter = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY")!,
+    );
+    for (const [key, max, win] of [
+      [`ai:user:${user.id}`, 60, 3600] as const,
+      [`ai:ip:${ip}`, 120, 3600] as const,
+    ]) {
+      const { data: allowed } = await adminLimiter.rpc(
+        "check_and_increment_rate_limit",
+        { _key: key, _max: max, _window_seconds: win },
+      );
+      if (allowed === false) {
+        return new Response(
+          JSON.stringify({ error: "Too many requests. Please slow down and try again later." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "300" } },
+        );
+      }
+    }
+
     const { messages } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
