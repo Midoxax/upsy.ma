@@ -17,6 +17,21 @@ function escapeHtml(s: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
+// Only allow https URLs in href/src attributes; reject javascript:/data:.
+function safeUrl(u: unknown): string {
+  if (typeof u !== "string") return "";
+  const trimmed = u.trim();
+  if (!/^https:\/\//i.test(trimmed)) return "";
+  return escapeHtml(trimmed);
+}
+
+function safeDate(d: unknown): string {
+  if (!d) return "";
+  const dt = new Date(String(d));
+  if (Number.isNaN(dt.getTime())) return "";
+  return escapeHtml(dt.toLocaleDateString("fr-MA"));
+}
+
 // Moroccan TVA-compliant invoice generator (HTML → returned as text/html for client-side print)
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -80,8 +95,8 @@ Deno.serve(async (req) => {
     <div class="meta">
       <div><strong>FACTURE</strong></div>
       <div>${escapeHtml(invoice.invoice_number)}</div>
-      <div>Date : ${new Date(invoice.created_at!).toLocaleDateString("fr-MA")}</div>
-      ${invoice.due_date ? `<div>Échéance : ${new Date(invoice.due_date).toLocaleDateString("fr-MA")}</div>` : ""}
+      <div>Date : ${safeDate(invoice.created_at)}</div>
+      ${invoice.due_date ? `<div>Échéance : ${safeDate(invoice.due_date)}</div>` : ""}
     </div>
   </div>
 
@@ -98,9 +113,11 @@ Deno.serve(async (req) => {
       <h3>Client</h3>
       <div><strong>${escapeHtml(org?.name)}</strong></div>
       <div>${escapeHtml(org?.billing_address ?? org?.city)}</div>
+      ${org?.contact_email ? `<div>${escapeHtml(org.contact_email)}</div>` : ""}
       ${org?.ice ? `<div>ICE : ${escapeHtml(org.ice)}</div>` : ""}
       ${org?.if_number ? `<div>IF : ${escapeHtml(org.if_number)}</div>` : ""}
       ${org?.rc_number ? `<div>RC : ${escapeHtml(org.rc_number)}</div>` : ""}
+      ${safeUrl(org?.logo_url) ? `<div style="margin-top:8px;"><img src="${safeUrl(org.logo_url)}" alt="" style="max-height:40px;"></div>` : ""}
     </div>
   </div>
 
@@ -110,7 +127,7 @@ Deno.serve(async (req) => {
     </thead>
     <tbody>
       <tr>
-        <td>Plan ${escapeHtml(org?.plan_type ?? "Enterprise")} — Période du ${new Date(invoice.period_start).toLocaleDateString("fr-MA")} au ${new Date(invoice.period_end).toLocaleDateString("fr-MA")}</td>
+        <td>Plan ${escapeHtml(org?.plan_type ?? "Enterprise")} — Période du ${safeDate(invoice.period_start)} au ${safeDate(invoice.period_end)}</td>
         <td style="text-align:right">${invoice.seats_billed}</td>
         <td style="text-align:right">${fmt(Number(invoice.unit_price_mad))} MAD</td>
         <td style="text-align:right">${fmt(Number(invoice.subtotal_mad))} MAD</td>
@@ -127,6 +144,7 @@ Deno.serve(async (req) => {
   <div class="legal">
     <p><strong>Mentions légales :</strong> Facture conforme aux dispositions du Code Général des Impôts du Royaume du Maroc. TVA collectée au taux normal de 20%. En cas de retard de paiement, des pénalités au taux légal seront appliquées (Art. 503 du Code de Commerce marocain).</p>
     <p>Données traitées conformément à la loi 09-08 relative à la protection des personnes physiques à l'égard des traitements des données à caractère personnel (CNDP).</p>
+    ${org?.pdf_signature_label ? `<p style="margin-top:1rem;">${escapeHtml(org.pdf_signature_label)}</p>` : ""}
   </div>
 </body>
 </html>`;

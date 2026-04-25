@@ -2,6 +2,8 @@
 // Uses lightweight CSSRS-style keyword screening + Lovable AI classifier
 // to estimate risk level. NEVER stores user content.
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -70,6 +72,45 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Per-user (if authed) + per-IP throttle. Crisis screening is invoked
+    // automatically while typing — keep limits generous but bounded.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const ip = (req.headers.get("x-forwarded-for") ?? "")
+      .split(",")[0]
+      .trim() || "unknown";
+    let userKey = "";
+    try {
+      const userClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const { data: { user } } = await userClient.auth.getUser();
+      if (user) userKey = `crisis:user:${user.id}`;
+    } catch (_) {
+      /* anon */
+    }
+    const limiter = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY")!,
+    );
+    for (const [key, max, win] of [
+      [userKey || `crisis:anon:${ip}`, 30, 300] as const,
+      [`crisis:ip:${ip}`, 60, 300] as const,
+    ]) {
+      if (!key) continue;
+      const { data: allowed } = await limiter.rpc(
+        "check_and_increment_rate_limit",
+        { _key: key, _max: max, _window_seconds: win },
+      );
+      if (allowed === false) {
+        return new Response(
+          JSON.stringify({ risk_level: "low", error: "rate_limited" }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
+        );
+      }
+    }
+
     const { text } = await req.json();
     if (typeof text !== "string" || text.length < 3) {
       return new Response(JSON.stringify({ risk_level: "low" }), {
