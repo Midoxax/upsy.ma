@@ -1,127 +1,122 @@
-# Platform QA — 5 personas
+## Goals
 
-I'll run a structured audit of the platform from 5 viewpoints: **Client**, **Specialist (psychologist)**, **Business (organization)**, **Admin**, **HIPAA/privacy reviewer**, and **Security hacker**. Each persona has a clear test list, and I already have a baseline of confirmed issues from the latest security scan + Supabase auth logs.
-
-## What "test" means here
-
-I will not click through the live UI as a real user (browser automation is reserved for explicit interactive testing). Instead I'll do a **deep code + database + logs audit per persona**, then deliver:
-
-1. A pass/fail checklist per role
-2. A prioritized list of bugs / risks found
-3. Fixes implemented for the critical ones (security + the broken admin user list)
-4. A short list of items that need your decision before I change them
+Address 5 work items in priority order. Items 1–2 are urgent user-facing bugs; 3–5 are security/QA hardening.
 
 ---
 
-## Already-confirmed issues (from scan + logs)
+## 1. Fix "Send meeting link" 500 error (URGENT)
 
-Three are critical and I'll fix them in this pass:
+**Root cause confirmed in logs:**
+```
+new row for relation "bookings" violates check constraint "bookings_payment_status_check"
+```
+`send-meeting-link/index.ts` inserts `payment_status: "comp"`, but the DB CHECK constraint only allows `'unpaid' | 'paid' | 'refunded'`.
 
-1. **`recommend` edge function leaks any user's mood/stress data** — accepts `user_id` from request body, queries `mood_entries` with service role. Anyone can pull any patient's mental health timeline.  *(HIPAA + Security)*
-2. **`bookings` RLS policy "Public token holders can read proposal"** — returns every active proposal to anyone, not just the row matching their token. Exposes patient emails, notes, payment status. *(HIPAA + Security)*
-3. **Admin user list is broken in production** — auth log shows `GET /admin/users → 500: converting NULL to string is unsupported (confirmation_token)`. Admin "Users" tab can't load. *(Admin)*
+**Fix:** Change the insert in `supabase/functions/send-meeting-link/index.ts` from `payment_status: "comp"` to `payment_status: "paid"` (the session is comped/auto-confirmed by the psychologist, no payment owed by client). Track the "comp" semantics via `amount_mad: 0` + a note in `patient_notes`, or add a small migration extending the CHECK to include `'comp'`. Recommended: extend the CHECK constraint to add `'comp'` so reporting can distinguish complimentary sessions from real paid ones.
 
-Plus two warns:
-4. **Stored XSS in org invoice HTML** — org fields (`name`, `billing_address`, `ice`, etc.) interpolated unescaped, then rendered via `document.write`. Malicious org → script in admin's browser. *(Security + Admin)*
-5. **`org_pulse_responses`** has no SELECT policy for org owners — owners can't read their own survey results without going through `org_pulse_aggregate` RPC. Confirm intent, otherwise add owner policy. *(Business)*
-
----
-
-## Persona test matrix
-
-### 1. Client (patient)
-Flows audited from code:
-- Signup / Google sign-in / email verification (`Auth.tsx`, `AuthContext`)
-- Browse psychologists, filters, profile page, booking widget
-- Booking flow + payment (`create-booking-payment`, `simulate-payment-webhook`)
-- Booking proposal accept/decline via email link (`/booking/respond/:token`, `BookRedirect`)
-- Patient dashboard: mood, journal, anamnesis, sessions, video call
-- Crisis screening, AI assistant (Nour), assessments
-- Idle auto-logout (24h default)
-
-### 2. Specialist (psychologist)
-- Apply wizard + accreditation docs upload
-- Provisioning after approval (`provision-psychologist`)
-- Profile tab + new **photo uploader** (just shipped)
-- Availability tab (replace_availability_for_day)
-- Leads, Sessions, Session notes (encrypt/decrypt), Earnings, Pricing
-- Propose session + Send meeting link (just shipped)
-- Share booking link card (just shipped)
-- Idle logout 30 min (privileged role)
-
-### 3. Business (organization)
-- Apply as organization, invite members (`invite_org_member` — recently hardened)
-- Org dashboard: overview, users, programs, billing, branding, pulse, reports, analytics
-- Generate invoice PDF/HTML
-- Pulse survey k-anonymity (≥5 responses) — already enforced in RPC ✅
-
-### 4. Admin
-- Admin dashboard, applications queue, approve/reject + email
-- User management (search, suspend, force sign-out, assign roles, delete)
-- Pricing control, accreditation manager, transactions, subscriptions
-- Translation manager, learning hub, matching requests, org applications
-- Audit log
-
-### 5. HIPAA / privacy reviewer
-- PHI tables: `session_notes` (encrypted), `mood_entries`, `journal_entries`, `assessment_results`, `anamnesis_*`, `crisis_*`
-- RLS coverage on all PHI
-- Audit logging on sensitive changes (`log_sensitive_change` trigger)
-- Encryption at rest for notes (`encrypt-note`/`decrypt-note` + pgsodium)
-- Data subject rights (Moroccan Law 09-08 notice present ✅)
-- Idle timeout for clinical roles (30 min ✅)
-- Email verification before login (no anon signups ✅)
-
-### 6. Security hacker (red-team checklist)
-- Edge functions accepting trusted IDs from body without JWT check
-- RLS policies with overly permissive `USING (true)` or token-leak patterns
-- Direct service-role usage in user-facing functions
-- XSS via `document.write` / `dangerouslySetInnerHTML`
-- IDOR on `/booking/respond/:token`, `/b/:slug`, `/session/:id`
-- Storage bucket policies (`psychologist-photos`, `accreditation-docs`, `user-documents`)
-- Rate limiting on auth + sensitive RPCs
-- Open CORS on edge functions
-- SQL injection via `execute_sql`-style RPCs (none expected)
+**Test after fix:** call the function via `supabase--curl_edge_functions` with a test payload, confirm 200 + booking row created.
 
 ---
 
-## What I'll fix in this pass
+## 2. Sticky language selection (URGENT UX)
 
-**Critical (no questions asked):**
+**Root cause in `src/contexts/LocaleContext.tsx`:**
+The `// Sync locale with URL changes` effect calls `setLocaleState(getLocaleFromPath(location.pathname))` on every URL change. `getLocaleFromPath` returns `'en'` as the default for any path missing `/fr` or `/ar` prefix. So when a user picks French, then clicks any internal `<Link to="/psychologists">` (no prefix), the locale flips back to English.
 
-1. **`recommend` edge function** → require `Authorization` header, derive `user.id` from `auth.getClaims()`, drop service-role client, ignore body `user_id`.
-2. **Booking proposal RLS** → drop the broad public policy. Replace with a SECURITY DEFINER RPC `get_booking_by_token(_token text)` that returns only the matching row and only if not expired. Update `BookingResponse.tsx` to call the RPC.
-3. **Admin users 500** → root cause is `supabase.auth.admin.listUsers()` choking on NULL `confirmation_token` from a Postgres driver mismatch. Fix by switching the admin user list to `admin_list_users_rich` (already exists, queries `auth.users` directly via SQL) instead of the `auth.admin.listUsers()` JS call. Verify all admin user-management surfaces use it.
-4. **Org invoice XSS** → add `escapeHtml()` in `generate-org-invoice` and wrap every interpolated org field. Mirror the pattern from `generate-certificate`.
-
-**Warn (also fixed in same pass):**
-
-5. **Org pulse owner read** → add SELECT policy on `org_pulse_responses` allowing org owners to read their org's rows (raw responses are still anonymous because `user_id` is nullable). Or, if you prefer aggregate-only, leave as-is and I'll just document it.
-
-**Audit deliverable (no code change, just a report):**
-
-6. Per-persona pass/fail list with everything else I checked (storage policies, IDOR surfaces, RLS coverage, idle timeout, CORS, etc.).
+**Fix:**
+- When a non-prefixed path is visited and the user's saved cookie is `fr` or `ar`, redirect to the prefixed equivalent (`/fr/psychologists`) instead of switching state to `en`.
+- Audit `<Link>` / `navigate()` calls in headers/menus to use locale-aware paths via a helper (`addLocalePrefix(path, locale)`); fix the most common offenders (Header, MegaMenu, Footer, RoleRouter).
+- Keep the cookie as the source of truth; URL syncs only when an explicit prefix exists.
 
 ---
 
-## Out of scope for this pass
+## 3. Invoice HTML escaping + stored-XSS test
 
-- Live click-through testing in the browser (will do only if you explicitly ask)
-- Penetration testing tools (Burp, ZAP) against the live deployment
-- Load / rate-limit testing
-- Mobile-device testing
-- Re-auditing the items already fixed in the previous security pass (admin function auth, invite_org_member ownership, pricing config RLS) unless the new audit surfaces a regression
+In `supabase/functions/generate-org-invoice/index.ts`:
+- Audit every `${...}` interpolation into HTML; ensure each runs through the existing `escapeHtml()` helper. Cover: `name`, `billing_address`, `ice`, `rc_number`, `if_number`, `contact_email`, `pdf_signature_label`, `plan_type`, `invoice_number`, member email/name, period strings.
+- For URLs (`logo_url`, `pdf_logo_url`), validate they start with `https://` and escape as attribute values; reject `javascript:` / `data:` schemes.
+- Add `supabase/functions/generate-org-invoice/index.test.ts` (Deno.test) that:
+  1. Seeds an org with payloads like `<script>alert(1)</script>` and `" onerror=alert(1) x="` in name, address, ICE.
+  2. Invokes the function and asserts the resulting HTML contains escaped entities (`&lt;script&gt;`) and no raw `<script>`, no unescaped `onerror=`.
 
 ---
 
-## Files I expect to touch
+## 4. Security regression tests (RLS / PHI)
 
-- `supabase/functions/recommend/index.ts`
-- `supabase/functions/generate-org-invoice/index.ts`
-- `src/pages/BookingResponse.tsx` (and possibly `BookRedirect.tsx`)
-- `src/components/admin/UserManagement.tsx` + any hook that calls `auth.admin.listUsers()`
-- New migration:
-  - drop + replace booking proposal token policy
-  - create `get_booking_by_token` RPC
-  - add owner SELECT policy on `org_pulse_responses` (pending your call)
+Add `supabase/functions/_tests/security_regression.test.ts` (Deno) using `dotenv/load.ts` per the testing guide. Create 5 throwaway auth users (client A, client B, specialist, business owner, "hacker" = unauth + unrelated user) and assert:
 
-After the fixes I'll mark the corresponding security findings as resolved and post the full per-persona QA report in chat.
+- **bookings**
+  - Client A cannot SELECT client B's bookings (RLS denies).
+  - Specialist sees only their own.
+  - Hacker (unauth) gets 0 rows.
+  - `get_booking_by_token(valid_token)` returns the row to anon.
+  - `get_booking_by_token(expired_token)` returns 0 rows.
+  - `get_booking_by_token('garbage')` returns 0 rows.
+- **recommend** edge function
+  - Anon call → returns FALLBACK only, never user-scoped data.
+  - Sending another user's id in body is ignored (function uses JWT).
+- **org_pulse_responses / org_pulse_surveys**
+  - Member of org X can submit; member of org Y cannot submit to X's survey.
+  - Org owner of X can SELECT responses for X only.
+  - Random user cannot SELECT any responses.
+- **PHI tables** (mood_entries, journal_entries, client_anamneses, session_notes)
+  - Cross-user SELECT returns 0; UPDATE/DELETE denied.
+
+Test asserts both row counts and that error codes are RLS denials (`42501` / empty result), not 500s. Cleanup runs in `afterAll` style block.
+
+---
+
+## 5. Rate limiting for high-risk edge functions
+
+Backend has no shared rate-limit primitive (per directive). Implement a lightweight DB-backed limiter for `crisis-screening` and `ai-assistant` only.
+
+**Migration:** new table `edge_rate_limits(key text pk, window_start timestamptz, count int)` with a SECURITY DEFINER RPC `check_and_increment_rate_limit(_key text, _max int, _window_seconds int) returns boolean`. Returns `true` if allowed, `false` if over quota; resets per window.
+
+**In each function:**
+- Derive identity key: prefer `auth.uid()` from JWT, else hash of `x-forwarded-for` IP.
+- `crisis-screening`: 30 req / 5 min per user, 60 / 5 min per IP.
+- `ai-assistant`: 60 req / hour per user, 120 / hour per IP.
+- On limit, return 429 with `{ error: "Too many requests, please slow down." }` and `Retry-After` header.
+- Caller is told this is ad-hoc until proper infra exists.
+
+---
+
+## 6. End-to-end booking proposal flow test
+
+Manual + scripted check via `supabase--curl_edge_functions` and `supabase--read_query`:
+
+1. Specialist creates a proposal (status='proposed', token + 48h expiry).
+2. Anon hits `/booking-response?token=...`; `get_booking_by_token` returns row → page renders.
+3. Client accepts → status flips to 'confirmed', token cleared.
+4. Re-fetching with same token returns 0 rows.
+5. Manually expire a token (`UPDATE bookings SET proposal_expires_at = now() - interval '1 hour'`); fetch returns 0 rows.
+6. Patient B (different account) cannot SELECT this booking via direct table query.
+
+Capture results in a short audit note.
+
+---
+
+## Files to change
+
+**Code**
+- `supabase/functions/send-meeting-link/index.ts` — fix `payment_status`.
+- `src/contexts/LocaleContext.tsx` — locale stickiness.
+- `src/components/Header.tsx`, `MegaMenu.tsx`, `Footer.tsx`, any `navigate()` calls dropping locale prefix — locale-aware routing helper.
+- `supabase/functions/generate-org-invoice/index.ts` — full escape audit + URL validation.
+- `supabase/functions/crisis-screening/index.ts`, `supabase/functions/ai-assistant/index.ts` — rate limiting.
+
+**New files**
+- `supabase/functions/generate-org-invoice/index.test.ts`
+- `supabase/functions/_tests/security_regression.test.ts`
+- `supabase/functions/_tests/booking_proposal_flow.test.ts`
+
+**Migrations**
+- Optional: extend `bookings_payment_status_check` to allow `'comp'`.
+- New: `edge_rate_limits` table + `check_and_increment_rate_limit` RPC.
+
+---
+
+## Out of scope
+- Replacing the ad-hoc rate limiter with proper infra (waiting on backend primitive).
+- Migrating all internal links to a `<LocalizedLink>` component (only fix the high-traffic offenders this round).
+- WhatsApp delivery of meeting link (Meta API pending).
