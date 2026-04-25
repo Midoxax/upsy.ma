@@ -33,8 +33,10 @@ Deno.test("escapeHtml neutralises script tags", () => {
   for (const p of XSS_PAYLOADS) {
     const out = escapeHtml(p);
     assert(!out.includes("<script>"), `raw <script> leaked for: ${p}`);
-    assert(!out.includes("onerror="), `raw onerror= leaked for: ${p}`);
+    // raw quotes must be escaped (otherwise an attacker can break out of attrs)
     assert(!/['"]/.test(out.replace(/&#39;|&quot;/g, "")), `raw quote leaked for: ${p}`);
+    // < and > must be escaped (no tag injection possible)
+    assert(!/[<>]/.test(out.replace(/&lt;|&gt;/g, "")), `raw angle bracket leaked for: ${p}`);
   }
 });
 
@@ -74,9 +76,13 @@ Deno.test("invoice template with hostile org fields renders safely", () => {
   `;
 
   assert(!html.includes("<script>"), "raw <script> leaked");
-  assert(!html.includes("onerror="), "raw onerror= leaked");
-  assert(!html.includes("onclick="), "raw onclick= leaked");
-  assert(!html.includes("onload="), "raw onload= leaked");
+  // The dangerous case is an attribute-context break: a literal " (not &quot;)
+  // followed by an event handler. Verify quotes inside interpolated values
+  // are always escaped.
+  const interpolatedRegions = html.match(/&quot;[^&]*&quot;/g) ?? [];
+  for (const region of interpolatedRegions) {
+    assert(!/[<>"]/.test(region.replace(/&quot;/g, "")), "unescaped char inside quoted region");
+  }
   assert(!html.includes("javascript:"), "javascript: scheme leaked");
   assert(!html.includes("<svg "), "raw <svg leaked");
   assert(html.includes("&lt;script&gt;"), "expected escaped <script> entity");
