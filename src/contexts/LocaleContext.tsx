@@ -66,9 +66,22 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Sync locale with URL changes
+  // Sync locale with URL changes — but never silently downgrade to 'en'
+  // when the user has explicitly chosen 'fr' or 'ar'. If a non-prefixed URL
+  // is visited and the cookie says fr/ar, redirect to the prefixed equivalent.
   useEffect(() => {
     const urlLocale = getLocaleFromPath(location.pathname);
+    const cookieLocale = getCookie('lng');
+    const preferred = (cookieLocale === 'fr' || cookieLocale === 'ar' || cookieLocale === 'en')
+      ? cookieLocale
+      : null;
+
+    if (urlLocale === 'en' && (preferred === 'fr' || preferred === 'ar')) {
+      const newPath = addLocalePrefix(location.pathname, preferred);
+      navigate(newPath + location.search + location.hash, { replace: true });
+      return;
+    }
+
     if (urlLocale !== locale) {
       setLocaleState(urlLocale);
     }
