@@ -139,6 +139,7 @@ Deno.serve(async (req) => {
         session_type: "video",
         status: "confirmed",
         payment_status: "comp",
+        amount_mad: 0,
         patient_notes: body.notes ?? null,
         proposed_by: psychologistId,
       })
