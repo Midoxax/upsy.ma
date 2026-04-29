@@ -121,6 +121,7 @@ const Resources = () => {
       <SEOHead
         title="Resources & Mental Health Library | U.Psy"
         description="Free articles, guides, worksheets, audio and video on anxiety, depression, mindfulness, sport psychology and more."
+        path="/resources"
       />
       <main className="min-h-screen bg-background">
         {/* Hero */}
