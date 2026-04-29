@@ -30,6 +30,7 @@ import PsychologistEditDrawer from "@/components/admin/PsychologistEditDrawer";
 import BookingDetailDrawer from "@/components/admin/BookingDetailDrawer";
 import RolePreviewFrame from "@/components/admin/RolePreviewFrame";
 import LearningHubManager from "@/components/admin/LearningHubManager";
+import SupportInbox from "@/components/admin/SupportInbox";
 import { rowsToCsv, downloadCsv } from "@/lib/admin/csv";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
@@ -600,6 +601,7 @@ const AdminDashboard = () => {
             { value: "transactions", label: "Transactions", icon: Database },
               { value: "translations", label: "Translations", icon: Globe },
               { value: "learning", label: "Learning Hub", icon: BookOpen },
+              { value: "support", label: "Support", icon: MessageSquare },
               { value: "live-views", label: "Live views", icon: Eye },
             ].map(({ value, label, icon: Icon }) => (
               <TabsTrigger key={value} value={value} className="gap-1.5 text-xs">
@@ -624,6 +626,7 @@ const AdminDashboard = () => {
             </div>
           </TabsContent>
           <TabsContent value="learning"><LearningHubManager /></TabsContent>
+          <TabsContent value="support"><SupportInbox /></TabsContent>
           <TabsContent value="live-views"><RolePreviewFrame /></TabsContent>
         </Tabs>
       </main>
