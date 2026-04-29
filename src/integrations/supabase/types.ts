@@ -2917,6 +2917,45 @@ export type Database = {
         }
         Relationships: []
       }
+      specialist_plans: {
+        Row: {
+          commission_rate: number
+          created_at: string
+          features: Json
+          id: string
+          is_active: boolean
+          monthly_price_mad: number
+          name: string
+          sort_order: number
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          commission_rate?: number
+          created_at?: string
+          features?: Json
+          id: string
+          is_active?: boolean
+          monthly_price_mad?: number
+          name: string
+          sort_order?: number
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          commission_rate?: number
+          created_at?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          monthly_price_mad?: number
+          name?: string
+          sort_order?: number
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       specialties: {
         Row: {
           created_at: string | null
@@ -2934,6 +2973,65 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      subscription_invoices: {
+        Row: {
+          amount_mad: number
+          created_at: string
+          id: string
+          invoice_number: string | null
+          metadata: Json | null
+          paid_at: string | null
+          payment_method: string | null
+          period_end: string
+          period_start: string
+          plan_type: string
+          psychologist_id: string
+          status: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_mad?: number
+          created_at?: string
+          id?: string
+          invoice_number?: string | null
+          metadata?: Json | null
+          paid_at?: string | null
+          payment_method?: string | null
+          period_end: string
+          period_start: string
+          plan_type: string
+          psychologist_id: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_mad?: number
+          created_at?: string
+          id?: string
+          invoice_number?: string | null
+          metadata?: Json | null
+          paid_at?: string | null
+          payment_method?: string | null
+          period_end?: string
+          period_start?: string
+          plan_type?: string
+          psychologist_id?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -2975,6 +3073,89 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      support_ticket_messages: {
+        Row: {
+          attachments: Json
+          author_id: string
+          author_role: string
+          body: string
+          created_at: string
+          id: string
+          ticket_id: string
+        }
+        Insert: {
+          attachments?: Json
+          author_id: string
+          author_role: string
+          body: string
+          created_at?: string
+          id?: string
+          ticket_id: string
+        }
+        Update: {
+          attachments?: Json
+          author_id?: string
+          author_role?: string
+          body?: string
+          created_at?: string
+          id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: string
+          closed_at: string | null
+          created_at: string
+          id: string
+          last_message_at: string
+          metadata: Json | null
+          priority: string
+          resolution: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          metadata?: Json | null
+          priority?: string
+          resolution?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          metadata?: Json | null
+          priority?: string
+          resolution?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       therapy_approaches: {
         Row: {
@@ -3415,6 +3596,11 @@ export type Database = {
       }
       get_or_assign_daily_challenge: { Args: never; Returns: Json }
       get_specialist_earnings_summary: { Args: never; Returns: Json }
+      get_specialist_plan: { Args: { _user_id: string }; Returns: Json }
+      has_plan_feature: {
+        Args: { _feature: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
