@@ -4,15 +4,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { format, startOfMonth, subMonths } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DollarSign, TrendingUp, Clock, CheckCircle, Loader2,
-  Star, Users, Calendar,
+  Star, Users, Calendar, Wallet, Hourglass, Banknote, Download,
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { useEarningsSummary, usePayouts } from "@/hooks/useSpecialistPayouts";
 
 const usePsychologistEarnings = () => {
   const { user } = useAuth();
@@ -124,6 +126,8 @@ const PIE_COLORS = ["#1D9E75", "#378ADD", "#EF9F27", "#D85A30"];
 
 export const EarningsTab = () => {
   const { data, isLoading } = usePsychologistEarnings();
+  const { data: summary } = useEarningsSummary();
+  const { data: payouts = [] } = usePayouts();
 
   if (isLoading) return (
     <div className="flex justify-center py-16">
@@ -133,12 +137,62 @@ export const EarningsTab = () => {
 
   if (!data) return null;
 
+  const exportTaxStatement = () => {
+    const year = new Date().getFullYear();
+    const settled = data.recentBookings.filter(
+      (b: any) => b.payment_status === "succeeded" || b.status === "completed"
+    );
+    const rows = [
+      ["Date", "Type", "Duration (min)", "Gross MAD", "Status"],
+      ...settled.map((b: any) => [
+        format(new Date(b.scheduled_at), "yyyy-MM-dd"),
+        b.session_type ?? "",
+        String(b.duration_minutes ?? ""),
+        String(b.amount_mad ?? ""),
+        b.status ?? "",
+      ]),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `upsy-earnings-${year}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const PAYOUT_STATUS_STYLES: Record<string, string> = {
+    paid: "bg-green-500/10 text-green-600 border-green-500/20",
+    processing: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+    pending: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    failed: "bg-red-500/10 text-red-500 border-red-500/20",
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Stat label="Net this month" value={`${data.netThisMonth.toLocaleString()} MAD`} sub="After 15% platform fee" icon={DollarSign} accent="text-green-500" />
-        <Stat label="Total sessions" value={data.totalSessions} sub={`${data.pendingSessions} upcoming`} icon={CheckCircle} accent="text-blue-500" />
-        <Stat label="Unique patients" value={data.uniquePatients} icon={Users} accent="text-purple-500" />
+        <Stat
+          label="Available to withdraw"
+          value={`${(summary?.available_to_withdraw ?? 0).toLocaleString()} MAD`}
+          sub="Settled, not yet paid out"
+          icon={Wallet}
+          accent="text-green-500"
+        />
+        <Stat
+          label="Pending settlement"
+          value={`${(summary?.pending_settlement ?? 0).toLocaleString()} MAD`}
+          sub="Awaiting client payment"
+          icon={Hourglass}
+          accent="text-amber-500"
+        />
+        <Stat
+          label="Paid out (lifetime)"
+          value={`${(summary?.paid_out_lifetime ?? 0).toLocaleString()} MAD`}
+          sub={`${data.totalSessions} sessions`}
+          icon={Banknote}
+          accent="text-blue-500"
+        />
         <Stat label="Rating" value={data.avgRating ? `${data.avgRating} / 5` : "No reviews"} sub={data.reviewCount > 0 ? `${data.reviewCount} review${data.reviewCount > 1 ? "s" : ""}` : undefined} icon={Star} accent="text-amber-500" />
       </div>
 
@@ -206,6 +260,50 @@ export const EarningsTab = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Payouts section */}
+      <Card className="bg-surface border-border">
+        <CardHeader className="pb-3 flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Wallet className="h-4 w-4 text-primary" />
+            Payouts
+          </CardTitle>
+          <Button variant="outline" size="sm" onClick={exportTaxStatement} className="gap-1.5">
+            <Download className="h-3.5 w-3.5" /> Export tax statement
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {payouts.length === 0 ? (
+            <div className="text-sm text-muted-foreground text-center py-6">
+              No payouts yet — first payout processes once you have ≥500 MAD settled.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {payouts.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between py-2.5 border-b border-border/50 last:border-0"
+                >
+                  <div>
+                    <p className="text-sm font-medium">
+                      {format(new Date(p.period_start), "MMM d")} — {format(new Date(p.period_end), "MMM d, yyyy")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {p.payout_method ?? "Bank transfer"}{p.reference ? ` · ${p.reference}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium">{Number(p.net_mad).toLocaleString()} MAD</span>
+                    <Badge className={cn("text-xs border capitalize", PAYOUT_STATUS_STYLES[p.status])}>
+                      {p.status}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="p-4 rounded-xl border border-border bg-surface text-sm">
         <div className="flex items-center gap-2 mb-3">
