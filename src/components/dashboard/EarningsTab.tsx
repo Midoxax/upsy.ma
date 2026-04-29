@@ -320,7 +320,9 @@ export const EarningsTab = () => {
             <p className="font-bold">{data.totalRevenue.toLocaleString()} MAD</p>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs mb-1">Platform fee (15%)</p>
+            <p className="text-muted-foreground text-xs mb-1">
+              Platform fee ({Math.round((data.commissionRate ?? 0.2) * 100)}%)
+            </p>
             <p className="font-bold text-muted-foreground">{(data.totalRevenue - data.netRevenue).toLocaleString()} MAD</p>
           </div>
           <div>
@@ -328,6 +330,14 @@ export const EarningsTab = () => {
             <p className="font-bold text-green-600">{data.netRevenue.toLocaleString()} MAD</p>
           </div>
         </div>
+        {(data.commissionRate ?? 0.2) >= 0.20 && (
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Lower commission on{" "}
+            <Link to="/my-space?tab=plans" className="text-primary hover:underline font-medium">
+              Pro (12%) or Elite (8%)
+            </Link>
+          </p>
+        )}
       </div>
 
       <Card className="bg-surface border-border">
