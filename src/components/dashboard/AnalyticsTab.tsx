@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2, TrendingUp, Users, Calendar, DollarSign, Star, BarChart3 } from "lucide-react";
+import { Loader2, TrendingUp, Users, Calendar, DollarSign, Star, BarChart3, Lock } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useHasFeature } from "@/hooks/useSpecialistPlan";
+import { UpgradePromptCard } from "@/components/dashboard/UpgradePromptCard";
 
 const COLORS = ["hsl(42,100%,50%)", "hsl(200,80%,50%)", "hsl(150,60%,45%)", "hsl(0,70%,55%)"];
 
 const AnalyticsTab = () => {
   const { user } = useAuth();
+  const { has: hasBasic, isLoading: planLoading } = useHasFeature("analytics_basic");
+  const { has: hasAdvanced } = useHasFeature("analytics_advanced");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalSessions: 0,
@@ -21,9 +25,9 @@ const AnalyticsTab = () => {
   const [sessionsByType, setSessionsByType] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !hasBasic) return;
     loadAnalytics();
-  }, [user]);
+  }, [user, hasBasic]);
 
   const loadAnalytics = async () => {
     const [sessionsRes, reviewsRes, profileRes] = await Promise.all([
@@ -73,6 +77,34 @@ const AnalyticsTab = () => {
     setLoading(false);
   };
 
+  if (planLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!hasBasic) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-h3 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-primary" /> Analytics
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Understand your practice performance — sessions, revenue trends, client retention.
+          </p>
+        </div>
+        <UpgradePromptCard
+          title="Unlock practice analytics"
+          description="See your sessions, revenue trends, and top specialties. Upgrade to Pro for basic charts, or Elite for advanced retention and heatmaps."
+          requiredPlan="Pro"
+        />
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -108,7 +140,7 @@ const AnalyticsTab = () => {
         ))}
       </div>
 
-      {/* Charts */}
+      {/* Basic charts (Pro+) */}
       <div className="grid md:grid-cols-2 gap-6">
         <div className="glass-card p-6">
           <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
@@ -146,6 +178,47 @@ const AnalyticsTab = () => {
           )}
         </div>
       </div>
+
+      {/* Advanced (Elite only) */}
+      {hasAdvanced ? (
+        <div className="glass-card p-6">
+          <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+            <Users className="w-4 h-4 text-accent" /> Advanced insights
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div className="rounded-xl border border-border bg-background p-4">
+              <p className="text-xs text-muted-foreground">Repeat clients</p>
+              <p className="text-2xl font-bold mt-1">
+                {stats.uniqueClients > 0
+                  ? `${Math.round((1 - stats.uniqueClients / Math.max(stats.completedSessions, 1)) * 100)}%`
+                  : "—"}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background p-4">
+              <p className="text-xs text-muted-foreground">Avg sessions / client</p>
+              <p className="text-2xl font-bold mt-1">
+                {stats.uniqueClients > 0
+                  ? (stats.completedSessions / stats.uniqueClients).toFixed(1)
+                  : "—"}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background p-4">
+              <p className="text-xs text-muted-foreground">Completion rate</p>
+              <p className="text-2xl font-bold mt-1">
+                {stats.totalSessions > 0
+                  ? `${Math.round((stats.completedSessions / stats.totalSessions) * 100)}%`
+                  : "—"}
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <UpgradePromptCard
+          title="Advanced analytics"
+          description="Client retention, top specialties, and hour-of-day heatmap. Available on Elite."
+          requiredPlan="Elite"
+        />
+      )}
     </div>
   );
 };
