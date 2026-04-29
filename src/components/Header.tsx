@@ -8,6 +8,7 @@ import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
 import logo from "@/assets/logo.webp";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 import InstallAppButton from "@/components/pwa/InstallAppButton";
 import ViewAsSwitcher from "@/components/ViewAsSwitcher";
 
@@ -119,6 +120,7 @@ const Header = () => {
             <LanguageSwitcher className="mr-1" />
             <InstallAppButton variant="ghost" size="sm" label="" className="hidden lg:inline-flex" />
             {user && <ViewAsSwitcher compact />}
+            {user && <NotificationBell />}
             {user ? (
               <Button variant="primary" size="sm" asChild>
                 <Link to={addLocalePrefix('/my-space', locale)}>
