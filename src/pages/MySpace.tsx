@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Calendar, DollarSign, Users, CreditCard, Video, Award, FileText, BarChart3 } from "lucide-react";
+import { User, Calendar, DollarSign, Users, CreditCard, Video, Award, FileText, BarChart3, LifeBuoy } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
 import { PricingTab } from "@/components/dashboard/PricingTab";
 import { LeadsTab } from "@/components/dashboard/LeadsTab";
-import { BillingTab } from "@/components/dashboard/BillingTab";
+import { SpecialistPlansTab } from "@/components/dashboard/SpecialistPlansTab";
+import { SupportTab } from "@/components/dashboard/SupportTab";
 import { SessionsTab } from "@/components/dashboard/SessionsTab";
 import CertificatesTab from "@/components/dashboard/CertificatesTab";
 import SessionNotesTab from "@/components/dashboard/SessionNotesTab";
@@ -63,7 +64,11 @@ const PsychologistDashboard = () => (
           </TabsTrigger>
           <TabsTrigger value="billing" className="gap-1.5">
             <CreditCard className="h-4 w-4" />
-            <span className="hidden sm:inline">Billing</span>
+            <span className="hidden sm:inline">Plan</span>
+          </TabsTrigger>
+          <TabsTrigger value="support" className="gap-1.5">
+            <LifeBuoy className="h-4 w-4" />
+            <span className="hidden sm:inline">Support</span>
           </TabsTrigger>
         </TabsList>
 
@@ -76,7 +81,8 @@ const PsychologistDashboard = () => (
         <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
         <TabsContent value="documents"><DocumentsTab /></TabsContent>
         <TabsContent value="certificates"><CertificatesTab /></TabsContent>
-        <TabsContent value="billing"><BillingTab /></TabsContent>
+        <TabsContent value="billing"><SpecialistPlansTab /></TabsContent>
+        <TabsContent value="support"><SupportTab /></TabsContent>
       </Tabs>
     </div>
   </section>
