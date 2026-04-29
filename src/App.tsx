@@ -35,6 +35,7 @@ import MoroccanUmbrella from "./pages/MoroccanUmbrella";
 import PsychologuesSansFrontieres from "./pages/PsychologuesSansFrontieres";
 import Psychologists from "./pages/Psychologists";
 import PsychologistProfile from "./pages/PsychologistProfile";
+import SpecialistPricing from "./pages/SpecialistPricing";
 import Auth from "./pages/Auth";
 import MySpace from "./pages/MySpace";
 import Apply from "./pages/Apply";
@@ -104,6 +105,7 @@ const AppRoutes = () => (
     <Route path="psf" element={<PageTransition><PsychologuesSansFrontieres /></PageTransition>} />
     <Route path="psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
+   <Route path="pricing-specialists" element={<PageTransition><SpecialistPricing /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
     <Route path="apply/wizard" element={<ProtectedRoute><PageTransition><ApplyWizard /></PageTransition></ProtectedRoute>} />
