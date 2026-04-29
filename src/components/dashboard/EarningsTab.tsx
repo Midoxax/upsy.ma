@@ -15,11 +15,15 @@ import {
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { useEarningsSummary, usePayouts } from "@/hooks/useSpecialistPayouts";
+import { useSpecialistPlan } from "@/hooks/useSpecialistPlan";
+import { Link } from "react-router-dom";
 
 const usePsychologistEarnings = () => {
   const { user } = useAuth();
+  const { data: plan } = useSpecialistPlan();
+  const platformFee = plan?.commission_rate ?? 0.20;
   return useQuery({
-    queryKey: ["psy-earnings", user?.id],
+    queryKey: ["psy-earnings", user?.id, platformFee],
     queryFn: async () => {
       if (!user) throw new Error("Not authenticated");
 
@@ -64,7 +68,6 @@ const usePsychologistEarnings = () => {
       const thisMonthRevenue = thisMonth.reduce((s, b) => s + (b.amount_mad ?? rate), 0);
 
       const totalRevenue = completed.reduce((s, b) => s + (b.amount_mad ?? rate), 0);
-      const platformFee = 0.15;
       const netRevenue = totalRevenue * (1 - platformFee);
       const netThisMonth = thisMonthRevenue * (1 - platformFee);
 
@@ -89,6 +92,7 @@ const usePsychologistEarnings = () => {
         netRevenue: Math.round(netRevenue),
         thisMonthRevenue: Math.round(thisMonthRevenue),
         netThisMonth: Math.round(netThisMonth),
+        commissionRate: platformFee,
         avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
         reviewCount: reviews.length,
         monthly,
