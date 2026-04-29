@@ -46,6 +46,7 @@ const Install = () => {
       <SEOHead
         title="Install U.Psy on your phone"
         description="Add U.Psy to your home screen for a full-app experience — works on iPhone, Android, and any modern browser."
+        path="/install"
       />
       <main className="container mx-auto px-4 py-12 max-w-3xl">
         <header className="text-center mb-10">
