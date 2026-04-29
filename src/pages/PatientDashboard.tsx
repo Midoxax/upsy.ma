@@ -28,6 +28,9 @@ import CrisisModal from "@/components/dashboard/CrisisModal";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import ReferralCard from "@/components/dashboard/ReferralCard";
 import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
+import DailyChallengeCard from "@/components/dashboard/DailyChallengeCard";
+import LeaderboardCard from "@/components/dashboard/LeaderboardCard";
+import { useAwardXp } from "@/hooks/useGamification";
 import { useNudges } from "@/hooks/useNudges";
 import { useCrisisScreening } from "@/hooks/useCrisisScreening";
 
@@ -55,6 +58,7 @@ const PatientDashboard = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   useNudges();
   const crisis = useCrisisScreening();
+  const awardXp = useAwardXp();
 
   const MOOD_ICONS = [
     { score: 1, icon: Frown, label: t('mood.veryLow'), color: "text-destructive" },
@@ -92,7 +96,7 @@ const PatientDashboard = () => {
     if (error) {
       toast({ title: "Error", description: "Failed to save mood entry", variant: "destructive" });
     } else {
-      toast({ title: t('dashboard.save'), description: "Mood entry recorded" });
+      awardXp.mutate({ action: "mood_log", xp: 10 });
       setShowForm(false);
       setMoodScore(0);
       setEnergyLevel(0);
@@ -186,9 +190,13 @@ const PatientDashboard = () => {
               </div>
 
               {/* Phase 3: Gamification (discreet) + Referral loop */}
-              <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6">
-                <GamificationPanel />
+              <div className="grid lg:grid-cols-2 gap-6">
+                <DailyChallengeCard />
                 <ReferralCard />
+              </div>
+              <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6">
+                <GamificationPanel />
+                <LeaderboardCard />
               </div>
 
               {/* Quick Stats */}
