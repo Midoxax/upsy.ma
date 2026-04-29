@@ -105,6 +105,7 @@ const AppRoutes = () => (
     <Route path="psf" element={<PageTransition><PsychologuesSansFrontieres /></PageTransition>} />
     <Route path="psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
+   <Route path="pricing-specialists" element={<PageTransition><SpecialistPricing /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
     <Route path="apply/wizard" element={<ProtectedRoute><PageTransition><ApplyWizard /></PageTransition></ProtectedRoute>} />
