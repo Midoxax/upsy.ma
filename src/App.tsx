@@ -45,6 +45,7 @@ import PatientDashboard from "./pages/PatientDashboard";
 import AthleteHub from "./pages/AthleteHub";
 import AssessmentLab from "./pages/AssessmentLab";
 import AIAssistant from "./pages/AIAssistant";
+import Notifications from "./pages/Notifications";
 import Applications from "./pages/admin/Applications";
 import AdminDashboard from "./pages/admin/Dashboard";
 import VideoCall from "./pages/VideoCall";
@@ -118,6 +119,7 @@ const AppRoutes = () => (
     <Route path="assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
     <Route path="ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
     <Route path="my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
+    <Route path="notifications" element={<ProtectedRoute><PageTransition><Notifications /></PageTransition></ProtectedRoute>} />
     <Route path="admin" element={<AdminRoute><PageTransition><AdminDashboard /></PageTransition></AdminRoute>} />
     <Route path="admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
     <Route path="session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
