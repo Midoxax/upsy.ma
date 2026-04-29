@@ -15,12 +15,14 @@ import {
   Wallet,
   BookOpen,
   Sparkles,
+  LifeBuoy,
 } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
 import { PricingTab } from "@/components/dashboard/PricingTab";
 import { LeadsTab } from "@/components/dashboard/LeadsTab";
 import { SpecialistPlansTab } from "@/components/dashboard/SpecialistPlansTab";
+import { SupportTab } from "@/components/dashboard/SupportTab";
 import { SessionsTab } from "@/components/dashboard/SessionsTab";
 import CertificatesTab from "@/components/dashboard/CertificatesTab";
 import SessionNotesTab from "@/components/dashboard/SessionNotesTab";
@@ -92,6 +94,10 @@ const SpecialistDashboard = () => {
                   <FileText className="h-4 w-4" />
                   <span className="hidden sm:inline">Docs</span>
                 </TabsTrigger>
+                <TabsTrigger value="support" className="gap-1.5">
+                  <LifeBuoy className="h-4 w-4" />
+                  <span className="hidden sm:inline">Support</span>
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile"><ProfileTab /></TabsContent>
@@ -106,6 +112,7 @@ const SpecialistDashboard = () => {
               <TabsContent value="journal"><JournalTab /></TabsContent>
               <TabsContent value="certificates"><CertificatesTab /></TabsContent>
               <TabsContent value="documents"><DocumentsTab /></TabsContent>
+              <TabsContent value="support"><SupportTab /></TabsContent>
             </Tabs>
           </div>
 
