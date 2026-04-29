@@ -117,7 +117,7 @@ const Header = () => {
           <div className="hidden lg:flex items-center gap-2">
             <ThemeToggle />
             <LanguageSwitcher className="mr-1" />
-            <InstallAppButton variant="ghost" size="sm" label="" className="hidden xl:inline-flex" />
+            <InstallAppButton variant="ghost" size="sm" label="" className="hidden lg:inline-flex" />
             {user && <ViewAsSwitcher compact />}
             {user ? (
               <Button variant="primary" size="sm" asChild>
