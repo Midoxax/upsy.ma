@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -132,6 +134,116 @@ export const useUserBadges = () => {
       return (data ?? []).map((b) => ({ slug: b.badge_slug, earned_at: b.earned_at }));
     },
     enabled: !!user,
+  });
+};
+
+// ── XP awarding ───────────────────────────────────────────────────────────────
+
+export const useAwardXp = () => {
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: async (params: { action: string; xp?: number; metadata?: Record<string, unknown> }) => {
+      const { data, error } = await supabase.rpc("award_xp", {
+        p_action: params.action,
+        p_xp: params.xp ?? 10,
+        p_metadata: (params.metadata ?? {}) as any,
+      });
+      if (error) throw error;
+      return data as { xp_awarded: number; xp_total: number; streak_days: number };
+    },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["user-progress"] });
+      qc.invalidateQueries({ queryKey: ["user-badges"] });
+      qc.invalidateQueries({ queryKey: ["leaderboard"] });
+      if (data?.xp_awarded) {
+        toast({ title: `+${data.xp_awarded} XP`, description: `Total: ${data.xp_total} XP` });
+      }
+    },
+    onError: () => {
+      // Silent fail — XP is non-critical
+    },
+  });
+};
+
+// ── Daily challenge ───────────────────────────────────────────────────────────
+
+export interface DailyChallenge {
+  user_challenge_id: string;
+  completed: boolean;
+  challenge: {
+    slug: string;
+    title: string;
+    title_fr?: string | null;
+    description?: string | null;
+    description_fr?: string | null;
+    icon: string;
+    xp_reward: number;
+    action_url?: string | null;
+  };
+}
+
+export const useDailyChallenge = () => {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["daily-challenge", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase.rpc("get_or_assign_daily_challenge");
+      if (error) throw error;
+      return data as unknown as DailyChallenge;
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+};
+
+export const useCompleteDailyChallenge = () => {
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: async (userChallengeId: string) => {
+      const { data, error } = await supabase.rpc("complete_daily_challenge", {
+        p_user_challenge_id: userChallengeId,
+      });
+      if (error) throw error;
+      return data as { ok: boolean; xp_awarded?: number; error?: string };
+    },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["daily-challenge"] });
+      qc.invalidateQueries({ queryKey: ["user-progress"] });
+      qc.invalidateQueries({ queryKey: ["leaderboard"] });
+      if (data?.ok) {
+        toast({ title: "Challenge complete! 🎉", description: `+${data.xp_awarded} XP earned` });
+      }
+    },
+  });
+};
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+export interface LeaderboardEntry {
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  xp_total: number;
+  xp_this_week: number;
+  streak_days: number;
+  rank: number;
+}
+
+export const useLeaderboard = () => {
+  return useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("gamification_leaderboard" as any)
+        .select("*")
+        .limit(20);
+      if (error) throw error;
+      return (data ?? []) as unknown as LeaderboardEntry[];
+    },
+    staleTime: 60_000,
   });
 };
 
