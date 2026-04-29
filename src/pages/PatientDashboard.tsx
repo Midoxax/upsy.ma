@@ -10,7 +10,7 @@ import MaroonDivider from "@/components/ui/maroon-divider";
 import {
   Heart, Brain, Calendar, TrendingUp, Smile, Frown, Meh,
   BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun, Award,
-  FileText, PenSquare, User,
+  FileText, PenSquare, User, CreditCard,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -20,6 +20,7 @@ import AnamnesisCard from "@/components/dashboard/AnamnesisCard";
 import CertificatesTab from "@/components/dashboard/CertificatesTab";
 import JournalTab from "@/components/dashboard/JournalTab";
 import DocumentsTab from "@/components/dashboard/DocumentsTab";
+import { ClientBillingTab } from "@/components/dashboard/ClientBillingTab";
 import TodaysStateCard from "@/components/dashboard/TodaysStateCard";
 import MentalPerformanceScore from "@/components/dashboard/MentalPerformanceScore";
 import SessionsTimeline from "@/components/dashboard/SessionsTimeline";
@@ -168,6 +169,10 @@ const PatientDashboard = () => {
               <TabsTrigger value="documents" className="gap-1.5">
                 <FileText className="h-4 w-4" />
                 <span className="hidden sm:inline">Documents</span>
+              </TabsTrigger>
+              <TabsTrigger value="billing" className="gap-1.5">
+                <CreditCard className="h-4 w-4" />
+                <span className="hidden sm:inline">Billing</span>
               </TabsTrigger>
               <TabsTrigger value="certificates" className="gap-1.5">
                 <Award className="h-4 w-4" />
@@ -444,6 +449,11 @@ const PatientDashboard = () => {
             {/* Documents Tab */}
             <TabsContent value="documents">
               <DocumentsTab />
+            </TabsContent>
+
+            {/* Billing Tab */}
+            <TabsContent value="billing">
+              <ClientBillingTab />
             </TabsContent>
 
             {/* Certificates Tab */}

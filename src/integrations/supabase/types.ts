@@ -1809,6 +1809,8 @@ export type Database = {
           currency: string
           failure_reason: string | null
           id: string
+          invoice_number: string | null
+          invoice_pdf_url: string | null
           net_to_psychologist_mad: number
           paid_at: string | null
           patient_id: string
@@ -1830,6 +1832,8 @@ export type Database = {
           currency?: string
           failure_reason?: string | null
           id?: string
+          invoice_number?: string | null
+          invoice_pdf_url?: string | null
           net_to_psychologist_mad?: number
           paid_at?: string | null
           patient_id: string
@@ -1851,6 +1855,8 @@ export type Database = {
           currency?: string
           failure_reason?: string | null
           id?: string
+          invoice_number?: string | null
+          invoice_pdf_url?: string | null
           net_to_psychologist_mad?: number
           paid_at?: string | null
           patient_id?: string

@@ -1,68 +1,63 @@
-# "Nothing is working" — diagnose, then fix what's actually broken
+# Plan — QA the release, then wire client Billing (mock payments)
 
-## Why this plan is shaped this way
+Two phases in one release. Phase 1 verifies what we just shipped works. Phase 2 closes the original "client dashboard is broken" complaint by giving clients a real Billing tab backed by the mock-payment flow that already exists in the backend.
 
-What I observed before writing this plan:
-- Homepage at `/` renders correctly in the live preview (hero, CTA, copy all visible).
-- Browser console: no app errors. Only a manifest 401 (preview iframe quirk, harmless) and React Router future-flag warnings (harmless).
-- Edge function logs: zero 4xx/5xx in the recent window.
-- Postgres logs: zero ERROR/FATAL severity entries.
-- `LocaleContext` is correctly set up with cookie-as-source-of-truth.
+## Phase 1 — QA the gamification + resources release
 
-So I cannot confirm a global breakage. Before doing a sweeping refactor across auth, payments, invoicing, anamnesis, admin and data protection at the same time, I want to **isolate what's actually failing**, fix exactly that, and then run targeted regression checks on the related flows. Otherwise we risk regressions in the parts that already work.
+### What I'll verify (read-only checks on live DB + manual flows)
+- `/resources`: page loads, search filters work, topic filters work, format icons render, completion call hits `resource_completions` and triggers XP via `award_xp`.
+- Daily Challenge card on Patient Dashboard: `get_or_assign_daily_challenge` returns a challenge for a fresh user, "Mark complete" calls `complete_daily_challenge`, XP increments.
+- Leaderboard card: the `gamification_leaderboard` view returns rows once at least one user has XP. (Currently 0 users in `user_progress` — expected since no logged-in user has triggered an action yet.)
+- Mood log → XP chain: submit a mood entry, confirm `user_progress.xp_total` increments and `streak_days` advances.
+- RLS sanity: `resource_completions`, `user_daily_challenges`, `user_progress` reject reads of other users' rows.
 
-## Phase 1 — Reproduce and isolate (no code changes)
+### Fixes I expect to make (small, in-place)
+- The previous release notes mentioned "15+ badges seeded" but only `user_badges` exists — no `badges` lookup table. I'll either:
+  - Create a `badges` reference table with the 15 badges and wire `useGamification` to read from it for the badge-grid UI, **or**
+  - Remove any stale badge-grid UI references and document badges as award-only (a row in `user_badges` per unlock).
+  Decision will be based on what `useGamification.ts` currently expects.
+- Any console/network errors found while clicking through the flows.
 
-For each flow you mentioned, I will:
-1. Open the relevant page in the in-tool browser, signed in as the right role (client, then specialist, then admin via `mehdifelji@gmail.com`).
-2. Click through the user-visible steps.
-3. Capture: screenshot, console errors, failing network request bodies, edge function logs, DB rows touched.
-4. Mark each flow as: ✅ works / ⚠️ partial / ❌ broken — with the exact error.
+## Phase 2 — Client Billing tab (mock payments, no real money)
 
-Flows to verify, in this order:
+The current `BillingTab.tsx` is the **specialist's** subscription view. Clients have no Billing tab at all. The backend already has `payment_transactions`, `bookings.payment_status`, `simulate-payment-webhook`, and a `user-documents` private bucket for invoice PDFs — we just need to expose this to clients and finish the simulation loop.
 
-```text
-1. Auth          : email signup, email login, Google login, password reset
-2. Locale        : pick FR on /, navigate to /psychologists, refresh — stays FR
-3. Specialists   : list loads, photo upload from dashboard, profile saves
-4. Booking       : send-meeting-link from specialist → client receives email
-5. Anamnesis     : client fills form, specialist sees it
-6. Payments      : create-booking-payment + simulate-payment-webhook flow
-7. Invoices      : generate-org-invoice produces PDF, escapes XSS payload in org name
-8. Admin         : edit a psychologist profile, change pricing, suspend a user
-9. Data privacy  : confirm RLS by trying cross-tenant reads as a hacker persona
-```
+### New: `src/components/dashboard/ClientBillingTab.tsx`
+Sections:
+1. **Outstanding** — bookings with `payment_status IN ('pending','deposit_pending')`. Each row: psychologist, date/time, amount, "Pay deposit" / "Pay balance" button.
+2. **Payment history** — `payment_transactions` for the user, with status badge (succeeded / failed / refunded), amount, date, and "Download invoice" link if `invoice_pdf_url` exists.
+3. **Simulated checkout dialog** — opens a modal with "Simulate success" / "Simulate failure" buttons that call `simulate-payment-webhook` with `outcome: succeeded | failed`. Clearly labeled "Test mode — no real money".
 
-## Phase 2 — Fix only the confirmed failures
+### Hook: `src/hooks/useClientBilling.ts`
+- `useOutstandingBookings()` — bookings where `patient_id = me` and `payment_status` is unpaid.
+- `useTransactionHistory()` — `payment_transactions` rows for me, ordered by `created_at` desc.
+- `useSimulatePayment()` — mutation that calls the existing `simulate-payment-webhook` edge function.
 
-For every ❌ found in Phase 1, I'll do a focused fix:
-- One root-cause change per failure.
-- A note in the response showing: the symptom, the root cause, the change, and the verification step.
+### Wire into Patient Dashboard
+Add a `<TabsTrigger value="billing">` in `src/pages/PatientDashboard.tsx` (between "documents" and "certificates") and a `<TabsContent value="billing">` rendering the new `ClientBillingTab`.
 
-I will **not** touch flows marked ✅ unless the fix for a ❌ requires it. This is the most important constraint of this plan.
+### Invoice generation on payment success
+On simulate-success, generate a PDF via the existing pattern (jsPDF — same approach as certificates) and upload to `user-documents/{user_id}/invoices/{invoice_no}.pdf`, then store the path on `payment_transactions.invoice_pdf_url`. Make this part of `simulate-payment-webhook` so any path that confirms a payment produces an invoice.
 
-## Phase 3 — Regression check
+If `payment_transactions.invoice_pdf_url` doesn't exist as a column, add it via migration. (I'll confirm the column set when I start; if missing, single ALTER TABLE.)
 
-After fixes:
-- Re-run the relevant flows from Phase 1 in the browser.
-- Run the existing security regression tests (`security_regression.test.ts`, `booking_proposal_flow.test.ts`, `generate-org-invoice/index.test.ts`).
-- Run `supabase--linter` to confirm no new RLS regressions.
+### Banner on dashboard
+Small banner at the top of the Billing tab: "Payments are in test mode. No real charges occur." So the user is never confused about charge state.
 
-## What I will NOT do in this round
+## Out of scope (this release)
+- Real Stripe / Paddle integration (deferred per your earlier choice).
+- Refund UX for clients (admin-only RPC `admin_refund_booking` already exists).
+- Specialist payouts dashboard (separate workstream).
 
-- I will not rewrite the auth context, the locale context, or the role router.
-- I will not refactor admin tooling unless a specific admin action is broken.
-- I will not change RLS policies unless a specific privacy violation is reproduced.
-- I will not introduce new features (e.g. new payment provider, new invoice template).
+## Technical notes
+- All new code follows existing patterns: TanStack Query hooks, shadcn cards, maroon/gold tokens, Outfit/Inter typography, glassmorphism panels.
+- RLS already covers `payment_transactions` and `bookings` for `patient_id = auth.uid()` reads — no policy changes expected. I'll double-check during implementation.
+- No new secrets needed; no config.toml changes.
 
-## Technical scope
+## Files touched (estimate)
+- New: `src/components/dashboard/ClientBillingTab.tsx`, `src/hooks/useClientBilling.ts`, `src/components/dashboard/SimulateCheckoutDialog.tsx`
+- Edited: `src/pages/PatientDashboard.tsx`, `supabase/functions/simulate-payment-webhook/index.ts` (add invoice PDF generation)
+- Possible migration: add `invoice_pdf_url` to `payment_transactions` if absent
+- Possible migration: create `badges` reference table if Phase 1 finds we need it
 
-Files I expect to *read* in Phase 1: `Auth.tsx`, `LocaleContext.tsx`, `useSendMeetingLink.ts`, `useBooking.ts`, `useAnamnesis.ts`, `BillingTab.tsx`, edge functions (`send-meeting-link`, `create-booking-payment`, `generate-org-invoice`, `propose-session`).
-
-Files I expect to *edit* in Phase 2: only those with a confirmed defect from Phase 1. Listed concretely in the implementation message after diagnosis.
-
-## What I need from you
-
-If you already know one specific flow that's broken (e.g. "I click Send meeting link and get a 500", or "I sign in with Google and land on a blank page"), tell me which one and I'll start there. Otherwise I'll begin top-down with Auth.
-
-Approve this plan and I'll switch to build mode and start Phase 1.
+After this release, Sessions / Journal / Documents / Billing / Certificates / Resources / Gamification are all live for the client. The only deferred piece is real-money payments.
