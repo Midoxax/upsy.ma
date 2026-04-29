@@ -62,6 +62,21 @@ export const searchPsychologists = async ({
   if (languagesData.error) throw languagesData.error;
   if (approachesData.error) throw approachesData.error;
 
+  // Plan-based ranking boost: pull active subscriptions for these profiles
+  const { data: subsData } = await supabase
+    .from("subscriptions")
+    .select("psychologist_id, plan_type, status")
+    .in("psychologist_id", profileIds)
+    .eq("status", "active");
+
+  const planRank = new Map<string, number>();
+  (subsData ?? []).forEach((s: any) => {
+    const tier =
+      s.plan_type === "elite" || s.plan_type === "premium" ? 3 :
+      s.plan_type === "pro" || s.plan_type === "basic" ? 2 : 1;
+    planRank.set(s.psychologist_id, tier);
+  });
+
   const buildMap = (items: any[], key: string) => {
     const map = new Map<string, any[]>();
     items?.forEach((item: any) => {
@@ -75,15 +90,30 @@ export const searchPsychologists = async ({
   const languagesMap = buildMap(languagesData.data || [], "language");
   const approachesMap = buildMap(approachesData.data || [], "therapy_approach");
 
-  const profiles: PsychologistProfile[] = (data || []).map((profile: any) => {
+  const profilesUnranked: PsychologistProfile[] = (data || []).map((profile: any) => {
     const { total_count, ...profileData } = profile;
     return {
       ...profileData,
       specialties: specialtiesMap.get(profile.id) || [],
       languages: languagesMap.get(profile.id) || [],
       therapy_approaches: approachesMap.get(profile.id) || [],
+      _plan_rank: planRank.get(profile.id) ?? 1,
     };
   });
+
+  // Stable sort: higher plan tier first, preserve underlying order otherwise.
+  const profiles = profilesUnranked
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => {
+      const ra = (a.p as any)._plan_rank ?? 1;
+      const rb = (b.p as any)._plan_rank ?? 1;
+      if (rb !== ra) return rb - ra;
+      return a.i - b.i;
+    })
+    .map(({ p }) => {
+      const { _plan_rank, ...clean } = p as any;
+      return clean as PsychologistProfile;
+    });
 
   return { profiles, total, page, pageSize };
 };
