@@ -10,9 +10,9 @@ const SpecialistPricing = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
+        path="/pricing-specialists"
         title="Plans & Pricing for Specialists | U.Psy"
         description="Choose the plan that fits your practice — Free, Pro, or Elite. Pay only when you grow."
-        canonical="/pricing-specialists"
       />
 
       <div className="container-custom py-12 md:py-16">
