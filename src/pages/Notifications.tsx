@@ -53,6 +53,7 @@ export default function Notifications() {
       <SEOHead
         title="Notifications | U.Psy"
         description="Your activity, payments, and gamification updates."
+        path="/notifications"
       />
       <section className="section-spacing">
         <div className="container-custom max-w-3xl space-y-6">
