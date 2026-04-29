@@ -836,6 +836,51 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_challenges: {
+        Row: {
+          action_url: string | null
+          category: string
+          created_at: string
+          description: string | null
+          description_fr: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          slug: string
+          title: string
+          title_fr: string | null
+          xp_reward: number
+        }
+        Insert: {
+          action_url?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          description_fr?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          slug: string
+          title: string
+          title_fr?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          action_url?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          description_fr?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          slug?: string
+          title?: string
+          title_fr?: string | null
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           created_at: string | null
@@ -2403,6 +2448,152 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_completions: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          resource_id: string
+          user_id: string
+        }
+        Insert: {
+          action?: string
+          created_at?: string
+          id?: string
+          resource_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          resource_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_completions_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resource_topics: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          name_ar: string | null
+          name_fr: string | null
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          name_ar?: string | null
+          name_fr?: string | null
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          name_ar?: string | null
+          name_fr?: string | null
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      resources: {
+        Row: {
+          category: string | null
+          content_md: string | null
+          content_url: string | null
+          created_at: string
+          download_url: string | null
+          format: string
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          is_premium: boolean
+          is_published: boolean
+          locale: string
+          rating: number | null
+          read_minutes: number | null
+          slug: string
+          summary: string | null
+          summary_ar: string | null
+          summary_fr: string | null
+          title: string
+          title_ar: string | null
+          title_fr: string | null
+          topic_slug: string | null
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          category?: string | null
+          content_md?: string | null
+          content_url?: string | null
+          created_at?: string
+          download_url?: string | null
+          format: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          is_premium?: boolean
+          is_published?: boolean
+          locale?: string
+          rating?: number | null
+          read_minutes?: number | null
+          slug: string
+          summary?: string | null
+          summary_ar?: string | null
+          summary_fr?: string | null
+          title: string
+          title_ar?: string | null
+          title_fr?: string | null
+          topic_slug?: string | null
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          category?: string | null
+          content_md?: string | null
+          content_url?: string | null
+          created_at?: string
+          download_url?: string | null
+          format?: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          is_premium?: boolean
+          is_published?: boolean
+          locale?: string
+          rating?: number | null
+          read_minutes?: number | null
+          slug?: string
+          summary?: string | null
+          summary_ar?: string | null
+          summary_fr?: string | null
+          title?: string
+          title_ar?: string | null
+          title_fr?: string | null
+          topic_slug?: string | null
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           client_id: string
@@ -2730,6 +2921,41 @@ export type Database = {
           },
         ]
       }
+      user_daily_challenges: {
+        Row: {
+          assigned_for_date: string
+          challenge_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_for_date?: string
+          challenge_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          assigned_for_date?: string
+          challenge_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_daily_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "daily_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_progress: {
         Row: {
           created_at: string | null
@@ -2884,6 +3110,18 @@ export type Database = {
           },
         ]
       }
+      gamification_leaderboard: {
+        Row: {
+          avatar_url: string | null
+          display_name: string | null
+          rank: number | null
+          streak_days: number | null
+          user_id: string | null
+          xp_this_week: number | null
+          xp_total: number | null
+        }
+        Relationships: []
+      }
       org_usage_summary: {
         Row: {
           active_members: number | null
@@ -3003,12 +3241,20 @@ export type Database = {
         Returns: Json
       }
       admin_user_activity: { Args: { _user_id: string }; Returns: Json }
+      award_xp: {
+        Args: { p_action: string; p_metadata?: Json; p_xp?: number }
+        Returns: Json
+      }
       check_and_increment_rate_limit: {
         Args: { _key: string; _max: number; _window_seconds: number }
         Returns: boolean
       }
       check_proposal_slot: {
         Args: { _duration: number; _psy: string; _start: string }
+        Returns: Json
+      }
+      complete_daily_challenge: {
+        Args: { p_user_challenge_id: string }
         Returns: Json
       }
       compute_mps: { Args: { _user_id: string }; Returns: Json }
@@ -3038,6 +3284,7 @@ export type Database = {
           status: string
         }[]
       }
+      get_or_assign_daily_challenge: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
