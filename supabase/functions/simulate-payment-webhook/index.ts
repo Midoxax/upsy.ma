@@ -126,6 +126,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+    const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
     const { data: tx, error: txErr } = await admin
       .from("payment_transactions")
@@ -203,6 +205,42 @@ serve(async (req) => {
         })
         .eq("id", tx.booking_id);
 
+      // Fire-and-forget notifications (don't block response)
+      const notifyUrl = `${SUPABASE_URL}/functions/v1/send-notification`;
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SERVICE_ROLE}`,
+      };
+      const amountMAD = Number(tx.amount_mad).toLocaleString();
+      Promise.all([
+        fetch(notifyUrl, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            user_id: tx.patient_id,
+            type: "payment_succeeded",
+            title: "Payment received",
+            body: `Your payment of ${amountMAD} MAD was successful. Invoice ${invoiceNumber} is ready.`,
+            action_url: "/my-space",
+            send_email: true,
+            metadata: { transaction_id: transactionId, invoice_number: invoiceNumber },
+          }),
+        }),
+        fetch(notifyUrl, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            user_id: tx.psychologist_id,
+            type: "booking_confirmed",
+            title: "New paid session",
+            body: `A client just paid ${amountMAD} MAD. The session is confirmed.`,
+            action_url: "/dashboard/specialist",
+            send_email: true,
+            metadata: { booking_id: tx.booking_id },
+          }),
+        }),
+      ]).catch((e) => console.error("notify error", e));
+
       return new Response(
         JSON.stringify({
           success: true,
@@ -223,6 +261,23 @@ serve(async (req) => {
         .from("bookings")
         .update({ status: "cancelled", payment_status: "failed" })
         .eq("id", tx.booking_id);
+
+      // Notify patient of failure
+      fetch(`${SUPABASE_URL}/functions/v1/send-notification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SERVICE_ROLE}`,
+        },
+        body: JSON.stringify({
+          user_id: tx.patient_id,
+          type: "payment_succeeded",
+          title: "Payment failed",
+          body: failureReason ?? "Your payment could not be processed. Please try again.",
+          action_url: "/my-space",
+          send_email: false,
+        }),
+      }).catch((e) => console.error("notify error", e));
 
       return new Response(
         JSON.stringify({ success: true, status: "failed" }),

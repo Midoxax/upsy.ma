@@ -1219,6 +1219,75 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          email_bookings: boolean
+          email_gamification: boolean
+          email_payments: boolean
+          email_reminders: boolean
+          inapp_all: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_bookings?: boolean
+          email_gamification?: boolean
+          email_payments?: boolean
+          email_reminders?: boolean
+          inapp_all?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_bookings?: boolean
+          email_gamification?: boolean
+          email_payments?: boolean
+          email_reminders?: boolean
+          inapp_all?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          body: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       org_aggregate_reports: {
         Row: {
           created_at: string
@@ -2794,6 +2863,60 @@ export type Database = {
           },
         ]
       }
+      specialist_payouts: {
+        Row: {
+          created_at: string
+          gross_mad: number
+          id: string
+          net_mad: number
+          notes: string | null
+          paid_at: string | null
+          payout_method: string | null
+          period_end: string
+          period_start: string
+          platform_fee_mad: number
+          psychologist_id: string
+          reference: string | null
+          status: string
+          transaction_ids: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          gross_mad?: number
+          id?: string
+          net_mad?: number
+          notes?: string | null
+          paid_at?: string | null
+          payout_method?: string | null
+          period_end: string
+          period_start: string
+          platform_fee_mad?: number
+          psychologist_id: string
+          reference?: string | null
+          status?: string
+          transaction_ids?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          gross_mad?: number
+          id?: string
+          net_mad?: number
+          notes?: string | null
+          paid_at?: string | null
+          payout_method?: string | null
+          period_end?: string
+          period_start?: string
+          platform_fee_mad?: number
+          psychologist_id?: string
+          reference?: string | null
+          status?: string
+          transaction_ids?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       specialties: {
         Row: {
           created_at: string | null
@@ -3291,6 +3414,7 @@ export type Database = {
         }[]
       }
       get_or_assign_daily_challenge: { Args: never; Returns: Json }
+      get_specialist_earnings_summary: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -3312,6 +3436,7 @@ export type Database = {
         }
         Returns: string
       }
+      mark_all_notifications_read: { Args: never; Returns: number }
       org_pulse_aggregate: {
         Args: { _org_id: string; _survey_id?: string }
         Returns: Json
