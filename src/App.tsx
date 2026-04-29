@@ -70,6 +70,7 @@ import Learn from "./pages/Learn";
 import LearnCourse from "./pages/LearnCourse";
 import BookingResponse from "./pages/BookingResponse";
 import BookRedirect from "./pages/BookRedirect";
+import Install from "./pages/Install";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,7 @@ const AppRoutes = () => (
   <>
     <Route index element={<PageTransition><Index /></PageTransition>} />
     <Route path="about" element={<PageTransition><About /></PageTransition>} />
+    <Route path="install" element={<PageTransition><Install /></PageTransition>} />
     <Route path="services" element={<PageTransition><Services /></PageTransition>} />
     <Route path="services/consulting-for-organizations" element={<PageTransition><ConsultingForOrganizations /></PageTransition>} />
     <Route path="skool" element={<PageTransition><Skool /></PageTransition>} />
