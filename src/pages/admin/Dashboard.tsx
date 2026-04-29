@@ -31,6 +31,7 @@ import BookingDetailDrawer from "@/components/admin/BookingDetailDrawer";
 import RolePreviewFrame from "@/components/admin/RolePreviewFrame";
 import LearningHubManager from "@/components/admin/LearningHubManager";
 import SupportInbox from "@/components/admin/SupportInbox";
+import { useAllTickets } from "@/hooks/useSupportTickets";
 import { rowsToCsv, downloadCsv } from "@/lib/admin/csv";
 
 // ── Data hooks ──────────────────────────────────────────────────────────────
@@ -590,25 +591,7 @@ const AdminDashboard = () => {
       <main className="container-custom py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="flex flex-wrap h-auto gap-1 bg-surface border border-border p-1 rounded-xl">
-            {[
-              { value: "overview", label: "Overview", icon: BarChart3 },
-              { value: "psychologists", label: "Psychologists", icon: Users },
-              { value: "bookings", label: "Bookings", icon: Calendar },
-              { value: "users", label: "Users", icon: Shield },
-              { value: "accreditation", label: "Accreditation", icon: Award },
-              { value: "org-applications", label: "Org. Apps", icon: Building2 as any },
-              { value: "pricing", label: "Pricing", icon: DollarSign },
-            { value: "transactions", label: "Transactions", icon: Database },
-              { value: "translations", label: "Translations", icon: Globe },
-              { value: "learning", label: "Learning Hub", icon: BookOpen },
-              { value: "support", label: "Support", icon: MessageSquare },
-              { value: "live-views", label: "Live views", icon: Eye },
-            ].map(({ value, label, icon: Icon }) => (
-              <TabsTrigger key={value} value={value} className="gap-1.5 text-xs">
-                <Icon className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{label}</span>
-              </TabsTrigger>
-            ))}
+            <SupportAwareTabs />
           </TabsList>
 
           <TabsContent value="overview"><OverviewTab /></TabsContent>
@@ -632,6 +615,40 @@ const AdminDashboard = () => {
       </main>
       <CommandPalette onTabChange={setActiveTab} />
     </div>
+  );
+};
+
+const SupportAwareTabs = () => {
+  const { data: tickets = [] } = useAllTickets();
+  const pendingAdmin = tickets.filter((t) => t.status === "pending_admin").length;
+  const items: Array<{ value: string; label: string; icon: any; badge?: number }> = [
+    { value: "overview", label: "Overview", icon: BarChart3 },
+    { value: "psychologists", label: "Psychologists", icon: Users },
+    { value: "bookings", label: "Bookings", icon: Calendar },
+    { value: "users", label: "Users", icon: Shield },
+    { value: "accreditation", label: "Accreditation", icon: Award },
+    { value: "org-applications", label: "Org. Apps", icon: Building2 },
+    { value: "pricing", label: "Pricing", icon: DollarSign },
+    { value: "transactions", label: "Transactions", icon: Database },
+    { value: "translations", label: "Translations", icon: Globe },
+    { value: "learning", label: "Learning Hub", icon: BookOpen },
+    { value: "support", label: "Support", icon: MessageSquare, badge: pendingAdmin },
+    { value: "live-views", label: "Live views", icon: Eye },
+  ];
+  return (
+    <>
+      {items.map(({ value, label, icon: Icon, badge }) => (
+        <TabsTrigger key={value} value={value} className="gap-1.5 text-xs relative">
+          <Icon className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">{label}</span>
+          {badge && badge > 0 ? (
+            <span className="ml-1 inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold h-4 min-w-4 px-1">
+              {badge}
+            </span>
+          ) : null}
+        </TabsTrigger>
+      ))}
+    </>
   );
 };
 
