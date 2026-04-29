@@ -44,6 +44,15 @@ const Apply = () => {
           <p className="text-xs text-muted-foreground text-center">
             Vos documents sont stockés dans un espace privé chiffré accessible uniquement à vous et à l'équipe d'accréditation.
           </p>
+          <p className="text-xs text-center pt-1">
+            <button
+              type="button"
+              onClick={() => navigate("/pricing-specialists")}
+              className="text-primary hover:underline font-medium"
+            >
+              Voir les plans et tarifs des spécialistes →
+            </button>
+          </p>
         </CardContent>
       </Card>
     </main>

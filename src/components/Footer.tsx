@@ -25,6 +25,7 @@ const Footer = () => {
         { name: t('founder.navLabel') || "Founder", href: "/founder" },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation') || "Apply", href: "/apply" },
+        { name: "Specialist pricing", href: "/pricing-specialists" },
       ],
     },
     {

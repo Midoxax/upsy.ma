@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,23 @@ export const SupportTab = () => {
   const { data: tickets = [], isLoading } = useMyTickets();
   const [openId, setOpenId] = useState<string | null>(null);
   const [newOpen, setNewOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Auto-open a ticket if ?ticket=<id> is present (deep link from notifications)
+  useEffect(() => {
+    const ticketId = searchParams.get("ticket");
+    if (ticketId && tickets.some((t) => t.id === ticketId)) {
+      setOpenId(ticketId);
+    }
+  }, [searchParams, tickets]);
+
+  const handleClose = () => {
+    setOpenId(null);
+    if (searchParams.get("ticket")) {
+      searchParams.delete("ticket");
+      setSearchParams(searchParams, { replace: true });
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -89,7 +107,7 @@ export const SupportTab = () => {
         <TicketDetailDialog
           ticketId={openId}
           ticket={tickets.find((t) => t.id === openId)}
-          onClose={() => setOpenId(null)}
+          onClose={handleClose}
         />
       )}
     </div>

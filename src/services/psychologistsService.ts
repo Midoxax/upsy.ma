@@ -119,6 +119,8 @@ export const searchPsychologists = async ({
 };
 
 export const getFeaturedPsychologists = async (limit = 4) => {
+  // Pull a wider pool, then sort: Elite > Pro > Free, recency as tiebreaker.
+  const poolSize = Math.max(limit * 5, 20);
   const { data, error } = await supabase
     .from("psychologist_profiles")
     .select(`
@@ -128,10 +130,33 @@ export const getFeaturedPsychologists = async (limit = 4) => {
       psychologist_languages(language_id, languages(name))
     `)
     .eq("is_published", true)
-    .limit(limit);
+    .order("created_at", { ascending: false })
+    .limit(poolSize);
 
   if (error) throw error;
-  return data || [];
+  const pool = data ?? [];
+  if (pool.length === 0) return [];
+
+  const ids = pool.map((p: any) => p.id);
+  const { data: subs } = await supabase
+    .from("subscriptions")
+    .select("psychologist_id, plan_type, status")
+    .in("psychologist_id", ids)
+    .eq("status", "active");
+
+  const tier = new Map<string, number>();
+  (subs ?? []).forEach((s: any) => {
+    const r =
+      s.plan_type === "elite" || s.plan_type === "premium" ? 3 :
+      s.plan_type === "pro" || s.plan_type === "basic" ? 2 : 1;
+    tier.set(s.psychologist_id, r);
+  });
+
+  return pool
+    .map((p: any, i: number) => ({ p, i, t: tier.get(p.id) ?? 1 }))
+    .sort((a, b) => (b.t - a.t) || (a.i - b.i))
+    .slice(0, limit)
+    .map(({ p }) => p);
 };
 
 export const fetchSpecialties = async () => {

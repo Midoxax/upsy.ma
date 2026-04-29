@@ -45,6 +45,7 @@ const Header = () => {
         { name: t('psf.navLabel') !== 'psf.navLabel' ? t('psf.navLabel') : "Psychologues Sans Frontières", href: "/psf", icon: Heart, featured: true },
         { name: t('nav.contact'), href: "/contact" },
         { name: t('nav.applyAccreditation'), href: "/apply" },
+        { name: "For specialists · Pricing", href: "/pricing-specialists" },
       ],
     },
   ];
