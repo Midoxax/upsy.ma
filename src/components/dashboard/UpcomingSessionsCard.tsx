@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Video, Calendar, Clock, MapPin, Globe } from "lucide-react";
+import { Video, Calendar, Clock, MapPin, Globe, CalendarClock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
@@ -26,7 +26,7 @@ const UpcomingSessionsCard = () => {
         .from("bookings_with_details")
         .select("id, scheduled_at, session_type, status, video_room_id, psychologist_name")
         .eq("patient_id", user.id)
-        .in("status", ["confirmed", "pending"])
+        .in("status", ["confirmed", "pending", "proposed"])
         .gte("scheduled_at", new Date().toISOString())
         .order("scheduled_at", { ascending: true })
         .limit(5);
@@ -47,6 +47,7 @@ const UpcomingSessionsCard = () => {
         {sessions.map((s) => {
           const dt = new Date(s.scheduled_at);
           const isOnline = s.session_type === "video" || s.session_type === "online";
+          const isProposed = s.status === "proposed";
           return (
             <div
               key={s.id}
@@ -66,15 +67,26 @@ const UpcomingSessionsCard = () => {
                     {isOnline ? <Globe className="w-3 h-3" /> : <MapPin className="w-3 h-3" />}
                     {isOnline ? "Online" : "In-Person"}
                   </span>
+                  {isProposed && (
+                    <span className="text-amber-600 dark:text-amber-400 font-medium">
+                      Pending your reply
+                    </span>
+                  )}
                 </div>
               </div>
-              {isOnline && s.video_room_id && (
+              {isProposed ? (
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={`/session/${s.id}`}>
+                    <CalendarClock className="h-4 w-4 mr-1" /> Confirm
+                  </Link>
+                </Button>
+              ) : isOnline && s.video_room_id ? (
                 <Button variant="primary" size="sm" asChild>
                   <Link to={`/session/${s.id}`}>
                     <Video className="h-4 w-4 mr-1" /> Join
                   </Link>
                 </Button>
-              )}
+              ) : null}
             </div>
           );
         })}
