@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { Calendar, Video, Star, ChevronRight } from "lucide-react";
+import { Calendar, Video, Star, ChevronRight, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -39,7 +39,7 @@ export default function SessionsTimeline() {
         .select("*")
         .eq("patient_id", user!.id)
         .gte("scheduled_at", now)
-        .in("status", ["confirmed", "pending"])
+        .in("status", ["confirmed", "pending", "proposed"])
         .order("scheduled_at", { ascending: true })
         .limit(1),
       supabase
@@ -97,7 +97,14 @@ export default function SessionsTimeline() {
           </p>
           <p className="text-xs text-muted-foreground mt-1">{formatDateTime(upcoming.scheduled_at)}</p>
           <div className="flex gap-2 mt-3">
-            {canJoin(upcoming) && upcoming.video_room_id ? (
+            {upcoming.status === "proposed" ? (
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/session/${upcoming.id}`}>
+                  <CalendarClock className="w-3.5 h-3.5 mr-1" />
+                  {t("dashboard.confirmInvitation") || "Confirm invitation"}
+                </Link>
+              </Button>
+            ) : canJoin(upcoming) && upcoming.video_room_id ? (
               <Button variant="primary" size="sm" asChild>
                 <Link to={`/session/${upcoming.id}`}>
                   <Video className="w-3.5 h-3.5 mr-1" />

@@ -1,94 +1,48 @@
-# Fix the video room error & simplify meeting setup
+## Problem
 
-## What's broken today
+Clicking "Join" on a `proposed` booking lands on `/session/:id` and hits the hard wall **"Cannot Join — This session is proposed."** with no way forward. The user has to hunt for the email or the `PendingInvitationsCard` to accept.
 
-**1. The video room never loads** — the page queries the wrong table.
-- `VideoCall.tsx` reads from the legacy `sessions` table (`client_id`, `date_time`)
-- All real bookings live in `bookings` (`patient_id`, `scheduled_at`)
-- Result: every "Join" click ends in *"Session not found."*
+Three concrete issues:
 
-**2. Three different URLs point to the same page**, only one matches the route:
-| Source | URL it builds | Works? |
-|---|---|---|
-| `App.tsx` route | `/session/:sessionId` | only this one |
-| `SessionsTimeline` (client dashboard) | `/video-call/:id` | 404 |
-| `BookingDetailDrawer` (admin) | `/video/:roomId` | 404 |
-| `UpcomingSessionsCard` | `/session/:id` (but reads dead table) | yes route, no data |
+1. **Wrong destination for proposed bookings.** Join buttons (`SessionsTimeline`, `UpcomingSessionsCard`, `SessionsTab`) link straight to `/session/:id` for any session — including proposed ones — and `VideoCall` then dead-ends them.
+2. **Proposed bookings never appear in `UpcomingSessionsCard` / `SessionsTimeline`** (they filter `status in ['confirmed','pending']`), so the patient only sees them in `PendingInvitationsCard` — easy to miss.
+3. **`VideoCall` "Cannot Join" screen offers no path forward** when the cause is a proposal still awaiting response.
 
-**3. Wrong post-call redirect** — VideoCall navigates to `/dashboard` but real users are on `/my-space`.
+## Plan
 
-**4. Meeting-setup modal is overloaded** — "Propose" and "Send link directly" share the same form, the same fields appear twice, the slot-availability checker only runs in one tab, and the "Now / +15 / +1h / Custom" toggle creates four code paths for one date input. Specialists report it feels confusing.
+### 1. Make `VideoCall` recover from a `proposed` status
+File: `src/pages/VideoCall.tsx`
 
-## What we'll change
+- When `data.status === "proposed"`, do **not** show "Cannot Join". Instead render a dedicated **"Awaiting your confirmation"** screen with:
+  - Session details (psychologist, date, type, duration)
+  - **Accept** and **Decline** buttons that call the same `useRespondToInvitation` mutation already used by `PendingInvitationsCard` (RLS already permits the patient to update their own proposed booking).
+  - On accept → re-fetch booking; if `status === confirmed` and inside the join window, mount Jitsi automatically; otherwise show the existing "Room opens in X" countdown screen.
+  - For psychologists landing on `/session/:id` of a still-proposed booking, show a "Waiting for client to accept" state instead of the error.
+- Keep the existing "ended / cancelled / unauthorized" branches.
 
-### A. Fix the video room (the actual error)
+### 2. Surface proposed bookings in the patient timeline
+Files: `src/components/dashboard/UpcomingSessionsCard.tsx`, `src/components/dashboard/SessionsTimeline.tsx`
 
-1. Rewrite `VideoCall.tsx` to load from `bookings` using the correct columns:
-   - `patient_id` instead of `client_id`
-   - `scheduled_at` instead of `date_time`
-   - keep the same authorization rule (only patient or psychologist)
-2. Keep the existing 10-min-early / +5-min-late join window, but show a live countdown ("Opens in 7 min") instead of a hard error before T-10.
-3. After the call ends or "Leave" is clicked → navigate to `/my-space` (not `/dashboard`).
-4. Improve error states: show *Reconnect* button on Jitsi load failure instead of a dead end.
+- Include `"proposed"` in the status filter so the patient sees the proposal in the same list.
+- For rows where `status === "proposed"`, replace the "Join" button with a yellow **"Confirm invitation"** button that links to `/session/:id` (which now handles accept inline) — and show a small "Pending your reply" badge.
+- Keep `PendingInvitationsCard` as the dedicated banner above; both surfaces stay in sync via the existing react-query invalidation.
 
-### B. Standardize the join URL across the app
+### 3. Don't offer "Join" for non-joinable rows
+Files: `src/components/dashboard/SessionsTab.tsx` (specialist), `src/components/admin/BookingDetailDrawer.tsx`
 
-Pick **one** canonical route: `/session/:bookingId` (already in `App.tsx`).
+- Specialist `SessionsTab`: hide the "Join Call" button when `status !== "confirmed"`. Add a small "Awaiting client confirmation" pill for `status === "proposed"`.
+- Admin drawer: relabel the link to "Open session room" and add a tooltip when status is proposed.
 
-Update the three places that build wrong URLs:
-- `SessionsTimeline.tsx`: `/video-call/${id}` → `/session/${id}`
-- `BookingDetailDrawer.tsx`: `/video/${video_room_id}` → `/session/${booking.id}`
-- `UpcomingSessionsCard.tsx`: keep `/session/${id}` but switch its data source from `sessions` to `bookings_with_details` so the IDs are valid bookings.
-
-### C. Simplify the meeting setup modal
-
-The current modal has **two tabs × two forms × duplicated fields**. Collapse to a single linear form:
-
-```text
-┌─ New session ──────────────────────────────┐
-│ Client email *           Client name        │
-│ ──────────────────       ──────────────     │
-│                                              │
-│ When *   [ Now | +15m | +1h | Pick date ]   │
-│ (Custom date/time appears only if "Pick")   │
-│                                              │
-│ Duration  [50 min ▼]   Type [Video ▼]       │
-│ Note (optional)  ───────────────────         │
-│                                              │
-│ ◉ Send confirmed meeting link now            │
-│ ○ Propose time (client must accept)          │
-│                                              │
-│ [Slot status: available ✓]                   │
-│                                              │
-│              [Cancel]  [Send]                │
-└──────────────────────────────────────────────┘
-```
-
-Concrete changes inside `ProposeSessionModal.tsx`:
-- Replace the two-tab structure with a single form + a radio at the bottom: *Send link now* / *Propose time*
-- Remove the duplicated `link-client-name`, `link-client-email`, `link-duration` fields
-- Run `check_proposal_slot` for **both** modes (today only "propose" validates)
-- "Now / +15m / +1h" become quick-fill buttons that just populate the date+time inputs (one source of truth instead of `quickWhen` state vs. `date/time` state)
-- Show a single inline status pill: *"Slot available ✓"* / *"Conflict at 14:00"*
-- Default mode = *Send link now* (the path most specialists actually use)
-
-### D. Small quality-of-life additions
-
-- After "Send link", show the `join_url` as a copy-button + a "Open room now" link, instead of buried in a toast action.
-- On the join screen, surface the `whatsapp_deeplink` and `.ics` calendar download next to "Copy link" so the specialist can share it through any channel without re-opening email.
-
-## Out of scope
-
-- Migrating the legacy `sessions` table away (kept read-only — it has 1 row and is not in the booking flow). We just stop reading it from the video page.
-- Replacing Jitsi (`meet.jit.si`) with a paid provider — no change here.
-- Reminder cron logic — already shipped, untouched.
+### 4. Small consistency fixes
+- In `VideoCall`, normalize the auth check so a psychologist with `psychologist_id === user.id` can also accept-on-behalf is **not** allowed — only the patient may accept (per RLS). The "Waiting for client" view replaces the buttons for the psychologist.
+- After successful in-page accept, toast "Session confirmed" and update the URL phase so the join window opens automatically when applicable.
 
 ## Files to edit
 
-- `src/pages/VideoCall.tsx` — rewrite data load, fix redirect, add countdown, reconnect button
-- `src/components/dashboard/SessionsTimeline.tsx` — fix URL
-- `src/components/dashboard/UpcomingSessionsCard.tsx` — switch to bookings, fix URL
-- `src/components/admin/BookingDetailDrawer.tsx` — fix URL
-- `src/components/dashboard/ProposeSessionModal.tsx` — collapse to single form, single slot-check, quick-fill buttons
+- `src/pages/VideoCall.tsx` — handle `proposed` status with inline Accept/Decline (patient) and waiting-state (psychologist)
+- `src/components/dashboard/UpcomingSessionsCard.tsx` — include proposed, swap CTA
+- `src/components/dashboard/SessionsTimeline.tsx` — include proposed, swap CTA
+- `src/components/dashboard/SessionsTab.tsx` — hide Join when not confirmed
+- `src/components/admin/BookingDetailDrawer.tsx` — clarify label/state
 
-No database migration needed. No edge function changes needed.
+No DB or edge function changes required — `useRespondToInvitation` and the `respond_to_proposal` RPC already exist and are RLS-safe.
