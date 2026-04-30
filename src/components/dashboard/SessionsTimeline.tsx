@@ -99,7 +99,7 @@ export default function SessionsTimeline() {
           <div className="flex gap-2 mt-3">
             {canJoin(upcoming) && upcoming.video_room_id ? (
               <Button variant="primary" size="sm" asChild>
-                <Link to={`/video-call/${upcoming.id}`}>
+                <Link to={`/session/${upcoming.id}`}>
                   <Video className="w-3.5 h-3.5 mr-1" />
                   {t("dashboard.join") || "Join"}
                 </Link>
