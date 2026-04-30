@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { setSentryUser } from "@/lib/analytics/sentry";
+import { identifyAnonymous } from "@/lib/analytics/posthog";
 
 interface AuthContextType {
   user: User | null;
@@ -32,6 +34,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        const uid = session?.user?.id ?? null;
+        setSentryUser(uid);
+        if (uid) identifyAnonymous(uid);
       }
     );
 
@@ -40,6 +45,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      const uid = session?.user?.id ?? null;
+      setSentryUser(uid);
+      if (uid) identifyAnonymous(uid);
     });
 
     return () => subscription.unsubscribe();
