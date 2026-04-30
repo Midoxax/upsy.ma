@@ -138,6 +138,99 @@ export type Database = {
           },
         ]
       }
+      ai_subscriptions: {
+        Row: {
+          amount_eur: number
+          amount_mad: number
+          billing_cycle: string
+          created_at: string
+          current_period_end: string | null
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string | null
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string | null
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_usage_meter: {
+        Row: {
+          id: string
+          message_count: number
+          usage_date: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          message_count?: number
+          usage_date?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          message_count?: number
+          usage_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      all_access_subscriptions: {
+        Row: {
+          amount_eur: number
+          amount_mad: number
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       anamnesis_reminders: {
         Row: {
           anamnesis_id: string | null
@@ -174,6 +267,45 @@ export type Database = {
           id?: string
           sent_at?: string | null
           status?: string
+        }
+        Relationships: []
+      }
+      assessment_premium_reports: {
+        Row: {
+          amount_eur: number
+          amount_mad: number
+          created_at: string
+          generated_at: string | null
+          id: string
+          payment_status: string
+          pdf_url: string | null
+          protocol: Json
+          result_id: string
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number
+          amount_mad?: number
+          created_at?: string
+          generated_at?: string | null
+          id?: string
+          payment_status?: string
+          pdf_url?: string | null
+          protocol?: Json
+          result_id: string
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number
+          amount_mad?: number
+          created_at?: string
+          generated_at?: string | null
+          id?: string
+          payment_status?: string
+          pdf_url?: string | null
+          protocol?: Json
+          result_id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -334,6 +466,45 @@ export type Database = {
           sport?: string | null
           team?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      athlete_subscriptions: {
+        Row: {
+          amount_eur: number
+          amount_mad: number
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          id: string
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -524,6 +695,42 @@ export type Database = {
           },
         ]
       }
+      certificate_verifications: {
+        Row: {
+          amount_mad: number | null
+          certificate_id: string
+          certificate_number: string
+          created_at: string
+          id: string
+          is_verified: boolean
+          issued_at: string
+          recipient_name: string
+          title: string
+        }
+        Insert: {
+          amount_mad?: number | null
+          certificate_id: string
+          certificate_number: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          issued_at: string
+          recipient_name: string
+          title: string
+        }
+        Update: {
+          amount_mad?: number | null
+          certificate_id?: string
+          certificate_number?: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          issued_at?: string
+          recipient_name?: string
+          title?: string
+        }
+        Relationships: []
+      }
       certificates: {
         Row: {
           certificate_number: string
@@ -531,12 +738,14 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          is_verified: boolean
           issued_at: string
           metadata: Json | null
           recipient_name: string
           reference_id: string | null
           title: string
           user_id: string
+          verification_url: string | null
         }
         Insert: {
           certificate_number?: string
@@ -544,12 +753,14 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_verified?: boolean
           issued_at?: string
           metadata?: Json | null
           recipient_name: string
           reference_id?: string | null
           title: string
           user_id: string
+          verification_url?: string | null
         }
         Update: {
           certificate_number?: string
@@ -557,12 +768,14 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_verified?: boolean
           issued_at?: string
           metadata?: Json | null
           recipient_name?: string
           reference_id?: string | null
           title?: string
           user_id?: string
+          verification_url?: string | null
         }
         Relationships: []
       }
@@ -712,6 +925,84 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_redemptions: {
+        Row: {
+          amount_saved_mad: number
+          coupon_id: string
+          created_at: string
+          id: string
+          redeemed_for: string
+          reference_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_saved_mad?: number
+          coupon_id: string
+          created_at?: string
+          id?: string
+          redeemed_for: string
+          reference_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_saved_mad?: number
+          coupon_id?: string
+          created_at?: string
+          id?: string
+          redeemed_for?: string
+          reference_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          applies_to: string
+          code: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount_type: string
+          discount_value: number
+          id: string
+          is_active: boolean
+          max_redemptions: number | null
+          redemption_count: number
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          applies_to?: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          id?: string
+          is_active?: boolean
+          max_redemptions?: number | null
+          redemption_count?: number
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          applies_to?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          is_active?: boolean
+          max_redemptions?: number | null
+          redemption_count?: number
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       course_enrollments: {
         Row: {
           completed_at: string | null
@@ -794,6 +1085,48 @@ export type Database = {
           },
         ]
       }
+      course_purchases: {
+        Row: {
+          amount_eur: number | null
+          amount_mad: number
+          bundle_slug: string | null
+          coupon_code: string | null
+          course_id: string | null
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json
+          payment_status: string
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number | null
+          amount_mad: number
+          bundle_slug?: string | null
+          coupon_code?: string | null
+          course_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json
+          payment_status?: string
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number | null
+          amount_mad?: number
+          bundle_slug?: string | null
+          coupon_code?: string | null
+          course_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json
+          payment_status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           category: string
@@ -802,8 +1135,11 @@ export type Database = {
           difficulty_level: string | null
           duration_hours: number | null
           id: string
+          is_paid: boolean
           is_published: boolean | null
           learning_path: string
+          price_eur: number | null
+          price_mad: number
           slug: string
           thumbnail_url: string | null
           title: string
@@ -815,8 +1151,11 @@ export type Database = {
           difficulty_level?: string | null
           duration_hours?: number | null
           id?: string
+          is_paid?: boolean
           is_published?: boolean | null
           learning_path?: string
+          price_eur?: number | null
+          price_mad?: number
           slug: string
           thumbnail_url?: string | null
           title: string
@@ -828,8 +1167,11 @@ export type Database = {
           difficulty_level?: string | null
           duration_hours?: number | null
           id?: string
+          is_paid?: boolean
           is_published?: boolean | null
           learning_path?: string
+          price_eur?: number | null
+          price_mad?: number
           slug?: string
           thumbnail_url?: string | null
           title?: string
@@ -1428,6 +1770,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      org_subscription_plans: {
+        Row: {
+          created_at: string
+          display_order: number
+          features: Json
+          id: string
+          is_active: boolean
+          max_seats: number | null
+          monthly_eur: number | null
+          monthly_mad: number
+          name: string
+          slug: string
+          tier: string
+          yearly_eur: number | null
+          yearly_mad: number | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          max_seats?: number | null
+          monthly_eur?: number | null
+          monthly_mad?: number
+          name: string
+          slug: string
+          tier: string
+          yearly_eur?: number | null
+          yearly_mad?: number | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          max_seats?: number | null
+          monthly_eur?: number | null
+          monthly_mad?: number
+          name?: string
+          slug?: string
+          tier?: string
+          yearly_eur?: number | null
+          yearly_mad?: number | null
+        }
+        Relationships: []
       }
       organization_accounts: {
         Row: {
@@ -2034,6 +2424,7 @@ export type Database = {
           bio: string | null
           city: string | null
           created_at: string | null
+          currency_preference: string
           date_of_birth: string | null
           full_name: string | null
           id: string
@@ -2048,6 +2439,7 @@ export type Database = {
           bio?: string | null
           city?: string | null
           created_at?: string | null
+          currency_preference?: string
           date_of_birth?: string | null
           full_name?: string | null
           id: string
@@ -2062,6 +2454,7 @@ export type Database = {
           bio?: string | null
           city?: string | null
           created_at?: string | null
+          currency_preference?: string
           date_of_birth?: string | null
           full_name?: string | null
           id?: string
@@ -2371,6 +2764,8 @@ export type Database = {
         Row: {
           accreditation_level: string | null
           bio: string | null
+          boost_type: string | null
+          boosted_until: string | null
           calendly_url: string | null
           city: string | null
           created_at: string | null
@@ -2390,6 +2785,8 @@ export type Database = {
         Insert: {
           accreditation_level?: string | null
           bio?: string | null
+          boost_type?: string | null
+          boosted_until?: string | null
           calendly_url?: string | null
           city?: string | null
           created_at?: string | null
@@ -2409,6 +2806,8 @@ export type Database = {
         Update: {
           accreditation_level?: string | null
           bio?: string | null
+          boost_type?: string | null
+          boosted_until?: string | null
           calendly_url?: string | null
           city?: string | null
           created_at?: string | null
@@ -2486,6 +2885,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referral_credits: {
+        Row: {
+          created_at: string
+          delta_mad: number
+          id: string
+          metadata: Json
+          reason: string
+          referral_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta_mad: number
+          id?: string
+          metadata?: Json
+          reason: string
+          referral_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta_mad?: number
+          id?: string
+          metadata?: Json
+          reason?: string
+          referral_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       referrals: {
         Row: {
@@ -2714,6 +3143,117 @@ export type Database = {
           },
         ]
       }
+      sector_reports: {
+        Row: {
+          amount_eur: number
+          amount_mad: number
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          id: string
+          org_id: string | null
+          sector: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          org_id?: string | null
+          sector: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number
+          amount_mad?: number
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          org_id?: string | null
+          sector?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      session_credit_packs: {
+        Row: {
+          created_at: string
+          discount_percent: number
+          id: string
+          is_active: boolean
+          name: string
+          price_eur: number | null
+          price_mad: number
+          session_count: number
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_eur?: number | null
+          price_mad: number
+          session_count: number
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_eur?: number | null
+          price_mad?: number
+          session_count?: number
+          slug?: string
+        }
+        Relationships: []
+      }
+      session_credits_ledger: {
+        Row: {
+          amount_mad: number | null
+          booking_id: string | null
+          created_at: string
+          delta: number
+          id: string
+          metadata: Json
+          pack_id: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount_mad?: number | null
+          booking_id?: string | null
+          created_at?: string
+          delta: number
+          id?: string
+          metadata?: Json
+          pack_id?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount_mad?: number | null
+          booking_id?: string | null
+          created_at?: string
+          delta?: number
+          id?: string
+          metadata?: Json
+          pack_id?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       session_events: {
         Row: {
           booking_id: string | null
@@ -2862,6 +3402,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      specialist_boosts: {
+        Row: {
+          amount_eur: number | null
+          amount_mad: number
+          boost_type: string
+          created_at: string
+          ends_at: string
+          id: string
+          metadata: Json
+          payment_status: string
+          psychologist_id: string
+          starts_at: string
+        }
+        Insert: {
+          amount_eur?: number | null
+          amount_mad?: number
+          boost_type: string
+          created_at?: string
+          ends_at: string
+          id?: string
+          metadata?: Json
+          payment_status?: string
+          psychologist_id: string
+          starts_at?: string
+        }
+        Update: {
+          amount_eur?: number | null
+          amount_mad?: number
+          boost_type?: string
+          created_at?: string
+          ends_at?: string
+          id?: string
+          metadata?: Json
+          payment_status?: string
+          psychologist_id?: string
+          starts_at?: string
+        }
+        Relationships: []
       }
       specialist_payouts: {
         Row: {
@@ -3574,6 +4153,7 @@ export type Database = {
       }
       generate_referral_code: { Args: never; Returns: string }
       generate_slug: { Args: { id: string; name: string }; Returns: string }
+      get_ai_tier: { Args: { _user_id: string }; Returns: string }
       get_available_slots: {
         Args: { p_date: string; p_psychologist_id: string }
         Returns: {
@@ -3595,8 +4175,18 @@ export type Database = {
         }[]
       }
       get_or_assign_daily_challenge: { Args: never; Returns: Json }
+      get_referral_credit_balance: {
+        Args: { _user_id: string }
+        Returns: number
+      }
+      get_session_credit_balance: {
+        Args: { _user_id: string }
+        Returns: number
+      }
       get_specialist_earnings_summary: { Args: never; Returns: Json }
       get_specialist_plan: { Args: { _user_id: string }; Returns: Json }
+      has_all_access: { Args: { _user_id: string }; Returns: boolean }
+      has_athlete_plus: { Args: { _user_id: string }; Returns: boolean }
       has_plan_feature: {
         Args: { _feature: string; _user_id: string }
         Returns: boolean
@@ -3708,6 +4298,14 @@ export type Database = {
               updated_at: string
             }[]
           }
+      validate_coupon: {
+        Args: { _amount_mad: number; _applies_to: string; _code: string }
+        Returns: {
+          coupon_id: string
+          discount_mad: number
+          final_mad: number
+        }[]
+      }
     }
     Enums: {
       app_role:
