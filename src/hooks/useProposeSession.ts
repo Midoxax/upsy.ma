@@ -83,10 +83,23 @@ export const useRespondToInvitation = () => {
         .eq("id", bookingId)
         .eq("status", "proposed");
       if (error) throw error;
+
+      // Fire-and-forget email notification to both parties.
+      // Failures here must never break the in-app response.
+      try {
+        await supabase.functions.invoke("notify-proposal-response", {
+          body: { booking_id: bookingId, action, reason: reason ?? null },
+        });
+      } catch (e) {
+        console.warn("notify-proposal-response failed", e);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pending-invitations"] });
       queryClient.invalidateQueries({ queryKey: ["upcoming-sessions"] });
+      queryClient.invalidateQueries({ queryKey: ["psy-bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["psychologist-bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-bookings"] });
     },
   });
 };
