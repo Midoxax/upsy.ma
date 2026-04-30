@@ -3,9 +3,11 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock, Check, X, CalendarClock } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock, Check, X, CalendarClock, AlertTriangle, LifeBuoy } from "lucide-react";
 import { toast } from "sonner";
 import { useRespondToInvitation } from "@/hooks/useProposeSession";
+import SessionStatusTimeline from "@/components/dashboard/SessionStatusTimeline";
 
 declare global {
   interface Window {
@@ -33,17 +35,22 @@ interface BookingRow {
 const loadJitsiScript = (): Promise<void> =>
   new Promise((resolve, reject) => {
     if (window.JitsiMeetExternalAPI) return resolve();
+    const timeout = setTimeout(
+      () => reject(new Error("Jitsi script load timed out — check your network or ad-blocker.")),
+      15000,
+    );
+    const finish = (fn: () => void) => () => { clearTimeout(timeout); fn(); };
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${JITSI_SCRIPT_SRC}"]`);
     if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Failed to load Jitsi")));
+      existing.addEventListener("load", finish(() => resolve()));
+      existing.addEventListener("error", finish(() => reject(new Error("Failed to load Jitsi"))));
       return;
     }
     const s = document.createElement("script");
     s.src = JITSI_SCRIPT_SRC;
     s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Failed to load Jitsi"));
+    s.onload = finish(() => resolve());
+    s.onerror = finish(() => reject(new Error("Failed to load Jitsi")));
     document.body.appendChild(s);
   });
 
@@ -73,6 +80,9 @@ const VideoCall = () => {
   const [reconnectKey, setReconnectKey] = useState(0);
   const respond = useRespondToInvitation();
   const [respondError, setRespondError] = useState<string | null>(null);
+  const [declineMode, setDeclineMode] = useState(false);
+  const [declineReason, setDeclineReason] = useState("");
+  const [embedError, setEmbedError] = useState<string | null>(null);
 
   // Tick once a second so the countdown updates
   useEffect(() => {
@@ -163,7 +173,11 @@ const VideoCall = () => {
     if (!booking) return;
     setRespondError(null);
     try {
-      await respond.mutateAsync({ bookingId: booking.id, action: "decline" });
+      await respond.mutateAsync({
+        bookingId: booking.id,
+        action: "decline",
+        reason: declineReason.trim() || undefined,
+      });
       toast("Invitation declined");
       navigate("/my-space");
     } catch (e: any) {
@@ -214,6 +228,7 @@ const VideoCall = () => {
     let cancelled = false;
     setConnectionState("connecting");
     setEmbedReady(false);
+    setEmbedError(null);
 
     (async () => {
       try {
@@ -264,7 +279,11 @@ const VideoCall = () => {
         });
       } catch (e) {
         console.error(e);
-        setError("Could not load the meeting room. Please check your connection and retry.");
+        setEmbedError(
+          (e as Error)?.message ??
+            "Could not load the meeting room. Please check your connection and retry.",
+        );
+        setConnectionState("disconnected");
         logEvent("connection_failed", { reason: (e as Error).message });
       }
     })();
@@ -291,6 +310,7 @@ const VideoCall = () => {
 
   const handleReconnect = () => {
     setError(null);
+    setEmbedError(null);
     setReconnectKey((k) => k + 1);
   };
 
@@ -352,6 +372,9 @@ const VideoCall = () => {
               ? "Your specialist proposed this session. Accept to unlock the room."
               : "This invitation is awaiting your client's reply. The room will open once they accept."}
           </p>
+          <div className="flex justify-center mb-4">
+            <SessionStatusTimeline status="proposed" />
+          </div>
           <div className="rounded-xl border border-border p-4 text-left mb-5 bg-muted/20">
             <p className="text-sm">
               <span className="text-muted-foreground">With: </span>
@@ -373,32 +396,64 @@ const VideoCall = () => {
             <p className="text-sm text-destructive mb-3">{respondError}</p>
           )}
           {isPatient ? (
-            <div className="flex gap-2 justify-center">
-              <Button
-                variant="outline"
-                onClick={handleDeclineInvite}
-                disabled={respond.isPending}
-              >
-                {respond.isPending && respond.variables?.action === "decline" ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
+            declineMode ? (
+              <div className="space-y-3 text-left">
+                <label className="text-xs text-muted-foreground" htmlFor="decline-reason">
+                  Reason for declining (optional)
+                </label>
+                <Textarea
+                  id="decline-reason"
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value.slice(0, 500))}
+                  placeholder="Let your specialist know why, if you'd like"
+                  rows={3}
+                />
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="ghost"
+                    onClick={() => { setDeclineMode(false); setDeclineReason(""); }}
+                    disabled={respond.isPending}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeclineInvite}
+                    disabled={respond.isPending}
+                  >
+                    {respond.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <X className="h-4 w-4 mr-1" />
+                    )}
+                    Confirm decline
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2 justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeclineMode(true)}
+                  disabled={respond.isPending}
+                >
                   <X className="h-4 w-4 mr-1" />
-                )}
-                Decline
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleAcceptInvite}
-                disabled={respond.isPending}
-              >
-                {respond.isPending && respond.variables?.action === "accept" ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Check className="h-4 w-4 mr-1" />
-                )}
-                Accept
-              </Button>
-            </div>
+                  Decline
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleAcceptInvite}
+                  disabled={respond.isPending}
+                >
+                  {respond.isPending && respond.variables?.action === "accept" ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4 mr-1" />
+                  )}
+                  Accept
+                </Button>
+              </div>
+            )
           ) : (
             <Button variant="outline" onClick={() => navigate("/my-space")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back to dashboard
@@ -451,11 +506,16 @@ const VideoCall = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate("/my-space")}>
             <ArrowLeft className="h-4 w-4 mr-1" /> Dashboard
           </Button>
-          <div className="hidden sm:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-3">
             <Video className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-foreground">
               Session with {psyName || "Psychologist"}
             </span>
+            {booking && (
+              <SessionStatusTimeline
+                status={connectionState === "connected" ? "in_progress" : booking.status}
+              />
+            )}
             <span className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
               {connectionState === "connected" ? (
                 <><Wifi className="h-3 w-3 text-primary" /> Connected</>
@@ -481,6 +541,31 @@ const VideoCall = () => {
 
       {/* Jitsi External API mount */}
       <div className="flex-1 relative bg-black">
+        {embedError && (
+          <div className="absolute inset-x-0 top-0 z-20 px-4 py-3">
+            <div className="mx-auto max-w-3xl rounded-xl border border-destructive/40 bg-destructive/10 backdrop-blur p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-start gap-3 flex-1">
+                <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-medium text-foreground">Meeting room failed to load</p>
+                  <p className="text-muted-foreground mt-0.5">
+                    Check your internet, then tap retry. If the issue persists, contact support.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button size="sm" variant="outline" onClick={handleReconnect}>
+                  <RefreshCw className="h-4 w-4 mr-1" /> Retry
+                </Button>
+                <Button size="sm" variant="ghost" asChild>
+                  <Link to="/my-space?tab=support">
+                    <LifeBuoy className="h-4 w-4 mr-1" /> Contact support
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         {!embedReady && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/80 text-white">
             <div className="flex flex-col items-center gap-3">
