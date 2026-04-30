@@ -6,31 +6,31 @@ import { Video, Calendar, Clock, MapPin, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
-interface Session {
+interface UpcomingItem {
   id: string;
-  date_time: string;
+  scheduled_at: string;
   session_type: string;
   status: string;
   video_room_id: string | null;
-  psychologist: { full_name: string } | null;
+  psychologist_name?: string | null;
 }
 
 const UpcomingSessionsCard = () => {
   const { user } = useAuth();
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessions, setSessions] = useState<UpcomingItem[]>([]);
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
       const { data } = await supabase
-        .from("sessions")
-        .select("id, date_time, session_type, status, video_room_id, psychologist:psychologist_profiles(full_name)")
-        .eq("client_id", user.id)
-        .eq("status", "confirmed")
-        .gte("date_time", new Date().toISOString())
-        .order("date_time", { ascending: true })
+        .from("bookings_with_details")
+        .select("id, scheduled_at, session_type, status, video_room_id, psychologist_name")
+        .eq("patient_id", user.id)
+        .in("status", ["confirmed", "pending"])
+        .gte("scheduled_at", new Date().toISOString())
+        .order("scheduled_at", { ascending: true })
         .limit(5);
-      if (data) setSessions(data as unknown as Session[]);
+      if (data) setSessions(data as unknown as UpcomingItem[]);
     };
     load();
   }, [user]);
@@ -45,8 +45,8 @@ const UpcomingSessionsCard = () => {
       </h3>
       <div className="space-y-3">
         {sessions.map((s) => {
-          const dt = new Date(s.date_time);
-          const isOnline = s.session_type === "online";
+          const dt = new Date(s.scheduled_at);
+          const isOnline = s.session_type === "video" || s.session_type === "online";
           return (
             <div
               key={s.id}
@@ -55,7 +55,7 @@ const UpcomingSessionsCard = () => {
             >
               <div className="space-y-0.5">
                 <p className="text-sm font-medium text-foreground">
-                  {(s.psychologist as any)?.full_name || "Psychologist"}
+                  {s.psychologist_name || "Psychologist"}
                 </p>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">

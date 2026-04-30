@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff } from "lucide-react";
+import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 declare global {
@@ -17,6 +17,17 @@ const JOIN_EARLY_MS = 10 * 60 * 1000;
 const JOIN_LATE_BUFFER_MS = 5 * 60 * 1000;
 const JITSI_DOMAIN = "meet.jit.si";
 const JITSI_SCRIPT_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
+
+interface BookingRow {
+  id: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  status: string;
+  session_type: string;
+  video_room_id: string | null;
+  patient_id: string;
+  psychologist_id: string;
+}
 
 const loadJitsiScript = (): Promise<void> =>
   new Promise((resolve, reject) => {
@@ -35,29 +46,49 @@ const loadJitsiScript = (): Promise<void> =>
     document.body.appendChild(s);
   });
 
+const formatCountdown = (ms: number) => {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s.toString().padStart(2, "0")}s`;
+  return `${s}s`;
+};
+
 const VideoCall = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<any>(null);
-  const [roomId, setRoomId] = useState<string | null>(null);
+  const [booking, setBooking] = useState<BookingRow | null>(null);
+  const [psyName, setPsyName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sessionData, setSessionData] = useState<any>(null);
   const [embedReady, setEmbedReady] = useState(false);
   const [connectionState, setConnectionState] = useState<"connecting" | "connected" | "disconnected">("connecting");
+  const [now, setNow] = useState(Date.now());
+  const [reconnectKey, setReconnectKey] = useState(0);
+
+  // Tick once a second so the countdown updates
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (!user || !sessionId) return;
 
-    const loadSession = async () => {
+    const loadBooking = async () => {
       setLoading(true);
+      setError(null);
+
       const { data, error: fetchErr } = await supabase
-        .from("sessions")
-        .select("*, psychologist:psychologist_profiles(full_name)")
+        .from("bookings")
+        .select("id, scheduled_at, duration_minutes, status, session_type, video_room_id, patient_id, psychologist_id")
         .eq("id", sessionId)
-        .single();
+        .maybeSingle();
 
       if (fetchErr || !data) {
         setError("Session not found.");
@@ -65,69 +96,87 @@ const VideoCall = () => {
         return;
       }
 
-      // Verify the user is a participant.
-      if (data.client_id !== user.id && data.psychologist_id !== user.id) {
+      // Authorization
+      if (data.patient_id !== user.id && data.psychologist_id !== user.id) {
         setError("You are not authorized to join this session.");
         setLoading(false);
         return;
       }
 
-      // Status must be active.
-      if (!["confirmed", "scheduled", "in_progress"].includes(data.status)) {
-        setError("This session is not active.");
+      // Status must be active
+      if (!["confirmed", "pending", "in_progress"].includes(data.status)) {
+        setError(`This session is ${data.status}.`);
         setLoading(false);
         return;
       }
 
-      // Time-window check: only allow joining near the scheduled time.
-      const startsAt = new Date(data.date_time).getTime();
+      // End-of-window check
+      const startsAt = new Date(data.scheduled_at).getTime();
       const duration = (data.duration_minutes ?? 50) * 60 * 1000;
-      const now = Date.now();
-      if (now < startsAt - JOIN_EARLY_MS) {
-        setError("This session has not opened yet. The room unlocks 10 minutes before the start time.");
-        setLoading(false);
-        return;
-      }
-      if (now > startsAt + duration + JOIN_LATE_BUFFER_MS) {
+      if (Date.now() > startsAt + duration + JOIN_LATE_BUFFER_MS) {
         setError("This session has ended.");
         setLoading(false);
         return;
       }
 
-      setSessionData(data);
-      setRoomId(data.video_room_id);
+      setBooking(data as BookingRow);
+
+      // Best-effort fetch of psychologist display name
+      const { data: psy } = await supabase
+        .from("psychologist_profiles")
+        .select("full_name")
+        .eq("id", data.psychologist_id)
+        .maybeSingle();
+      setPsyName(psy?.full_name ?? "");
+
       setLoading(false);
     };
 
-    loadSession();
+    loadBooking();
   }, [user, sessionId]);
+
+  // Derived window state
+  const windowState = useMemo(() => {
+    if (!booking) return { phase: "loading" as const, opensInMs: 0 };
+    const startsAt = new Date(booking.scheduled_at).getTime();
+    if (now < startsAt - JOIN_EARLY_MS) {
+      return { phase: "early" as const, opensInMs: startsAt - JOIN_EARLY_MS - now };
+    }
+    return { phase: "open" as const, opensInMs: 0 };
+  }, [booking, now]);
 
   // Log a session event (best-effort).
   const logEvent = useCallback(
     async (eventType: string, metadata?: Record<string, unknown>) => {
-      if (!user || !sessionId) return;
+      if (!user || !booking) return;
       try {
         await supabase.from("session_events").insert([
           {
-            booking_id: sessionData?.booking_id ?? null,
-            session_id: sessionId,
+            booking_id: booking.id,
+            session_id: null,
             user_id: user.id,
             event_type: eventType,
             metadata: (metadata ?? null) as any,
           },
         ]);
       } catch (e) {
-        // non-blocking
         console.warn("session_events insert failed", e);
       }
     },
-    [user, sessionId, sessionData],
+    [user, booking],
   );
 
-  // Mount Jitsi External API once we have a roomId
+  // Mount Jitsi External API once we have a roomId AND we're inside the join window
   useEffect(() => {
-    if (!roomId || !user || !containerRef.current) return;
+    if (!booking || !user || !containerRef.current) return;
+    if (windowState.phase !== "open") return;
+    if (!booking.video_room_id) {
+      setError("This session has no video room. Please contact your specialist.");
+      return;
+    }
     let cancelled = false;
+    setConnectionState("connecting");
+    setEmbedReady(false);
 
     (async () => {
       try {
@@ -136,7 +185,7 @@ const VideoCall = () => {
 
         const displayName = user.user_metadata?.full_name || user.email || "Participant";
         const api = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, {
-          roomName: roomId,
+          roomName: booking.video_room_id,
           parentNode: containerRef.current,
           width: "100%",
           height: "100%",
@@ -171,10 +220,10 @@ const VideoCall = () => {
           setConnectionState("disconnected");
           logEvent("left");
           toast("Session ended");
-          setTimeout(() => navigate("/dashboard"), 800);
+          setTimeout(() => navigate("/my-space"), 800);
         });
         api.addListener("readyToClose", () => {
-          navigate("/dashboard");
+          navigate("/my-space");
         });
       } catch (e) {
         console.error(e);
@@ -192,7 +241,7 @@ const VideoCall = () => {
       }
       apiRef.current = null;
     };
-  }, [roomId, user, navigate, logEvent]);
+  }, [booking, user, navigate, logEvent, windowState.phase, reconnectKey]);
 
   const handleLeave = () => {
     try {
@@ -200,7 +249,12 @@ const VideoCall = () => {
     } catch {
       /* ignore */
     }
-    navigate("/dashboard");
+    navigate("/my-space");
+  };
+
+  const handleReconnect = () => {
+    setError(null);
+    setReconnectKey((k) => k + 1);
   };
 
   if (!user) {
@@ -233,8 +287,41 @@ const VideoCall = () => {
           <ShieldAlert className="w-12 h-12 text-destructive mx-auto mb-4" />
           <h2 className="text-h2 mb-2">Cannot Join</h2>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <Button variant="primary" onClick={() => navigate("/dashboard")}>
-            Back to Dashboard
+          <div className="flex gap-2 justify-center">
+            <Button variant="outline" onClick={handleReconnect}>
+              <RefreshCw className="h-4 w-4 mr-1" /> Try again
+            </Button>
+            <Button variant="primary" onClick={() => navigate("/my-space")}>
+              Back to dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Pre-window waiting screen with live countdown
+  if (booking && windowState.phase === "early") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="glass-card p-12 text-center max-w-md">
+          <Clock className="w-12 h-12 text-primary mx-auto mb-4" />
+          <h2 className="text-h2 mb-2">Room opens soon</h2>
+          <p className="text-muted-foreground mb-2">
+            The session room unlocks 10 minutes before the start time.
+          </p>
+          <p className="text-3xl font-semibold text-primary tabular-nums my-4">
+            {formatCountdown(windowState.opensInMs)}
+          </p>
+          <p className="text-xs text-muted-foreground mb-6">
+            Session with {psyName || "your specialist"} ·{" "}
+            {new Date(booking.scheduled_at).toLocaleString(undefined, {
+              weekday: "short", month: "short", day: "numeric",
+              hour: "2-digit", minute: "2-digit",
+            })}
+          </p>
+          <Button variant="outline" onClick={() => navigate("/my-space")}>
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back to dashboard
           </Button>
         </div>
       </div>
@@ -246,13 +333,13 @@ const VideoCall = () => {
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")}>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/my-space")}>
             <ArrowLeft className="h-4 w-4 mr-1" /> Dashboard
           </Button>
           <div className="hidden sm:flex items-center gap-2">
             <Video className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-foreground">
-              Session with {sessionData?.psychologist?.full_name || "Psychologist"}
+              Session with {psyName || "Psychologist"}
             </span>
             <span className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
               {connectionState === "connected" ? (
@@ -265,13 +352,16 @@ const VideoCall = () => {
             </span>
           </div>
         </div>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={handleLeave}
-        >
-          <PhoneOff className="h-4 w-4 mr-1" /> Leave
-        </Button>
+        <div className="flex items-center gap-2">
+          {connectionState === "disconnected" && (
+            <Button variant="outline" size="sm" onClick={handleReconnect}>
+              <RefreshCw className="h-4 w-4 mr-1" /> Reconnect
+            </Button>
+          )}
+          <Button variant="destructive" size="sm" onClick={handleLeave}>
+            <PhoneOff className="h-4 w-4 mr-1" /> Leave
+          </Button>
+        </div>
       </div>
 
       {/* Jitsi External API mount */}
