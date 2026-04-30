@@ -3,9 +3,11 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock, Check, X, CalendarClock } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock, Check, X, CalendarClock, AlertTriangle, LifeBuoy } from "lucide-react";
 import { toast } from "sonner";
 import { useRespondToInvitation } from "@/hooks/useProposeSession";
+import SessionStatusTimeline from "@/components/dashboard/SessionStatusTimeline";
 
 declare global {
   interface Window {
@@ -73,6 +75,9 @@ const VideoCall = () => {
   const [reconnectKey, setReconnectKey] = useState(0);
   const respond = useRespondToInvitation();
   const [respondError, setRespondError] = useState<string | null>(null);
+  const [declineMode, setDeclineMode] = useState(false);
+  const [declineReason, setDeclineReason] = useState("");
+  const [embedError, setEmbedError] = useState<string | null>(null);
 
   // Tick once a second so the countdown updates
   useEffect(() => {
@@ -163,7 +168,11 @@ const VideoCall = () => {
     if (!booking) return;
     setRespondError(null);
     try {
-      await respond.mutateAsync({ bookingId: booking.id, action: "decline" });
+      await respond.mutateAsync({
+        bookingId: booking.id,
+        action: "decline",
+        reason: declineReason.trim() || undefined,
+      });
       toast("Invitation declined");
       navigate("/my-space");
     } catch (e: any) {
@@ -214,6 +223,7 @@ const VideoCall = () => {
     let cancelled = false;
     setConnectionState("connecting");
     setEmbedReady(false);
+    setEmbedError(null);
 
     (async () => {
       try {
@@ -264,7 +274,11 @@ const VideoCall = () => {
         });
       } catch (e) {
         console.error(e);
-        setError("Could not load the meeting room. Please check your connection and retry.");
+        setEmbedError(
+          (e as Error)?.message ??
+            "Could not load the meeting room. Please check your connection and retry.",
+        );
+        setConnectionState("disconnected");
         logEvent("connection_failed", { reason: (e as Error).message });
       }
     })();
@@ -291,6 +305,7 @@ const VideoCall = () => {
 
   const handleReconnect = () => {
     setError(null);
+    setEmbedError(null);
     setReconnectKey((k) => k + 1);
   };
 
@@ -352,6 +367,9 @@ const VideoCall = () => {
               ? "Your specialist proposed this session. Accept to unlock the room."
               : "This invitation is awaiting your client's reply. The room will open once they accept."}
           </p>
+          <div className="flex justify-center mb-4">
+            <SessionStatusTimeline status="proposed" />
+          </div>
           <div className="rounded-xl border border-border p-4 text-left mb-5 bg-muted/20">
             <p className="text-sm">
               <span className="text-muted-foreground">With: </span>
@@ -373,32 +391,64 @@ const VideoCall = () => {
             <p className="text-sm text-destructive mb-3">{respondError}</p>
           )}
           {isPatient ? (
-            <div className="flex gap-2 justify-center">
-              <Button
-                variant="outline"
-                onClick={handleDeclineInvite}
-                disabled={respond.isPending}
-              >
-                {respond.isPending && respond.variables?.action === "decline" ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
+            declineMode ? (
+              <div className="space-y-3 text-left">
+                <label className="text-xs text-muted-foreground" htmlFor="decline-reason">
+                  Reason for declining (optional)
+                </label>
+                <Textarea
+                  id="decline-reason"
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value.slice(0, 500))}
+                  placeholder="Let your specialist know why, if you'd like"
+                  rows={3}
+                />
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="ghost"
+                    onClick={() => { setDeclineMode(false); setDeclineReason(""); }}
+                    disabled={respond.isPending}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeclineInvite}
+                    disabled={respond.isPending}
+                  >
+                    {respond.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <X className="h-4 w-4 mr-1" />
+                    )}
+                    Confirm decline
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2 justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeclineMode(true)}
+                  disabled={respond.isPending}
+                >
                   <X className="h-4 w-4 mr-1" />
-                )}
-                Decline
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleAcceptInvite}
-                disabled={respond.isPending}
-              >
-                {respond.isPending && respond.variables?.action === "accept" ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Check className="h-4 w-4 mr-1" />
-                )}
-                Accept
-              </Button>
-            </div>
+                  Decline
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleAcceptInvite}
+                  disabled={respond.isPending}
+                >
+                  {respond.isPending && respond.variables?.action === "accept" ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4 mr-1" />
+                  )}
+                  Accept
+                </Button>
+              </div>
+            )
           ) : (
             <Button variant="outline" onClick={() => navigate("/my-space")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back to dashboard
