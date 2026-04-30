@@ -57,7 +57,8 @@ export default function BookingDetailDrawer({ bookingId, onClose }: Props) {
             {booking.video_room_id && (
               <Button variant="outline" size="sm" asChild>
                 <a href={`/session/${booking.id}`} target="_blank" rel="noreferrer">
-                  <Video className="h-4 w-4 mr-1" /> Open video room
+                  <Video className="h-4 w-4 mr-1" />
+                  {booking.status === "proposed" ? "Open invitation page" : "Open video room"}
                 </a>
               </Button>
             )}
