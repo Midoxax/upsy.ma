@@ -5,3 +5,5 @@ project_id = "vuawmihxcaewzmkuarkr"
     verify_jwt = false
   [functions.send-notification]
     verify_jwt = false
+  [functions.session-reminders-cron]
+    verify_jwt = false
