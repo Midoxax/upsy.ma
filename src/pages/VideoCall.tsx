@@ -3,8 +3,9 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock } from "lucide-react";
+import { Video, PhoneOff, ArrowLeft, Loader2, ShieldAlert, Wifi, WifiOff, RefreshCw, Clock, Check, X, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
+import { useRespondToInvitation } from "@/hooks/useProposeSession";
 
 declare global {
   interface Window {
@@ -70,6 +71,8 @@ const VideoCall = () => {
   const [connectionState, setConnectionState] = useState<"connecting" | "connected" | "disconnected">("connecting");
   const [now, setNow] = useState(Date.now());
   const [reconnectKey, setReconnectKey] = useState(0);
+  const respond = useRespondToInvitation();
+  const [respondError, setRespondError] = useState<string | null>(null);
 
   // Tick once a second so the countdown updates
   useEffect(() => {
@@ -104,7 +107,7 @@ const VideoCall = () => {
       }
 
       // Status must be active
-      if (!["confirmed", "pending", "in_progress"].includes(data.status)) {
+      if (!["confirmed", "pending", "in_progress", "proposed"].includes(data.status)) {
         setError(`This session is ${data.status}.`);
         setLoading(false);
         return;
@@ -134,6 +137,39 @@ const VideoCall = () => {
 
     loadBooking();
   }, [user, sessionId]);
+
+  const isPatient = !!booking && !!user && booking.patient_id === user.id;
+  const isPsychologist = !!booking && !!user && booking.psychologist_id === user.id;
+
+  const handleAcceptInvite = async () => {
+    if (!booking) return;
+    setRespondError(null);
+    try {
+      await respond.mutateAsync({ bookingId: booking.id, action: "accept" });
+      toast.success("Session confirmed");
+      // Refetch booking to update status / mount Jitsi if window is open
+      const { data } = await supabase
+        .from("bookings")
+        .select("id, scheduled_at, duration_minutes, status, session_type, video_room_id, patient_id, psychologist_id")
+        .eq("id", booking.id)
+        .maybeSingle();
+      if (data) setBooking(data as BookingRow);
+    } catch (e: any) {
+      setRespondError(e?.message ?? "Could not confirm. Please try again.");
+    }
+  };
+
+  const handleDeclineInvite = async () => {
+    if (!booking) return;
+    setRespondError(null);
+    try {
+      await respond.mutateAsync({ bookingId: booking.id, action: "decline" });
+      toast("Invitation declined");
+      navigate("/my-space");
+    } catch (e: any) {
+      setRespondError(e?.message ?? "Could not decline. Please try again.");
+    }
+  };
 
   // Derived window state
   const windowState = useMemo(() => {
@@ -169,6 +205,7 @@ const VideoCall = () => {
   // Mount Jitsi External API once we have a roomId AND we're inside the join window
   useEffect(() => {
     if (!booking || !user || !containerRef.current) return;
+    if (booking.status === "proposed") return; // not joinable yet
     if (windowState.phase !== "open") return;
     if (!booking.video_room_id) {
       setError("This session has no video room. Please contact your specialist.");
@@ -299,6 +336,84 @@ const VideoCall = () => {
       </div>
     );
   }
+
+  // Proposed booking — show inline Accept/Decline (patient) or waiting state (specialist)
+  if (booking && booking.status === "proposed") {
+    const dt = new Date(booking.scheduled_at);
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="glass-card p-10 text-center max-w-md w-full">
+          <CalendarClock className="w-12 h-12 text-primary mx-auto mb-4" />
+          <h2 className="text-h2 mb-2">
+            {isPatient ? "Confirm your session" : "Waiting for client"}
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            {isPatient
+              ? "Your specialist proposed this session. Accept to unlock the room."
+              : "This invitation is awaiting your client's reply. The room will open once they accept."}
+          </p>
+          <div className="rounded-xl border border-border p-4 text-left mb-5 bg-muted/20">
+            <p className="text-sm">
+              <span className="text-muted-foreground">With: </span>
+              <span className="font-medium">{psyName || "Your specialist"}</span>
+            </p>
+            <p className="text-sm">
+              <span className="text-muted-foreground">When: </span>
+              {dt.toLocaleString(undefined, {
+                weekday: "short", month: "short", day: "numeric",
+                hour: "2-digit", minute: "2-digit",
+              })}
+            </p>
+            <p className="text-sm capitalize">
+              <span className="text-muted-foreground">Type: </span>
+              {booking.session_type.replace("_", " ")} · {booking.duration_minutes} min
+            </p>
+          </div>
+          {respondError && (
+            <p className="text-sm text-destructive mb-3">{respondError}</p>
+          )}
+          {isPatient ? (
+            <div className="flex gap-2 justify-center">
+              <Button
+                variant="outline"
+                onClick={handleDeclineInvite}
+                disabled={respond.isPending}
+              >
+                {respond.isPending && respond.variables?.action === "decline" ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <X className="h-4 w-4 mr-1" />
+                )}
+                Decline
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleAcceptInvite}
+                disabled={respond.isPending}
+              >
+                {respond.isPending && respond.variables?.action === "accept" ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <Check className="h-4 w-4 mr-1" />
+                )}
+                Accept
+              </Button>
+            </div>
+          ) : (
+            <Button variant="outline" onClick={() => navigate("/my-space")}>
+              <ArrowLeft className="h-4 w-4 mr-1" /> Back to dashboard
+            </Button>
+          )}
+          <p className="text-xs text-muted-foreground mt-4">
+            Conformément à la loi 09-08, vos données personnelles sont protégées.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Suppress lint: isPsychologist used implicitly above via !isPatient branch
+  void isPsychologist;
 
   // Pre-window waiting screen with live countdown
   if (booking && windowState.phase === "early") {
