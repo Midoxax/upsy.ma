@@ -501,11 +501,16 @@ const VideoCall = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate("/my-space")}>
             <ArrowLeft className="h-4 w-4 mr-1" /> Dashboard
           </Button>
-          <div className="hidden sm:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-3">
             <Video className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-foreground">
               Session with {psyName || "Psychologist"}
             </span>
+            {booking && (
+              <SessionStatusTimeline
+                status={connectionState === "connected" ? "in_progress" : booking.status}
+              />
+            )}
             <span className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
               {connectionState === "connected" ? (
                 <><Wifi className="h-3 w-3 text-primary" /> Connected</>
@@ -531,6 +536,31 @@ const VideoCall = () => {
 
       {/* Jitsi External API mount */}
       <div className="flex-1 relative bg-black">
+        {embedError && (
+          <div className="absolute inset-x-0 top-0 z-20 px-4 py-3">
+            <div className="mx-auto max-w-3xl rounded-xl border border-destructive/40 bg-destructive/10 backdrop-blur p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-start gap-3 flex-1">
+                <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-medium text-foreground">Meeting room failed to load</p>
+                  <p className="text-muted-foreground mt-0.5">
+                    Check your internet, then tap retry. If the issue persists, contact support.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button size="sm" variant="outline" onClick={handleReconnect}>
+                  <RefreshCw className="h-4 w-4 mr-1" /> Retry
+                </Button>
+                <Button size="sm" variant="ghost" asChild>
+                  <Link to="/my-space?tab=support">
+                    <LifeBuoy className="h-4 w-4 mr-1" /> Contact support
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         {!embedReady && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/80 text-white">
             <div className="flex flex-col items-center gap-3">
