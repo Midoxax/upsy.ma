@@ -72,7 +72,6 @@ const ResetPassword = () => {
   const [isRecovery, setIsRecovery] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { toast: _toast } = { toast };
 
   const rules = checkRules(password);
   const strength = strengthOf(password);
