@@ -16,6 +16,7 @@ import {
   BookOpen,
   Sparkles,
   LifeBuoy,
+  Rocket,
 } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
@@ -30,6 +31,7 @@ import AnalyticsTab from "@/components/dashboard/AnalyticsTab";
 import DocumentsTab from "@/components/dashboard/DocumentsTab";
 import EarningsTab from "@/components/dashboard/EarningsTab";
 import JournalTab from "@/components/dashboard/JournalTab";
+import { BoostsTab } from "@/components/dashboard/BoostsTab";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
 import SpecialistBurnoutCard from "@/components/dashboard/SpecialistBurnoutCard";
 import SmartSchedulingCard from "@/components/dashboard/SmartSchedulingCard";
@@ -82,6 +84,10 @@ const SpecialistDashboard = () => {
                   <CreditCard className="h-4 w-4" />
                   <span className="hidden sm:inline">Plan</span>
                 </TabsTrigger>
+                <TabsTrigger value="boosts" className="gap-1.5">
+                  <Rocket className="h-4 w-4" />
+                  <span className="hidden sm:inline">Boosts</span>
+                </TabsTrigger>
                 <TabsTrigger value="journal" className="gap-1.5">
                   <BookOpen className="h-4 w-4" />
                   <span className="hidden sm:inline">Journal</span>
@@ -109,6 +115,7 @@ const SpecialistDashboard = () => {
               <TabsContent value="earnings"><EarningsTab /></TabsContent>
               <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
               <TabsContent value="billing"><SpecialistPlansTab /></TabsContent>
+              <TabsContent value="boosts"><BoostsTab /></TabsContent>
               <TabsContent value="journal"><JournalTab /></TabsContent>
               <TabsContent value="certificates"><CertificatesTab /></TabsContent>
               <TabsContent value="documents"><DocumentsTab /></TabsContent>
