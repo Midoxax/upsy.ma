@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface SendMeetingLinkInput {
   client_email: string;
   client_name?: string;
+  client_phone?: string;
   scheduled_at: string;
   duration_minutes: number;
   notes?: string;
@@ -15,6 +16,9 @@ export interface SendMeetingLinkResult {
   join_url: string;
   video_room_id: string;
   email_sent: boolean;
+  whatsapp_deeplink?: string;
+  ics_data_url?: string;
+  in_app_notified?: boolean;
 }
 
 export const useSendMeetingLink = () => {
