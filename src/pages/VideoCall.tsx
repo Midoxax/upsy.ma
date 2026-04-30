@@ -35,17 +35,22 @@ interface BookingRow {
 const loadJitsiScript = (): Promise<void> =>
   new Promise((resolve, reject) => {
     if (window.JitsiMeetExternalAPI) return resolve();
+    const timeout = setTimeout(
+      () => reject(new Error("Jitsi script load timed out — check your network or ad-blocker.")),
+      15000,
+    );
+    const finish = (fn: () => void) => () => { clearTimeout(timeout); fn(); };
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${JITSI_SCRIPT_SRC}"]`);
     if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Failed to load Jitsi")));
+      existing.addEventListener("load", finish(() => resolve()));
+      existing.addEventListener("error", finish(() => reject(new Error("Failed to load Jitsi"))));
       return;
     }
     const s = document.createElement("script");
     s.src = JITSI_SCRIPT_SRC;
     s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Failed to load Jitsi"));
+    s.onload = finish(() => resolve());
+    s.onerror = finish(() => reject(new Error("Failed to load Jitsi")));
     document.body.appendChild(s);
   });
 
