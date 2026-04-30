@@ -13,6 +13,7 @@ const corsHeaders = {
 interface Body {
   client_email: string;
   client_name?: string;
+  client_phone?: string;
   scheduled_at: string;
   duration_minutes: number;
   notes?: string;
@@ -20,6 +21,45 @@ interface Body {
 
 function isValidEmail(s: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+// Build an .ics calendar invite (RFC 5545) the recipient can add to Google/Apple Calendar.
+function buildIcs(opts: {
+  uid: string;
+  start: Date;
+  durationMin: number;
+  summary: string;
+  description: string;
+  url: string;
+}) {
+  const fmt = (d: Date) =>
+    d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const end = new Date(opts.start.getTime() + opts.durationMin * 60 * 1000);
+  const escape = (s: string) =>
+    s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//U.Psy//Session//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:REQUEST",
+    "BEGIN:VEVENT",
+    `UID:${opts.uid}@upsy.ma`,
+    `DTSTAMP:${fmt(new Date())}`,
+    `DTSTART:${fmt(opts.start)}`,
+    `DTEND:${fmt(end)}`,
+    `SUMMARY:${escape(opts.summary)}`,
+    `DESCRIPTION:${escape(opts.description)}`,
+    `URL:${opts.url}`,
+    `LOCATION:${escape(opts.url)}`,
+    "BEGIN:VALARM",
+    "ACTION:DISPLAY",
+    "DESCRIPTION:Reminder",
+    "TRIGGER:-PT15M",
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
 }
 
 Deno.serve(async (req) => {
@@ -165,7 +205,7 @@ Deno.serve(async (req) => {
       req.headers.get("origin") ??
       req.headers.get("referer")?.replace(/\/$/, "") ??
       "https://upsy.ma";
-    const joinUrl = `${origin}/video/${booking.video_room_id}`;
+    const joinUrl = `${origin}/video-call/${booking.video_room_id}`;
 
     const isNow = startMs <= Date.now() + 60 * 1000;
     const dateStr = isNow
@@ -210,6 +250,45 @@ Deno.serve(async (req) => {
   </div>
 </body></html>`;
 
+    // Persist phone on booking for downstream WhatsApp reminders
+    if (body.client_phone) {
+      await admin
+        .from("bookings")
+        .update({ patient_phone: body.client_phone })
+        .eq("id", booking.id);
+    }
+
+    // 1) In-app notification for the client (only if they have an account)
+    if (existingUser?.id) {
+      await admin.from("notifications").insert({
+        user_id: existingUser.id,
+        type: "session_invite",
+        title: `${psyName} invited you to a session`,
+        body: `${dateStr} · ${body.duration_minutes} min`,
+        action_url: joinUrl,
+        metadata: { booking_id: booking.id, video_room_id: booking.video_room_id },
+      });
+    }
+
+    // 2) WhatsApp deep-link (no API needed, just opens WhatsApp prefilled)
+    const waText = encodeURIComponent(
+      `${psyName} invited you to a U.Psy video session.\n${dateStr} (${body.duration_minutes} min)\nJoin: ${joinUrl}`,
+    );
+    const whatsappDeeplink = body.client_phone
+      ? `https://wa.me/${body.client_phone.replace(/[^\d]/g, "")}?text=${waText}`
+      : `https://wa.me/?text=${waText}`;
+
+    // 3) .ics calendar invite (data URL — clients can attach in their browser/inbox)
+    const ics = buildIcs({
+      uid: booking.id,
+      start: new Date(startMs),
+      durationMin: body.duration_minutes,
+      summary: `Session with ${psyName} — U.Psy`,
+      description: `Join the secure video room: ${joinUrl}`,
+      url: joinUrl,
+    });
+    const icsDataUrl = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     let emailSent = false;
     if (RESEND_API_KEY) {
@@ -225,6 +304,12 @@ Deno.serve(async (req) => {
             to: [email],
             subject: `Video session with ${psyName} — Join link`,
             html,
+            attachments: [
+              {
+                filename: "session.ics",
+                content: btoa(unescape(encodeURIComponent(ics))),
+              },
+            ],
           }),
         });
         emailSent = resp.ok;
@@ -243,6 +328,9 @@ Deno.serve(async (req) => {
         join_url: joinUrl,
         video_room_id: booking.video_room_id,
         email_sent: emailSent,
+        whatsapp_deeplink: whatsappDeeplink,
+        ics_data_url: icsDataUrl,
+        in_app_notified: Boolean(existingUser?.id),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
