@@ -3,10 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { usePendingInvitations, useRespondToInvitation } from "@/hooks/useProposeSession";
 import { CalendarClock, Check, X, Loader2, Video, MapPin, Phone } from "lucide-react";
 import { format } from "date-fns";
+import SessionStatusTimeline from "@/components/dashboard/SessionStatusTimeline";
 
 const typeIcon = {
   video: Video,
@@ -19,11 +21,13 @@ export const PendingInvitationsCard = () => {
   const { data: invitations = [], isLoading } = usePendingInvitations();
   const respond = useRespondToInvitation();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [decliningId, setDecliningId] = useState<string | null>(null);
+  const [declineReason, setDeclineReason] = useState("");
 
-  const handle = async (id: string, action: "accept" | "decline") => {
+  const handle = async (id: string, action: "accept" | "decline", reason?: string) => {
     setPendingId(id);
     try {
-      await respond.mutateAsync({ bookingId: id, action });
+      await respond.mutateAsync({ bookingId: id, action, reason });
       toast({
         title: action === "accept" ? "Session confirmed" : "Invitation declined",
         description:
@@ -31,6 +35,8 @@ export const PendingInvitationsCard = () => {
             ? "Your psychologist has been notified."
             : "The invitation has been declined.",
       });
+      setDecliningId(null);
+      setDeclineReason("");
     } catch (err: any) {
       toast({
         title: "Action failed",
@@ -61,6 +67,7 @@ export const PendingInvitationsCard = () => {
         {invitations.map((inv: any) => {
           const Icon = typeIcon[inv.session_type as keyof typeof typeIcon] ?? Video;
           const isPending = pendingId === inv.id;
+          const isDeclining = decliningId === inv.id;
           return (
             <div
               key={inv.id}
@@ -87,20 +94,48 @@ export const PendingInvitationsCard = () => {
                       "{inv.patient_notes}"
                     </p>
                   )}
+                  <SessionStatusTimeline status="proposed" className="mt-2" />
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:items-end">
+                {isDeclining ? (
+                  <div className="w-full sm:w-72 space-y-2">
+                    <Textarea
+                      value={declineReason}
+                      onChange={(e) => setDeclineReason(e.target.value.slice(0, 500))}
+                      placeholder="Reason (optional, max 500 chars)"
+                      rows={2}
+                      className="text-sm"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => { setDecliningId(null); setDeclineReason(""); }}
+                        disabled={isPending}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handle(inv.id, "decline", declineReason.trim() || undefined)}
+                        disabled={isPending}
+                      >
+                        {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
+                        Confirm decline
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handle(inv.id, "decline")}
+                  onClick={() => { setDecliningId(inv.id); setDeclineReason(""); }}
                   disabled={isPending}
                 >
-                  {isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <X className="h-4 w-4" />
-                  )}
+                  <X className="h-4 w-4" />
                   Decline
                 </Button>
                 <Button
@@ -115,6 +150,8 @@ export const PendingInvitationsCard = () => {
                   )}
                   Accept
                 </Button>
+                  </div>
+                )}
               </div>
             </div>
           );
