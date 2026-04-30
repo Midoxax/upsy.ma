@@ -3,16 +3,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { CreditCard, Info, Loader2, CheckCircle2, FileText, Receipt } from "lucide-react";
+import { CreditCard, Info, Loader2, CheckCircle2, FileText, Receipt, Tag, X } from "lucide-react";
 import { format } from "date-fns";
 import { useSpecialistPlan, useAllPlans, type SpecialistPlan } from "@/hooks/useSpecialistPlan";
 import {
   useSubscriptionInvoices,
   useChangePlanMock,
 } from "@/hooks/useSubscriptionBilling";
+import { useValidateCoupon, type CouponValidation } from "@/hooks/useCoupons";
 import { PlanComparisonGrid } from "./PlanComparisonGrid";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,8 +25,12 @@ export const SpecialistPlansTab = () => {
   const { data: invoices = [] } = useSubscriptionInvoices();
   const { data: allPlans = [] } = useAllPlans();
   const changePlan = useChangePlanMock();
+  const validateCoupon = useValidateCoupon();
   const { toast } = useToast();
   const [pending, setPending] = useState<SpecialistPlan | null>(null);
+  const [annual, setAnnual] = useState(false);
+  const [coupon, setCoupon] = useState("");
+  const [discount, setDiscount] = useState<CouponValidation | null>(null);
 
   if (isLoading) {
     return (
@@ -34,21 +42,61 @@ export const SpecialistPlansTab = () => {
     );
   }
 
+  // Annual = pay 10 months, get 12 (2 months free)
+  const baseAmount = pending
+    ? annual
+      ? pending.monthly_price_mad * 10
+      : pending.monthly_price_mad
+    : 0;
+  const finalAmount = discount ? discount.finalMad : baseAmount;
+
+  const openConfirm = (p: SpecialistPlan) => {
+    setPending(p);
+    setCoupon("");
+    setDiscount(null);
+    setAnnual(false);
+  };
+
+  const applyCoupon = async () => {
+    if (!pending || !coupon.trim() || baseAmount <= 0) return;
+    try {
+      const result = await validateCoupon.mutateAsync({
+        code: coupon.trim(),
+        amountMad: baseAmount,
+        appliesTo: "subscription",
+      });
+      setDiscount(result);
+      toast({
+        title: "Coupon applied",
+        description: `−${result.discountMad.toFixed(0)} MAD discount`,
+      });
+    } catch (e: any) {
+      setDiscount(null);
+      toast({
+        title: "Invalid coupon",
+        description: e.message || "This code is not valid for subscriptions.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleConfirm = async () => {
     if (!pending) return;
     try {
       await changePlan.mutateAsync({
         planId: pending.id,
-        amountMad: pending.monthly_price_mad,
+        amountMad: finalAmount,
       });
       toast({
         title: pending.id === "free" ? "Downgraded to Free" : `Upgraded to ${pending.name}`,
         description:
           pending.id === "free"
             ? "Your premium features will remain until the end of the current period."
-            : `Test payment of ${pending.monthly_price_mad} MAD recorded. Premium features are now active.`,
+            : `Test payment of ${finalAmount} MAD ${annual ? "(annual)" : "(monthly)"} recorded. Premium features are now active.`,
       });
       setPending(null);
+      setDiscount(null);
+      setCoupon("");
     } catch (e: any) {
       toast({
         title: "Could not update plan",
@@ -90,7 +138,7 @@ export const SpecialistPlansTab = () => {
       {/* Comparison grid */}
       <PlanComparisonGrid
         currentPlanId={currentPlan?.id}
-        onSelectPlan={(p) => setPending(p)}
+        onSelectPlan={openConfirm}
         ctaLabel={(p) => {
           if (!currentPlan) return `Upgrade to ${p.name}`;
           if (p.sort_order > currentPlan.sort_order) return `Upgrade to ${p.name}`;
@@ -158,9 +206,81 @@ export const SpecialistPlansTab = () => {
             <DialogDescription>
               {pending?.id === "free"
                 ? "You'll keep your premium features until the end of the current billing period."
-                : `Test payment of ${pending?.monthly_price_mad} MAD will be recorded. No real card will be charged.`}
+                : `Choose monthly or annual billing. No real card will be charged in test mode.`}
             </DialogDescription>
           </DialogHeader>
+
+          {pending && pending.id !== "free" && pending.monthly_price_mad > 0 && (
+            <div className="space-y-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-3">
+                <div>
+                  <Label htmlFor="annual-toggle" className="text-sm font-medium">
+                    Annual billing
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Pay 10 months, get 12 — save {pending.monthly_price_mad * 2} MAD/year.
+                  </p>
+                </div>
+                <Switch id="annual-toggle" checked={annual} onCheckedChange={setAnnual} />
+              </div>
+
+              <div className="rounded-lg border border-border bg-background p-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {pending.name} · {annual ? "Annual" : "Monthly"}
+                  </span>
+                  <span>{baseAmount} MAD</span>
+                </div>
+                {discount && (
+                  <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
+                    <span className="flex items-center gap-1">
+                      <Tag className="h-3 w-3" /> Coupon
+                    </span>
+                    <span>−{discount.discountMad.toFixed(0)} MAD</span>
+                  </div>
+                )}
+                <div className="border-t border-border pt-2 flex justify-between font-semibold">
+                  <span>Total today</span>
+                  <span>{finalAmount} MAD</span>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Promo code"
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+                  disabled={!!discount}
+                />
+                {discount ? (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      setDiscount(null);
+                      setCoupon("");
+                    }}
+                    aria-label="Remove coupon"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={applyCoupon}
+                    disabled={!coupon.trim() || validateCoupon.isPending}
+                  >
+                    {validateCoupon.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Apply"
+                    )}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
           <Alert className="border-primary/30 bg-primary/5 my-2">
             <Info className="h-4 w-4 text-primary" />
             <AlertDescription className="text-xs">
