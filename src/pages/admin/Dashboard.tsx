@@ -9,7 +9,7 @@ import {
   Clock, AlertCircle, Search, ChevronDown, MoreVertical,
   UserCheck, UserX, Eye, Zap, Globe, BookOpen, Award, BarChart3,
   ArrowUpRight, ArrowDownRight, Loader2, Bell, Settings, Database,
-  Shield, MessageSquare, RefreshCw, Building2,
+  Shield, MessageSquare, RefreshCw, Building2, Check, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -372,18 +372,79 @@ const BookingsTab = () => {
   const [filter, setFilter] = useState("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const { data: bookings = [], isLoading } = useAllBookings();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const filtered = bookings.filter((b: any) =>
     filter === "all" || b.status === filter
   );
 
+  const proposedSelected = filtered.filter(
+    (b: any) => selected.has(b.id) && b.status === "proposed",
+  );
+
+  const toggleRow = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const toggleAllVisible = () => {
+    const visibleProposed = filtered
+      .filter((b: any) => b.status === "proposed")
+      .map((b: any) => b.id);
+    setSelected((prev) => {
+      const allOn = visibleProposed.every((id: string) => prev.has(id));
+      const next = new Set(prev);
+      if (allOn) visibleProposed.forEach((id: string) => next.delete(id));
+      else visibleProposed.forEach((id: string) => next.add(id));
+      return next;
+    });
+  };
+
+  const runBulk = async (action: "accept" | "decline") => {
+    if (proposedSelected.length === 0) return;
+    setBulkBusy(true);
+    const ids = proposedSelected.map((b: any) => b.id);
+    const newStatus = action === "accept" ? "confirmed" : "cancelled";
+    const { error } = await supabase
+      .from("bookings")
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .in("id", ids)
+      .eq("status", "proposed");
+    if (error) {
+      toast({ title: "Bulk action failed", description: error.message, variant: "destructive" });
+      setBulkBusy(false);
+      return;
+    }
+    // Fire notifications for each (best-effort)
+    await Promise.allSettled(
+      ids.map((id) =>
+        supabase.functions.invoke("notify-proposal-response", {
+          body: { booking_id: id, action, reason: null },
+        }),
+      ),
+    );
+    toast({
+      title: action === "accept" ? "Invitations accepted" : "Invitations declined",
+      description: `${ids.length} booking${ids.length > 1 ? "s" : ""} updated.`,
+    });
+    setSelected(new Set());
+    queryClient.invalidateQueries({ queryKey: ["admin-bookings"] });
+    setBulkBusy(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2 flex-wrap">
-        {["all", "pending", "confirmed", "completed", "cancelled"].map((s) => (
+        {["all", "proposed", "pending", "confirmed", "completed", "cancelled"].map((s) => (
           <button
             key={s}
-            onClick={() => setFilter(s)}
+            onClick={() => { setFilter(s); setSelected(new Set()); }}
             className={cn(
               "text-xs px-3 py-1.5 rounded-full border transition-all capitalize",
               filter === s
@@ -406,6 +467,28 @@ const BookingsTab = () => {
         </div>
       </div>
 
+      {proposedSelected.length > 0 && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-2.5 text-sm">
+          <span className="text-muted-foreground">
+            {proposedSelected.length} proposed invitation
+            {proposedSelected.length > 1 ? "s" : ""} selected
+          </span>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setSelected(new Set())} disabled={bulkBusy}>
+              Clear
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => runBulk("decline")} disabled={bulkBusy}>
+              {bulkBusy ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <X className="h-4 w-4 mr-1" />}
+              Decline all
+            </Button>
+            <Button size="sm" onClick={() => runBulk("accept")} disabled={bulkBusy}>
+              {bulkBusy ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
+              Accept all
+            </Button>
+          </div>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : (
@@ -413,6 +496,20 @@ const BookingsTab = () => {
           <table className="w-full text-sm">
             <thead className="bg-surface border-b border-border">
               <tr>
+                <th className="px-3 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    aria-label="Select all proposed in view"
+                    checked={
+                      filtered.some((b: any) => b.status === "proposed") &&
+                      filtered
+                        .filter((b: any) => b.status === "proposed")
+                        .every((b: any) => selected.has(b.id))
+                    }
+                    onChange={toggleAllVisible}
+                    className="rounded border-border"
+                  />
+                </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide">Patient</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide hidden md:table-cell">Psychologist</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide">When</th>
@@ -423,6 +520,16 @@ const BookingsTab = () => {
             <tbody className="divide-y divide-border bg-background">
               {filtered.map((b: any) => (
                 <tr key={b.id} className="hover:bg-surface/50 transition-colors cursor-pointer" onClick={() => setOpenId(b.id)}>
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      aria-label={`Select booking ${b.id}`}
+                      disabled={b.status !== "proposed"}
+                      checked={selected.has(b.id)}
+                      onChange={() => toggleRow(b.id)}
+                      className="rounded border-border disabled:opacity-30"
+                    />
+                  </td>
                   <td className="px-4 py-3 font-medium">{b.patient_name ?? "–"}</td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{b.psychologist_name ?? "–"}</td>
                   <td className="px-4 py-3 text-muted-foreground">
@@ -441,7 +548,7 @@ const BookingsTab = () => {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-muted-foreground text-sm">No bookings found.</td>
+                  <td colSpan={6} className="py-12 text-center text-muted-foreground text-sm">No bookings found.</td>
                 </tr>
               )}
             </tbody>
