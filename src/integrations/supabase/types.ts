@@ -624,6 +624,51 @@ export type Database = {
           },
         ]
       }
+      booking_reminders_sent: {
+        Row: {
+          booking_id: string
+          channel: string
+          id: string
+          metadata: Json
+          recipient_role: string
+          reminder_type: string
+          sent_at: string
+        }
+        Insert: {
+          booking_id: string
+          channel: string
+          id?: string
+          metadata?: Json
+          recipient_role: string
+          reminder_type: string
+          sent_at?: string
+        }
+        Update: {
+          booking_id?: string
+          channel?: string
+          id?: string
+          metadata?: Json
+          recipient_role?: string
+          reminder_type?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_reminders_sent_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_reminders_sent_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings_with_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           amount_mad: number | null
@@ -634,11 +679,16 @@ export type Database = {
           patient_email: string | null
           patient_id: string
           patient_notes: string | null
+          patient_phone: string | null
           payment_status: string | null
           proposal_expires_at: string | null
           proposal_token: string | null
           proposed_by: string | null
           psychologist_id: string
+          reminder_1h_enabled: boolean
+          reminder_24h_enabled: boolean
+          reminder_5min_enabled: boolean
+          reminder_channels: Json
           scheduled_at: string
           session_type: string
           status: string
@@ -654,11 +704,16 @@ export type Database = {
           patient_email?: string | null
           patient_id: string
           patient_notes?: string | null
+          patient_phone?: string | null
           payment_status?: string | null
           proposal_expires_at?: string | null
           proposal_token?: string | null
           proposed_by?: string | null
           psychologist_id: string
+          reminder_1h_enabled?: boolean
+          reminder_24h_enabled?: boolean
+          reminder_5min_enabled?: boolean
+          reminder_channels?: Json
           scheduled_at: string
           session_type?: string
           status?: string
@@ -674,11 +729,16 @@ export type Database = {
           patient_email?: string | null
           patient_id?: string
           patient_notes?: string | null
+          patient_phone?: string | null
           payment_status?: string | null
           proposal_expires_at?: string | null
           proposal_token?: string | null
           proposed_by?: string | null
           psychologist_id?: string
+          reminder_1h_enabled?: boolean
+          reminder_24h_enabled?: boolean
+          reminder_5min_enabled?: boolean
+          reminder_channels?: Json
           scheduled_at?: string
           session_type?: string
           status?: string
