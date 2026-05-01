@@ -1,0 +1,6 @@
+---
+name: I18n configuration
+description: Configured for EN, FR, RTL AR, and LTR Amazigh (ber/Tifinagh)
+type: feature
+---
+The platform supports English (en), French (fr), Arabic (ar), and Amazigh/Tamazight (ber). Arabic applies RTL layout (dir="rtl"). Amazigh uses Tifinagh script and is LTR. Locale type is exported from src/lib/i18n/utils.ts. The ber translation block is minimal — pages fall back to English for missing keys using optional chaining.
