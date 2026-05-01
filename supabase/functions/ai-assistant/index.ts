@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createLogger } from "../_shared/logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -114,7 +115,7 @@ serve(async (req) => {
         });
       }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      log.error("AI gateway error", null, { status: response.status, body: t });
       return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -124,7 +125,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    console.error("chat error:", e);
+    log.error("chat error", e);
     return new Response(JSON.stringify({ error: "An error occurred" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
