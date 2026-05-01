@@ -1,4 +1,5 @@
 // src/components/home/HeroSection.tsx
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -7,11 +8,175 @@ import logo from "@/assets/logo.webp";
 import { useIntentStore } from "@/stores/intentStore";
 import type { UserIntent } from "@/stores/intentStore";
 
+// ── Rotating word pairs (problem → solution) ─────────────────────────────────
+
+const wordPairs = [
+  { problem: "Burnout", solution: "Recovery" },
+  { problem: "Anxiety", solution: "Clarity" },
+  { problem: "Stress", solution: "Balance" },
+  { problem: "Self-doubt", solution: "Confidence" },
+  { problem: "Overwhelm", solution: "Focus" },
+  { problem: "Disconnection", solution: "Resilience" },
+];
+
+const WORD_INTERVAL = 3000;
+
+// ── Animation modes ──────────────────────────────────────────────────────────
+
+type AnimMode = "rotating" | "stagger" | "typewriter" | "floating";
+const ANIM_MODES: AnimMode[] = ["rotating", "stagger", "typewriter", "floating"];
+
+// ── Floating keyword pills ───────────────────────────────────────────────────
+
+const floatingKeywords = [
+  { label: "CBT", x: "8%", y: "18%", duration: 7, delay: 0 },
+  { label: "EMDR", x: "85%", y: "22%", duration: 8, delay: 1.2 },
+  { label: "Schema", x: "12%", y: "72%", duration: 9, delay: 0.5 },
+  { label: "Resilience", x: "78%", y: "68%", duration: 6.5, delay: 2 },
+  { label: "ACT", x: "92%", y: "45%", duration: 7.5, delay: 1.8 },
+  { label: "Mindfulness", x: "5%", y: "48%", duration: 8.5, delay: 0.8 },
+  { label: "Peak Performance", x: "70%", y: "85%", duration: 10, delay: 1.5 },
+  { label: "Well-being", x: "25%", y: "88%", duration: 7, delay: 2.5 },
+];
+
+// ── Rotating Word component ──────────────────────────────────────────────────
+
+function RotatingWord() {
+  const [index, setIndex] = useState(0);
+  const [showSolution, setShowSolution] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setShowSolution((prev) => {
+        if (prev) {
+          setIndex((i) => (i + 1) % wordPairs.length);
+          return false;
+        }
+        return true;
+      });
+    }, WORD_INTERVAL / 2);
+    return () => clearInterval(timer);
+  }, []);
+
+  const pair = wordPairs[index];
+  const word = showSolution ? pair.solution : pair.problem;
+  const color = showSolution ? "text-primary" : "text-primary/70";
+
+  return (
+    <span className="relative inline-block min-w-[180px] md:min-w-[260px] h-[1.15em] align-bottom overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={`${index}-${showSolution}`}
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -30, opacity: 0 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+          className={`absolute inset-x-0 italic font-serif ${color}`}
+        >
+          {word}
+          {showSolution && (
+            <span className="absolute inset-x-0 bottom-0 h-[0.18em] bg-primary/15" aria-hidden="true" />
+          )}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+// ── Staggered headline ──────────────────────────────────────────────────────
+
+function StaggeredHeadline({ text }: { text: string }) {
+  const words = text.split(" ");
+  return (
+    <>
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.5, delay: i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
+          className="inline-block mr-[0.3em]"
+        >
+          {word}
+        </motion.span>
+      ))}
+    </>
+  );
+}
+
+// ── Typewriter subtitle ─────────────────────────────────────────────────────
+
+function TypewriterSubtitle({ text, startDelay = 800 }: { text: string; startDelay?: number }) {
+  const [displayed, setDisplayed] = useState("");
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStarted(true), startDelay);
+    return () => clearTimeout(timer);
+  }, [startDelay]);
+
+  useEffect(() => {
+    if (!started) return;
+    setDisplayed("");
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(interval);
+    }, 22);
+    return () => clearInterval(interval);
+  }, [text, started]);
+
+  if (!started) return <span className="invisible">{text}</span>;
+
+  return (
+    <span>
+      {displayed}
+      {displayed.length < text.length && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+          className="inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-text-bottom"
+        />
+      )}
+    </span>
+  );
+}
+
+// ── Floating keywords background ─────────────────────────────────────────────
+
+function FloatingKeywords() {
+  return (
+    <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden="true">
+      {floatingKeywords.map((kw) => (
+        <motion.div
+          key={kw.label}
+          className="absolute text-[11px] tracking-widest uppercase text-muted-foreground/20 font-medium select-none"
+          style={{ left: kw.x, top: kw.y }}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 0.6, 0.6, 0],
+            y: [0, -18, -10, 0],
+          }}
+          transition={{
+            duration: kw.duration,
+            delay: kw.delay,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "easeInOut",
+          }}
+        >
+          {kw.label}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
 // ── Intent-reactive hero configurations ───────────────────────────────────────
 
 interface HeroVariant {
-  title: string;
-  titleHighlight: string;
+  titlePrefix: string;
   subtitle: string;
   primaryCta: { label: string; to: string; icon: React.ReactNode };
   secondaryCta: { label: string; to: string; icon: React.ReactNode };
@@ -20,8 +185,7 @@ interface HeroVariant {
 
 const heroVariants: Record<UserIntent, HeroVariant> = {
   EXPLORING: {
-    title: "Measure. Identify. Train.",
-    titleHighlight: "Apply.",
+    titlePrefix: "Psychology, Built for",
     subtitle:
       "A performance psychology system that quantifies mental readiness, identifies blind spots, and builds evidence-based protocols for peak performance.",
     primaryCta: {
@@ -41,8 +205,7 @@ const heroVariants: Record<UserIntent, HeroVariant> = {
     ],
   },
   READY_TO_ACT: {
-    title: "Find your psychologist",
-    titleHighlight: "today.",
+    titlePrefix: "Your match for",
     subtitle:
       "You know what you need. Match with a verified specialist in under 2 minutes — online or in-person across Morocco.",
     primaryCta: {
@@ -62,8 +225,7 @@ const heroVariants: Record<UserIntent, HeroVariant> = {
     ],
   },
   RESEARCHING: {
-    title: "Evidence-based mental",
-    titleHighlight: "performance.",
+    titlePrefix: "Evidence-based tools for",
     subtitle:
       "Explore our clinical screening tools, peer-reviewed methodologies, and structured protocols used by sports psychologists and organizations worldwide.",
     primaryCta: {
@@ -83,8 +245,7 @@ const heroVariants: Record<UserIntent, HeroVariant> = {
     ],
   },
   SKEPTICAL: {
-    title: "Trusted by 50+ verified",
-    titleHighlight: "specialists.",
+    titlePrefix: "Trusted protection from",
     subtitle:
       "Every psychologist on U.Psy is clinically accredited, peer-reviewed, and bound by Moroccan Law 09-08 data protection. Your privacy is non-negotiable.",
     primaryCta: {
@@ -105,9 +266,21 @@ const heroVariants: Record<UserIntent, HeroVariant> = {
   },
 };
 
+// ── Main component ───────────────────────────────────────────────────────────
+
 const HeroSection = () => {
   const intent = useIntentStore((s) => s.intent);
   const variant = heroVariants[intent];
+
+  // Pick random animation mode per session
+  const animMode = useMemo<AnimMode>(
+    () => ANIM_MODES[Math.floor(Math.random() * ANIM_MODES.length)],
+    []
+  );
+
+  const showFloating = animMode === "floating";
+  const useStagger = animMode === "stagger";
+  const useTypewriter = animMode === "typewriter";
 
   return (
     <section className="relative min-h-[88vh] flex items-center overflow-hidden bg-background">
@@ -134,6 +307,9 @@ const HeroSection = () => {
           WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 80%)",
         }}
       />
+
+      {/* Floating keywords (when mode = floating) */}
+      {showFloating && <FloatingKeywords />}
 
       <div className="container-custom relative z-10 w-full py-24 md:py-32">
         <div className="max-w-5xl mx-auto text-center space-y-10">
@@ -162,27 +338,32 @@ const HeroSection = () => {
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               className="space-y-10"
             >
-              {/* Headline */}
-              <h1 className="font-bold tracking-[-0.03em] leading-[0.98] text-foreground text-[clamp(2.6rem,7vw,5.5rem)]">
-                {variant.title}{" "}
-                <span className="relative inline-block">
-                  <span className="relative z-10 italic font-serif text-primary">
-                    {variant.titleHighlight}
-                  </span>
-                  <span
-                    className="absolute inset-x-0 bottom-1 h-[0.2em] bg-primary/15 -z-0"
-                    aria-hidden="true"
-                  />
-                </span>
+              {/* Headline with rotating word */}
+              <h1 className="font-bold tracking-[-0.03em] leading-[1.1] text-foreground text-[clamp(2.4rem,6.5vw,5rem)]">
+                {useStagger ? (
+                  <StaggeredHeadline text={variant.titlePrefix} />
+                ) : (
+                  <span>{variant.titlePrefix} </span>
+                )}
+                <RotatingWord />
               </h1>
 
               {/* Subline */}
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-light">
-                {variant.subtitle}
+                {useTypewriter ? (
+                  <TypewriterSubtitle text={variant.subtitle} startDelay={800} />
+                ) : (
+                  variant.subtitle
+                )}
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+              <motion.div
+                className="flex flex-col sm:flex-row gap-3 justify-center pt-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: useTypewriter ? 1.2 : 0.3, duration: 0.5 }}
+              >
                 <Button variant="primary" size="lg" asChild className="gap-2 group h-12 px-7 text-base">
                   <Link to={variant.primaryCta.to}>
                     {variant.primaryCta.label}
@@ -195,20 +376,26 @@ const HeroSection = () => {
                     {variant.secondaryCta.label}
                   </Link>
                 </Button>
-              </div>
+              </motion.div>
 
               {/* Trust strip */}
               <div className="pt-12 mt-4 border-t border-border/60 max-w-3xl mx-auto">
                 <div className="grid grid-cols-3 gap-4 md:gap-12">
-                  {variant.stats.map((s) => (
-                    <div key={s.label} className="text-center">
+                  {variant.stats.map((s, i) => (
+                    <motion.div
+                      key={s.label}
+                      className="text-center"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 + i * 0.1, duration: 0.4 }}
+                    >
                       <p className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
                         {s.value}
                       </p>
                       <p className="text-[11px] md:text-xs text-muted-foreground mt-1.5 uppercase tracking-wider">
                         {s.label}
                       </p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
