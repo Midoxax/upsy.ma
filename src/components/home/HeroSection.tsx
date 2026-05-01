@@ -478,7 +478,7 @@ const HeroSection = () => {
                   asChild
                   className="gap-2 h-12 px-6 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
-                  <Link to="/contact">
+                  <Link to="/book-a-call">
                     <Phone className="h-4 w-4" />
                     Book a Call
                   </Link>
