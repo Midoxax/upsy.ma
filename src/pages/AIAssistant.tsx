@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import CrisisModal from "@/components/dashboard/CrisisModal";
 import {
   Send, Loader2, Plus, Wind, BookOpen, Heart, Brain,
   Sparkles,
@@ -17,6 +18,8 @@ import { cn } from "@/lib/utils";
 type Msg = { role: "user" | "assistant"; content: string; id: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`;
+
+const DISTRESS_PATTERNS = /\b(suicid|kill\s*my\s*self|end\s*(my|it\s*all)|don'?t\s*want\s*to\s*live|self[- ]?harm|hurt\s*myself|no\s*reason\s*to\s*live|hopeless|overdose)\b/i;
 
 const QUICK_PROMPTS = [
   { icon: Wind,     label: "Breathing",   msg: "Guide me through a calming breathing exercise right now." },
@@ -81,6 +84,7 @@ const AIAssistant = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<{ name?: string } | null>(null);
+  const [crisisOpen, setCrisisOpen] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -112,6 +116,11 @@ const AIAssistant = () => {
     const payload = {
       messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
     };
+
+    // Check user message for distress keywords
+    if (DISTRESS_PATTERNS.test(text)) {
+      setCrisisOpen(true);
+    }
 
     const session = await supabase.auth.getSession();
     const token = session.data.session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -263,6 +272,8 @@ const AIAssistant = () => {
           <div ref={endRef} />
         </div>
       </div>
+
+      <CrisisModal open={crisisOpen} onOpenChange={setCrisisOpen} riskLevel="high" />
 
       {/* Input area */}
       <div className="border-t border-border bg-background/80 backdrop-blur-xl sticky bottom-0">
