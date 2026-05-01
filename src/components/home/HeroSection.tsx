@@ -63,7 +63,7 @@ function RotatingWord() {
   const color = showSolution ? "text-primary" : "text-primary/70";
 
   return (
-    <span className="relative inline-block min-w-[180px] md:min-w-[260px] h-[1.15em] align-bottom overflow-hidden">
+    <span className="relative block w-full h-[1.25em] mt-1 overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.span
           key={`${index}-${showSolution}`}
@@ -71,7 +71,7 @@ function RotatingWord() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -30, opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-          className={`absolute inset-x-0 italic font-serif ${color}`}
+          className={`absolute inset-x-0 text-center italic font-serif ${color}`}
         >
           {word}
           {showSolution && (
@@ -338,13 +338,15 @@ const HeroSection = () => {
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               className="space-y-10"
             >
-              {/* Headline with rotating word */}
-              <h1 className="font-bold tracking-[-0.03em] leading-[1.1] text-foreground text-[clamp(2.4rem,6.5vw,5rem)]">
-                {useStagger ? (
-                  <StaggeredHeadline text={variant.titlePrefix} />
-                ) : (
-                  <span>{variant.titlePrefix} </span>
-                )}
+              {/* Headline — prefix line + rotating word line (Djembe-style) */}
+              <h1 className="font-bold tracking-[-0.03em] leading-[1.1] text-foreground text-[clamp(2.2rem,6vw,4.5rem)]">
+                <span className="block">
+                  {useStagger ? (
+                    <StaggeredHeadline text={variant.titlePrefix} />
+                  ) : (
+                    variant.titlePrefix
+                  )}
+                </span>
                 <RotatingWord />
               </h1>
 
