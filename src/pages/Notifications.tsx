@@ -76,36 +76,7 @@ export default function Notifications() {
           </header>
 
           {/* Preferences */}
-          <Card className="p-5 space-y-4 bg-surface border-border">
-            <h2 className="font-semibold text-sm">Email preferences</h2>
-            {prefs && (
-              <div className="space-y-3">
-                {([
-                  ["email_payments", "Payments and invoices"],
-                  ["email_bookings", "Bookings and confirmations"],
-                  ["email_reminders", "Session reminders"],
-                  ["email_gamification", "Badges, levels & streaks"],
-                  ["inapp_all", "Show in-app notifications"],
-                ] as const).map(([key, label]) => (
-                  <div
-                    key={key}
-                    className="flex items-center justify-between"
-                  >
-                    <Label htmlFor={key} className="text-sm font-normal">
-                      {label}
-                    </Label>
-                    <Switch
-                      id={key}
-                      checked={prefs[key]}
-                      onCheckedChange={(v) =>
-                        updatePrefs.mutate({ [key]: v })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
+          <NotificationPreferencesCard />
 
           {/* Filters */}
           <Tabs value={filter} onValueChange={(v) => setFilter(v as "all" | "unread")}>
