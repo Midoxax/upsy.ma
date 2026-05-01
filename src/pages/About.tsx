@@ -5,10 +5,12 @@ import { translations } from "@/lib/i18n/translations";
 const About = () => {
   const { t, locale } = useLocale();
   
-  const credentialsList = translations[locale].about.credentials.list;
-  const philosophyList = translations[locale].about.philosophy.list;
-  const individualList = translations[locale].about.specializations.individual.list;
-  const organizationalList = translations[locale].about.specializations.organizational.list;
+  const loc = translations[locale] as any;
+  const enLoc = translations.en as any;
+  const credentialsList = loc.about?.credentials?.list ?? enLoc.about.credentials.list;
+  const philosophyList = loc.about?.philosophy?.list ?? enLoc.about.philosophy.list;
+  const individualList = loc.about?.specializations?.individual?.list ?? enLoc.about.specializations.individual.list;
+  const organizationalList = loc.about?.specializations?.organizational?.list ?? enLoc.about.specializations.organizational.list;
   
   return (
     <main className="min-h-screen bg-background">

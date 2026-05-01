@@ -1,95 +1,103 @@
-# Dynamic Homepage Redesign — Process Academy Style
 
-## What Process Academy Does That We Want
+# Implementation Plan
 
-The Process Academy site is a **scroll-driven storytelling experience** with these standout features:
+## 1. Accessibility Audit and Fixes
 
-1. **Bold organic SVG shapes** — Large colored blobs (orange yellow, vine red) that create visual "rooms" as you scroll, replacing flat section backgrounds
-2. **Floating decorative elements** — Triangles, circles, X-shapes, and dashed path lines scattered across sections, gently animated
-3. **A mascot character (man in labiranth)** that appears at transitions, reacts to content, and guides the user through the page with speech bubbles
-4. **Scroll-triggered content reveals** — Cards, text blocks, and images animate into view as you scroll (not all loaded at once)
-5. **Content tiers with visual identity** — Each content tier (Brainsnack, Microlearning, Gigalearning) has its own color, icon, and section shape
-6. **Interactive card carousels** — Horizontally scrollable content cards within sections
-7. **Playful typography** — Large bold sans-serif headlines with supporting descriptive text
+**Hero & Decorative SVGs:**
+- Add `aria-hidden="true"` and `role="presentation"` to all decorative SVGs in `HeroSection.tsx`, `FloatingDecorations.tsx`, `SectionDivider.tsx`
+- Add `prefers-reduced-motion` media query support to all Framer Motion animations (already partially done in HeroSection; extend to FloatingDecorations, ScrollGuide)
+- Ensure ScrollGuide speech bubbles are not keyboard-focusable traps
 
-## How This Adapts to U.Psy
+**Semantic Landmarks across all homepage sections:**
+- Wrap homepage in `<main>`, header in `<header>`, footer in `<footer>` (verify existing)
+- Add `<section aria-labelledby="...">` with heading IDs to each homepage section component
+- Add descriptive `alt` text to all `<img>` tags; use `alt=""` for purely decorative images
+- Verify all interactive elements (buttons, links) have visible focus rings (already using `focus:ring-2` in many places; audit gaps)
 
-We keep the existing intent-engine, section ordering, and clinical branding. The change is purely **visual and interaction design**.
-
-### 1. Organic Section Backgrounds
-
-Replace flat `bg-background` sections with SVG wave/blob dividers between sections. Each major section gets a themed background shape:
-
-- Hero: warm beige base with a maroon organic blob
-- Self-Assessment: soft gold wave transition
-- Featured Psychologists: neutral with floating neural-node decorations
-- Programs/Learning: blue-tinted wave section
-
-Implementation: Create a `SectionDivider` component using inline SVGs with `viewBox` preservation. CSS `clip-path` for simpler shapes.
-
-### 2. Floating Decorative Elements
-
-Add a `FloatingDecorations` component that renders small SVG shapes (circles, triangles, dots, dashed paths) positioned absolutely within sections. These use Framer Motion `float` animations (already in the motion language: 300-800ms).
-
-Shapes use the brand palette: Deep Maroon circles, Muted Gold triangles, Soft Beige dots.
-
-### 3. Scroll-Triggered Section Reveals
-
-Enhance the existing `ScrollReveal` component to support multiple animation variants:
-
-- **Slide up + fade** (current default)
-- **Scale from center** (for hero-adjacent sections)
-- **Stagger children** (for card grids)
-
-Each homepage section wrapper gets scroll-triggered entrance animations using Intersection Observer (already used in `useIntentSignals`).
-
-### 4. Mascot / Guide Character
-
-Introduce a simple illustrated character (a "neural guide" — fits the brain/psychology brand) that appears at 2-3 scroll breakpoints with speech bubbles:
-
-- After Hero: "Let's explore what fits you"
-- Before Assessment: "Quick check — 2 minutes"
-- Before CTA: "Ready to take the next step?"
-
-Implementation: A `ScrollGuide` component using Framer Motion `whileInView`. Character is a static SVG/illustration (can use the existing BreathingOrb concept expanded into a face/character, or a simple emoji-style illustration rendered as SVG).
-
-### 5. Interactive Content Cards
-
-In sections like Programs, Learning, and Featured Psychologists — add horizontal scroll carousels on mobile and animated grid reveals on desktop. Cards tilt slightly on hover (CSS `perspective` + `rotateY`).
-
-### 6. Hero Section Enhancements
-
-- Add a large organic background shape (maroon/gold gradient blob) behind the hero text
-- Add a dashed animated path SVG (like Process Academy's dotted trail) connecting the hero to the next section
-- Floating decorative shapes around the edges
-
-### 7. Narrative Connector Upgrade
-
-Replace the current minimal `NarrativeConnector` (just a gradient line) with organic SVG wave dividers that match the section color transitions.
+**Files:** `HeroSection.tsx`, `FloatingDecorations.tsx`, `SectionDivider.tsx`, `ScrollGuide.tsx`, all homepage section components, `Header.tsx`, `Footer.tsx`
 
 ---
 
-## Files to Create/Edit
+## 2. Route Pages with Placeholder Content
 
+Create or verify the following pages exist with proper placeholder content, SEOHead, and translation-ready structure:
 
-| File                                                   | Action | Purpose                                                                        |
-| ------------------------------------------------------ | ------ | ------------------------------------------------------------------------------ |
-| `src/components/home/SectionDivider.tsx`               | Create | SVG wave/blob dividers between sections                                        |
-| `src/components/home/FloatingDecorations.tsx`          | Create | Decorative SVG shapes (circles, triangles, paths)                              |
-| `src/components/home/ScrollGuide.tsx`                  | Create | Mascot character with speech bubbles at scroll points                          |
-| `src/components/home/HeroSection.tsx`                  | Edit   | Add organic blob background, dashed path, floating shapes                      |
-| `src/pages/Index.tsx`                                  | Edit   | Replace NarrativeConnector with SectionDivider, add ScrollGuide at breakpoints |
-| `src/components/home/FeaturedPsychologistsSection.tsx` | Edit   | Add horizontal scroll carousel and card hover tilt                             |
-| `src/components/home/ProgramsSection.tsx`              | Edit   | Add card carousel and scroll-reveal stagger                                    |
-| `src/components/home/LearningSection.tsx`              | Edit   | Add card carousel                                                              |
-| `src/index.css`                                        | Edit   | Add organic shape CSS utilities, card tilt transforms                          |
+| Route | File | Status |
+|-------|------|--------|
+| `/about` | `About.tsx` | Exists -- verify content |
+| `/services` | `Services.tsx` | Exists -- verify sub-routes |
+| `/services/*` | `services/` dir | Exists -- verify |
+| `/resources` | `Resources.tsx` | Exists |
+| `/book-a-call` | `BookRedirect.tsx` | Exists -- rename/alias |
+| `/contact` | `Contact.tsx` | Exists |
+| `/legal` | `Legal.tsx` | Exists |
+| `/talent-innovation-hub` | `TalentInnovationHub.tsx` | Exists |
+| `*` (404) | `NotFound.tsx` | Exists |
 
+Most pages already exist. Will audit each for proper semantic HTML, SEOHead usage, and translation key coverage. Add any missing sub-service routes.
 
-No database changes needed. No new dependencies — uses Framer Motion (already installed) and inline SVGs.
+---
 
-### Scope Note
+## 3. Hero Section Rebuild
 
-This is a large visual overhaul. I recommend implementing it in 2 passes:
+Polish the existing `HeroSection.tsx` (561 lines):
+- Ensure dark gradient background with brand blobs is the primary visual above the fold
+- Add a prominent "Book a Call" CTA button that links to `/book-a-call` or scrolls to booking section
+- Accessible focus states on all CTAs
+- Keep the rotating word pairs and intent-driven content
+- Verify mobile layout (vertical stacking, proper blob sizing)
 
-- **Pass 1**: Section dividers, floating decorations, hero blob, enhanced narrative connectors
-- **Pass 2**: Scroll guide mascot, card carousels, hover effects
+---
+
+## 4. Global Footer Enhancement
+
+Update `Footer.tsx` to include:
+- Social icons (YouTube, LinkedIn, Instagram -- already present)
+- Contact info (WhatsApp, email from memory)
+- Language toggle (already has `LanguageSwitcher`, will add Amazigh button)
+- Crisis/SOS note: "If you are in crisis, contact SOS Amitie Maroc: 0522-200-200"
+- Proper `<footer>` landmark with `aria-label`
+
+---
+
+## 5. Global Sticky Header with Mobile Menu
+
+Update `Header.tsx`:
+- Make header sticky (`sticky top-0 z-50`) with glassmorphism backdrop
+- Verify all nav links route correctly to their pages
+- Audit mobile hamburger menu for proper `aria-expanded`, focus management, and scroll lock
+- Add smooth scroll behavior for same-page anchor links
+
+---
+
+## 6. Translation Fixes + Amazigh (Tamazight) Language
+
+**Add Amazigh as 4th language:**
+- Update `Locale` type from `'en' | 'fr' | 'ar'` to `'en' | 'fr' | 'ar' | 'ber'`
+- Add Amazigh button to `LanguageSwitcher.tsx` with label "ⵜⵎⵣ" or "AMZ"
+- Add `ber` translation block in `translations.ts` with Tifinagh script content
+- Update `LocaleContext.tsx` to handle `'ber'` locale
+- Update `i18n/utils.ts` for `/ber` path prefix
+
+**Translation audit:**
+- Review all 3779 lines in `translations.ts` for missing keys across EN/FR/AR
+- Fix scientific/clinical terminology accuracy (CBT, EMDR, Schema Therapy, GAD-7, PHQ-9)
+- Ensure proper RTL support for AR and appropriate direction for Tifinagh
+- Add translation keys for any new placeholder page content
+
+### Technical Details
+
+- Locale type change propagates to: `LocaleContext.tsx`, `LanguageSwitcher.tsx`, `i18n/utils.ts`, any component using `handleSwitch` or locale checks
+- Amazigh/Tifinagh is written left-to-right, so no RTL handling needed for `ber`
+- The `translation_overrides` table in the database already supports any locale string, so no migration needed
+
+---
+
+## Execution Order
+
+1. Accessibility audit (all decorative elements, landmarks, focus states)
+2. Hero section polish with "Book a Call" CTA
+3. Sticky header + mobile menu fixes
+4. Footer enhancement with crisis note and contact info
+5. Route pages audit and placeholder content
+6. Amazigh language support + translation fixes across all pages

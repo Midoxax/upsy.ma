@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { translations } from '@/lib/i18n/translations';
-import { getCookie, setCookie, getLocaleFromPath, stripLocalePrefix, addLocalePrefix } from '@/lib/i18n/utils';
+import { getCookie, setCookie, getLocaleFromPath, stripLocalePrefix, addLocalePrefix, type Locale } from '@/lib/i18n/utils';
 import { supabase } from '@/integrations/supabase/client';
-
-type Locale = 'en' | 'fr' | 'ar';
 
 interface LocaleContextType {
   locale: Locale;
@@ -19,7 +17,7 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [locale, setLocaleState] = useState<Locale>(() => {
     const cookieLocale = getCookie('lng');
-    if (cookieLocale === 'fr' || cookieLocale === 'en' || cookieLocale === 'ar') return cookieLocale;
+    if (cookieLocale === 'fr' || cookieLocale === 'en' || cookieLocale === 'ar' || cookieLocale === 'ber') return cookieLocale;
     return getLocaleFromPath(location.pathname);
   });
   const [overrides, setOverrides] = useState<Record<string, Record<string, string>>>({});
@@ -47,7 +45,7 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     const hasVisited = getCookie('lng');
     const currentPath = location.pathname;
     
-    if (!hasVisited && !currentPath.startsWith('/fr') && !currentPath.startsWith('/ar')) {
+    if (!hasVisited && !currentPath.startsWith('/fr') && !currentPath.startsWith('/ar') && !currentPath.startsWith('/ber')) {
       const browserLang = navigator.language.toLowerCase();
       if (browserLang.includes('fr')) {
         setCookie('lng', 'fr', 180);
@@ -72,11 +70,11 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const urlLocale = getLocaleFromPath(location.pathname);
     const cookieLocale = getCookie('lng');
-    const preferred = (cookieLocale === 'fr' || cookieLocale === 'ar' || cookieLocale === 'en')
+    const preferred = (cookieLocale === 'fr' || cookieLocale === 'ar' || cookieLocale === 'en' || cookieLocale === 'ber')
       ? cookieLocale
       : null;
 
-    if (urlLocale === 'en' && (preferred === 'fr' || preferred === 'ar')) {
+    if (urlLocale === 'en' && (preferred === 'fr' || preferred === 'ar' || preferred === 'ber')) {
       const newPath = addLocalePrefix(location.pathname, preferred);
       navigate(newPath + location.search + location.hash, { replace: true });
       return;
@@ -91,6 +89,9 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = locale;
+    if (locale === 'ber') {
+      document.documentElement.lang = 'ber';
+    }
   }, [locale]);
 
   const setLocale = (newLocale: Locale) => {

@@ -26,8 +26,8 @@ const Services = () => {
   const navigate = useNavigate();
   const { t, locale } = useLocale();
   
-  const serviceItems = translations[locale].services.items;
-  const expectationsList = translations[locale].services.expectations.list;
+  const serviceItems = (translations[locale] as any).services?.items ?? (translations.en as any).services.items;
+  const expectationsList = (translations[locale] as any).services?.expectations?.list ?? (translations.en as any).services.expectations.list;
   const seo = seoByLocale[locale];
 
   return (

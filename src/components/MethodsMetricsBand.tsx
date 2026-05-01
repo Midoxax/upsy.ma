@@ -13,7 +13,7 @@ import { translations } from "@/lib/i18n/translations";
 
 export const MethodsMetricsBand = () => {
   const { locale } = useLocale();
-  const band = translations[locale].services.methodsBand;
+  const band = (translations[locale] as any).services?.methodsBand ?? (translations.en as any).services.methodsBand;
 
   return (
     <section className="py-12 md:py-16 bg-accent/5 border-y border-accent/10">

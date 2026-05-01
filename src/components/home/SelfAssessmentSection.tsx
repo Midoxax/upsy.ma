@@ -15,10 +15,11 @@ const SelfAssessmentSection = () => {
   ];
 
   return (
-    <section className="py-28 md:py-36 relative overflow-hidden" id="self-assessment">
+    <section className="py-28 md:py-36 relative overflow-hidden" id="self-assessment" aria-labelledby="self-assessment-heading">
       {/* Warm atmospheric glow — dominant section feel */}
       <div
         className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
         style={{
           background:
             "radial-gradient(ellipse at 50% 40%, hsl(var(--primary) / 0.06), transparent 55%), radial-gradient(ellipse at 50% 80%, hsl(var(--accent) / 0.04), transparent 50%)",
@@ -49,7 +50,7 @@ const SelfAssessmentSection = () => {
             <Clock className="w-3 h-3" /> {t("selfAssessment.duration") || "Takes only 2 minutes"}
           </span>
 
-          <h2 className="text-h2 mb-4">
+          <h2 id="self-assessment-heading" className="text-h2 mb-4">
             {t("selfAssessment.title") || "Understand Yourself Better"}
           </h2>
 

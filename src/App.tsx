@@ -144,6 +144,7 @@ const AppRoutes = () => (
     <Route path="learn/:slug" element={<PageTransition><LearnCourse /></PageTransition>} />
     <Route path="booking/respond/:token" element={<PageTransition><BookingResponse /></PageTransition>} />
     <Route path="b/:slug" element={<BookRedirect />} />
+    <Route path="book-a-call" element={<PageTransition><Contact /></PageTransition>} />
   </>
 );
 
