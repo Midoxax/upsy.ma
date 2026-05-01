@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/hooks/use-toast";
+import CrisisModal from "@/components/dashboard/CrisisModal";
 import { Frown, Meh, Smile, Flame, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -26,6 +27,7 @@ export default function TodaysStateCard({ onLogged }: Props) {
   const [recentAvg, setRecentAvg] = useState<number | null>(null);
   const [todayLogged, setTodayLogged] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [crisisOpen, setCrisisOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -73,6 +75,12 @@ export default function TodaysStateCard({ onLogged }: Props) {
       toast({ title: t("dashboard.error") || "Error", variant: "destructive" });
       return;
     }
+
+    // Show crisis modal for very low mood scores
+    if (score <= 1) {
+      setCrisisOpen(true);
+    }
+
     toast({ title: t("dashboard.moodSaved") || "Check-in saved" });
     await loadState();
     onLogged?.();
@@ -92,6 +100,8 @@ export default function TodaysStateCard({ onLogged }: Props) {
       animate={{ opacity: 1, y: 0 }}
       className="glass-card p-6 space-y-5"
     >
+      <CrisisModal open={crisisOpen} onOpenChange={setCrisisOpen} riskLevel="high" />
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-h3 flex items-center gap-2">
