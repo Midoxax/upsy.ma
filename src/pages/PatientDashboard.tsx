@@ -12,6 +12,7 @@ import {
   BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun, Award,
   FileText, PenSquare, User, CreditCard,
 } from "lucide-react";
+import { ListChecks, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
@@ -29,6 +30,9 @@ import CrisisModal from "@/components/dashboard/CrisisModal";
 import { GamificationPanel } from "@/components/GamificationPanel";
 import ReferralCard from "@/components/dashboard/ReferralCard";
 import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
+import HomeworkTab from "@/components/dashboard/HomeworkTab";
+import ClientProgressTab from "@/components/dashboard/ClientProgressTab";
+import DischargeTab from "@/components/dashboard/DischargeTab";
 import DailyChallengeCard from "@/components/dashboard/DailyChallengeCard";
 import LeaderboardCard from "@/components/dashboard/LeaderboardCard";
 import { useAwardXp } from "@/hooks/useGamification";
@@ -177,6 +181,18 @@ const PatientDashboard = () => {
               <TabsTrigger value="certificates" className="gap-1.5">
                 <Award className="h-4 w-4" />
                 <span className="hidden sm:inline">Certificates</span>
+              </TabsTrigger>
+              <TabsTrigger value="homework" className="gap-1.5">
+                <ListChecks className="h-4 w-4" />
+                <span className="hidden sm:inline">Homework</span>
+              </TabsTrigger>
+              <TabsTrigger value="progress" className="gap-1.5">
+                <TrendingUp className="h-4 w-4" />
+                <span className="hidden sm:inline">Progress</span>
+              </TabsTrigger>
+              <TabsTrigger value="discharge" className="gap-1.5">
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Records</span>
               </TabsTrigger>
             </TabsList>
 
@@ -459,6 +475,18 @@ const PatientDashboard = () => {
             {/* Certificates Tab */}
             <TabsContent value="certificates">
               <CertificatesTab />
+            </TabsContent>
+
+            <TabsContent value="homework">
+              <HomeworkTab role="client" />
+            </TabsContent>
+
+            <TabsContent value="progress">
+              <ClientProgressTab role="client" />
+            </TabsContent>
+
+            <TabsContent value="discharge">
+              <DischargeTab role="client" />
             </TabsContent>
           </Tabs>
         </div>

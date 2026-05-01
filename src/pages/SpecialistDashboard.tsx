@@ -18,6 +18,12 @@ import {
   LifeBuoy,
   Rocket,
 } from "lucide-react";
+import {
+  ClipboardList,
+  ListChecks,
+  TrendingUp,
+  LogOut,
+} from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
 import { AvailabilityTab } from "@/components/dashboard/AvailabilityTab";
 import { PricingTab } from "@/components/dashboard/PricingTab";
@@ -32,6 +38,10 @@ import DocumentsTab from "@/components/dashboard/DocumentsTab";
 import EarningsTab from "@/components/dashboard/EarningsTab";
 import JournalTab from "@/components/dashboard/JournalTab";
 import { BoostsTab } from "@/components/dashboard/BoostsTab";
+import TreatmentPlansTab from "@/components/dashboard/TreatmentPlansTab";
+import HomeworkTab from "@/components/dashboard/HomeworkTab";
+import ClientProgressTab from "@/components/dashboard/ClientProgressTab";
+import DischargeTab from "@/components/dashboard/DischargeTab";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
 import SpecialistBurnoutCard from "@/components/dashboard/SpecialistBurnoutCard";
 import SmartSchedulingCard from "@/components/dashboard/SmartSchedulingCard";
@@ -59,6 +69,22 @@ const SpecialistDashboard = () => {
                 <TabsTrigger value="notes" className="gap-1.5">
                   <FileText className="h-4 w-4" />
                   <span className="hidden sm:inline">Notes</span>
+                </TabsTrigger>
+                <TabsTrigger value="treatment-plans" className="gap-1.5">
+                  <ClipboardList className="h-4 w-4" />
+                  <span className="hidden sm:inline">Plans</span>
+                </TabsTrigger>
+                <TabsTrigger value="homework" className="gap-1.5">
+                  <ListChecks className="h-4 w-4" />
+                  <span className="hidden sm:inline">Homework</span>
+                </TabsTrigger>
+                <TabsTrigger value="progress" className="gap-1.5">
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="hidden sm:inline">Progress</span>
+                </TabsTrigger>
+                <TabsTrigger value="discharge" className="gap-1.5">
+                  <LogOut className="h-4 w-4" />
+                  <span className="hidden sm:inline">Discharge</span>
                 </TabsTrigger>
                 <TabsTrigger value="availability" className="gap-1.5">
                   <Calendar className="h-4 w-4" />
@@ -109,6 +135,10 @@ const SpecialistDashboard = () => {
               <TabsContent value="profile"><ProfileTab /></TabsContent>
               <TabsContent value="sessions"><SessionsTab /></TabsContent>
               <TabsContent value="notes"><SessionNotesTab /></TabsContent>
+              <TabsContent value="treatment-plans"><TreatmentPlansTab /></TabsContent>
+              <TabsContent value="homework"><HomeworkTab role="psychologist" /></TabsContent>
+              <TabsContent value="progress"><ClientProgressTab role="psychologist" /></TabsContent>
+              <TabsContent value="discharge"><DischargeTab role="psychologist" /></TabsContent>
               <TabsContent value="availability"><AvailabilityTab /></TabsContent>
               <TabsContent value="pricing"><PricingTab /></TabsContent>
               <TabsContent value="leads"><LeadsTab /></TabsContent>
