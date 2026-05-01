@@ -7,6 +7,7 @@ import { ArrowRight, Sparkles, Search, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo.webp";
 import { useIntentStore } from "@/stores/intentStore";
 import type { UserIntent } from "@/stores/intentStore";
+import FloatingDecorations from "./FloatingDecorations";
 
 // ── Rotating word pairs (problem → solution) ─────────────────────────────────
 
@@ -307,6 +308,52 @@ const HeroSection = () => {
           WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 80%)",
         }}
       />
+
+      {/* Organic blob background shape */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <svg
+          viewBox="0 0 1200 800"
+          className="absolute -right-[10%] -top-[10%] w-[80%] h-[120%] opacity-[0.07]"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M600,50 C850,0 1100,150 1150,350 C1200,550 1050,750 800,780 C550,810 350,700 200,550 C50,400 100,200 250,100 C400,0 500,50 600,50 Z"
+            fill="hsl(var(--upsy-maroon))"
+          />
+        </svg>
+        <svg
+          viewBox="0 0 800 600"
+          className="absolute -left-[15%] bottom-[5%] w-[50%] h-[60%] opacity-[0.04]"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M200,50 C400,-30 600,100 700,250 C800,400 650,550 400,580 C150,610 0,450 50,280 C100,110 150,80 200,50 Z"
+            fill="hsl(var(--upsy-gold))"
+          />
+        </svg>
+      </div>
+
+      {/* Floating decorative shapes */}
+      <FloatingDecorations preset="hero" />
+
+      {/* Dashed animated path */}
+      <svg
+        className="absolute bottom-0 left-0 w-full h-32 pointer-events-none opacity-20"
+        viewBox="0 0 1920 200"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <motion.path
+          d="M0,100 C300,20 500,180 800,100 C1100,20 1300,160 1920,80"
+          fill="none"
+          stroke="hsl(var(--upsy-maroon))"
+          strokeWidth="2"
+          strokeDasharray="12 8"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2, delay: 1, ease: "easeInOut" }}
+        />
+      </svg>
 
       {/* Floating keywords (when mode = floating) */}
       {showFloating && <FloatingKeywords />}

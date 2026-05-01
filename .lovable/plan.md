@@ -1,87 +1,95 @@
+# Dynamic Homepage Redesign — Process Academy Style
 
-# Clinical Psychotherapy Process — What's Next
+## What Process Academy Does That We Want
 
-## Current State (what exists)
+The Process Academy site is a **scroll-driven storytelling experience** with these standout features:
 
-The platform already covers these stages of the psychotherapy process:
+1. **Bold organic SVG shapes** — Large colored blobs (orange yellow, vine red) that create visual "rooms" as you scroll, replacing flat section backgrounds
+2. **Floating decorative elements** — Triangles, circles, X-shapes, and dashed path lines scattered across sections, gently animated
+3. **A mascot character (man in labiranth)** that appears at transitions, reacts to content, and guides the user through the page with speech bubbles
+4. **Scroll-triggered content reveals** — Cards, text blocks, and images animate into view as you scroll (not all loaded at once)
+5. **Content tiers with visual identity** — Each content tier (Brainsnack, Microlearning, Gigalearning) has its own color, icon, and section shape
+6. **Interactive card carousels** — Horizontally scrollable content cards within sections
+7. **Playful typography** — Large bold sans-serif headlines with supporting descriptive text
 
-| Stage | Feature | Status |
-|-------|---------|--------|
-| 1. Discovery / Matching | Get-Matched funnel, directory, filters | Done |
-| 2. Booking / Scheduling | BookingModal, BookingWidget, availability slots, propose-session | Done |
-| 3. Intake / Anamnesis | Full 8-section anamnesis form with auto-save, consent, review | Done |
-| 4. Assessment / Screening | GAD-7, PHQ-9, assessment lab, automated scoring | Done |
-| 5. Session Delivery | Video call (Jitsi), session types (video/in-person/phone) | Done |
-| 6. Session Notes | Progress notes, intake notes, treatment plan notes, discharge notes (free-text inside note types) | Done |
-| 7. Journaling | Interactive journal entries for clients | Done |
-| 8. Mood Tracking | Mood + stress entries, MPS score computation | Done |
+## How This Adapts to U.Psy
 
-## What's Missing (the gaps in the therapy process)
+We keep the existing intent-engine, section ordering, and clinical branding. The change is purely **visual and interaction design**.
 
-Following the standard psychotherapy lifecycle, these structured clinical features are absent:
+### 1. Organic Section Backgrounds
 
-### Phase A — Treatment Planning (post-intake, pre-ongoing sessions)
-**Treatment Plans** — A structured document (not just a note type) linking:
-- Presenting problems (from anamnesis)
-- Therapeutic goals (SMART format)
-- Selected interventions/approaches (CBT, EMDR, Schema, etc.)
-- Estimated session count / review milestones
-- Status tracking (active / revised / completed)
+Replace flat `bg-background` sections with SVG wave/blob dividers between sections. Each major section gets a themed background shape:
 
-### Phase B — Between-Session Work
-**Homework / Tasks** — Assignments the psychologist gives clients between sessions:
-- Task description, due date, category (worksheet, exercise, reading, reflection)
-- Client completion status + optional response/reflection
-- Visible in both specialist and patient dashboards
+- Hero: warm beige base with a maroon organic blob
+- Self-Assessment: soft gold wave transition
+- Featured Psychologists: neutral with floating neural-node decorations
+- Programs/Learning: blue-tinted wave section
 
-### Phase C — Progress Review
-**Clinical Progress Timeline** — A unified view per client showing:
-- Assessment score trends over time (GAD-7/PHQ-9 chart)
-- Mood trajectory graph
-- Treatment plan milestone markers
-- Session count and frequency
+Implementation: Create a `SectionDivider` component using inline SVGs with `viewBox` preservation. CSS `clip-path` for simpler shapes.
 
-### Phase D — Termination / Discharge
-**Discharge Summary** — A structured document (beyond the note type):
-- Reason for termination (goals met, client request, referral, dropout)
-- Summary of progress (initial vs. final assessment scores)
-- Recommendations / aftercare plan
-- Optional referral to another specialist
+### 2. Floating Decorative Elements
+
+Add a `FloatingDecorations` component that renders small SVG shapes (circles, triangles, dots, dashed paths) positioned absolutely within sections. These use Framer Motion `float` animations (already in the motion language: 300-800ms).
+
+Shapes use the brand palette: Deep Maroon circles, Muted Gold triangles, Soft Beige dots.
+
+### 3. Scroll-Triggered Section Reveals
+
+Enhance the existing `ScrollReveal` component to support multiple animation variants:
+
+- **Slide up + fade** (current default)
+- **Scale from center** (for hero-adjacent sections)
+- **Stagger children** (for card grids)
+
+Each homepage section wrapper gets scroll-triggered entrance animations using Intersection Observer (already used in `useIntentSignals`).
+
+### 4. Mascot / Guide Character
+
+Introduce a simple illustrated character (a "neural guide" — fits the brain/psychology brand) that appears at 2-3 scroll breakpoints with speech bubbles:
+
+- After Hero: "Let's explore what fits you"
+- Before Assessment: "Quick check — 2 minutes"
+- Before CTA: "Ready to take the next step?"
+
+Implementation: A `ScrollGuide` component using Framer Motion `whileInView`. Character is a static SVG/illustration (can use the existing BreathingOrb concept expanded into a face/character, or a simple emoji-style illustration rendered as SVG).
+
+### 5. Interactive Content Cards
+
+In sections like Programs, Learning, and Featured Psychologists — add horizontal scroll carousels on mobile and animated grid reveals on desktop. Cards tilt slightly on hover (CSS `perspective` + `rotateY`).
+
+### 6. Hero Section Enhancements
+
+- Add a large organic background shape (maroon/gold gradient blob) behind the hero text
+- Add a dashed animated path SVG (like Process Academy's dotted trail) connecting the hero to the next section
+- Floating decorative shapes around the edges
+
+### 7. Narrative Connector Upgrade
+
+Replace the current minimal `NarrativeConnector` (just a gradient line) with organic SVG wave dividers that match the section color transitions.
 
 ---
 
-## Proposed Implementation
+## Files to Create/Edit
 
-### 1. Database: New tables via migrations
 
-**`treatment_plans`** — psychologist_id, client_id, presenting_problems (jsonb), goals (jsonb array of SMART goals), interventions (text[]), estimated_sessions (int), status (enum: draft/active/revised/completed), review_at (timestamptz), created/updated timestamps. RLS: psychologist owner + admin read.
+| File                                                   | Action | Purpose                                                                        |
+| ------------------------------------------------------ | ------ | ------------------------------------------------------------------------------ |
+| `src/components/home/SectionDivider.tsx`               | Create | SVG wave/blob dividers between sections                                        |
+| `src/components/home/FloatingDecorations.tsx`          | Create | Decorative SVG shapes (circles, triangles, paths)                              |
+| `src/components/home/ScrollGuide.tsx`                  | Create | Mascot character with speech bubbles at scroll points                          |
+| `src/components/home/HeroSection.tsx`                  | Edit   | Add organic blob background, dashed path, floating shapes                      |
+| `src/pages/Index.tsx`                                  | Edit   | Replace NarrativeConnector with SectionDivider, add ScrollGuide at breakpoints |
+| `src/components/home/FeaturedPsychologistsSection.tsx` | Edit   | Add horizontal scroll carousel and card hover tilt                             |
+| `src/components/home/ProgramsSection.tsx`              | Edit   | Add card carousel and scroll-reveal stagger                                    |
+| `src/components/home/LearningSection.tsx`              | Edit   | Add card carousel                                                              |
+| `src/index.css`                                        | Edit   | Add organic shape CSS utilities, card tilt transforms                          |
 
-**`homework_assignments`** — psychologist_id, client_id, session_id (nullable), title, description, category (enum: worksheet/exercise/reading/reflection/other), due_date, completed_at, client_response (text), created/updated. RLS: psychologist owner + client (own rows) read/update completion.
 
-**`discharge_summaries`** — psychologist_id, client_id, treatment_plan_id (nullable), reason (enum: goals_met/client_request/referral/dropout/other), progress_summary (text), initial_scores (jsonb), final_scores (jsonb), aftercare_recommendations (text), referral_to (uuid nullable), created_at. RLS: psychologist owner + admin.
+No database changes needed. No new dependencies — uses Framer Motion (already installed) and inline SVGs.
 
-### 2. Specialist Dashboard: New tabs/sections
+### Scope Note
 
-- **Treatment Plans tab** — List of plans per client, create/edit form with SMART goal builder, status badges, review reminders.
-- **Homework tab** — Assign tasks to clients, see completion status, filter by client.
-- **Client Progress view** — Chart of assessment scores + mood over time (inside sessions or as a sub-view when viewing a client).
+This is a large visual overhaul. I recommend implementing it in 2 passes:
 
-### 3. Patient Dashboard: New sections
-
-- **My Homework** card/tab — See assigned tasks, mark complete, add reflections.
-- **My Progress** — Visual timeline of their journey (assessment trends, session milestones, goals achieved).
-- **Treatment Plan view** — Read-only view of active treatment plan goals and progress.
-
-### 4. Discharge flow
-
-- Button on specialist dashboard to initiate discharge for a client.
-- Structured form pulling initial/final assessment scores automatically.
-- Generates a discharge summary viewable by both parties.
-
-### Technical notes
-
-- Assessment score charts will use Recharts (already in the project).
-- Treatment plan goals use a JSONB array for flexibility (each goal: description, target_date, status, notes).
-- Homework completion triggers XP award via existing `award_xp` function.
-- All new tables get RLS policies and audit logging via existing `log_sensitive_change` trigger.
-- No new edge functions needed — all CRUD via Supabase client SDK.
+- **Pass 1**: Section dividers, floating decorations, hero blob, enhanced narrative connectors
+- **Pass 2**: Scroll guide mascot, card carousels, hover effects
