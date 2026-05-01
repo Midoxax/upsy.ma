@@ -104,7 +104,9 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-    if (!["video", "in_person", "phone"].includes(body.session_type)) {
+    // Normalize "video" → "online" for consistency with booking modal
+    if (body.session_type === "video") body.session_type = "online";
+    if (!["online", "in_person", "phone"].includes(body.session_type)) {
       return new Response(
         JSON.stringify({ error: "Invalid session type" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
