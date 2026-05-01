@@ -6,10 +6,11 @@ const About = () => {
   const { t, locale } = useLocale();
   
   const loc = translations[locale] as any;
-  const credentialsList = loc.about?.credentials?.list ?? translations.en.about.credentials.list;
-  const philosophyList = loc.about?.philosophy?.list ?? translations.en.about.philosophy.list;
-  const individualList = loc.about?.specializations?.individual?.list ?? translations.en.about.specializations.individual.list;
-  const organizationalList = loc.about?.specializations?.organizational?.list ?? translations.en.about.specializations.organizational.list;
+  const enLoc = translations.en as any;
+  const credentialsList = loc.about?.credentials?.list ?? enLoc.about.credentials.list;
+  const philosophyList = loc.about?.philosophy?.list ?? enLoc.about.philosophy.list;
+  const individualList = loc.about?.specializations?.individual?.list ?? enLoc.about.specializations.individual.list;
+  const organizationalList = loc.about?.specializations?.organizational?.list ?? enLoc.about.specializations.organizational.list;
   
   return (
     <main className="min-h-screen bg-background">
