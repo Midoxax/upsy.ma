@@ -3,6 +3,7 @@
 // Best-effort — never throws back to the caller if email delivery fails.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createLogger } from "../_shared/logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,6 +27,8 @@ const escape = (s: string) =>
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const log = createLogger(req, "notify-proposal-response");
 
   try {
     const body = (await req.json()) as Body;
@@ -51,7 +54,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (bErr || !booking) {
-      console.warn("[notify-proposal-response] booking not found", bErr);
+      log.warn("booking not found", { error: bErr?.message });
       return new Response(JSON.stringify({ ok: false, error: "booking_not_found" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -156,17 +159,17 @@ Deno.serve(async (req) => {
               html,
             }),
           });
-          if (!resp.ok) console.warn("[notify-proposal-response] send failed", await resp.text());
+          if (!resp.ok) log.warn("email send failed", { status: resp.status });
           return resp.ok;
         } catch (e) {
-          console.warn("[notify-proposal-response] send error", e);
+          log.warn("email send error", { error: String(e) });
           return false;
         }
       };
       if (psyEmail) psyEmailSent = await send(psyEmail, subjectPsy, psyHtml);
       if (patientEmail) patientEmailSent = await send(patientEmail, subjectPatient, patientHtml);
     } else {
-      console.warn("[notify-proposal-response] RESEND_API_KEY not set — skipping email");
+      log.warn("RESEND_API_KEY not set — skipping email");
     }
 
     // Best-effort in-app notification for the psychologist
@@ -179,7 +182,7 @@ Deno.serve(async (req) => {
         data: { booking_id: booking.id, action: body.action },
       });
     } catch (e) {
-      console.warn("[notify-proposal-response] in-app notification failed", e);
+      log.warn("in-app notification failed", { error: String(e) });
     }
 
     return new Response(
@@ -191,7 +194,7 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e: any) {
-    console.error("[notify-proposal-response] unhandled", e);
+    log.error("unhandled error", e);
     return new Response(JSON.stringify({ error: e?.message ?? "Internal error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

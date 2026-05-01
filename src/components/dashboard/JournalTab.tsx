@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import CrisisModal from "@/components/dashboard/CrisisModal";
 import {
   BookOpen, Plus, Pencil, Trash2, Calendar, Smile, Frown, Meh, Heart,
   Loader2, ChevronDown,
@@ -49,6 +50,7 @@ const JournalTab = () => {
   const [moodTag, setMoodTag] = useState("");
   const [saving, setSaving] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [crisisOpen, setCrisisOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -69,6 +71,12 @@ const JournalTab = () => {
   const saveEntry = async () => {
     if (!user || !content.trim()) return;
     setSaving(true);
+
+    // Trigger crisis modal for distress moods
+    if (moodTag === "struggling") {
+      setCrisisOpen(true);
+    }
+
     const { error } = await supabase.from("journal_entries").insert({
       user_id: user.id,
       title: title.trim() || null,
@@ -88,7 +96,7 @@ const JournalTab = () => {
     }
   };
 
-  const deleteEntry = async (id: string) => {
+   const deleteEntry = async (id: string) => {
     await supabase.from("journal_entries").delete().eq("id", id);
     setEntries((prev) => prev.filter((e) => e.id !== id));
     toast({ title: "Deleted", description: "Journal entry removed" });
@@ -110,6 +118,8 @@ const JournalTab = () => {
 
   return (
     <div className="space-y-6">
+      <CrisisModal open={crisisOpen} onOpenChange={setCrisisOpen} riskLevel="moderate" />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

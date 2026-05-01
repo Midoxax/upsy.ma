@@ -3,6 +3,7 @@
 // and sends a branded email with Accept / Decline links.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createLogger } from "../_shared/logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,6 +34,8 @@ function genToken() {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const log = createLogger(req, "propose-session");
 
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -115,7 +118,7 @@ Deno.serve(async (req) => {
       _duration: body.duration_minutes,
     });
     if (slotErr) {
-      console.error("[propose-session] slot check error", slotErr);
+      log.error("slot check error", slotErr);
       return new Response(
         JSON.stringify({ error: "Could not validate slot" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -186,7 +189,7 @@ Deno.serve(async (req) => {
       .single();
 
     if (insertErr) {
-      console.error("[propose-session] insert error", insertErr);
+      log.error("insert error", insertErr);
       return new Response(
         JSON.stringify({ error: insertErr.message }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -266,13 +269,14 @@ Deno.serve(async (req) => {
         });
         if (!resp.ok) {
           const text = await resp.text();
-          console.warn("[propose-session] email send failed", text);
+          log.warn("email send failed", { response: text });
         }
       } catch (e) {
-        console.warn("[propose-session] email error", e);
+        log.warn("email error", { error: String(e) });
       }
     }
 
+    log.info("proposal created", { bookingId: booking.id, emailSent: !!RESEND_API_KEY });
     return new Response(
       JSON.stringify({
         ok: true,
@@ -282,7 +286,7 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e: any) {
-    console.error("[propose-session] unhandled", e);
+    log.error("unhandled error", e);
     return new Response(
       JSON.stringify({ error: e?.message ?? "Internal error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

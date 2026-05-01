@@ -3,6 +3,7 @@
 // to estimate risk level. NEVER stores user content.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createLogger } from "../_shared/logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -71,6 +72,8 @@ async function aiClassify(text: string): Promise<RiskLevel> {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const log = createLogger(req, "crisis-screening");
+
   try {
     // Per-user (if authed) + per-IP throttle. Crisis screening is invoked
     // automatically while typing — keep limits generous but bounded.
@@ -121,6 +124,7 @@ Deno.serve(async (req) => {
     const kw = keywordScreen(text);
     // Short-circuit: keyword 'high' is always high.
     if (kw === "high") {
+      log.warn("high risk via keyword match");
       return new Response(JSON.stringify({ risk_level: "high", source: "keyword" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -131,10 +135,12 @@ Deno.serve(async (req) => {
     const order: Record<RiskLevel, number> = { low: 0, moderate: 1, high: 2 };
     const finalRisk: RiskLevel = order[ai] >= order[kw] ? ai : kw;
 
+    if (finalRisk !== "low") log.info("risk detected", { level: finalRisk, source: "blended" });
     return new Response(JSON.stringify({ risk_level: finalRisk, source: "blended" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    log.error("unhandled error", e);
     return new Response(JSON.stringify({ risk_level: "low", error: String(e) }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
