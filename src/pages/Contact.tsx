@@ -25,7 +25,7 @@ const contactSchema = z.object({
 const Contact = () => {
   const { t, locale } = useLocale();
   const { toast } = useToast();
-  const faqQuestions = translations[locale].contact.faq.questions;
+  const faqQuestions = (translations[locale] as any).contact?.faq?.questions ?? (translations.en as any).contact.faq.questions;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
 
