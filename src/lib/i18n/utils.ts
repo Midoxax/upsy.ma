@@ -1,19 +1,20 @@
-const SUPPORTED_LOCALES = ['fr', 'ar'] as const;
+const SUPPORTED_LOCALES = ['fr', 'ar', 'ber'] as const;
 
-export const getLocaleFromPath = (pathname: string): 'en' | 'fr' | 'ar' => {
-  // Match /fr, /fr/, /fr/anything or /ar, /ar/, /ar/anything
-  const match = pathname.match(/^\/(fr|ar)(?:\/|$)/);
-  if (match) return match[1] as 'fr' | 'ar';
+export type Locale = 'en' | 'fr' | 'ar' | 'ber';
+
+export const getLocaleFromPath = (pathname: string): Locale => {
+  const match = pathname.match(/^\/(fr|ar|ber)(?:\/|$)/);
+  if (match) return match[1] as Locale;
   return 'en';
 };
 
 export const stripLocalePrefix = (pathname: string): string => {
-  const match = pathname.match(/^\/(fr|ar)(\/.*)?$/);
+  const match = pathname.match(/^\/(fr|ar|ber)(\/.*)?$/);
   if (match) return match[2] || '/';
   return pathname;
 };
 
-export const addLocalePrefix = (pathname: string, locale: 'en' | 'fr' | 'ar'): string => {
+export const addLocalePrefix = (pathname: string, locale: Locale): string => {
   // Ensure pathname starts with /
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
   if (locale === 'en') return path;
