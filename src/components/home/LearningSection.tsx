@@ -6,6 +6,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import FloatingDecorations from "./FloatingDecorations";
 
 const LearningSection = () => {
   const { t } = useLocale();
@@ -37,7 +38,8 @@ const LearningSection = () => {
       ];
 
   return (
-    <section className="section-spacing liquid-bg">
+    <section className="section-spacing liquid-bg relative">
+      <FloatingDecorations preset="clinical" />
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-12">
@@ -49,10 +51,11 @@ const LearningSection = () => {
         </ScrollReveal>
 
         <StaggerContainer staggerDelay={0.1}>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="scroll-carousel md:!grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0">
             {displayCourses.map((course) => (
               <StaggerItem key={course.title}>
-                <div className="glass-card p-6 h-full flex flex-col">
+                <div className="card-tilt">
+                <div className="glass-card p-6 h-full flex flex-col min-w-0">
                   <div className="w-full h-32 rounded-xl mb-4 flex items-center justify-center bg-primary/5 border border-primary/10">
                     <span className="text-primary/30 text-4xl font-bold">{course.title.charAt(0)}</span>
                   </div>
@@ -64,6 +67,7 @@ const LearningSection = () => {
                   <Button variant="secondary" size="sm" className="mt-auto w-full" asChild>
                     <Link to="/resources">{t("learning.startCourse") || "Start Course"}</Link>
                   </Button>
+                </div>
                 </div>
               </StaggerItem>
             ))}
