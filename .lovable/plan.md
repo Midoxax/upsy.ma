@@ -1,72 +1,67 @@
 
-# Sprint 1 Continuation — Non-Payment Items
+# Fill Decoys, Fix Sessions & Video, Dynamic Hero
 
-Payments are parked. Here's what I'll tackle next, ordered by impact on performance and client retention.
+## What's actually broken / decoy
 
----
+**Assessments:** 8 of 10 assessments have ZERO questions — only GAD-7 and PHQ-9 are real. Clicking "Start" on any of the other 8 shows a "no questions" error. These are:
+- Burnout Assessment (12 questions needed)
+- Stress Perception Scale (10 questions)
+- Emotional Intelligence Assessment (20 questions)
+- Psychological Resilience Scale (14 questions)
+- Competition Anxiety Inventory (15 questions — athlete)
+- Confidence Profiling (10 questions — athlete)
+- Focus & Attentional Control (12 questions — athlete)
+- Organizational Wellbeing Survey (25 questions — organization)
 
-## 1. Crisis Safety — Full Coverage (P0)
+**Video meetings:** The video room works — a DB trigger auto-generates `video_room_id` on every booking insert. The Jitsi embed logic is solid. The issue is that `propose-session` (specialist proposes to client) creates a booking with `session_type: "video"`, but the VideoCall page checks `session_type` values `"online"` — there's a mismatch. Also, the booking modal uses `getClaims()` which may fail on older supabase-js CDN versions.
 
-**Problem:** CrisisModal + useCrisisScreening exist but are only wired into PatientDashboard. The AI Assistant (Nour), JournalTab, and TodaysStateCard have zero crisis detection.
-
-**Work:**
-- Wire crisis screening into **AIAssistant** — if the AI response or user message contains distress keywords, surface the CrisisModal.
-- Add a low-mood trigger in **JournalTab** — when a user saves a journal entry flagged by the edge function, show CrisisModal.
-- Add a low-score trigger in **TodaysStateCard** — if the user's self-reported state is very low, surface the modal.
-- Write an audit row to `crisis_screenings` on every trigger so admin can review coverage.
-- Verify the `crisis-screening` edge function works end-to-end by calling it.
-
----
-
-## 2. PWA Completion — Offline + Install Prompt + Push (P1)
-
-**Problem:** Manifest exists, Install page exists, but no service worker, no install prompt logic, no push. Icons reuse a single favicon.
-
-**Work:**
-- Add `vite-plugin-pwa` with the guarded config (disabled in iframe/preview, NetworkFirst for HTML, `navigateFallbackDenylist` for `/~oauth`).
-- Generate proper 192px and 512px icons (+ maskable variant) from the existing favicon.
-- Wire `beforeinstallprompt` into `InstallAppButton` so it shows a real native prompt on supported browsers.
-- Create a `push_subscriptions` table (migration) to store push tokens per user.
-- Add a lightweight push subscription flow on dashboard load (ask permission, store token).
-- Hook `send-notification` edge function to also dispatch web push via the Web Push API for users who opted in.
+**Hero section:** Currently 100% static — same headline, same CTAs, same stats for everyone. The intent engine already powers section reordering on the homepage but the hero doesn't react to it.
 
 ---
 
-## 3. Notification Preferences UI (P1)
+## Plan
 
-**Problem:** `notification_preferences` table exists but there's no UI for users to toggle channels (email / in-app / push) per event type.
+### 1. Populate all 8 empty assessments (data insert)
 
-**Work:**
-- Add a "Notification Settings" section to the patient and specialist dashboards (or a shared settings page).
-- Read/write `notification_preferences` rows per user.
-- Respect these preferences in `send-notification` and `notify-proposal-response` edge functions before dispatching.
+Insert clinically-validated questions for each assessment using the `insert` tool. Each question gets the standard 4-point Likert scale (0-3: Not at all / Several days / More than half the days / Nearly every day) or a domain-appropriate scale. All based on established instruments:
+
+- **Burnout:** Maslach-derived 12-item (dimensions: exhaustion, cynicism, efficacy)
+- **Stress:** Cohen PSS-10 (dimension: perceived_stress)
+- **Emotional Intelligence:** Wong & Law WLEIS-inspired 20-item (self_emotion, others_emotion, use_of_emotion, regulation)
+- **Resilience:** Connor-Davidson CD-RISC-derived 14-item (tenacity, adaptability, support)
+- **Competition Anxiety:** CSAI-2-derived 15-item (cognitive_anxiety, somatic_anxiety, self_confidence)
+- **Confidence:** Sport Confidence-derived 10-item (mastery, demonstration, physical_self)
+- **Focus:** TOPS-derived 12-item (concentration, distraction_control, mental_rehearsal)
+- **Org Wellbeing:** 25-item (engagement, psychological_safety, workload, leadership, social_connection)
+
+### 2. Fix session type mismatch for video
+
+The `propose-session` function uses `session_type: "video"` but the `BookingModal` and `VideoCall` page use `"online"`. Fix:
+- Update `propose-session` to accept `"online"` as a valid session type value
+- Or normalize by accepting both `"video"` and `"online"` in VideoCall and the booking widget
+
+### 3. Fix `getClaims` compatibility in booking flow
+
+Replace `supabase.auth.getClaims(token)` with `supabase.auth.getUser()` in `create-booking-payment` and `simulate-payment-webhook`. This is the standard method and avoids version-dependent failures.
+
+### 4. Make hero section dynamic (intent-reactive)
+
+Wire the hero to read from the intent store (already exists: `useIntentSignals`). Based on the detected intent, change:
+
+| Intent | Headline | CTA |
+|--------|----------|-----|
+| EXPLORING | "Measure. Identify. Train. Apply." (current) | Start Assessment |
+| READY_TO_ACT | "Find your psychologist today" | Find My Match |
+| RESEARCHING | "Evidence-based mental performance" | Explore Methods |
+| SKEPTICAL | "Trusted by 50+ verified specialists" | See How It Works |
+
+The hero copy, CTA text, CTA destination, and trust strip stats will adapt. Transition between states uses Framer Motion crossfade.
 
 ---
 
-## 4. Structured Logging Rollout (P0)
+## Technical details
 
-**Problem:** `_shared/logger.ts` was created but no edge functions use it yet. 17 raw `console.error` calls remain.
-
-**Work:**
-- Import and use the structured logger in the most critical edge functions: `crisis-screening`, `propose-session`, `notify-proposal-response`, `ai-assistant`, `create-booking-payment`.
-- Replace raw `console.error` with `logger.error()` calls across edge functions.
-- Add `requestId` header forwarding for traceability.
-
----
-
-## 5. Sentry/PostHog Activation Reminder
-
-SDKs are installed and wired. They silently no-op without keys. I'll add a small admin-visible banner (or console note) reminding that observability is inactive until you provide the DSN/key. No code blocker — everything works without them.
-
----
-
-## Technical Details
-
-- **New migration:** `push_subscriptions` table with `user_id`, `endpoint`, `p256dh`, `auth`, `created_at`, RLS policy (users manage own rows).
-- **vite-plugin-pwa:** Added to `vite.config.ts` with iframe/preview guard in `src/main.tsx`.
-- **Edge function changes:** Import `logger` in 5+ functions, add crisis triggers to 3 components.
-- **No breaking changes** to existing flows.
-
----
-
-Shall I proceed?
+- **Assessment data:** ~118 INSERT rows into `assessment_questions` via the insert tool (no schema changes needed)
+- **Edge functions modified:** `propose-session` (session type), `create-booking-payment` (auth method), `simulate-payment-webhook` (auth method)
+- **Frontend modified:** `HeroSection.tsx` (intent-reactive copy), `VideoCall.tsx` (accept both "video" and "online")
+- **No new tables or migrations**
