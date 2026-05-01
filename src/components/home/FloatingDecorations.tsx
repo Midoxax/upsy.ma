@@ -19,6 +19,10 @@ interface Shape {
   rotation?: number;
 }
 
+// Respect prefers-reduced-motion
+const prefersReducedMotion =
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
 const presets: Record<DecorationPreset, Shape[]> = {
   hero: [
     { type: "circle", x: "5%", y: "15%", size: 80, color: "hsl(var(--upsy-maroon) / 0.12)", duration: 8, delay: 0 },
@@ -56,24 +60,30 @@ const presets: Record<DecorationPreset, Shape[]> = {
 };
 
 function renderShape(shape: Shape, index: number) {
-  const floatAnim = {
-    y: [0, -12, 0, 8, 0],
-    rotate: shape.rotation ? [0, shape.rotation / 4, 0, -shape.rotation / 4, 0] : undefined,
-    opacity: [0.6, 1, 0.8, 1, 0.6],
-  };
+  const floatAnim = prefersReducedMotion
+    ? { opacity: 0.7 }
+    : {
+        y: [0, -12, 0, 8, 0],
+        rotate: shape.rotation ? [0, shape.rotation / 4, 0, -shape.rotation / 4, 0] : undefined,
+        opacity: [0.6, 1, 0.8, 1, 0.6],
+      };
+
+  const floatTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: shape.duration, delay: shape.delay, repeat: Infinity, ease: "easeInOut" as const };
 
   const common = {
     className: "absolute pointer-events-none",
     style: { left: shape.x, top: shape.y } as React.CSSProperties,
     animate: floatAnim,
-    transition: { duration: shape.duration, delay: shape.delay, repeat: Infinity, ease: "easeInOut" as const },
+    transition: floatTransition,
   };
 
   switch (shape.type) {
     case "circle":
       return (
         <motion.div key={index} {...common}>
-          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100">
+          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100" role="presentation">
             <circle cx="50" cy="50" r="45" fill={shape.color} />
           </svg>
         </motion.div>
@@ -81,7 +91,7 @@ function renderShape(shape: Shape, index: number) {
     case "ring":
       return (
         <motion.div key={index} {...common}>
-          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100">
+          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100" role="presentation">
             <circle cx="50" cy="50" r="40" fill="none" stroke={shape.color} strokeWidth="6" />
           </svg>
         </motion.div>
@@ -89,7 +99,7 @@ function renderShape(shape: Shape, index: number) {
     case "triangle":
       return (
         <motion.div key={index} {...common}>
-          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100">
+          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100" role="presentation">
             <polygon points="50,10 90,90 10,90" fill={shape.color} />
           </svg>
         </motion.div>
@@ -97,7 +107,7 @@ function renderShape(shape: Shape, index: number) {
     case "dot":
       return (
         <motion.div key={index} {...common}>
-          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100">
+          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100" role="presentation">
             <circle cx="50" cy="50" r="50" fill={shape.color} />
           </svg>
         </motion.div>
@@ -105,7 +115,7 @@ function renderShape(shape: Shape, index: number) {
     case "cross":
       return (
         <motion.div key={index} {...common}>
-          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100">
+          <svg width={shape.size} height={shape.size} viewBox="0 0 100 100" role="presentation">
             <line x1="20" y1="20" x2="80" y2="80" stroke={shape.color} strokeWidth="8" strokeLinecap="round" />
             <line x1="80" y1="20" x2="20" y2="80" stroke={shape.color} strokeWidth="8" strokeLinecap="round" />
           </svg>
