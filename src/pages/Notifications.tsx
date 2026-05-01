@@ -29,9 +29,6 @@ export default function Notifications() {
   const markRead = useMarkRead();
   const markAll = useMarkAllRead();
 
-  const { data: prefs } = useNotificationPreferences();
-  const updatePrefs = useUpdatePreferences();
-
   const items = (data?.items ?? []).filter((n) =>
     filter === "unread" ? !n.read_at : true
   );
