@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useLocale } from "@/contexts/LocaleContext";
 import { ArrowRight, Sparkles, Search, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo.webp";
 import { useIntentStore } from "@/stores/intentStore";
@@ -107,7 +106,6 @@ const heroVariants: Record<UserIntent, HeroVariant> = {
 };
 
 const HeroSection = () => {
-  const { t, locale } = useLocale();
   const intent = useIntentStore((s) => s.intent);
   const variant = heroVariants[intent];
 
