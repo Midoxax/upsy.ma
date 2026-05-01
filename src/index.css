@@ -159,6 +159,11 @@
     /* ── Dark Shadows ── */
     --shadow-soft: 0 4px 20px rgba(0,0,0,0.3);
     --shadow-gold: 0 0 24px rgba(255,179,0,0.2);
+
+    /* ── Dark Brand Aliases ── */
+    --upsy-maroon: var(--burgundy);
+    --upsy-beige: 0 0% 14%;
+    --upsy-gold: var(--gold-accent);
   }
 
   * {
