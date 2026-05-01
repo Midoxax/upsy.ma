@@ -541,6 +541,32 @@
 
   /* ── Mega Menu (legacy compat) ── */
   @keyframes megaMenuSlide {
+  }
+
+  /* ── Interactive Card Effects ── */
+  .card-tilt {
+    perspective: 800px;
+  }
+  .card-tilt > * {
+    transition: transform 0.35s ease;
+  }
+  .card-tilt:hover > * {
+    transform: rotateY(-2deg) rotateX(1deg) translateY(-4px);
+  }
+
+  /* ── Horizontal scroll carousel (mobile) ── */
+  .scroll-carousel {
+    @apply flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-carousel > * {
+    @apply snap-start flex-shrink-0;
+    width: 80%;
+    max-width: 320px;
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }

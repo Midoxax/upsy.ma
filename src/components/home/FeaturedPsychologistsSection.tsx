@@ -7,6 +7,7 @@ import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedPsychologists } from "@/services/psychologistsService";
 import { useAssessmentStore } from "@/stores/assessmentStore";
+import FloatingDecorations from "./FloatingDecorations";
 
 const FeaturedPsychologistsSection = () => {
   const { t } = useLocale();
@@ -26,7 +27,8 @@ const FeaturedPsychologistsSection = () => {
       ];
 
   return (
-    <section className="section-spacing liquid-bg">
+    <section className="section-spacing liquid-bg relative">
+      <FloatingDecorations preset="neural" />
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-12">
@@ -44,10 +46,11 @@ const FeaturedPsychologistsSection = () => {
         </ScrollReveal>
 
         <StaggerContainer staggerDelay={0.1}>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="scroll-carousel md:!grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0">
             {displayPsychologists.map((psych: any) => (
               <StaggerItem key={psych.id}>
-                <div className="glass-card p-6 text-center">
+                <div className="card-tilt">
+                <div className="glass-card p-6 text-center min-w-0">
                   <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden bg-primary/10 border-2 border-primary/30">
                     {psych.photo_url ? (
                       <img src={psych.photo_url} alt={psych.full_name} className="w-full h-full object-cover" />
@@ -82,6 +85,7 @@ const FeaturedPsychologistsSection = () => {
                   <Button variant="primary" size="sm" asChild className="w-full">
                     <Link to={`/psychologists/${psych.slug}`}>{t("featured.bookSession") || "Book Session"}</Link>
                   </Button>
+                </div>
                 </div>
               </StaggerItem>
             ))}

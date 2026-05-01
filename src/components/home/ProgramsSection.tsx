@@ -4,6 +4,7 @@ import { Heart, Activity, Leaf, ShieldCheck, ArrowRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
+import FloatingDecorations from "./FloatingDecorations";
 
 const programs = [
   { icon: Heart, titleKey: "programs.clinical.title" as const, descKey: "programs.clinical.desc" as const, fallbackTitle: "Clinical Care", fallbackDesc: "Evidence-based therapy for anxiety, depression, and trauma.", audiences: ["Adults", "Students"] },
@@ -16,7 +17,8 @@ const ProgramsSection = () => {
   const { t } = useLocale();
 
   return (
-    <section className="section-spacing liquid-bg">
+    <section className="section-spacing liquid-bg relative">
+      <FloatingDecorations preset="warm" />
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-12">
@@ -28,10 +30,11 @@ const ProgramsSection = () => {
         </ScrollReveal>
 
         <StaggerContainer staggerDelay={0.1}>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="scroll-carousel md:!grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0">
             {programs.map((program) => (
               <StaggerItem key={program.fallbackTitle}>
-                <div className="glass-card p-7 h-full">
+                <div className="card-tilt">
+                <div className="glass-card p-7 h-full min-w-0">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center mb-5 bg-primary/8 border-2 border-primary/15">
                     <program.icon className="w-6 h-6 text-primary" />
                   </div>
@@ -44,6 +47,7 @@ const ProgramsSection = () => {
                       </span>
                     ))}
                   </div>
+                </div>
                 </div>
               </StaggerItem>
             ))}
