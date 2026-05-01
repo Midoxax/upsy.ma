@@ -3839,4 +3839,4 @@ export const translations = {
     contact: { title: "ⴰⵎⵢⴰⵡⴰⴹ", description: "ⵎⵢⴰⵡⴰⴹ ⴷⵉⴷⵏⵖ." },
     legal: { title: "ⴰⵣⵔⴼ", description: "ⵜⵉⵏⵏⵓⵜⵍⴰ ⴷ ⵜⵡⵉⵍⴰⵡⵉⵏ." },
   },
-}: Record<string, any>;
+};
