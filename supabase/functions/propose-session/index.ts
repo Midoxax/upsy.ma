@@ -16,7 +16,7 @@ interface Body {
   client_name?: string;
   scheduled_at: string;
   duration_minutes: number;
-  session_type: "video" | "in_person" | "phone";
+  session_type: "online" | "video" | "in_person" | "phone";
   notes?: string;
 }
 
