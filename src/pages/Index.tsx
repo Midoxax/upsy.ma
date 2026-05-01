@@ -10,6 +10,9 @@ import PathwaysSection from "@/components/home/PathwaysSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
+import SectionDivider from "@/components/home/SectionDivider";
+import type { DividerVariant, DividerColor } from "@/components/home/SectionDivider";
+import ScrollGuide from "@/components/home/ScrollGuide";
 
 // Lazy-loaded below-the-fold sections
 const ProgramsSection = lazy(() => import("@/components/home/ProgramsSection"));
@@ -232,18 +235,33 @@ const SectionFallback = () => (
   </div>
 );
 
-const NarrativeConnector = () => (
-  <div className="relative h-16 md:h-24 overflow-hidden" aria-hidden="true">
-    <div
-      className="absolute inset-x-0 top-0 h-full"
-      style={{
-        background:
-          "linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.03) 50%, transparent)",
-      }}
-    />
-    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-px h-8 bg-gradient-to-b from-transparent via-primary/10 to-transparent" />
-  </div>
-);
+// ── Divider config per transition ──
+
+const dividerSequence: { variant: DividerVariant; color: DividerColor; flip?: boolean }[] = [
+  { variant: "wave", color: "primary" },
+  { variant: "blob", color: "gold" },
+  { variant: "curve", color: "maroon" },
+  { variant: "wave", color: "beige", flip: true },
+  { variant: "blob", color: "primary" },
+  { variant: "curve", color: "gold" },
+  { variant: "wave", color: "maroon" },
+  { variant: "blob", color: "beige", flip: true },
+  { variant: "curve", color: "primary" },
+  { variant: "wave", color: "gold" },
+  { variant: "blob", color: "maroon" },
+  { variant: "curve", color: "beige", flip: true },
+  { variant: "wave", color: "primary" },
+  { variant: "blob", color: "gold" },
+  { variant: "curve", color: "maroon" },
+];
+
+// ── Scroll guide messages at specific breakpoint indices ──
+
+const guideMessages: Record<number, { message: string; position: "left" | "right"; variant: "wave" | "point" | "think" }> = {
+  1: { message: "Let's explore what fits you best 🧠", position: "right", variant: "wave" },
+  4: { message: "Quick check — just 2 minutes ⏱️", position: "left", variant: "point" },
+  10: { message: "Ready to take the next step? 🚀", position: "right", variant: "think" },
+};
 
 const Index = () => {
   // Phase 1: Collect signals → classify → lock intent
@@ -256,10 +274,15 @@ const Index = () => {
     <main className="flex-1">
       {orderedSections.map((section, index) => {
         const Section = section.component;
+        const divider = dividerSequence[index % dividerSequence.length];
+        const guide = guideMessages[index];
         return (
           <Suspense key={section.key} fallback={<SectionFallback />}>
+            {guide && <ScrollGuide message={guide.message} position={guide.position} variant={guide.variant} />}
             <Section />
-            {index < orderedSections.length - 1 && <NarrativeConnector />}
+            {index < orderedSections.length - 1 && (
+              <SectionDivider variant={divider.variant} color={divider.color} flip={divider.flip} />
+            )}
           </Suspense>
         );
       })}
