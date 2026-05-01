@@ -50,7 +50,7 @@ const SelfAssessmentSection = () => {
             <Clock className="w-3 h-3" /> {t("selfAssessment.duration") || "Takes only 2 minutes"}
           </span>
 
-          <h2 className="text-h2 mb-4">
+          <h2 id="self-assessment-heading" className="text-h2 mb-4">
             {t("selfAssessment.title") || "Understand Yourself Better"}
           </h2>
 
