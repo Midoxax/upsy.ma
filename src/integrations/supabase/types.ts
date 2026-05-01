@@ -1283,6 +1283,63 @@ export type Database = {
         }
         Relationships: []
       }
+      discharge_summaries: {
+        Row: {
+          aftercare_recommendations: string | null
+          client_id: string
+          created_at: string
+          final_scores: Json | null
+          id: string
+          initial_scores: Json | null
+          progress_summary: string | null
+          psychologist_id: string
+          reason: Database["public"]["Enums"]["discharge_reason"]
+          referral_to: string | null
+          treatment_plan_id: string | null
+        }
+        Insert: {
+          aftercare_recommendations?: string | null
+          client_id: string
+          created_at?: string
+          final_scores?: Json | null
+          id?: string
+          initial_scores?: Json | null
+          progress_summary?: string | null
+          psychologist_id: string
+          reason?: Database["public"]["Enums"]["discharge_reason"]
+          referral_to?: string | null
+          treatment_plan_id?: string | null
+        }
+        Update: {
+          aftercare_recommendations?: string | null
+          client_id?: string
+          created_at?: string
+          final_scores?: Json | null
+          id?: string
+          initial_scores?: Json | null
+          progress_summary?: string | null
+          psychologist_id?: string
+          reason?: Database["public"]["Enums"]["discharge_reason"]
+          referral_to?: string | null
+          treatment_plan_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discharge_summaries_referral_to_fkey"
+            columns: ["referral_to"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discharge_summaries_treatment_plan_id_fkey"
+            columns: ["treatment_plan_id"]
+            isOneToOne: false
+            referencedRelation: "treatment_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           created_at: string | null
@@ -1483,6 +1540,59 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      homework_assignments: {
+        Row: {
+          category: Database["public"]["Enums"]["homework_category"]
+          client_id: string
+          client_response: string | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          psychologist_id: string
+          session_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["homework_category"]
+          client_id: string
+          client_response?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          psychologist_id: string
+          session_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["homework_category"]
+          client_id?: string
+          client_response?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          psychologist_id?: string
+          session_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "homework_assignments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       journal_entries: {
         Row: {
@@ -3868,6 +3978,51 @@ export type Database = {
         }
         Relationships: []
       }
+      treatment_plans: {
+        Row: {
+          client_id: string
+          created_at: string
+          estimated_sessions: number | null
+          goals: Json
+          id: string
+          interventions: string[]
+          notes: string | null
+          presenting_problems: Json
+          psychologist_id: string
+          review_at: string | null
+          status: Database["public"]["Enums"]["treatment_plan_status"]
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          estimated_sessions?: number | null
+          goals?: Json
+          id?: string
+          interventions?: string[]
+          notes?: string | null
+          presenting_problems?: Json
+          psychologist_id: string
+          review_at?: string | null
+          status?: Database["public"]["Enums"]["treatment_plan_status"]
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          estimated_sessions?: number | null
+          goals?: Json
+          id?: string
+          interventions?: string[]
+          notes?: string | null
+          presenting_problems?: Json
+          psychologist_id?: string
+          review_at?: string | null
+          status?: Database["public"]["Enums"]["treatment_plan_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_badges: {
         Row: {
           badge_slug: string
@@ -4407,6 +4562,19 @@ export type Database = {
         | "assessment_completion"
         | "psychologist_accreditation"
         | "mooc_training"
+      discharge_reason:
+        | "goals_met"
+        | "client_request"
+        | "referral"
+        | "dropout"
+        | "other"
+      homework_category:
+        | "worksheet"
+        | "exercise"
+        | "reading"
+        | "reflection"
+        | "other"
+      treatment_plan_status: "draft" | "active" | "revised" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4548,6 +4716,21 @@ export const Constants = {
         "psychologist_accreditation",
         "mooc_training",
       ],
+      discharge_reason: [
+        "goals_met",
+        "client_request",
+        "referral",
+        "dropout",
+        "other",
+      ],
+      homework_category: [
+        "worksheet",
+        "exercise",
+        "reading",
+        "reflection",
+        "other",
+      ],
+      treatment_plan_status: ["draft", "active", "revised", "completed"],
     },
   },
 } as const
