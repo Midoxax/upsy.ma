@@ -42,6 +42,11 @@
     --warm-beige: 30 33% 95%;        /* #F7F3F0 - warm background */
     --warm-gold: 36 35% 60%;         /* #C8A96A - premium accent */
 
+    /* ── Brand Aliases (for decorative components) ── */
+    --upsy-maroon: var(--warm-maroon);
+    --upsy-beige: var(--warm-beige);
+    --upsy-gold: var(--warm-gold);
+
     /* ── Light Semantic Tokens ── */
     --background: 30 33% 97%;
     --foreground: 0 0% 10%;
