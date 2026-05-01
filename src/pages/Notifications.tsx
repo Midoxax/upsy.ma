@@ -20,6 +20,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import SEOHead from "@/components/SEOHead";
+import NotificationPreferencesCard from "@/components/dashboard/NotificationPreferencesCard";
 
 export default function Notifications() {
   const navigate = useNavigate();
