@@ -1,12 +1,5 @@
 import { lazy, Suspense, ComponentType } from "react";
 import HeroSection from "@/components/home/HeroSection";
-import TrustSection from "@/components/home/TrustSection";
-import SelfAssessmentSection from "@/components/home/SelfAssessmentSection";
-import FeaturedPsychologistsSection from "@/components/home/FeaturedPsychologistsSection";
-import HowItWorksSection from "@/components/home/HowItWorksSection";
-import FounderSection from "@/components/home/FounderSection";
-import PillarsSection from "@/components/home/PillarsSection";
-import PathwaysSection from "@/components/home/PathwaysSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
@@ -14,7 +7,14 @@ import SectionDivider from "@/components/home/SectionDivider";
 import type { DividerVariant, DividerColor } from "@/components/home/SectionDivider";
 import ScrollGuide from "@/components/home/ScrollGuide";
 
-// Lazy-loaded below-the-fold sections
+// Lazy-loaded sections (all except Hero to reduce initial bundle)
+const TrustSection = lazy(() => import("@/components/home/TrustSection"));
+const SelfAssessmentSection = lazy(() => import("@/components/home/SelfAssessmentSection"));
+const FeaturedPsychologistsSection = lazy(() => import("@/components/home/FeaturedPsychologistsSection"));
+const HowItWorksSection = lazy(() => import("@/components/home/HowItWorksSection"));
+const FounderSection = lazy(() => import("@/components/home/FounderSection"));
+const PillarsSection = lazy(() => import("@/components/home/PillarsSection"));
+const PathwaysSection = lazy(() => import("@/components/home/PathwaysSection"));
 const ProgramsSection = lazy(() => import("@/components/home/ProgramsSection"));
 const LearningSection = lazy(() => import("@/components/home/LearningSection"));
 const OrganizationsSection = lazy(() => import("@/components/home/OrganizationsSection"));
