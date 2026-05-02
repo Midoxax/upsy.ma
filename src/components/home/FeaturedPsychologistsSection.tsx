@@ -53,7 +53,7 @@ const FeaturedPsychologistsSection = () => {
                 <div className="glass-card p-6 text-center min-w-0">
                   <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden bg-primary/10 border-2 border-primary/30">
                     {psych.photo_url ? (
-                      <img src={psych.photo_url} alt={psych.full_name} className="w-full h-full object-cover" />
+                      <img src={psych.photo_url} alt={psych.full_name} className="w-full h-full object-cover" width={80} height={80} loading="lazy" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-primary text-2xl font-bold">
                         {psych.full_name?.charAt(0)}
