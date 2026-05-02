@@ -427,6 +427,7 @@ const HeroSection = () => {
               style={{ filter: "drop-shadow(0 2px 8px hsl(var(--primary) / 0.15))" }}
               width={80}
               height={80}
+              fetchPriority="high"
             />
           </motion.div>
 
