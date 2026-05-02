@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -13,8 +13,6 @@ import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import DashboardErrorFallback from "@/components/DashboardErrorFallback";
 import RoleRouter from "@/components/RoleRouter";
-import SpecialistDashboard from "@/pages/SpecialistDashboard";
-import OrganizationDashboard from "@/pages/OrganizationDashboard";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { stripLocalePrefix } from "@/lib/i18n/utils";
@@ -23,56 +21,66 @@ import Footer from "@/components/Footer";
 import { BreadcrumbWrapper } from "@/components/BreadcrumbWrapper";
 import SEOHead from "@/components/SEOHead";
 import Index from "./pages/Index";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import ConsultingForOrganizations from "./pages/services/ConsultingForOrganizations";
-import Skool from "./pages/Skool";
-import Resources from "./pages/Resources";
-import Contact from "./pages/Contact";
-import Legal from "./pages/Legal";
-import TalentInnovationHub from "./pages/TalentInnovationHub";
-import MoroccanUmbrella from "./pages/MoroccanUmbrella";
-import PsychologuesSansFrontieres from "./pages/PsychologuesSansFrontieres";
-import Psychologists from "./pages/Psychologists";
-import PsychologistProfile from "./pages/PsychologistProfile";
-import SpecialistPricing from "./pages/SpecialistPricing";
-import Auth from "./pages/Auth";
-import MySpace from "./pages/MySpace";
-import Apply from "./pages/Apply";
-import ApplyWizard from "./pages/apply/ApplyWizard";
-import ApplyOrganization from "./pages/apply/ApplyOrganization";
-import GetMatched from "./pages/GetMatched";
-import PatientDashboard from "./pages/PatientDashboard";
-import AthleteHub from "./pages/AthleteHub";
-import AssessmentLab from "./pages/AssessmentLab";
-import AIAssistant from "./pages/AIAssistant";
-import Notifications from "./pages/Notifications";
-import Applications from "./pages/admin/Applications";
-import AdminDashboard from "./pages/admin/Dashboard";
-import VideoCall from "./pages/VideoCall";
-import ResetPassword from "./pages/ResetPassword";
-import MfaSetup from "./pages/MfaSetup";
-import BrandGuidelines from "./pages/BrandGuidelines";
-import Founder from "./pages/Founder";
-import BlogIndex from "./pages/blog/BlogIndex";
-import FindRightPsychologist from "./pages/blog/FindRightPsychologist";
-import DoINeedTherapy from "./pages/blog/DoINeedTherapy";
-import UnderstandingAnxiety from "./pages/blog/UnderstandingAnxiety";
-import BenefitsOnlineTherapy from "./pages/blog/BenefitsOnlineTherapy";
-import MentalHealthAtWork from "./pages/blog/MentalHealthAtWork";
-import UnderstandingDepression from "./pages/blog/UnderstandingDepression";
-import HowToSupportALovedOne from "./pages/blog/HowToSupportALovedOne";
-import MindfulnessForBeginners from "./pages/blog/MindfulnessForBeginners";
-import FreeScore from "./pages/FreeScore";
-import Invite from "./pages/Invite";
-import ForAthletes from "./pages/funnels/ForAthletes";
-import ForOrganizations from "./pages/funnels/ForOrganizations";
-import NotFound from "./pages/NotFound";
-import Learn from "./pages/Learn";
-import LearnCourse from "./pages/LearnCourse";
-import BookingResponse from "./pages/BookingResponse";
-import BookRedirect from "./pages/BookRedirect";
-import Install from "./pages/Install";
+
+// Lazy-loaded pages — keeps the initial bundle small
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const ConsultingForOrganizations = lazy(() => import("./pages/services/ConsultingForOrganizations"));
+const Skool = lazy(() => import("./pages/Skool"));
+const Resources = lazy(() => import("./pages/Resources"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Legal = lazy(() => import("./pages/Legal"));
+const TalentInnovationHub = lazy(() => import("./pages/TalentInnovationHub"));
+const MoroccanUmbrella = lazy(() => import("./pages/MoroccanUmbrella"));
+const PsychologuesSansFrontieres = lazy(() => import("./pages/PsychologuesSansFrontieres"));
+const Psychologists = lazy(() => import("./pages/Psychologists"));
+const PsychologistProfile = lazy(() => import("./pages/PsychologistProfile"));
+const SpecialistPricing = lazy(() => import("./pages/SpecialistPricing"));
+const Auth = lazy(() => import("./pages/Auth"));
+const MySpace = lazy(() => import("./pages/MySpace"));
+const Apply = lazy(() => import("./pages/Apply"));
+const ApplyWizard = lazy(() => import("./pages/apply/ApplyWizard"));
+const ApplyOrganization = lazy(() => import("./pages/apply/ApplyOrganization"));
+const GetMatched = lazy(() => import("./pages/GetMatched"));
+const PatientDashboard = lazy(() => import("./pages/PatientDashboard"));
+const SpecialistDashboard = lazy(() => import("./pages/SpecialistDashboard"));
+const OrganizationDashboard = lazy(() => import("./pages/OrganizationDashboard"));
+const AthleteHub = lazy(() => import("./pages/AthleteHub"));
+const AssessmentLab = lazy(() => import("./pages/AssessmentLab"));
+const AIAssistant = lazy(() => import("./pages/AIAssistant"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const Applications = lazy(() => import("./pages/admin/Applications"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const VideoCall = lazy(() => import("./pages/VideoCall"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const MfaSetup = lazy(() => import("./pages/MfaSetup"));
+const BrandGuidelines = lazy(() => import("./pages/BrandGuidelines"));
+const Founder = lazy(() => import("./pages/Founder"));
+const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
+const FindRightPsychologist = lazy(() => import("./pages/blog/FindRightPsychologist"));
+const DoINeedTherapy = lazy(() => import("./pages/blog/DoINeedTherapy"));
+const UnderstandingAnxiety = lazy(() => import("./pages/blog/UnderstandingAnxiety"));
+const BenefitsOnlineTherapy = lazy(() => import("./pages/blog/BenefitsOnlineTherapy"));
+const MentalHealthAtWork = lazy(() => import("./pages/blog/MentalHealthAtWork"));
+const UnderstandingDepression = lazy(() => import("./pages/blog/UnderstandingDepression"));
+const HowToSupportALovedOne = lazy(() => import("./pages/blog/HowToSupportALovedOne"));
+const MindfulnessForBeginners = lazy(() => import("./pages/blog/MindfulnessForBeginners"));
+const FreeScore = lazy(() => import("./pages/FreeScore"));
+const Invite = lazy(() => import("./pages/Invite"));
+const ForAthletes = lazy(() => import("./pages/funnels/ForAthletes"));
+const ForOrganizations = lazy(() => import("./pages/funnels/ForOrganizations"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Learn = lazy(() => import("./pages/Learn"));
+const LearnCourse = lazy(() => import("./pages/LearnCourse"));
+const BookingResponse = lazy(() => import("./pages/BookingResponse"));
+const BookRedirect = lazy(() => import("./pages/BookRedirect"));
+const Install = lazy(() => import("./pages/Install"));
+
+const LazyFallback = () => (
+  <div className="flex-1 flex items-center justify-center py-20">
+    <div className="h-6 w-6 motion-breathe rounded-full bg-primary/20" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -160,6 +168,7 @@ const AnimatedRoutes = () => {
   return (
     <>
       <SEOHead path={location.pathname} />
+      <Suspense fallback={<LazyFallback />}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* Root locale (English / default) */}
@@ -175,6 +184,7 @@ const AnimatedRoutes = () => {
           <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
         </Routes>
       </AnimatePresence>
+      </Suspense>
     </>
   );
 };
