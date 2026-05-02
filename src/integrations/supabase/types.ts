@@ -4197,6 +4197,24 @@ export type Database = {
       }
     }
     Views: {
+      active_boosts_public: {
+        Row: {
+          boost_type: string | null
+          ends_at: string | null
+          psychologist_id: string | null
+        }
+        Insert: {
+          boost_type?: string | null
+          ends_at?: string | null
+          psychologist_id?: string | null
+        }
+        Update: {
+          boost_type?: string | null
+          ends_at?: string | null
+          psychologist_id?: string | null
+        }
+        Relationships: []
+      }
       admin_platform_stats: {
         Row: {
           accredited_psychologists: number | null
