@@ -215,8 +215,8 @@ export const translations = {
       perSession: "/ session",
     },
     auth: {
-      portalTitle: "U.Psy Psychologist Portal",
-      portalDesc: "Login or create your psychologist account",
+      portalTitle: "Welcome to U.Psy",
+      portalDesc: "Login or create your account",
       login: "Login",
       signUp: "Sign Up",
       email: "Email",
@@ -1568,8 +1568,8 @@ export const translations = {
       perSession: "/ séance",
     },
     auth: {
-      portalTitle: "Portail Psychologue U.Psy",
-      portalDesc: "Connectez-vous ou créez votre compte psychologue",
+      portalTitle: "Bienvenue sur U.Psy",
+      portalDesc: "Connectez-vous ou créez votre compte",
       login: "Connexion",
       signUp: "S'inscrire",
       email: "E-mail",
@@ -2780,8 +2780,8 @@ export const translations = {
       perSession: "/ جلسة",
     },
     auth: {
-      portalTitle: "بوابة أخصائي U.Psy",
-      portalDesc: "سجل الدخول أو أنشئ حساب أخصائي نفسي",
+      portalTitle: "مرحباً بك في U.Psy",
+      portalDesc: "سجل الدخول أو أنشئ حسابك",
       login: "تسجيل الدخول",
       signUp: "إنشاء حساب",
       email: "البريد الإلكتروني",

@@ -127,6 +127,7 @@ const AppRoutes = () => (
     <Route path="dashboard/organization" element={<ProtectedRoute role="organization"><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><OrganizationDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
     <Route path="athlete-hub" element={<ProtectedRoute><PageTransition><AthleteHub /></PageTransition></ProtectedRoute>} />
     <Route path="assessments" element={<PageTransition><AssessmentLab /></PageTransition>} />
+    <Route path="assessment-lab" element={<PageTransition><AssessmentLab /></PageTransition>} />
     <Route path="ai-assistant" element={<ProtectedRoute><PageTransition><AIAssistant /></PageTransition></ProtectedRoute>} />
     <Route path="my-space" element={<ProtectedRoute><PageTransition><MySpace /></PageTransition></ProtectedRoute>} />
     <Route path="notifications" element={<ProtectedRoute><PageTransition><Notifications /></PageTransition></ProtectedRoute>} />
