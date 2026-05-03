@@ -309,7 +309,7 @@ const Auth = () => {
                     <Label htmlFor="signup-name">{t('auth.fullName')}</Label>
                     <Input id="signup-name" type="text" required autoComplete="name" value={signupData.fullName}
                       onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
-                      placeholder="Dr. John Doe" className="bg-background" />
+                      placeholder="John Doe" className="bg-background" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">{t('auth.email')}</Label>
