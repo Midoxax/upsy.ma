@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Loader2, Brain, Sparkles, Eye, EyeOff, Check, X } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+
 
 const emailSchema = z.string().email("Invalid email address");
 const passwordSchema = z
@@ -162,7 +163,9 @@ const Auth = () => {
         toast({ title: t('auth.loginFailed'), description: error.message, variant: "destructive" });
       } else {
         toast({ title: t('auth.welcomeBack'), description: t('auth.welcomeBackDesc') });
-        navigate("/my-space");
+        const [sp] = [new URLSearchParams(window.location.search)];
+        const redirectTo = sp.get("redirect");
+        navigate(redirectTo || "/my-space");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
