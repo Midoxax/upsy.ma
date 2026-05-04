@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -47,6 +47,7 @@ const AssessmentLab = () => {
   const navigate = useNavigate();
   const { t, locale } = useLocale();
   const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQ, setCurrentQ] = useState(0);
@@ -60,6 +61,18 @@ const AssessmentLab = () => {
       if (data) setAssessments(data);
     });
   }, []);
+
+  // Auto-start assessment from URL param (e.g. after auth redirect)
+  useEffect(() => {
+    const startId = searchParams.get("start");
+    if (startId && user && assessments.length > 0 && !selectedAssessment) {
+      const found = assessments.find((a) => a.id === startId);
+      if (found) {
+        startAssessment(found);
+        setSearchParams({}, { replace: true });
+      }
+    }
+  }, [searchParams, user, assessments]);
 
   const startAssessment = async (assessment: Assessment) => {
     setSelectedAssessment(assessment);
@@ -131,7 +144,8 @@ const AssessmentLab = () => {
     if (cat === "general") return t('assessments.generalMentalHealth');
     if (cat === "athlete") return t('assessments.athletePerformance');
     if (cat === "organization") return t('assessments.organizational');
-    return cat;
+    if (cat === "personality") return t('assessments.personality') || "Personality & Traits";
+    return cat.charAt(0).toUpperCase() + cat.slice(1);
   };
 
   // Assessment list view
@@ -175,7 +189,7 @@ const AssessmentLab = () => {
                             <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> {assessment.question_count} {t('common.questions')}</span>
                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~{assessment.estimated_minutes} {t('common.minutes')}</span>
                           </div>
-                          <Button variant="primary" size="sm" onClick={() => user ? startAssessment(assessment) : navigate(addLocalePrefix("/auth", locale))} className="w-full">
+                          <Button variant="primary" size="sm" onClick={() => user ? startAssessment(assessment) : navigate(addLocalePrefix("/auth", locale) + "?redirect=" + encodeURIComponent("/assessments?start=" + assessment.id))} className="w-full">
                             {user ? t('assessments.startAssessment') : t('assessments.signInToStart')}
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
