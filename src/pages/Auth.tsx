@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Button } from "@/components/ui/button";
@@ -163,8 +163,7 @@ const Auth = () => {
         toast({ title: t('auth.loginFailed'), description: error.message, variant: "destructive" });
       } else {
         toast({ title: t('auth.welcomeBack'), description: t('auth.welcomeBackDesc') });
-        const [sp] = [new URLSearchParams(window.location.search)];
-        const redirectTo = sp.get("redirect");
+        const redirectTo = new URLSearchParams(window.location.search).get("redirect");
         navigate(redirectTo || "/my-space");
       }
     } catch (error) {
