@@ -13,6 +13,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
+
 const emailSchema = z.string().email("Invalid email address");
 const passwordSchema = z
   .string()
@@ -162,7 +163,8 @@ const Auth = () => {
         toast({ title: t('auth.loginFailed'), description: error.message, variant: "destructive" });
       } else {
         toast({ title: t('auth.welcomeBack'), description: t('auth.welcomeBackDesc') });
-        navigate("/my-space");
+        const redirectTo = new URLSearchParams(window.location.search).get("redirect");
+        navigate(redirectTo || "/my-space");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
