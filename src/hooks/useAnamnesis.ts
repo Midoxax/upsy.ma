@@ -10,7 +10,10 @@ export type AnamnesisSection =
   | "medical"
   | "lifestyle"
   | "risk_screening"
-  | "goals";
+  | "goals"
+  | "relationships"
+  | "specialized_module"
+  | "objectives_consent";
 
 export interface AnamnesisData {
   id?: string;
@@ -25,11 +28,26 @@ export interface AnamnesisData {
   lifestyle: Record<string, any>;
   risk_screening: Record<string, any>;
   goals: Record<string, any>;
+  relationships: Record<string, any>;
+  specialized_module: Record<string, any>;
+  objectives_consent: Record<string, any>;
   status: "draft" | "in_progress" | "completed" | "reviewed";
   consent_given: boolean;
   consent_at?: string | null;
   completed_at?: string | null;
   reviewed_at?: string | null;
+  phq9_score?: number | null;
+  phq9_severity?: string | null;
+  gad7_score?: number | null;
+  gad7_severity?: string | null;
+  pss10_score?: number | null;
+  pss10_severity?: string | null;
+  audit_c_score?: number | null;
+  audit_c_at_risk?: boolean;
+  clinical_flags?: string[];
+  completion_pct?: number;
+  current_section?: number;
+  shared_with_psy_at?: string | null;
 }
 
 const empty = (clientId: string): AnamnesisData => ({
@@ -42,6 +60,9 @@ const empty = (clientId: string): AnamnesisData => ({
   lifestyle: {},
   risk_screening: {},
   goals: {},
+  relationships: {},
+  specialized_module: {},
+  objectives_consent: {},
   status: "draft",
   consent_given: false,
 });
