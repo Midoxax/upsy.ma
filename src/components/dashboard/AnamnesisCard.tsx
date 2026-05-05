@@ -7,6 +7,7 @@ import { ClipboardList, ChevronRight, Download, Bell, AlertCircle } from "lucide
 import { useAuth } from "@/contexts/AuthContext";
 import { useAnamnesis } from "@/hooks/useAnamnesis";
 import AnamnesisDrawer from "@/components/anamnesis/AnamnesisDrawer";
+import { useNavigate } from "react-router-dom";
 import { useLocale } from "@/contexts/LocaleContext";
 import jsPDF from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +33,7 @@ const AnamnesisCard = () => {
   const { user } = useAuth();
   const { data, progress, loading } = useAnamnesis(user?.id);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const [reminderInfo, setReminderInfo] = useState<{ sent_at: string | null } | null>(null);
   const { t, locale } = useLocale();
 
@@ -212,7 +214,7 @@ const AnamnesisCard = () => {
             </div>
           )}
 
-          <Button size="sm" className="w-full" onClick={() => setOpen(true)} disabled={loading}>
+          <Button size="sm" className="w-full" onClick={() => navigate("/intake")} disabled={loading}>
             {progress > 0 ? t("anamnesis.continue") : t("anamnesis.start")}
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>

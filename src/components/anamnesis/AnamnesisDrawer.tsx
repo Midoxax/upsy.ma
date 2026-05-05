@@ -43,6 +43,9 @@ const REQUIRED: Record<AnamnesisSection, string[]> = {
   lifestyle: ["sleep"],
   risk_screening: ["__answered"], // sentinel: all 3 yes/no answered
   goals: ["therapy_goals"],
+  relationships: [],
+  specialized_module: [],
+  objectives_consent: [],
 };
 
 const RISK_KEYS = ["suicidal_ideation", "self_harm", "violence_risk"] as const;

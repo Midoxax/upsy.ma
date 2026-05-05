@@ -75,6 +75,7 @@ const LearnCourse = lazy(() => import("./pages/LearnCourse"));
 const BookingResponse = lazy(() => import("./pages/BookingResponse"));
 const BookRedirect = lazy(() => import("./pages/BookRedirect"));
 const Install = lazy(() => import("./pages/Install"));
+const IntakeForm = lazy(() => import("./pages/IntakeForm"));
 
 const LazyFallback = () => (
   <div className="flex-1 flex items-center justify-center py-20">
@@ -154,6 +155,8 @@ const AppRoutes = () => (
     <Route path="booking/respond/:token" element={<PageTransition><BookingResponse /></PageTransition>} />
     <Route path="b/:slug" element={<BookRedirect />} />
     <Route path="book-a-call" element={<PageTransition><Contact /></PageTransition>} />
+    <Route path="intake" element={<ProtectedRoute><PageTransition><IntakeForm /></PageTransition></ProtectedRoute>} />
+    <Route path="intake/:bookingId" element={<ProtectedRoute><PageTransition><IntakeForm /></PageTransition></ProtectedRoute>} />
   </>
 );
 
