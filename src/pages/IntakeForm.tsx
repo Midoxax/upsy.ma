@@ -615,7 +615,7 @@ const IntakeForm = () => {
 
   return (
     <>
-      <SEOHead title="Anamnèse — U.Psy" description="Formulaire d'intake confidentiel pour préparer ta première séance." />
+      <SEOHead path="/intake" title="Anamnèse — U.Psy" description="Formulaire d'intake confidentiel pour préparer ta première séance." />
       <div className="min-h-screen bg-background">
         <div className="max-w-2xl mx-auto px-4 py-8">
           {/* Header */}
