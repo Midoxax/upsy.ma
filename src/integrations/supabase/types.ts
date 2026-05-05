@@ -841,69 +841,128 @@ export type Database = {
       }
       client_anamneses: {
         Row: {
+          audit_c_at_risk: boolean | null
+          audit_c_score: number | null
           booking_id: string | null
           client_id: string
+          clinical_flags: string[] | null
           completed_at: string | null
+          completion_pct: number | null
           consent_at: string | null
           consent_given: boolean
           created_at: string
+          current_section: number | null
+          gad7_score: number | null
+          gad7_severity: string | null
           goals: Json
           history_family: Json
           history_personal: Json
           id: string
           identity: Json
+          is_minor_intake: boolean | null
           lifestyle: Json
           medical: Json
+          objectives_consent: Json | null
+          parent_intake_form_id: string | null
+          phq9_score: number | null
+          phq9_severity: string | null
           presenting_complaint: Json
+          pss10_score: number | null
+          pss10_severity: string | null
           psychologist_id: string | null
+          relationships: Json | null
           reviewed_at: string | null
           risk_screening: Json
+          shared_with_psy_at: string | null
+          specialized_module: Json | null
           status: string
           updated_at: string
         }
         Insert: {
+          audit_c_at_risk?: boolean | null
+          audit_c_score?: number | null
           booking_id?: string | null
           client_id: string
+          clinical_flags?: string[] | null
           completed_at?: string | null
+          completion_pct?: number | null
           consent_at?: string | null
           consent_given?: boolean
           created_at?: string
+          current_section?: number | null
+          gad7_score?: number | null
+          gad7_severity?: string | null
           goals?: Json
           history_family?: Json
           history_personal?: Json
           id?: string
           identity?: Json
+          is_minor_intake?: boolean | null
           lifestyle?: Json
           medical?: Json
+          objectives_consent?: Json | null
+          parent_intake_form_id?: string | null
+          phq9_score?: number | null
+          phq9_severity?: string | null
           presenting_complaint?: Json
+          pss10_score?: number | null
+          pss10_severity?: string | null
           psychologist_id?: string | null
+          relationships?: Json | null
           reviewed_at?: string | null
           risk_screening?: Json
+          shared_with_psy_at?: string | null
+          specialized_module?: Json | null
           status?: string
           updated_at?: string
         }
         Update: {
+          audit_c_at_risk?: boolean | null
+          audit_c_score?: number | null
           booking_id?: string | null
           client_id?: string
+          clinical_flags?: string[] | null
           completed_at?: string | null
+          completion_pct?: number | null
           consent_at?: string | null
           consent_given?: boolean
           created_at?: string
+          current_section?: number | null
+          gad7_score?: number | null
+          gad7_severity?: string | null
           goals?: Json
           history_family?: Json
           history_personal?: Json
           id?: string
           identity?: Json
+          is_minor_intake?: boolean | null
           lifestyle?: Json
           medical?: Json
+          objectives_consent?: Json | null
+          parent_intake_form_id?: string | null
+          phq9_score?: number | null
+          phq9_severity?: string | null
           presenting_complaint?: Json
+          pss10_score?: number | null
+          pss10_severity?: string | null
           psychologist_id?: string | null
+          relationships?: Json | null
           reviewed_at?: string | null
           risk_screening?: Json
+          shared_with_psy_at?: string | null
+          specialized_module?: Json | null
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_anamneses_parent_intake_form_id_fkey"
+            columns: ["parent_intake_form_id"]
+            isOneToOne: false
+            referencedRelation: "client_anamneses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       client_matching_requests: {
         Row: {
@@ -1237,6 +1296,79 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      crisis_alerts: {
+        Row: {
+          alert_type: string
+          booking_id: string | null
+          client_id: string
+          created_at: string | null
+          id: string
+          intake_form_id: string | null
+          notes: string | null
+          notified_admin: boolean | null
+          notified_psy: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          source_section: string | null
+          source_value: string | null
+        }
+        Insert: {
+          alert_type: string
+          booking_id?: string | null
+          client_id: string
+          created_at?: string | null
+          id?: string
+          intake_form_id?: string | null
+          notes?: string | null
+          notified_admin?: boolean | null
+          notified_psy?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          source_section?: string | null
+          source_value?: string | null
+        }
+        Update: {
+          alert_type?: string
+          booking_id?: string | null
+          client_id?: string
+          created_at?: string | null
+          id?: string
+          intake_form_id?: string | null
+          notes?: string | null
+          notified_admin?: boolean | null
+          notified_psy?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          source_section?: string | null
+          source_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crisis_alerts_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crisis_alerts_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings_with_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crisis_alerts_intake_form_id_fkey"
+            columns: ["intake_form_id"]
+            isOneToOne: false
+            referencedRelation: "client_anamneses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       daily_challenges: {
         Row: {
@@ -1590,6 +1722,74 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_clinical_briefs: {
+        Row: {
+          ai_model: string | null
+          brief_markdown: string
+          brief_pdf_path: string | null
+          created_at: string | null
+          generated_at: string | null
+          generation_tokens_used: number | null
+          id: string
+          intake_form_id: string
+          key_history_points: string[] | null
+          motif_synthesis: string | null
+          notes_by_psy: string | null
+          psychologist_id: string
+          read_by_psy_at: string | null
+          red_flags: string[] | null
+          scales_summary: Json | null
+          treatment_suggestions: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          ai_model?: string | null
+          brief_markdown?: string
+          brief_pdf_path?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          generation_tokens_used?: number | null
+          id?: string
+          intake_form_id: string
+          key_history_points?: string[] | null
+          motif_synthesis?: string | null
+          notes_by_psy?: string | null
+          psychologist_id: string
+          read_by_psy_at?: string | null
+          red_flags?: string[] | null
+          scales_summary?: Json | null
+          treatment_suggestions?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          ai_model?: string | null
+          brief_markdown?: string
+          brief_pdf_path?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          generation_tokens_used?: number | null
+          id?: string
+          intake_form_id?: string
+          key_history_points?: string[] | null
+          motif_synthesis?: string | null
+          notes_by_psy?: string | null
+          psychologist_id?: string
+          read_by_psy_at?: string | null
+          red_flags?: string[] | null
+          scales_summary?: Json | null
+          treatment_suggestions?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_clinical_briefs_intake_form_id_fkey"
+            columns: ["intake_form_id"]
+            isOneToOne: true
+            referencedRelation: "client_anamneses"
             referencedColumns: ["id"]
           },
         ]
