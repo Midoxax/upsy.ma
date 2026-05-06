@@ -5,7 +5,6 @@ import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
 import SectionDivider from "@/components/home/SectionDivider";
 import type { DividerVariant, DividerColor } from "@/components/home/SectionDivider";
-import ScrollGuide from "@/components/home/ScrollGuide";
 
 // Lazy-loaded sections (all except Hero to reduce initial bundle)
 const TrustSection = lazy(() => import("@/components/home/TrustSection"));
@@ -255,14 +254,6 @@ const dividerSequence: { variant: DividerVariant; color: DividerColor; flip?: bo
   { variant: "curve", color: "maroon" },
 ];
 
-// ── Scroll guide messages at specific breakpoint indices ──
-
-const guideMessages: Record<number, { message: string; position: "left" | "right"; variant: "wave" | "point" | "think" }> = {
-  1: { message: "Let's explore what fits you best 🧠", position: "right", variant: "wave" },
-  4: { message: "Quick check — just 2 minutes ⏱️", position: "left", variant: "point" },
-  10: { message: "Ready to take the next step? 🚀", position: "right", variant: "think" },
-};
-
 const Index = () => {
   // Phase 1: Collect signals → classify → lock intent
   useIntentSignals();
@@ -275,10 +266,8 @@ const Index = () => {
       {orderedSections.map((section, index) => {
         const Section = section.component;
         const divider = dividerSequence[index % dividerSequence.length];
-        const guide = guideMessages[index];
         return (
           <Suspense key={section.key} fallback={<SectionFallback />}>
-            {guide && <ScrollGuide message={guide.message} position={guide.position} variant={guide.variant} />}
             <Section />
             {index < orderedSections.length - 1 && (
               <SectionDivider variant={divider.variant} color={divider.color} flip={divider.flip} />
