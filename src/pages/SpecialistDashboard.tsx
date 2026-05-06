@@ -17,6 +17,7 @@ import {
   Sparkles,
   LifeBuoy,
   Rocket,
+  Brain,
 } from "lucide-react";
 import {
   ClipboardList,
@@ -43,6 +44,7 @@ import HomeworkTab from "@/components/dashboard/HomeworkTab";
 import ClientProgressTab from "@/components/dashboard/ClientProgressTab";
 import DischargeTab from "@/components/dashboard/DischargeTab";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
+import ClinicalBriefsTab from "@/components/dashboard/ClinicalBriefsTab";
 import SpecialistBurnoutCard from "@/components/dashboard/SpecialistBurnoutCard";
 import SmartSchedulingCard from "@/components/dashboard/SmartSchedulingCard";
 import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
@@ -69,6 +71,10 @@ const SpecialistDashboard = () => {
                 <TabsTrigger value="notes" className="gap-1.5">
                   <FileText className="h-4 w-4" />
                   <span className="hidden sm:inline">Notes</span>
+                </TabsTrigger>
+                <TabsTrigger value="briefs" className="gap-1.5">
+                  <Brain className="h-4 w-4" />
+                  <span className="hidden sm:inline">Briefs</span>
                 </TabsTrigger>
                 <TabsTrigger value="treatment-plans" className="gap-1.5">
                   <ClipboardList className="h-4 w-4" />
@@ -135,6 +141,7 @@ const SpecialistDashboard = () => {
               <TabsContent value="profile"><ProfileTab /></TabsContent>
               <TabsContent value="sessions"><SessionsTab /></TabsContent>
               <TabsContent value="notes"><SessionNotesTab /></TabsContent>
+              <TabsContent value="briefs"><ClinicalBriefsTab /></TabsContent>
               <TabsContent value="treatment-plans"><TreatmentPlansTab /></TabsContent>
               <TabsContent value="homework"><HomeworkTab role="psychologist" /></TabsContent>
               <TabsContent value="progress"><ClientProgressTab role="psychologist" /></TabsContent>
