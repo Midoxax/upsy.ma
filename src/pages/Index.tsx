@@ -5,7 +5,6 @@ import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
 import SectionDivider from "@/components/home/SectionDivider";
 import type { DividerVariant, DividerColor } from "@/components/home/SectionDivider";
-import ScrollGuide from "@/components/home/ScrollGuide";
 
 // Lazy-loaded sections (all except Hero to reduce initial bundle)
 const TrustSection = lazy(() => import("@/components/home/TrustSection"));
@@ -278,7 +277,6 @@ const Index = () => {
         const guide = guideMessages[index];
         return (
           <Suspense key={section.key} fallback={<SectionFallback />}>
-            {guide && <ScrollGuide message={guide.message} position={guide.position} variant={guide.variant} />}
             <Section />
             {index < orderedSections.length - 1 && (
               <SectionDivider variant={divider.variant} color={divider.color} flip={divider.flip} />
