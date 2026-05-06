@@ -12,7 +12,7 @@ import {
   BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun, Award,
   FileText, PenSquare, User, CreditCard,
 } from "lucide-react";
-import { ListChecks, LogOut } from "lucide-react";
+import { ListChecks, LogOut, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
