@@ -12,7 +12,7 @@ import {
   BarChart3, BookOpen, Plus, ChevronRight, Zap, Moon, Sun, Award,
   FileText, PenSquare, User, CreditCard,
 } from "lucide-react";
-import { ListChecks, LogOut } from "lucide-react";
+import { ListChecks, LogOut, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import UpcomingSessionsCard from "@/components/dashboard/UpcomingSessionsCard";
@@ -33,6 +33,7 @@ import ContinueLearningCard from "@/components/dashboard/ContinueLearningCard";
 import HomeworkTab from "@/components/dashboard/HomeworkTab";
 import ClientProgressTab from "@/components/dashboard/ClientProgressTab";
 import DischargeTab from "@/components/dashboard/DischargeTab";
+import DataPrivacyTab from "@/components/dashboard/DataPrivacyTab";
 import DailyChallengeCard from "@/components/dashboard/DailyChallengeCard";
 import LeaderboardCard from "@/components/dashboard/LeaderboardCard";
 import { useAwardXp } from "@/hooks/useGamification";
@@ -193,6 +194,10 @@ const PatientDashboard = () => {
               <TabsTrigger value="discharge" className="gap-1.5">
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Records</span>
+              </TabsTrigger>
+              <TabsTrigger value="privacy" className="gap-1.5">
+                <ShieldCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Privacy</span>
               </TabsTrigger>
             </TabsList>
 
@@ -487,6 +492,10 @@ const PatientDashboard = () => {
 
             <TabsContent value="discharge">
               <DischargeTab role="client" />
+            </TabsContent>
+
+            <TabsContent value="privacy">
+              <DataPrivacyTab />
             </TabsContent>
           </Tabs>
         </div>
