@@ -254,14 +254,6 @@ const dividerSequence: { variant: DividerVariant; color: DividerColor; flip?: bo
   { variant: "curve", color: "maroon" },
 ];
 
-// ── Scroll guide messages at specific breakpoint indices ──
-
-const guideMessages: Record<number, { message: string; position: "left" | "right"; variant: "wave" | "point" | "think" }> = {
-  1: { message: "Let's explore what fits you best 🧠", position: "right", variant: "wave" },
-  4: { message: "Quick check — just 2 minutes ⏱️", position: "left", variant: "point" },
-  10: { message: "Ready to take the next step? 🚀", position: "right", variant: "think" },
-};
-
 const Index = () => {
   // Phase 1: Collect signals → classify → lock intent
   useIntentSignals();
@@ -274,7 +266,6 @@ const Index = () => {
       {orderedSections.map((section, index) => {
         const Section = section.component;
         const divider = dividerSequence[index % dividerSequence.length];
-        const guide = guideMessages[index];
         return (
           <Suspense key={section.key} fallback={<SectionFallback />}>
             <Section />
