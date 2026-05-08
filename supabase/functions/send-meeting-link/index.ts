@@ -201,10 +201,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
     const psyName = psyProfile?.full_name ?? "Your psychologist";
 
-    const origin =
-      req.headers.get("origin") ??
-      req.headers.get("referer")?.replace(/\/$/, "") ??
-      "https://upsy.ma";
+    const origin = Deno.env.get("SITE_URL") ?? "https://upsy.ma";
     const joinUrl = `${origin}/video-call/${booking.video_room_id}`;
 
     const isNow = startMs <= Date.now() + 60 * 1000;

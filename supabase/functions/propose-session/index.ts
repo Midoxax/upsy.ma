@@ -207,11 +207,8 @@ Deno.serve(async (req) => {
 
     const psyName = psyProfile?.full_name ?? "Your psychologist";
 
-    // Build response URLs (use upsy.ma in production, fallback to request origin)
-    const origin =
-      req.headers.get("origin") ??
-      req.headers.get("referer")?.replace(/\/$/, "") ??
-      "https://upsy.ma";
+    // Build response URLs from a server-side trusted origin (never trust client headers in emails)
+    const origin = Deno.env.get("SITE_URL") ?? "https://upsy.ma";
     const acceptUrl = `${origin}/booking/respond/${proposalToken}?action=accept`;
     const declineUrl = `${origin}/booking/respond/${proposalToken}?action=decline`;
 
