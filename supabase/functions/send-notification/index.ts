@@ -84,6 +84,15 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Restrict to internal callers (service role) only.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    if (!token || token !== SERVICE_ROLE) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const body = await req.json();
     const {
       user_id,
