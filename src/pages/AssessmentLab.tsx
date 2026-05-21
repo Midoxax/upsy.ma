@@ -15,6 +15,7 @@ import {
   Brain, CheckCircle2, ArrowRight, ArrowLeft, Clock, Shield,
   BarChart3, ChevronRight, AlertTriangle,
 } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 interface Assessment {
   id: string;
@@ -284,6 +285,11 @@ const AssessmentLab = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        path="/assessment-lab"
+        title="Assessment Lab — Clinical Self-Assessments | U.Psy"
+        description="Take validated clinical screenings (GAD-7, PHQ-9 and more) on U.Psy and get an immediate, evidence-based snapshot of your mental health."
+      />
       <div className="sticky top-16 z-30 py-3" style={{ background: "rgba(26,26,26,0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="container-custom">
           <div className="flex items-center gap-4">

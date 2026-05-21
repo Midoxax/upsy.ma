@@ -372,6 +372,11 @@ const GetMatched = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        path="/get-matched"
+        title="Get Matched with a Psychologist — U.Psy"
+        description="Answer a few questions and U.Psy matches you with an accredited Moroccan psychologist tailored to your needs, language, and goals."
+      />
       {step > 0 && step < 5 && (
         <div className="sticky top-16 z-30 py-3" style={{ background: "rgba(26,26,26,0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="container-custom">
