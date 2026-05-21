@@ -59,7 +59,11 @@ export default function Learn() {
 
   return (
     <>
-      <SEOHead path="/learn" />
+      <SEOHead
+        path="/learn"
+        title="Learn — Mental Health Courses & Paths | U.Psy"
+        description="Structured learning paths on mental health, resilience, and performance psychology — built by U.Psy clinicians for everyday life."
+      />
       <main className="container-custom py-12 md:py-16 space-y-12">
         <header className="max-w-2xl">
           <Badge variant="outline" className="mb-3">Learning & Performance Hub</Badge>

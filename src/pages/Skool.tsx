@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Users, MessageCircle, BookOpen, Video, Star, ArrowRight, Globe, Award, Calendar, Sparkles } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
+import SEOHead from "@/components/SEOHead";
 
 const Skool = () => {
   const { t } = useLocale();
@@ -31,6 +32,11 @@ const Skool = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      <SEOHead
+        path="/skool"
+        title="U.Psy Skool — Mental Health Learning Community"
+        description="Join U.Psy Skool — workshops, forums, and live sessions for psychologists and curious learners in Morocco and beyond."
+      />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 lg:py-28">
         <div className="container-custom text-center max-w-4xl mx-auto">

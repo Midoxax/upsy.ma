@@ -21,7 +21,19 @@ const Founder = () => {
 
   return (
     <>
-      <SEOHead path="/founder" />
+      <SEOHead
+        path="/founder"
+        title="Mehdi Felji — Founder of U.Psy"
+        description="Mehdi Felji, founder of U.Psy, combines clinical psychology, sport performance, and humanitarian fieldwork to build Morocco's mental health platform."
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "Mehdi Felji",
+          jobTitle: "Founder of U.Psy",
+          url: "https://upsy.ma/founder",
+          worksFor: { "@type": "Organization", name: "U.Psy", url: "https://upsy.ma" },
+        }}
+      />
       <main className="flex-1">
         {/* Hero — Editorial layout */}
         <section className="hero-neural-bg py-20 md:py-32">

@@ -1,6 +1,7 @@
 import { CheckCircle2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { translations } from "@/lib/i18n/translations";
+import SEOHead from "@/components/SEOHead";
 
 const About = () => {
   const { t, locale } = useLocale();
@@ -14,6 +15,11 @@ const About = () => {
   
   return (
     <main className="min-h-screen bg-background">
+      <SEOHead
+        path="/about"
+        title="About U.Psy — Our Mission & Clinical Approach"
+        description="Learn how U.Psy connects users with accredited psychologists in Morocco through evidence-based assessments, matching, and care pathways."
+      />
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-b from-u-maroon/5 to-background">
         <div className="container-custom">

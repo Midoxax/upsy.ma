@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import DataPrivacyNotice from "@/components/DataPrivacyNotice";
 import { z } from "zod";
+import SEOHead from "@/components/SEOHead";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
@@ -59,6 +60,11 @@ const Contact = () => {
   
   return (
     <main className="min-h-screen bg-background">
+      <SEOHead
+        path="/contact"
+        title="Contact U.Psy — Talk to Our Team"
+        description="Reach the U.Psy team in Morocco for support, partnerships, or questions about psychologists, assessments, and mental health programs."
+      />
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container-custom text-center">

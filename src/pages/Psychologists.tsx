@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/contexts/LocaleContext";
+import SEOHead from "@/components/SEOHead";
 
 const Psychologists = () => {
   const { t } = useLocale();
@@ -64,8 +65,26 @@ const Psychologists = () => {
     filters.minPrice > 0 || filters.maxPrice < 2000,
   ].filter(Boolean).length;
 
+  const itemListJsonLd = filteredProfiles && filteredProfiles.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Accredited Psychologists on U.Psy",
+    itemListElement: filteredProfiles.slice(0, 20).map((p: any, i: number) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://upsy.ma/psychologists/${p.slug || p.id}`,
+      name: p.full_name,
+    })),
+  } : undefined;
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        path="/psychologists"
+        title="Find a Psychologist in Morocco — U.Psy Directory"
+        description="Browse accredited psychologists in Morocco. Filter by specialty, language, city, and approach. Online and in-person sessions available."
+        jsonLd={itemListJsonLd}
+      />
       {/* Hero Section */}
       <section className="hero-neural-bg relative py-20">
         <div className="container-custom relative z-10">
