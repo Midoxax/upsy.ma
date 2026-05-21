@@ -132,7 +132,31 @@ const PsychologistProfile = () => {
 
   return (
     <div className="min-h-screen pb-24 lg:pb-8 bg-background">
-      <SEOHead path={`/psychologists/${psychologist.slug}`} />
+      <SEOHead
+        path={`/psychologists/${psychologist.slug}`}
+        title={`${psychologist.full_name} — Psychologist in Morocco | U.Psy`}
+        description={(psychologist.bio || `${psychologist.full_name} is an accredited psychologist on U.Psy offering evidence-based sessions in Morocco.`).slice(0, 155)}
+        ogImage={(psychologist as any).avatar_url || undefined}
+        ogType="profile"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Physician",
+          name: psychologist.full_name,
+          medicalSpecialty: "Psychiatric",
+          url: `https://upsy.ma/psychologists/${psychologist.slug}`,
+          image: (psychologist as any).avatar_url || undefined,
+          description: psychologist.bio || undefined,
+          knowsLanguage: (psychologist as any).languages || undefined,
+          areaServed: { "@type": "Country", name: "Morocco" },
+          ...(reviewStats.count > 0 ? {
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: reviewStats.avg,
+              reviewCount: reviewStats.count,
+            }
+          } : {}),
+        }}
+      />
 
       <div id="booking-widget">
         <BookingWidget
