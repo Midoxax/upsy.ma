@@ -31,6 +31,30 @@ Deno.serve(async (req) => {
   const log = createLogger(req, "notify-proposal-response");
 
   try {
+    // --- AUTH: require a valid caller before doing anything ---
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const SUPABASE_URL_AUTH = Deno.env.get("SUPABASE_URL")!;
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userClient = createClient(SUPABASE_URL_AUTH, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(
+      authHeader.replace("Bearer ", ""),
+    );
+    if (claimsErr || !claimsData?.claims?.sub) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const callerId = claimsData.claims.sub as string;
+
     const body = (await req.json()) as Body;
     if (!body?.booking_id || !["accept", "decline"].includes(body.action)) {
       return new Response(JSON.stringify({ error: "Invalid payload" }), {
@@ -57,6 +81,21 @@ Deno.serve(async (req) => {
       log.warn("booking not found", { error: bErr?.message });
       return new Response(JSON.stringify({ ok: false, error: "booking_not_found" }), {
         status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- AUTHZ: only the patient on this booking (or an admin) may notify a response ---
+    const { data: isAdminRow } = await sb
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId)
+      .eq("role", "admin")
+      .maybeSingle();
+    const isAdmin = !!isAdminRow;
+    if (!isAdmin && callerId !== booking.patient_id) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -195,7 +234,7 @@ Deno.serve(async (req) => {
     );
   } catch (e: any) {
     log.error("unhandled error", e);
-    return new Response(JSON.stringify({ error: e?.message ?? "Internal error" }), {
+    return new Response(JSON.stringify({ error: "Internal error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
