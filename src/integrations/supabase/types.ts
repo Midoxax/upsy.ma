@@ -4628,6 +4628,36 @@ export type Database = {
           },
         ]
       }
+      specialist_plans_public: {
+        Row: {
+          features: Json | null
+          id: string | null
+          is_active: boolean | null
+          monthly_price_mad: number | null
+          name: string | null
+          sort_order: number | null
+          tagline: string | null
+        }
+        Insert: {
+          features?: Json | null
+          id?: string | null
+          is_active?: boolean | null
+          monthly_price_mad?: number | null
+          name?: string | null
+          sort_order?: number | null
+          tagline?: string | null
+        }
+        Update: {
+          features?: Json | null
+          id?: string | null
+          is_active?: boolean | null
+          monthly_price_mad?: number | null
+          name?: string | null
+          sort_order?: number | null
+          tagline?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_assign_role: {

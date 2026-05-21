@@ -201,6 +201,14 @@ Deno.serve(async (req) => {
       .maybeSingle();
     const psyName = psyProfile?.full_name ?? "Your psychologist";
 
+    const escapeHtml = (s: string) =>
+      String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
     const origin = Deno.env.get("SITE_URL") ?? "https://upsy.ma";
     const joinUrl = `${origin}/video-call/${booking.video_room_id}`;
 
@@ -223,14 +231,14 @@ Deno.serve(async (req) => {
     <div style="text-align:center;margin-bottom:24px;">
       <h1 style="color:#6B1F2A;margin:0;font-size:22px;">U.Psy</h1>
     </div>
-    <h2 style="color:#1a1a1a;margin:0 0 16px;">${psyName} is inviting you to a video session</h2>
+    <h2 style="color:#1a1a1a;margin:0 0 16px;">${escapeHtml(psyName)} is inviting you to a video session</h2>
     <p style="color:#444;line-height:1.6;margin:0 0 20px;">
       Click the button below to join the secure video room. No account required.
     </p>
     <div style="background:#FAF7F5;border-left:4px solid #6B1F2A;padding:16px;margin:20px 0;border-radius:4px;">
       <p style="margin:0 0 6px;"><strong>When:</strong> ${dateStr}</p>
       <p style="margin:0;"><strong>Duration:</strong> ${body.duration_minutes} minutes</p>
-      ${body.notes ? `<p style="margin:12px 0 0;font-style:italic;color:#666;">"${body.notes}"</p>` : ""}
+      ${body.notes ? `<p style="margin:12px 0 0;font-style:italic;color:#666;">"${escapeHtml(body.notes)}"</p>` : ""}
     </div>
     <div style="text-align:center;margin:28px 0;">
       <a href="${joinUrl}" style="display:inline-block;background:#6B1F2A;color:#ffffff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">Join the session</a>
@@ -299,7 +307,7 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             from: "U.Psy <onboarding@resend.dev>",
             to: [email],
-            subject: `Video session with ${psyName} — Join link`,
+            subject: `Video session with ${psyName.replace(/[\r\n<>]/g, " ")} — Join link`,
             html,
             attachments: [
               {
@@ -334,7 +342,7 @@ Deno.serve(async (req) => {
   } catch (e: any) {
     console.error("[send-meeting-link] unhandled", e);
     return new Response(
-      JSON.stringify({ error: e?.message ?? "Internal error" }),
+      JSON.stringify({ error: "Internal error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
