@@ -1,4 +1,6 @@
-import { lazy, Suspense, ComponentType } from "react";
+import { lazy, Suspense, ComponentType, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import HeroSection from "@/components/home/HeroSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import { useDynamicSections } from "@/hooks/useDynamicSections";
@@ -256,6 +258,24 @@ const dividerSequence: { variant: DividerVariant; color: DividerColor; flip?: bo
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  // If the user just completed an OAuth round-trip, the SDK lands them back
+  // on "/" with a fresh session. Forward them to /my-space once the session
+  // is restored.
+  useEffect(() => {
+    if (authLoading || !user) return;
+    let target: string | null = null;
+    try {
+      target = sessionStorage.getItem("upsy:post-oauth-redirect");
+    } catch {}
+    if (target) {
+      try { sessionStorage.removeItem("upsy:post-oauth-redirect"); } catch {}
+      navigate(target, { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
   // Phase 1: Collect signals → classify → lock intent
   useIntentSignals();
 

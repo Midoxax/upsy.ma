@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -112,7 +112,7 @@ const OAuthButtons = ({ onGoogle, onApple, isGoogleLoading, isAppleLoading, t }:
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const { t } = useLocale();
   const [isLoading, setIsLoading] = useState(false);
@@ -123,6 +123,15 @@ const Auth = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [lastAttempt, setLastAttempt] = useState(0);
+
+  // Auto-redirect once a session is available (covers OAuth round-trip and
+  // visits to /auth while already signed in).
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) return;
+    const redirectTo = new URLSearchParams(window.location.search).get("redirect");
+    navigate(redirectTo || "/my-space", { replace: true });
+  }, [user, authLoading, navigate]);
 
   const throttle = () => {
     const now = Date.now();
@@ -138,6 +147,11 @@ const Auth = () => {
     const setter = provider === "google" ? setIsGoogleLoading : setIsAppleLoading;
     setter(true);
     try {
+      // Flag so the homepage knows to forward this session to /my-space
+      // once the OAuth round-trip lands back on "/".
+      try {
+        sessionStorage.setItem("upsy:post-oauth-redirect", "/my-space");
+      } catch {}
       const { error } = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
       });
