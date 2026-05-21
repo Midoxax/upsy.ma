@@ -32,7 +32,24 @@ const Services = () => {
 
   return (
     <main className="min-h-screen bg-background">
-      <SEOHead path="/services" title={seo.title} description={seo.description} />
+      <SEOHead
+        path="/services"
+        title={seo.title}
+        description={seo.description}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "MedicalBusiness",
+          name: "U.Psy Clinical Services",
+          url: "https://upsy.ma/services",
+          areaServed: { "@type": "Country", name: "Morocco" },
+          medicalSpecialty: "Psychiatric",
+          availableService: (serviceItems as any[]).map((s) => ({
+            "@type": "MedicalTherapy",
+            name: s.title,
+            description: s.description,
+          })),
+        }}
+      />
       {/* Methods & Metrics Band */}
       <MethodsMetricsBand />
 
