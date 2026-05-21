@@ -93,6 +93,15 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // --- HARD BLOCK in production: this is a dev-only simulator ---
+    const paymentEnv = (Deno.env.get("PAYMENT_ENV") ?? "sandbox").toLowerCase();
+    if (paymentEnv !== "sandbox") {
+      return new Response(JSON.stringify({ error: "Simulator disabled in production" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
