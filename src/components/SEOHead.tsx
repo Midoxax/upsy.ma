@@ -8,9 +8,14 @@ interface SEOHeadProps {
   description?: string;
   ogImage?: string;
   ogType?: string;
+  jsonLd?: Record<string, any> | Record<string, any>[];
 }
 
-const SEOHead = ({ path, title, description, ogImage, ogType = 'website' }: SEOHeadProps) => {
+const DEFAULT_TITLE = 'U.Psy — Performance Psychology Platform for Morocco';
+const DEFAULT_DESCRIPTION = "U.Psy is Morocco's performance psychology platform. Find accredited psychologists, take clinical self-assessments, and access tailored mental health programs.";
+const DEFAULT_OG_IMAGE = 'https://upsy.ma/og-image.png';
+
+const SEOHead = ({ path, title, description, ogImage, ogType = 'website', jsonLd }: SEOHeadProps) => {
   const { locale } = useLocale();
   const basePath = stripLocalePrefix(path);
   const baseUrl = 'https://upsy.ma';
@@ -18,8 +23,12 @@ const SEOHead = ({ path, title, description, ogImage, ogType = 'website' }: SEOH
   useEffect(() => {
     document.documentElement.lang = locale;
 
-    // Title
-    if (title) document.title = title;
+    const effectiveTitle = title || DEFAULT_TITLE;
+    const effectiveDescription = description || DEFAULT_DESCRIPTION;
+    const effectiveOgImage = ogImage || DEFAULT_OG_IMAGE;
+
+    // Title — always set so values don't leak across routes
+    document.title = effectiveTitle;
 
     // Helper to set or create a meta tag
     const setMeta = (attr: string, key: string, content: string) => {
@@ -32,26 +41,19 @@ const SEOHead = ({ path, title, description, ogImage, ogType = 'website' }: SEOH
       el.setAttribute('content', content);
     };
 
-    if (description) {
-      setMeta('name', 'description', description);
-      setMeta('property', 'og:description', description);
-      setMeta('name', 'twitter:description', description);
-    }
+    setMeta('name', 'description', effectiveDescription);
+    setMeta('property', 'og:description', effectiveDescription);
+    setMeta('name', 'twitter:description', effectiveDescription);
 
     const pageUrl = locale === 'fr' ? `${baseUrl}/fr${basePath}` : locale === 'ar' ? `${baseUrl}/ar${basePath}` : `${baseUrl}${basePath}`;
 
-    if (title) {
-      setMeta('property', 'og:title', title);
-      setMeta('name', 'twitter:title', title);
-    }
+    setMeta('property', 'og:title', effectiveTitle);
+    setMeta('name', 'twitter:title', effectiveTitle);
     setMeta('property', 'og:url', pageUrl);
     setMeta('property', 'og:type', ogType);
     setMeta('name', 'twitter:card', 'summary_large_image');
-
-    if (ogImage) {
-      setMeta('property', 'og:image', ogImage);
-      setMeta('name', 'twitter:image', ogImage);
-    }
+    setMeta('property', 'og:image', effectiveOgImage);
+    setMeta('name', 'twitter:image', effectiveOgImage);
 
     // Remove existing alternate/canonical links
     document.querySelectorAll('link[rel="alternate"]').forEach(el => el.remove());
@@ -88,7 +90,24 @@ const SEOHead = ({ path, title, description, ogImage, ogType = 'website' }: SEOH
       el.setAttribute('content', altLocale);
       document.head.appendChild(el);
     });
-  }, [locale, basePath, title, description, ogImage, ogType]);
+
+    // Per-route JSON-LD — tag with data attribute so we can clean on unmount
+    document.querySelectorAll('script[data-seo-jsonld="true"]').forEach(el => el.remove());
+    if (jsonLd) {
+      const blocks = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+      blocks.forEach(block => {
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.setAttribute('data-seo-jsonld', 'true');
+        script.text = JSON.stringify(block);
+        document.head.appendChild(script);
+      });
+    }
+
+    return () => {
+      document.querySelectorAll('script[data-seo-jsonld="true"]').forEach(el => el.remove());
+    };
+  }, [locale, basePath, title, description, ogImage, ogType, jsonLd]);
 
   return null;
 };
