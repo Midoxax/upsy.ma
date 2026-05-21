@@ -114,7 +114,11 @@ const BlogIndex = () => {
 
   return (
     <>
-      <SEOHead path="/blog" />
+      <SEOHead
+        path="/blog"
+        title="U.Psy Blog — Mental Health Insights from Morocco"
+        description="Evidence-based articles on therapy, anxiety, depression, workplace mental health, and mindfulness from the U.Psy clinical team."
+      />
       <main className="flex-1">
         {/* Hero */}
         <section className="hero-neural-bg py-20 md:py-28">
