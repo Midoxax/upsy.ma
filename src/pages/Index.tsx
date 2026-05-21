@@ -5,6 +5,7 @@ import { useDynamicSections } from "@/hooks/useDynamicSections";
 import type { UserIntent } from "@/stores/intentStore";
 import SectionDivider from "@/components/home/SectionDivider";
 import type { DividerVariant, DividerColor } from "@/components/home/SectionDivider";
+import SEOHead from "@/components/SEOHead";
 
 // Lazy-loaded sections (all except Hero to reduce initial bundle)
 const TrustSection = lazy(() => import("@/components/home/TrustSection"));
@@ -263,6 +264,21 @@ const Index = () => {
 
   return (
     <main className="flex-1">
+      <SEOHead
+        path="/"
+        title="U.Psy — Performance Psychology Platform for Morocco"
+        description="Find accredited psychologists, take clinical self-assessments (GAD-7, PHQ-9), and access tailored mental health programs across Morocco."
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "U.Psy",
+          url: "https://upsy.ma",
+          logo: "https://upsy.ma/favicon.png",
+          description: "Performance psychology platform connecting users with accredited psychologists in Morocco.",
+          founder: { "@type": "Person", name: "Mehdi Felji", jobTitle: "Founder" },
+          areaServed: "Morocco",
+        }}
+      />
       {orderedSections.map((section, index) => {
         const Section = section.component;
         const divider = dividerSequence[index % dividerSequence.length];
