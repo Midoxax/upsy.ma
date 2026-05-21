@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Sparkles } from "lucide-react";
-import { useAllPlans, type SpecialistPlan } from "@/hooks/useSpecialistPlan";
+import { useAllPlans, useAllPlansPublic, type SpecialistPlan } from "@/hooks/useSpecialistPlan";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -50,7 +50,11 @@ export const PlanComparisonGrid = ({
   ctaLabel,
   variant = "grid",
 }: Props) => {
-  const { data: plans = [], isLoading } = useAllPlans();
+  // Marketing/public page hides commission_rate (business-sensitive) via the public view.
+  const authed = useAllPlans();
+  const publicPlans = useAllPlansPublic();
+  const { data: plans = [], isLoading } =
+    variant === "marketing" ? publicPlans : authed;
 
   if (isLoading) {
     return <div className="text-sm text-muted-foreground">Loading plans…</div>;
@@ -101,9 +105,11 @@ export const PlanComparisonGrid = ({
               {plan.monthly_price_mad > 0 && (
                 <span className="text-sm text-muted-foreground"> / month</span>
               )}
-              <p className="mt-1 text-xs text-muted-foreground">
-                Platform commission: {(plan.commission_rate * 100).toFixed(0)}% per session
-              </p>
+              {typeof plan.commission_rate === "number" && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Platform commission: {(plan.commission_rate * 100).toFixed(0)}% per session
+                </p>
+              )}
             </div>
 
             <ul className="mb-6 space-y-2 text-sm">
