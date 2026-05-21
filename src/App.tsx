@@ -30,6 +30,8 @@ const Skool = lazy(() => import("./pages/Skool"));
 const Resources = lazy(() => import("./pages/Resources"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Legal = lazy(() => import("./pages/Legal"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 const TalentInnovationHub = lazy(() => import("./pages/TalentInnovationHub"));
 const MoroccanUmbrella = lazy(() => import("./pages/MoroccanUmbrella"));
 const PsychologuesSansFrontieres = lazy(() => import("./pages/PsychologuesSansFrontieres"));
@@ -109,6 +111,8 @@ const AppRoutes = () => (
     <Route path="resources" element={<PageTransition><Resources /></PageTransition>} />
     <Route path="contact" element={<PageTransition><Contact /></PageTransition>} />
     <Route path="legal" element={<PageTransition><Legal /></PageTransition>} />
+    <Route path="privacy" element={<PageTransition><Privacy /></PageTransition>} />
+    <Route path="terms" element={<PageTransition><Terms /></PageTransition>} />
     <Route path="talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
     <Route path="moroccan-umbrella" element={<PageTransition><MoroccanUmbrella /></PageTransition>} />
     <Route path="psf" element={<PageTransition><PsychologuesSansFrontieres /></PageTransition>} />
