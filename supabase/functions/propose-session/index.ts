@@ -207,6 +207,14 @@ Deno.serve(async (req) => {
 
     const psyName = psyProfile?.full_name ?? "Your psychologist";
 
+    const escapeHtml = (s: string) =>
+      String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
     // Build response URLs from a server-side trusted origin (never trust client headers in emails)
     const origin = Deno.env.get("SITE_URL") ?? "https://upsy.ma";
     const acceptUrl = `${origin}/booking/respond/${proposalToken}?action=accept`;
@@ -228,15 +236,15 @@ Deno.serve(async (req) => {
     <div style="text-align:center;margin-bottom:24px;">
       <h1 style="color:#6B1F2A;margin:0;font-size:22px;">U.Psy</h1>
     </div>
-    <h2 style="color:#1a1a1a;margin:0 0 16px;">Session invitation from ${psyName}</h2>
+    <h2 style="color:#1a1a1a;margin:0 0 16px;">Session invitation from ${escapeHtml(psyName)}</h2>
     <p style="color:#444;line-height:1.6;margin:0 0 20px;">
-      ${psyName} has proposed a session with you. Please confirm or decline below.
+      ${escapeHtml(psyName)} has proposed a session with you. Please confirm or decline below.
     </p>
     <div style="background:#FAF7F5;border-left:4px solid #6B1F2A;padding:16px;margin:20px 0;border-radius:4px;">
       <p style="margin:0 0 6px;"><strong>When:</strong> ${dateStr}</p>
       <p style="margin:0 0 6px;"><strong>Duration:</strong> ${body.duration_minutes} minutes</p>
-      <p style="margin:0;"><strong>Type:</strong> ${body.session_type.replace("_", " ")}</p>
-      ${body.notes ? `<p style="margin:12px 0 0;font-style:italic;color:#666;">"${body.notes}"</p>` : ""}
+      <p style="margin:0;"><strong>Type:</strong> ${escapeHtml(body.session_type.replace("_", " "))}</p>
+      ${body.notes ? `<p style="margin:12px 0 0;font-style:italic;color:#666;">"${escapeHtml(body.notes)}"</p>` : ""}
     </div>
     <div style="text-align:center;margin:28px 0;">
       <a href="${acceptUrl}" style="display:inline-block;background:#6B1F2A;color:#ffffff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin:0 6px;">Accept</a>
@@ -262,7 +270,7 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             from: "U.Psy <onboarding@resend.dev>",
             to: [email],
-            subject: `Session invitation from ${psyName}`,
+            subject: `Session invitation from ${psyName.replace(/[\r\n<>]/g, " ")}`,
             html,
           }),
         });
@@ -287,7 +295,7 @@ Deno.serve(async (req) => {
   } catch (e: any) {
     log.error("unhandled error", e);
     return new Response(
-      JSON.stringify({ error: e?.message ?? "Internal error" }),
+      JSON.stringify({ error: "Internal error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
