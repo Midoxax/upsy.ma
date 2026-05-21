@@ -60,6 +60,25 @@ export const useAllPlans = () =>
     staleTime: 5 * 60_000,
   });
 
+/**
+ * Public-safe plan list (no commission_rate). Use on anonymous marketing pages
+ * — the underlying view excludes the business-sensitive commission column.
+ */
+export const useAllPlansPublic = () =>
+  useQuery({
+    queryKey: ["specialist-plans-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("specialist_plans_public" as any)
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return (data ?? []) as unknown as SpecialistPlan[];
+    },
+    staleTime: 5 * 60_000,
+  });
+
 /** Boolean helper for any feature key */
 export const hasFeature = (
   plan: SpecialistPlan | undefined,
