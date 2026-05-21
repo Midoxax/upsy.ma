@@ -111,6 +111,8 @@ const AppRoutes = () => (
     <Route path="resources" element={<PageTransition><Resources /></PageTransition>} />
     <Route path="contact" element={<PageTransition><Contact /></PageTransition>} />
     <Route path="legal" element={<PageTransition><Legal /></PageTransition>} />
+    <Route path="privacy" element={<PageTransition><Privacy /></PageTransition>} />
+    <Route path="terms" element={<PageTransition><Terms /></PageTransition>} />
     <Route path="talent-innovation-hub" element={<PageTransition><TalentInnovationHub /></PageTransition>} />
     <Route path="moroccan-umbrella" element={<PageTransition><MoroccanUmbrella /></PageTransition>} />
     <Route path="psf" element={<PageTransition><PsychologuesSansFrontieres /></PageTransition>} />
