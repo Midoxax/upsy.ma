@@ -15,6 +15,7 @@ import {
   Lock, ChevronRight,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import SEOHead from "@/components/SEOHead";
 
 interface AssessmentAnswers {
   feeling: string;
