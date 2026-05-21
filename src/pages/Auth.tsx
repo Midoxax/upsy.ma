@@ -147,6 +147,11 @@ const Auth = () => {
     const setter = provider === "google" ? setIsGoogleLoading : setIsAppleLoading;
     setter(true);
     try {
+      // Flag so the homepage knows to forward this session to /my-space
+      // once the OAuth round-trip lands back on "/".
+      try {
+        sessionStorage.setItem("upsy:post-oauth-redirect", "/my-space");
+      } catch {}
       const { error } = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
       });
