@@ -44,13 +44,17 @@ export const useSpecialistPlan = () => {
   });
 };
 
-/** All active plans, ordered for pricing pages */
+/**
+ * All active plans, ordered for pricing pages.
+ * Reads from the commission-free `specialist_plans_public` view — only admins
+ * can read commission_rate via the underlying table directly.
+ */
 export const useAllPlans = () =>
   useQuery({
-    queryKey: ["specialist-plans-all"],
+    queryKey: ["specialist-plans-public"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("specialist_plans" as any)
+        .from("specialist_plans_public" as any)
         .select("*")
         .eq("is_active", true)
         .order("sort_order");
