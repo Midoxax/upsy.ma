@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/LocaleContext";
 import SEOHead from "@/components/SEOHead";
-import MethodsMetricsBand from "@/components/MethodsMetricsBand";
+import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 
 const pillars = [
   {
