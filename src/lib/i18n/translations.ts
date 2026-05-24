@@ -506,10 +506,10 @@ export const translations = {
       hero: {
         title: "About Mr. Mehdi Felji",
         subtitle: "Founder of U.Psy | Mental Health Innovation & Psychology Platform",
-              talkToNour: "تحدث مع نور · ذكاء اصطناعي",
-        statPsychologists: "أخصائيون موثقون",
-        statMatch: "للعثور على المطابقة",
-        statSatisfaction: "رضا المرضى",
+        talkToNour: "Talk to Nour · AI",
+        statPsychologists: "Verified psychologists",
+        statMatch: "To find your match",
+        statSatisfaction: "Client satisfaction",
       },
       background: {
         title: "Who is Mehdi Felji?",
