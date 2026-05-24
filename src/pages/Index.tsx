@@ -16,6 +16,7 @@ const FeaturedPsychologistsSection = lazy(() => import("@/components/home/Featur
 const HowItWorksSection = lazy(() => import("@/components/home/HowItWorksSection"));
 const FounderSection = lazy(() => import("@/components/home/FounderSection"));
 const PillarsSection = lazy(() => import("@/components/home/PillarsSection"));
+const WhyUsSection = lazy(() => import("@/components/home/WhyUsSection"));
 const PathwaysSection = lazy(() => import("@/components/home/PathwaysSection"));
 const ProgramsSection = lazy(() => import("@/components/home/ProgramsSection"));
 const LearningSection = lazy(() => import("@/components/home/LearningSection"));
@@ -144,6 +145,15 @@ const sections: SectionConfig[] = [
     defaultIndex: 5,
     skeletonVariant: "cards",
     priorityByIntent: { EXPLORING: 3, READY_TO_ACT: 5, RESEARCHING: 3, SKEPTICAL: 7 },
+    narrativeConstraints: {},
+  },
+  {
+    key: "why-us",
+    component: WhyUsSection,
+    trackingId: "why_us",
+    defaultIndex: 6,
+    skeletonVariant: "text",
+    priorityByIntent: { EXPLORING: 4, READY_TO_ACT: 6, RESEARCHING: 2, SKEPTICAL: 1 },
     narrativeConstraints: {},
   },
   {
