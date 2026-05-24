@@ -16,65 +16,53 @@ import { useLocale } from "@/contexts/LocaleContext";
 import SEOHead from "@/components/SEOHead";
 import { MethodsMetricsBand } from "@/components/MethodsMetricsBand";
 
-const pillars = [
+const pillarConfig = [
   {
     icon: Activity,
-    title: "Performance Psychology System",
-    desc: "We don't list therapists. We operate a system that measures, identifies what's breaking, trains the right skills, and applies them in real life.",
-    proof: ["Validated diagnostics", "Structured protocols", "Outcome tracking"],
+    key: "system",
+    fallbackTitle: "Performance Psychology System",
     href: "/assessment-lab",
-    cta: "Try the assessment lab",
   },
   {
     icon: ShieldCheck,
-    title: "5-Tier Clinical Accreditation",
-    desc: "Every U.Psy specialist passes a multi-stage clinical accreditation reviewed by our team — credentials, training history, supervision, and ethics.",
-    proof: ["Identity & license verified", "Training history reviewed", "Continuous supervision"],
+    key: "accreditation",
+    fallbackTitle: "5-Tier Clinical Accreditation",
     href: "/psychologists",
-    cta: "Browse accredited specialists",
   },
   {
     icon: Globe2,
-    title: "Built for Morocco",
-    desc: "Trilingual EN / FR / Arabic with full RTL support, Law 09-08 privacy compliance, MAD pricing, and clinical content adapted to Moroccan culture.",
-    proof: ["EN · FR · AR (RTL)", "Law 09-08 compliant", "Local payment rails"],
+    key: "morocco",
+    fallbackTitle: "Built for Morocco",
     href: "/moroccan-umbrella",
-    cta: "Our Moroccan umbrella",
   },
   {
     icon: FlaskConical,
-    title: "Clinical Rigor",
-    desc: "Validated psychometric instruments, evidence-based therapeutic protocols, and structured session notes — every interaction grounded in clinical science.",
-    proof: ["GAD-7 · PHQ-9", "CBT · Schema · EMDR", "Structured session notes"],
+    key: "rigor",
+    fallbackTitle: "Clinical Rigor",
     href: "/founder",
-    cta: "Read the methodology",
   },
   {
     icon: Layers,
-    title: "Integrated Ecosystem",
-    desc: "One login, one platform: marketplace for individual care, MOOC for learning, B2B programs for organizations, AI tools for self-guided work.",
-    proof: ["Marketplace + MOOC", "B2B programs", "Nour AI assistant"],
+    key: "ecosystem",
+    fallbackTitle: "Integrated Ecosystem",
     href: "/services",
-    cta: "Explore services",
   },
   {
     icon: Lock,
-    title: "Privacy by Design",
-    desc: "Strict row-level security, encrypted clinical notes, breached-password checks, mandatory email verification, zero data resale.",
-    proof: ["RLS on every table", "Encrypted notes", "No data resale"],
+    key: "privacy",
+    fallbackTitle: "Privacy by Design",
     href: "/privacy",
-    cta: "Read privacy policy",
   },
-];
+] as const;
 
-const comparison = [
-  { label: "Verified clinical credentials", us: true, them: false },
-  { label: "Validated diagnostics built-in", us: true, them: false },
-  { label: "Structured outcome tracking", us: true, them: false },
-  { label: "Native Arabic + RTL", us: true, them: false },
-  { label: "Moroccan Law 09-08 compliance", us: true, them: false },
-  { label: "Integrated learning + B2B + AI", us: true, them: false },
-];
+const comparisonRows = [
+  { key: "credentials", fallback: "Verified clinical credentials" },
+  { key: "diagnostics", fallback: "Validated diagnostics built-in" },
+  { key: "outcomes", fallback: "Structured outcome tracking" },
+  { key: "arabic", fallback: "Native Arabic + RTL" },
+  { key: "law", fallback: "Moroccan Law 09-08 compliance" },
+  { key: "ecosystem", fallback: "Integrated learning + B2B + AI" },
+] as const;
 
 const WhyUs = () => {
   const { t } = useLocale();
@@ -192,27 +180,19 @@ const WhyUs = () => {
                 U.Psy
               </div>
             </div>
-            {comparison.map((row, idx) => (
+            {comparisonRows.map((row, idx) => (
               <div
-                key={row.label}
-                className={`grid grid-cols-3 ${idx !== comparison.length - 1 ? "border-b border-border/30" : ""}`}
+                key={row.key}
+                className={`grid grid-cols-3 ${idx !== comparisonRows.length - 1 ? "border-b border-border/30" : ""}`}
               >
                 <div className="p-4 md:p-5 text-sm md:text-base font-medium">
-                  {row.label}
+                  {t(`whyUs.compare.rows.${row.key}`) || row.fallback}
                 </div>
                 <div className="p-4 md:p-5 flex items-center justify-center">
-                  {row.them ? (
-                    <Check className="w-5 h-5 text-muted-foreground" />
-                  ) : (
-                    <X className="w-5 h-5 text-muted-foreground/40" />
-                  )}
+                  <X className="w-5 h-5 text-muted-foreground/40" />
                 </div>
                 <div className="p-4 md:p-5 flex items-center justify-center bg-primary/5">
-                  {row.us ? (
-                    <Check className="w-5 h-5 text-primary" />
-                  ) : (
-                    <X className="w-5 h-5 text-muted-foreground/40" />
-                  )}
+                  <Check className="w-5 h-5 text-primary" />
                 </div>
               </div>
             ))}
@@ -234,9 +214,15 @@ const WhyUs = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {pillars.map((pillar, idx) => (
+            {pillarConfig.map((pillar, idx) => {
+              const proof = [
+                t(`whyUs.pillars.${pillar.key}.proof.a`),
+                t(`whyUs.pillars.${pillar.key}.proof.b`),
+                t(`whyUs.pillars.${pillar.key}.proof.c`),
+              ].filter(Boolean);
+              return (
               <motion.div
-                key={pillar.title}
+                key={pillar.key}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
@@ -246,12 +232,14 @@ const WhyUs = () => {
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-primary/10 border border-primary/20 mb-5">
                   <pillar.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-h3 mb-3">{pillar.title}</h3>
+                <h3 className="text-h3 mb-3">
+                  {t(`whyUs.items.${pillar.key}.title`) || pillar.fallbackTitle}
+                </h3>
                 <p className="text-body text-muted-foreground text-sm leading-relaxed mb-5">
-                  {pillar.desc}
+                  {t(`whyUs.pillars.${pillar.key}.desc`) || t(`whyUs.items.${pillar.key}.desc`)}
                 </p>
                 <ul className="space-y-2 mb-6">
-                  {pillar.proof.map((p) => (
+                  {proof.map((p) => (
                     <li key={p} className="flex items-start gap-2 text-sm">
                       <Check className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
                       <span>{p}</span>
@@ -262,10 +250,11 @@ const WhyUs = () => {
                   to={pillar.href}
                   className="mt-auto inline-flex items-center gap-1 text-sm text-primary font-medium hover:gap-2 transition-all"
                 >
-                  {pillar.cta} <ArrowRight className="w-4 h-4" />
+                  {t(`whyUs.pillars.${pillar.key}.cta`)} <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
