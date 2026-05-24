@@ -1,74 +1,67 @@
-## Goal
+# Translations + RTL Fix Plan
 
-Unblock the platform with one focused fix now, and queue three follow-up plans for the rest.
+## What's actually broken
 
----
+After auditing the codebase:
 
-## Phase 1 — Now: Auth redirect bug
+- **4 locales** are wired (en, fr, ar, ber) via `LocaleContext` + `src/lib/i18n/translations.ts`.
+- **EN has ~1353 lines of keys, FR/AR ~1212 each, BER only 64.** That means FR/AR are missing ~140+ keys (silently fall back to the raw key string) and BER is essentially a stub.
+- **Only 64 of 252 components actually call `t()`.** ~188 components ship hardcoded English — including the hero. In `HeroSection.tsx` everything visible is hardcoded: `wordPairs` (Burnout→Recovery…), `floatingKeywords` (CBT, EMDR, Schema…), all 4 `heroVariants` (`titlePrefix`, `subtitle`, both CTAs, all stats), and `previewCards`.
+- **RTL** only flips `<html dir>` — there's no audit of asymmetric layouts, mirrored icons, `text-left`, `pl-*`/`ml-*`, or directional arrows for Arabic.
+- **Berber** is so incomplete it shows mostly raw keys; we'll hide it from the language switcher until content lands.
 
-**Symptom:** After signing up / signing in (especially via Google/Apple OAuth), the page doesn't move forward. The user is left on `/auth` or `/` instead of landing on `/my-space`.
+This is a very large surface (≈190 components). Doing it all at once would be a giant unreviewable change, so I'll phase it.
 
-**Root cause:** `src/pages/Auth.tsx` only navigates inside the `handleLogin` success branch. It has no effect that listens to the auth context — so when:
-- OAuth returns the user to `/` with a fresh session, nothing routes them onward
-- A user with an existing session visits `/auth`, they stay stuck on the form
-- Email verification link lands them on `/my-space` but role-based routing doesn't fire
+## Scope decisions
 
-**Changes:**
+- **Languages:** EN, FR, AR fully covered. BER hidden from the switcher (kept in the file, marked as work-in-progress).
+- **Order of attack:** marketing/public surfaces first (highest visibility), then auth/booking/dashboards, then admin (admin stays EN-only — internal tool).
+- **Strategy:** for each component touched I (1) extract literals into `translations.ts` under a stable key namespace, (2) call `t()` from the component, (3) add FR + AR values, (4) verify RTL.
 
-1. **`src/pages/Auth.tsx`** — add a `useEffect` watching `user` from `useAuth()`. When a session exists and we're on `/auth`, navigate to `?redirect=` param or `/my-space`.
-2. **`src/pages/Auth.tsx`** — in `handleOAuth`, if `result.redirected` is false (already-authenticated case the SDK returns), also navigate.
-3. **OAuth landing** — verify the OAuth callback path (`redirect_uri: window.location.origin`) actually completes session restore before the homepage renders. If `Index.tsx` doesn't gate on `loading`, add a small effect there too: when an authenticated user with a known role lands on `/`, send them to `/my-space` only if they came from the OAuth round-trip (detect via URL hash `#access_token` or sessionStorage flag set before `signInWithOAuth`).
-4. **`useRoleBasedRoute`** check — ensure `/my-space` itself dispatches admin → `/admin`, psychologist → psychologist dashboard, etc. (already exists per memory; just verify it fires on first mount after OAuth, not just on cached sessions).
+## Phase 1 — Hero + homepage (this turn)
 
-**Verification:** sign up with email → toast appears, stays on /auth (correct). Sign in with email → lands on /my-space. Sign in with Google → returns and lands on /my-space (or /admin for admin account).
+1. Add `home.hero.*` namespace to `translations.ts` for EN/FR/AR with:
+   - 6 word pairs (problem/solution).
+   - 8 floating keyword labels.
+   - All 4 intent variants × {titlePrefix, subtitle, primaryCta, secondaryCta, 3 stats labels}.
+   - Preview cards (3 × {title, description}).
+2. Refactor `HeroSection.tsx` to read every visible string via `t()`. Keep the data shape, just swap the values to keys.
+3. Sweep the rest of `src/components/home/*` (`Trust`, `Pathways`, `Founder`, `MethodsMetrics`, `SelfAssessment`, `FeaturedPsychologists`, `HowItWorks`, `FinalCTA`, `Testimonials`, `Programs`, `Community`, `Research`, `Pillars`, `Psf`, `Organizations`, `Learning`) — same treatment. New namespace `home.<section>.*`.
+4. RTL pass for the homepage: replace any `text-left`, `ml-*`, `mr-*`, `pl-*`, `pr-*`, `flex-row` with logical equivalents (`text-start`, `ms-*`, `me-*`, `ps-*`, `pe-*`) where direction matters; add `rtl:rotate-180` to forward-pointing arrow icons inside CTAs.
 
----
+## Phase 2 — Public pages
 
-## Phase 2 — Queued (separate plans when you say go)
+`Psychologists`, `PsychologistProfile`, `Services`, `ConsultingForOrganizations`, `GetMatched`, `MoroccanUmbrella`, `PsychologuesSansFrontieres`, `Founder`, `About`, `Contact`, `Resources`, `Learn`, `LearnCourse`, `AssessmentLab`, `Skool`, `TalentInnovationHub`, `MethodsMetricsBand`, `Footer`, `Header`/`MegaMenu`, `BookingModal`, `BookingWidget`, `MatchingFormModal`, `ProposalRequestModal`, blog index + 8 articles.
 
-These are scoped but I'm not building them in this plan — too much surface to bundle safely.
+For each: extract literals → keys → EN/FR/AR values → RTL polish.
 
-### A. Legal status section (Wyoming LLC vs SARL vs Autoentrepreneur)
-- Add a new "Structure & Conformité" section to `src/pages/About.tsx` (or `/legal`).
-- Three comparison cards: Autoentrepreneur MA (current), SARL MA, Wyoming LLC — with cost, tax, liability, banking, international payments rows.
-- Honest framing: today U.Psy operates under Autoentrepreneur; SARL/LLC are planned milestones.
-- Pure content + table, no backend.
+## Phase 3 — Auth + booking + client-facing dashboards
 
-### B. Session minuteur (specialist-side toggle)
-- Add a `SessionTimer` component inside the video consultation room (`src/components/video/*` or wherever Jitsi iframe lives).
-- Two modes via a small switch visible only to specialists: **Elapsed** (counts up from `session.started_at`) and **Remaining** (counts down to `started_at + duration_minutes`).
-- Warning state at <5 min remaining (color shifts to gold, then maroon).
-- No new tables — read `sessions.started_at` and `sessions.duration_minutes` from existing schema.
+`Auth`, `ResetPassword`, `MfaSetup`, `Invite`, `Apply` + wizard, `IntakeForm`, `BookingResponse`, `VideoCall`, `MySpace`, `PatientDashboard`, `SpecialistDashboard`, `OrganizationDashboard`, `AthleteHub`, `Notifications`, `AIAssistant`, `Legal`, `Privacy`, `Terms`, `Install`, `NotFound`, dashboard cards/components.
 
-### C. Blog editor with dual mode
-- Extend the admin blog insertion form (`src/pages/admin/*` blog editor) so authors can pick **Rich text** or **Markdown** with a tab toggle, in addition to file upload.
-- Rich text: `@tiptap/react` with starter-kit + image + link extensions (already a common dep).
-- Markdown: textarea + live preview via `react-markdown`.
-- File upload stays as a third tab.
-- Save normalized HTML to the existing `blog_posts.content` column.
+## Phase 4 — RTL audit + cleanup
 
-### D. Other items you mentioned (parked, will scope individually)
-- Light theme contrast + colorfulness pass
-- Burger banner contrast
-- Pricing/tarifs page for Autoentrepreneur + MAD + CIH manual confirmation
-- Credit system for organisms
-- Contracts & partnerships flow
-- CIH bank payment confirmation emails
+- Switchers, tabs, drawers, slide-over panels: ensure they slide from the correct edge in AR.
+- `LanguageSwitcher`: hide `ber` until BER reaches parity, add a "(beta)" tag if we keep it visible.
+- Add a small dev-only logger in `t()` that `console.warn`s missing keys per locale (DEV only) so future drift is caught.
+- Add a CI-style script `scripts/i18n-check.ts` (run manually) that diffs EN vs FR vs AR and prints missing keys.
 
----
+## Out of scope
 
-## Technical details (Phase 1)
+- Admin pages (`src/pages/admin/*`, `src/components/admin/*`) stay EN-only.
+- Email templates already have their own i18n in `supabase/functions/_shared/email-templates`.
+- Dynamic DB content (psychologist bios, blog post bodies if stored in DB) — needs a separate data-translation strategy.
 
-```text
-src/pages/Auth.tsx
-├── import { useAuth } from "@/contexts/AuthContext"
-├── const { user, loading } = useAuth()
-└── useEffect(() => {
-      if (loading) return
-      if (!user) return
-      const redirectTo = new URLSearchParams(location.search).get("redirect")
-      navigate(redirectTo || "/my-space", { replace: true })
-    }, [user, loading])
-```
+## Technical notes
 
-No DB changes. No new dependencies. ~15 lines touched in one file.
+- All new keys go in `src/lib/i18n/translations.ts` under nested namespaces (`home.hero.variants.exploring.titlePrefix`, etc.).
+- `t()` already supports DB overrides via `translation_overrides` table — admins can still tweak copy without code changes.
+- For Arabic numerals/dates we keep Western digits (matches existing pattern); only direction flips.
+- I'll only run Phase 1 in this turn. After you review the hero + homepage in EN/FR/AR, I'll proceed to Phase 2, then 3, then 4 as separate turns so each is reviewable.
+
+## Deliverable for Phase 1
+
+- `src/lib/i18n/translations.ts` — new `home.*` keys for en/fr/ar.
+- `src/components/home/HeroSection.tsx` + all sibling section files — refactored to use `t()`.
+- RTL polish on homepage components.
+- Brief screenshot check on `/`, `/fr`, `/ar` after the change.
