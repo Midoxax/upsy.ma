@@ -65,20 +65,6 @@ const LanguageSwitcher = ({ compact = false, className }: LanguageSwitcherProps)
       >
         AR
       </button>
-      <span className="text-u-gray-600">|</span>
-      <button
-        onClick={() => handleSwitch('ber')}
-        className={cn(
-          "transition-colors focus:outline-none focus:ring-2 focus:ring-u-gold focus:ring-offset-2 focus:ring-offset-u-surface rounded px-1",
-          locale === 'ber'
-            ? "text-u-white font-semibold"
-            : "text-u-gray-300 hover:text-u-gold"
-        )}
-        aria-pressed={locale === 'ber'}
-        aria-label="ⵜⴰⵎⴰⵣⵉⵖⵜ — Switch to Amazigh"
-      >
-        ⵜⵎⵣ
-      </button>
     </div>
   );
 };
