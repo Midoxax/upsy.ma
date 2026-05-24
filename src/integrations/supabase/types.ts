@@ -757,7 +757,6 @@ export type Database = {
       }
       certificate_verifications: {
         Row: {
-          amount_mad: number | null
           certificate_id: string
           certificate_number: string
           created_at: string
@@ -768,7 +767,6 @@ export type Database = {
           title: string
         }
         Insert: {
-          amount_mad?: number | null
           certificate_id: string
           certificate_number: string
           created_at?: string
@@ -779,7 +777,6 @@ export type Database = {
           title: string
         }
         Update: {
-          amount_mad?: number | null
           certificate_id?: string
           certificate_number?: string
           created_at?: string
@@ -4807,6 +4804,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_ai_usage: { Args: never; Returns: number }
       inspect_provisioning_state: {
         Args: { _application_id: string }
         Returns: Json
