@@ -180,7 +180,7 @@ const WhyUs = () => {
                 U.Psy
               </div>
             </div>
-            {comparison.map((row, idx) => (
+            {comparisonRows.map((row, idx) => (
               <div
                 key={row.key}
                 className={`grid grid-cols-3 ${idx !== comparisonRows.length - 1 ? "border-b border-border/30" : ""}`}
