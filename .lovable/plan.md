@@ -1,96 +1,54 @@
-## Add "Why U.Psy" Differentiation Section + Page
+## Audit Fixes — Implementation Plan
 
-A distinctive homepage section showcasing what sets U.Psy apart, plus a full dedicated page for deeper dive.
+Applying 4 of the 6 audit fixes. Skipping Fix 6 (PostHog) — already wired via `src/lib/analytics/posthog.ts`. Auth fix preserves existing `AuthContext` features (idle timeout, Sentry/PostHog identify, OAuth post-redirect) instead of the verbatim rewrite.
 
-### Differentiators (auto-drafted from platform positioning)
+---
 
-Six pillars that genuinely distinguish U.Psy in the Moroccan market:
+### Fix 1 — Auth redirect (minimal, preserve features)
+**File:** `src/pages/Auth.tsx`
+- Update `handleLogin` to call `signIn` then explicitly `navigate(redirect || "/my-space", { replace: true })` on success, matching uploaded `FIX_1b`.
+- Update `handleSignup` similarly (respect existing email-verification flow — if signup returns no session because verification is required, show the existing "check your email" toast instead of navigating).
+- Keep the existing `useEffect`-based redirect as a fallback (covers OAuth round-trips).
+- **Do not touch** `src/contexts/AuthContext.tsx` — its idle-timeout, Sentry/PostHog identify, and `upsy:post-oauth-redirect` logic stay intact.
 
-1. **Performance Psychology System** — Not a therapy directory. A full operational SaaS for measuring, training, and applying psychological skills.
-2. **5-Tier Accreditation** — Every specialist verified through a multi-stage clinical accreditation, not self-declared credentials.
-3. **Built for Morocco** — Trilingual (EN/FR/AR-RTL), Law 09-08 compliant, MAD pricing, local payment rails, Moroccan clinical culture.
-4. **Clinical Rigor** — Validated instruments (GAD-7, PHQ-9), evidence-based protocols (CBT, Schema, EMDR), structured session notes.
-5. **Integrated Ecosystem** — Marketplace + MOOC + B2B programs + AI tools (Nour) + crisis protocol — one platform, not patchwork.
-6. **Privacy by Design** — Strict RLS, encrypted notes, HIBP password checks, mandatory email verification, zero data resale.
+### Fix 2 — `/pricing` page
+**New:** `src/pages/Pricing.tsx`
+- Build from uploaded `FIX_2_Pricing_Page.tsx` but rewrite to use semantic design tokens (`bg-primary`, `text-foreground`, `border-border`, gradient-maroon utilities) — no raw Tailwind colors.
+- Sections: Individual pricing, packs, B2B/Organizations, FAQ accordion. Includes `SEOHead`.
+- CTAs link to `/auth?redirect=/get-matched` (individuals) and `/services` proposal modal (B2B).
+- `i18n` via `t()` with English fallbacks (consistent with existing pages).
 
-### 1. Homepage section: `WhyUsSection.tsx`
+**Route + nav:**
+- `src/App.tsx` — add `const Pricing = lazy(() => import("./pages/Pricing"))` and `<Route path="/pricing" element={<Pricing />} />`.
+- `src/components/MegaMenu.tsx` — add "Pricing" link under an appropriate category (Services or Resources).
+- `src/components/Footer.tsx` — add Pricing link to footer.
 
-**Distinctive layout** — diverges from the standard glassmorphism card grids used elsewhere:
+### Fix 3 — Light-theme contrast (WCAG AA)
+**File:** `src/index.css`
+- In light `:root`: tighten `--muted-foreground` to `0 0% 32%`, `--border` to `30 15% 85%`, `--input` to `30 15% 90%`.
+- Add the placeholder/disabled/label utility rules from `FIX_3_CSS_Contrast.css`, scoped so they don't override dark theme (verify dark `.dark { ... }` block remains untouched).
+- Skip the `!important` overrides on `.text-muted-foreground` and `nav a.text-foreground/70` — those are too aggressive and will break dark mode. The token change is enough.
 
-```text
-┌───────────────────────────────────────────────────────────┐
-│  Eyebrow: WHY U.PSY                                       │
-│  H2: Six reasons we're not another therapy directory.     │
-│                                                           │
-│  ┌─────────┐                                              │
-│  │ 01      │   Performance Psychology System              │
-│  │ ●━━━━━━━│   Short body copy explaining differentiator. │
-│  └─────────┘                                              │
-│         ┌─────────┐                                       │
-│         │ 02      │   5-Tier Accreditation                │
-│         │ ●━━━━━━━│   Body copy.                          │
-│         └─────────┘                                       │
-│  ┌─────────┐                                              │
-│  │ 03 ...  │   (alternating left/right zigzag)            │
-│  └─────────┘                                              │
-│                                                           │
-│  [Read the full why →  /why-us]                           │
-└───────────────────────────────────────────────────────────┘
-```
+### Fix 4 — Mobile menu overflow
+**File:** `src/components/Header.tsx`
+- Replace the mobile nav block with the version from uploaded `FIX_4_Mobile_Menu.tsx`: `max-h-[calc(100vh-4rem)] overflow-y-auto`, fixed dropdown toggle, `e.stopPropagation()` on inner Link clicks, reset `openDropdown` on close.
+- Verify the currently-used nav structure (`navigation`, `addLocalePrefix`, `isActive`) matches the uploaded snippet before splicing.
 
-- **Asymmetric zigzag** numbered list (01–06), alternating left/right alignment to break from grid sections.
-- Large numerals in Outfit, gold accent line, soft maroon glow on hover.
-- Each row reveals on scroll (Framer Motion, 400ms stagger).
-- Subtle floating gold particles in background.
-- Final CTA links to `/why-us`.
-- Fully responsive: collapses to single column on mobile, sticky CTA preserved.
+### Fix 5 — `package.json` polish
+**File:** `package.json`
+- Rename to `"upsy-platform"`, bump version to `"1.0.0"`.
 
-**Insert position:** between `pillars` and `programs` in `src/pages/Index.tsx` `sections` array, with intent priorities tuned so it surfaces high for SKEPTICAL and RESEARCHING intents.
+---
 
-### 2. Dedicated page: `/why-us`
+### Out of scope
+- Fix 6 PostHog (already wired).
+- AuthContext rewrite.
+- Any backend / RLS / migration changes.
+- New translations file edits — reuse `t() || "fallback"` pattern.
 
-Route: `src/pages/WhyUs.tsx`, registered in `src/App.tsx`.
+### Files touched
+- **New:** `src/pages/Pricing.tsx`
+- **Modified:** `src/pages/Auth.tsx`, `src/App.tsx`, `src/components/MegaMenu.tsx`, `src/components/Footer.tsx`, `src/index.css`, `src/components/Header.tsx`, `package.json`
 
-Page structure:
-1. **Hero** — Bold statement: "We don't list therapists. We run a performance psychology system." + subtitle + dual CTA (Get Matched / Talk to Founder).
-2. **Comparison band** — Side-by-side "Typical therapy directory" vs "U.Psy" with 5-row checklist (verified credentials, structured outcomes, integrated tools, local compliance, ongoing measurement).
-3. **Six differentiator pillars** — Expanded versions of the homepage section, each with icon, supporting proof points, and a deep-link to the relevant feature (e.g., `/assessment-lab`, `/founder`, `/psychologists`).
-4. **Methodology proof** — Reuses existing `MethodsMetricsBand` component (CBT/Schema/EMDR transparency).
-5. **Founder voice** — Short pull-quote from Mehdi Felji with link to `/founder`.
-6. **Final CTA** — "Find your match" → `/get-matched` + "Read methodology" → `/founder`.
-
-SEO: `SEOHead` with title "Why U.Psy — Performance Psychology System for Morocco", localized canonicals, FAQPage JSON-LD covering common "why us" questions.
-
-### 3. Translations
-
-Add keys under `whyUs.*` namespace in `src/lib/i18n/translations.ts` covering EN, FR, AR — eyebrow, headline, the six pillars (title + body), comparison rows, page hero, CTAs.
-
-### 4. Navigation
-
-Add "Why U.Psy" link to the existing MegaMenu under the "About" / company category in `src/components/MegaMenu.tsx`, plus a footer link in `src/components/Footer.tsx`.
-
-### Files Touched
-
-**New:**
-- `src/components/home/WhyUsSection.tsx` — homepage zigzag section
-- `src/pages/WhyUs.tsx` — dedicated page
-
-**Modified:**
-- `src/pages/Index.tsx` — register section in `sections` array with priorities
-- `src/App.tsx` — add `/why-us` route
-- `src/lib/i18n/translations.ts` — add `whyUs.*` keys (EN/FR/AR)
-- `src/components/MegaMenu.tsx` — add nav entry
-- `src/components/Footer.tsx` — add footer link
-
-### Out of Scope
-
-- No backend/database changes
-- No new edge functions
-- No new design tokens — reuses existing maroon/gold/beige + glassmorphism utilities
-- No A/B testing infrastructure
-
-### Technical Notes
-
-- Animations stay within the project's motion language (Float/Pulse, 300–800ms, Framer Motion only).
-- The homepage section follows the ±2 reorder clamp and won't disrupt narrative anchoring (Hero/Trust/Pathways/HowItWorks pinned positions stay intact).
-- Memory rule respected: Mehdi Felji referenced as "Founder", never "Dr." or "Clinical Psychologist".
+### Verification
+- After build: visit `/pricing`, `/auth` (sign in → lands on `/my-space` immediately), check light-mode muted text contrast, open mobile menu at <768px and confirm scroll + dropdown behavior.
