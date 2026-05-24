@@ -28,6 +28,7 @@ const Header = () => {
       href: "/services",
       dropdown: [
         { name: t('nav.individualServices'), href: "/services" },
+        { name: t('nav.pricing') || "Pricing", href: "/pricing" },
         { name: t('nav.forOrganizations'), href: "/services/consulting-for-organizations" },
         { name: t('nav.getMatched'), href: "/get-matched" },
       ],
@@ -156,7 +157,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border/30 animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden py-4 border-t border-border/30 max-h-[calc(100vh-4rem)] overflow-y-auto animate-in slide-in-from-top-2 duration-200">
             <nav className="flex flex-col gap-1">
               {navigation.map((item) => (
                 <div key={item.name}>
@@ -166,6 +167,7 @@ const Header = () => {
                         setOpenDropdown(openDropdown === item.name ? null : item.name);
                       } else {
                         setIsMobileMenuOpen(false);
+                        setOpenDropdown(null);
                       }
                     }}
                     className={`flex items-center justify-between w-full text-sm font-medium transition-colors rounded-lg px-3 py-2.5 ${
@@ -175,7 +177,11 @@ const Header = () => {
                     {!item.dropdown ? (
                       <Link
                         to={addLocalePrefix(item.href, locale)}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsMobileMenuOpen(false);
+                          setOpenDropdown(null);
+                        }}
                         className="flex-1 text-left"
                       >
                         {item.name}
@@ -184,16 +190,19 @@ const Header = () => {
                       <span>{item.name}</span>
                     )}
                     {item.dropdown && (
-                      <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === item.name ? 'rotate-180' : ''}`} />
                     )}
                   </button>
                   {item.dropdown && openDropdown === item.name && (
-                    <div className="ml-3 pl-3 border-l-2 border-primary/20 space-y-1 mt-1 mb-2">
+                    <div className="ml-3 pl-3 border-l-2 border-primary/20 space-y-1 mt-1 mb-2 animate-in slide-in-from-top-1 duration-200">
                       {item.dropdown.map((subItem) => (
                         <Link
                           key={subItem.name}
                           to={addLocalePrefix(subItem.href, locale)}
-                          onClick={() => setIsMobileMenuOpen(false)}
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            setOpenDropdown(null);
+                          }}
                           className={`flex items-center gap-2 text-sm py-2 px-3 rounded-lg transition-colors ${
                             subItem.featured
                               ? "text-primary font-semibold bg-primary/5 hover:bg-primary/10"

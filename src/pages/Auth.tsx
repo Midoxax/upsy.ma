@@ -178,7 +178,7 @@ const Auth = () => {
       } else {
         toast({ title: t('auth.welcomeBack'), description: t('auth.welcomeBackDesc') });
         const redirectTo = new URLSearchParams(window.location.search).get("redirect");
-        navigate(redirectTo || "/my-space");
+        navigate(redirectTo || "/my-space", { replace: true });
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

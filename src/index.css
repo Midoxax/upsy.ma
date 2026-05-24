@@ -59,13 +59,13 @@
     --secondary: var(--light-purple);
     --secondary-foreground: var(--white);
     --muted: 30 15% 93%;
-    --muted-foreground: 0 0% 42%;
+    --muted-foreground: 0 0% 32%;
     --accent: var(--warm-gold);
     --accent-foreground: 0 0% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: var(--white);
-    --border: 30 15% 88%;
-    --input: 30 15% 93%;
+    --border: 30 15% 85%;
+    --input: 30 15% 90%;
     --ring: var(--warm-maroon);
 
     /* ── Layout Tokens ── */
