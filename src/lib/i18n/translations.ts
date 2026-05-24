@@ -3201,6 +3201,10 @@ export const translations = {
       hero: {
         title: "عن السيد مهدي فلجي",
         subtitle: "مؤسس U.Psy | الابتكار في الصحة النفسية ومنصة علم النفس",
+        talkToNour: "تحدث مع نور · ذكاء اصطناعي",
+        statPsychologists: "أخصائيون موثقون",
+        statMatch: "للعثور على المطابقة",
+        statSatisfaction: "رضا العملاء",
       },
       background: {
         title: "من هو مهدي فلجي؟",
