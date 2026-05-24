@@ -159,12 +159,13 @@ function TypewriterSubtitle({ text, startDelay = 800 }: { text: string; startDel
 // ── Floating keywords background ─────────────────────────────────────────────
 
 function FloatingKeywords() {
+  const { t } = useLocale();
   if (prefersReducedMotion) return null;
   return (
     <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden="true">
-      {floatingKeywords.map((kw) => (
+      {floatingKeywordSlots.map((kw) => (
         <motion.div
-          key={kw.label}
+          key={kw.key}
           className="absolute text-[11px] tracking-widest uppercase text-muted-foreground/20 font-medium select-none"
           style={{ left: kw.x, top: kw.y }}
           initial={{ opacity: 0 }}
@@ -180,7 +181,7 @@ function FloatingKeywords() {
             ease: "easeInOut",
           }}
         >
-          {kw.label}
+          {t(`home.hero.keywords.${kw.key}`)}
         </motion.div>
       ))}
     </div>
