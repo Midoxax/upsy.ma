@@ -1920,6 +1920,10 @@ export const translations = {
       hero: {
         title: "À propos de M. Mehdi Felji",
         subtitle: "Fondateur de U.Psy | Innovation en Santé Mentale & Plateforme de Psychologie",
+        talkToNour: "Parler à Nour · IA",
+        statPsychologists: "Psychologues vérifiés",
+        statMatch: "Pour trouver votre match",
+        statSatisfaction: "Satisfaction client",
       },
       background: {
         title: "Qui est Mehdi Felji ?",
