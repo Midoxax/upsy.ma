@@ -190,26 +190,11 @@ function FloatingKeywords() {
 
 // ── Preview cards under hero ─────────────────────────────────────────────────
 
-const previewCards = [
-  {
-    title: "Services",
-    description: "Individual therapy, performance coaching, and structured clinical protocols.",
-    href: "/services",
-    icon: "🧠",
-  },
-  {
-    title: "Resources",
-    description: "Self-paced courses, assessments, and tools designed by licensed psychologists.",
-    href: "/resources",
-    icon: "📚",
-  },
-  {
-    title: "Community",
-    description: "Join the Skool community for peer support, live events, and expert Q&A.",
-    href: "/skool",
-    icon: "🤝",
-  },
-];
+const previewCardSlots = [
+  { keyBase: "services", href: "/services", icon: "🧠" },
+  { keyBase: "resources", href: "/resources", icon: "📚" },
+  { keyBase: "community", href: "/skool", icon: "🤝" },
+] as const;
 
 // ── Intent-reactive hero configurations ───────────────────────────────────────
 
@@ -221,94 +206,78 @@ interface HeroVariant {
   stats: { value: string; label: string }[];
 }
 
-const heroVariants: Record<UserIntent, HeroVariant> = {
-  EXPLORING: {
-    titlePrefix: "Psychology, Built for",
-    subtitle:
-      "A performance psychology system that quantifies mental readiness, identifies blind spots, and builds evidence-based protocols for peak performance.",
-    primaryCta: {
-      label: "Start Your Assessment",
-      to: "/get-matched",
-      icon: <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />,
-    },
-    secondaryCta: {
-      label: "Talk to Nour · AI",
-      to: "/ai-assistant",
-      icon: <Sparkles className="h-4 w-4 text-primary" />,
-    },
-    stats: [
-      { value: "50+", label: "Verified psychologists" },
-      { value: "2 min", label: "To find your match" },
-      { value: "98%", label: "Client satisfaction" },
-    ],
+// Per-intent visual config (icons + routes + stat values stay static; copy is translated)
+type IntentSlug = "exploring" | "ready" | "researching" | "skeptical";
+const INTENT_TO_SLUG: Record<UserIntent, IntentSlug> = {
+  EXPLORING: "exploring",
+  READY_TO_ACT: "ready",
+  RESEARCHING: "researching",
+  SKEPTICAL: "skeptical",
+};
+const intentVisuals: Record<IntentSlug, {
+  primaryTo: string;
+  primaryIcon: React.ReactNode;
+  secondaryTo: string;
+  secondaryIcon: React.ReactNode;
+  stat1Value: string; stat2Value: string; stat3Value: string;
+}> = {
+  exploring: {
+    primaryTo: "/get-matched",
+    primaryIcon: <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />,
+    secondaryTo: "/ai-assistant",
+    secondaryIcon: <Sparkles className="h-4 w-4 text-primary" />,
+    stat1Value: "50+", stat2Value: "2 min", stat3Value: "98%",
   },
-  READY_TO_ACT: {
-    titlePrefix: "Your match for",
-    subtitle:
-      "You know what you need. Match with a verified specialist in under 2 minutes — online or in-person across Morocco.",
-    primaryCta: {
-      label: "Find My Match",
-      to: "/get-matched",
-      icon: <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />,
-    },
-    secondaryCta: {
-      label: "Browse Specialists",
-      to: "/psychologists",
-      icon: <Search className="h-4 w-4 text-primary" />,
-    },
-    stats: [
-      { value: "50+", label: "Verified psychologists" },
-      { value: "24h", label: "Average first session" },
-      { value: "4.9★", label: "Average rating" },
-    ],
+  ready: {
+    primaryTo: "/get-matched",
+    primaryIcon: <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />,
+    secondaryTo: "/psychologists",
+    secondaryIcon: <Search className="h-4 w-4 text-primary" />,
+    stat1Value: "50+", stat2Value: "24h", stat3Value: "4.9★",
   },
-  RESEARCHING: {
-    titlePrefix: "Evidence-based tools for",
-    subtitle:
-      "Explore our clinical screening tools, peer-reviewed methodologies, and structured protocols used by sports psychologists and organizations worldwide.",
-    primaryCta: {
-      label: "Explore Assessments",
-      to: "/assessment-lab",
-      icon: <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />,
-    },
-    secondaryCta: {
-      label: "Our Methods",
-      to: "/services",
-      icon: <Sparkles className="h-4 w-4 text-primary" />,
-    },
-    stats: [
-      { value: "10+", label: "Clinical screenings" },
-      { value: "CBT", label: "Schema · EMDR · ACT" },
-      { value: "100%", label: "Evidence-based" },
-    ],
+  researching: {
+    primaryTo: "/assessment-lab",
+    primaryIcon: <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />,
+    secondaryTo: "/services",
+    secondaryIcon: <Sparkles className="h-4 w-4 text-primary" />,
+    stat1Value: "10+", stat2Value: "CBT", stat3Value: "100%",
   },
-  SKEPTICAL: {
-    titlePrefix: "Trusted protection from",
-    subtitle:
-      "Every psychologist on U.Psy is clinically accredited, peer-reviewed, and bound by Moroccan Law 09-08 data protection. Your privacy is non-negotiable.",
-    primaryCta: {
-      label: "See How It Works",
-      to: "/services",
-      icon: <ShieldCheck className="h-4 w-4 transition-transform group-hover:translate-x-1" />,
-    },
-    secondaryCta: {
-      label: "Read Reviews",
-      to: "/psychologists",
-      icon: <Search className="h-4 w-4 text-primary" />,
-    },
-    stats: [
-      { value: "5-tier", label: "Accreditation system" },
-      { value: "09-08", label: "Data law compliant" },
-      { value: "0%", label: "Data shared with third parties" },
-    ],
+  skeptical: {
+    primaryTo: "/services",
+    primaryIcon: <ShieldCheck className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />,
+    secondaryTo: "/psychologists",
+    secondaryIcon: <Search className="h-4 w-4 text-primary" />,
+    stat1Value: "5-tier", stat2Value: "09-08", stat3Value: "0%",
   },
 };
 
 // ── Main component ───────────────────────────────────────────────────────────
 
 const HeroSection = () => {
+  const { t } = useLocale();
   const intent = useIntentStore((s) => s.intent);
-  const variant = heroVariants[intent];
+  const intentSlug = INTENT_TO_SLUG[intent];
+  const visuals = intentVisuals[intentSlug];
+  const variant = useMemo<HeroVariant>(() => ({
+    titlePrefix: t(`home.hero.intent.${intentSlug}.titlePrefix`),
+    subtitle: t(`home.hero.intent.${intentSlug}.subtitle`),
+    primaryCta: {
+      label: t(`home.hero.intent.${intentSlug}.primary`),
+      to: visuals.primaryTo,
+      icon: visuals.primaryIcon,
+    },
+    secondaryCta: {
+      label: t(`home.hero.intent.${intentSlug}.secondary`),
+      to: visuals.secondaryTo,
+      icon: visuals.secondaryIcon,
+    },
+    stats: [
+      { value: visuals.stat1Value, label: t(`home.hero.intent.${intentSlug}.stat1Label`) },
+      { value: visuals.stat2Value, label: t(`home.hero.intent.${intentSlug}.stat2Label`) },
+      { value: visuals.stat3Value, label: t(`home.hero.intent.${intentSlug}.stat3Label`) },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [intentSlug, t]);
 
   const animMode = useMemo<AnimMode>(
     () => prefersReducedMotion ? "rotating" : ANIM_MODES[Math.floor(Math.random() * ANIM_MODES.length)],
