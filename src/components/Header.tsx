@@ -28,6 +28,7 @@ const Header = () => {
       href: "/services",
       dropdown: [
         { name: t('nav.individualServices'), href: "/services" },
+        { name: t('nav.pricing') || "Pricing", href: "/pricing" },
         { name: t('nav.forOrganizations'), href: "/services/consulting-for-organizations" },
         { name: t('nav.getMatched'), href: "/get-matched" },
       ],
