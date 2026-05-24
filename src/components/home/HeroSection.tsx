@@ -8,21 +8,14 @@ import logo from "@/assets/logo.webp";
 import { useIntentStore } from "@/stores/intentStore";
 import type { UserIntent } from "@/stores/intentStore";
 import FloatingDecorations from "./FloatingDecorations";
+import { useLocale } from "@/contexts/LocaleContext";
 
 // Reduced motion check
 const prefersReducedMotion =
   typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-// ── Rotating word pairs (problem → solution) ─────────────────────────────────
-
-const wordPairs = [
-  { problem: "Burnout", solution: "Recovery" },
-  { problem: "Anxiety", solution: "Clarity" },
-  { problem: "Stress", solution: "Balance" },
-  { problem: "Self-doubt", solution: "Confidence" },
-  { problem: "Overwhelm", solution: "Focus" },
-  { problem: "Disconnection", solution: "Resilience" },
-];
+// Word-pair key suffixes (translated at render time)
+const WORD_PAIR_KEYS = ["burnout", "anxiety", "stress", "doubt", "overwhelm", "disconnection"] as const;
 
 const WORD_INTERVAL = 3000;
 
@@ -31,22 +24,22 @@ const WORD_INTERVAL = 3000;
 type AnimMode = "rotating" | "stagger" | "typewriter" | "floating";
 const ANIM_MODES: AnimMode[] = ["rotating", "stagger", "typewriter", "floating"];
 
-// ── Floating keyword pills ───────────────────────────────────────────────────
-
-const floatingKeywords = [
-  { label: "CBT", x: "8%", y: "18%", duration: 7, delay: 0 },
-  { label: "EMDR", x: "85%", y: "22%", duration: 8, delay: 1.2 },
-  { label: "Schema", x: "12%", y: "72%", duration: 9, delay: 0.5 },
-  { label: "Resilience", x: "78%", y: "68%", duration: 6.5, delay: 2 },
-  { label: "ACT", x: "92%", y: "45%", duration: 7.5, delay: 1.8 },
-  { label: "Mindfulness", x: "5%", y: "48%", duration: 8.5, delay: 0.8 },
-  { label: "Peak Performance", x: "70%", y: "85%", duration: 10, delay: 1.5 },
-  { label: "Well-being", x: "25%", y: "88%", duration: 7, delay: 2.5 },
-];
+// Floating keyword pill positions (label resolved via t())
+const floatingKeywordSlots = [
+  { key: "cbt", x: "8%", y: "18%", duration: 7, delay: 0 },
+  { key: "emdr", x: "85%", y: "22%", duration: 8, delay: 1.2 },
+  { key: "schema", x: "12%", y: "72%", duration: 9, delay: 0.5 },
+  { key: "resilience", x: "78%", y: "68%", duration: 6.5, delay: 2 },
+  { key: "act", x: "92%", y: "45%", duration: 7.5, delay: 1.8 },
+  { key: "mindfulness", x: "5%", y: "48%", duration: 8.5, delay: 0.8 },
+  { key: "peakPerformance", x: "70%", y: "85%", duration: 10, delay: 1.5 },
+  { key: "wellbeing", x: "25%", y: "88%", duration: 7, delay: 2.5 },
+] as const;
 
 // ── Rotating Word component ──────────────────────────────────────────────────
 
 function RotatingWord() {
+  const { t } = useLocale();
   const [index, setIndex] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
 
@@ -55,7 +48,7 @@ function RotatingWord() {
     const timer = setInterval(() => {
       setShowSolution((prev) => {
         if (prev) {
-          setIndex((i) => (i + 1) % wordPairs.length);
+          setIndex((i) => (i + 1) % WORD_PAIR_KEYS.length);
           return false;
         }
         return true;
@@ -64,14 +57,16 @@ function RotatingWord() {
     return () => clearInterval(timer);
   }, []);
 
-  const pair = wordPairs[index];
-  const word = showSolution ? pair.solution : pair.problem;
+  const pairKey = WORD_PAIR_KEYS[index];
+  const problem = t(`home.hero.words.${pairKey}P`);
+  const solution = t(`home.hero.words.${pairKey}S`);
+  const word = showSolution ? solution : problem;
   const color = showSolution ? "text-primary" : "text-primary/70";
 
   if (prefersReducedMotion) {
     return (
       <span className="block w-full mt-1 text-center italic font-serif text-primary" aria-live="polite">
-        {pair.problem} → {pair.solution}
+        {problem} → {solution}
       </span>
     );
   }
