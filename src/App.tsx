@@ -58,6 +58,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MfaSetup = lazy(() => import("./pages/MfaSetup"));
 const BrandGuidelines = lazy(() => import("./pages/BrandGuidelines"));
 const Founder = lazy(() => import("./pages/Founder"));
+const WhyUs = lazy(() => import("./pages/WhyUs"));
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
 const FindRightPsychologist = lazy(() => import("./pages/blog/FindRightPsychologist"));
 const DoINeedTherapy = lazy(() => import("./pages/blog/DoINeedTherapy"));
@@ -141,6 +142,7 @@ const AppRoutes = () => (
     <Route path="session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
     <Route path="brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
     <Route path="founder" element={<PageTransition><Founder /></PageTransition>} />
+    <Route path="why-us" element={<PageTransition><WhyUs /></PageTransition>} />
     <Route path="blog" element={<PageTransition><BlogIndex /></PageTransition>} />
     <Route path="blog/find-right-psychologist" element={<PageTransition><FindRightPsychologist /></PageTransition>} />
     <Route path="blog/do-i-need-therapy" element={<PageTransition><DoINeedTherapy /></PageTransition>} />
