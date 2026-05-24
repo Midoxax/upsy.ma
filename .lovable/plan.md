@@ -1,67 +1,50 @@
-# Translations + RTL Fix Plan
+# Seed One Confirmed Test Booking
 
-## What's actually broken
+## Accounts to use
 
-After auditing the codebase:
+- **Patient**: `mehdifelji@gmail.com` — `6b5abd90-ec31-4013-b6d2-f28848b1e7fe` (your admin account)
+- **Psychologist**: **Dr. Amina Benali** — `48993805-f94c-4b29-9fe8-54c7b9dad829`, published, online, 500 MAD/h, `slug: dr-amina-benali-48993805`
 
-- **4 locales** are wired (en, fr, ar, ber) via `LocaleContext` + `src/lib/i18n/translations.ts`.
-- **EN has ~1353 lines of keys, FR/AR ~1212 each, BER only 64.** That means FR/AR are missing ~140+ keys (silently fall back to the raw key string) and BER is essentially a stub.
-- **Only 64 of 252 components actually call `t()`.** ~188 components ship hardcoded English — including the hero. In `HeroSection.tsx` everything visible is hardcoded: `wordPairs` (Burnout→Recovery…), `floatingKeywords` (CBT, EMDR, Schema…), all 4 `heroVariants` (`titlePrefix`, `subtitle`, both CTAs, all stats), and `previewCards`.
-- **RTL** only flips `<html dir>` — there's no audit of asymmetric layouts, mirrored icons, `text-left`, `pl-*`/`ml-*`, or directional arrows for Arabic.
-- **Berber** is so incomplete it shows mostly raw keys; we'll hide it from the language switcher until content lands.
+These are two different UUIDs — fixes the previous "patient_id == psychologist_id" issue that made every test session look cancelled/invalid.
 
-This is a very large surface (≈190 components). Doing it all at once would be a giant unreviewable change, so I'll phase it.
+> Note: `mehdifelji@gmail.com` is also the user behind the "Mehdi Felji" psychologist profile, so I deliberately avoid using that profile to keep patient ≠ psychologist.
 
-## Scope decisions
+## What I'll insert
 
-- **Languages:** EN, FR, AR fully covered. BER hidden from the switcher (kept in the file, marked as work-in-progress).
-- **Order of attack:** marketing/public surfaces first (highest visibility), then auth/booking/dashboards, then admin (admin stays EN-only — internal tool).
-- **Strategy:** for each component touched I (1) extract literals into `translations.ts` under a stable key namespace, (2) call `t()` from the component, (3) add FR + AR values, (4) verify RTL.
+A single `bookings` row with the `supabase--insert` tool (no schema change needed):
 
-## Phase 1 — Hero + homepage (this turn)
+```text
+patient_id          = 6b5abd90-ec31-4013-b6d2-f28848b1e7fe   (Mehdi)
+psychologist_id     = 48993805-f94c-4b29-9fe8-54c7b9dad829   (Dr. Amina)
+scheduled_at        = now() + interval '5 minutes'
+duration_minutes    = 50
+session_type        = 'video'
+status              = 'confirmed'
+payment_status      = 'paid'
+amount_mad          = 500
+patient_notes       = 'Seeded test session'
+video_room_id       = (auto-set by the set_booking_video_room trigger)
+```
 
-1. Add `home.hero.*` namespace to `translations.ts` for EN/FR/AR with:
-   - 6 word pairs (problem/solution).
-   - 8 floating keyword labels.
-   - All 4 intent variants × {titlePrefix, subtitle, primaryCta, secondaryCta, 3 stats labels}.
-   - Preview cards (3 × {title, description}).
-2. Refactor `HeroSection.tsx` to read every visible string via `t()`. Keep the data shape, just swap the values to keys.
-3. Sweep the rest of `src/components/home/*` (`Trust`, `Pathways`, `Founder`, `MethodsMetrics`, `SelfAssessment`, `FeaturedPsychologists`, `HowItWorks`, `FinalCTA`, `Testimonials`, `Programs`, `Community`, `Research`, `Pillars`, `Psf`, `Organizations`, `Learning`) — same treatment. New namespace `home.<section>.*`.
-4. RTL pass for the homepage: replace any `text-left`, `ml-*`, `mr-*`, `pl-*`, `pr-*`, `flex-row` with logical equivalents (`text-start`, `ms-*`, `me-*`, `ps-*`, `pe-*`) where direction matters; add `rtl:rotate-180` to forward-pointing arrow icons inside CTAs.
+The existing `set_booking_video_room` BEFORE-INSERT trigger generates a fresh `upsy-…` room id, and `ensure_video_room_on_confirm` covers the confirmed-status path as a safety net. So `video_room_id` is guaranteed populated.
 
-## Phase 2 — Public pages
+After insert I'll read the row back and return:
+- the booking `id`
+- the `video_room_id`
+- the direct URL: `/session/<id>`
 
-`Psychologists`, `PsychologistProfile`, `Services`, `ConsultingForOrganizations`, `GetMatched`, `MoroccanUmbrella`, `PsychologuesSansFrontieres`, `Founder`, `About`, `Contact`, `Resources`, `Learn`, `LearnCourse`, `AssessmentLab`, `Skool`, `TalentInnovationHub`, `MethodsMetricsBand`, `Footer`, `Header`/`MegaMenu`, `BookingModal`, `BookingWidget`, `MatchingFormModal`, `ProposalRequestModal`, blog index + 8 articles.
+## Verification (after build mode)
 
-For each: extract literals → keys → EN/FR/AR values → RTL polish.
+1. Run a `read_query` to confirm the row exists, status=confirmed, video_room_id is set, and `scheduled_at` is in the future.
+2. Confirm the `VideoCall.tsx` join window: it allows joining from `scheduled - 10 min` until `scheduled + duration + 30 min`. Scheduling 5 min out keeps it well inside the window.
+3. Hand back the URL so you can open it while logged in as Mehdi and Jitsi will mount.
 
-## Phase 3 — Auth + booking + client-facing dashboards
+## Cleanup
 
-`Auth`, `ResetPassword`, `MfaSetup`, `Invite`, `Apply` + wizard, `IntakeForm`, `BookingResponse`, `VideoCall`, `MySpace`, `PatientDashboard`, `SpecialistDashboard`, `OrganizationDashboard`, `AthleteHub`, `Notifications`, `AIAssistant`, `Legal`, `Privacy`, `Terms`, `Install`, `NotFound`, dashboard cards/components.
-
-## Phase 4 — RTL audit + cleanup
-
-- Switchers, tabs, drawers, slide-over panels: ensure they slide from the correct edge in AR.
-- `LanguageSwitcher`: hide `ber` until BER reaches parity, add a "(beta)" tag if we keep it visible.
-- Add a small dev-only logger in `t()` that `console.warn`s missing keys per locale (DEV only) so future drift is caught.
-- Add a CI-style script `scripts/i18n-check.ts` (run manually) that diffs EN vs FR vs AR and prints missing keys.
+If later you want to remove it, I can delete by id with the insert tool.
 
 ## Out of scope
 
-- Admin pages (`src/pages/admin/*`, `src/components/admin/*`) stay EN-only.
-- Email templates already have their own i18n in `supabase/functions/_shared/email-templates`.
-- Dynamic DB content (psychologist bios, blog post bodies if stored in DB) — needs a separate data-translation strategy.
-
-## Technical notes
-
-- All new keys go in `src/lib/i18n/translations.ts` under nested namespaces (`home.hero.variants.exploring.titlePrefix`, etc.).
-- `t()` already supports DB overrides via `translation_overrides` table — admins can still tweak copy without code changes.
-- For Arabic numerals/dates we keep Western digits (matches existing pattern); only direction flips.
-- I'll only run Phase 1 in this turn. After you review the hero + homepage in EN/FR/AR, I'll proceed to Phase 2, then 3, then 4 as separate turns so each is reviewable.
-
-## Deliverable for Phase 1
-
-- `src/lib/i18n/translations.ts` — new `home.*` keys for en/fr/ar.
-- `src/components/home/HeroSection.tsx` + all sibling section files — refactored to use `t()`.
-- RTL polish on homepage components.
-- Brief screenshot check on `/`, `/fr`, `/ar` after the change.
+- No code changes.
+- No schema/RLS changes — RLS already lets the patient read their own bookings.
+- Not seeding availability slots for Dr. Amina (not needed for this confirmed booking; can be done separately if you want to test the booking modal flow next).
