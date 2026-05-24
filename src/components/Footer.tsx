@@ -13,6 +13,7 @@ const Footer = () => {
       links: [
         { name: t('nav.findPsychologist'), href: "/psychologists" },
         { name: t('nav.programs'), href: "/services" },
+        { name: t('nav.pricing') || "Pricing", href: "/pricing" },
         { name: t('nav.learning'), href: "/resources" },
         { name: t('nav.research'), href: "/talent-innovation-hub" },
       ],
