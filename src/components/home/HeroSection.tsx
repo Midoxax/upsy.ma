@@ -9,6 +9,7 @@ import { useIntentStore } from "@/stores/intentStore";
 import type { UserIntent } from "@/stores/intentStore";
 import FloatingDecorations from "./FloatingDecorations";
 import { useLocale } from "@/contexts/LocaleContext";
+import { BreathingOrb, MagneticButton } from "@/lib/motion";
 
 // Reduced motion check
 const prefersReducedMotion =
@@ -383,12 +384,15 @@ const HeroSection = () => {
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex justify-center"
+            className="relative flex justify-center"
           >
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+              <BreathingOrb size={280} intensity="subtle" />
+            </div>
             <img
               src={logo}
               alt="U.Psy"
-              className="h-14 md:h-20 w-auto dark:brightness-110"
+              className="relative h-14 md:h-20 w-auto dark:brightness-110"
               style={{ filter: "drop-shadow(0 2px 8px hsl(var(--primary) / 0.15))" }}
               width={80}
               height={80}
@@ -434,12 +438,14 @@ const HeroSection = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: useTypewriter ? 1.2 : 0.3, duration: 0.5 }}
               >
-                <Button variant="primary" size="lg" asChild className="gap-2 group h-12 px-7 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                  <Link to={variant.primaryCta.to}>
-                    {variant.primaryCta.label}
-                    {variant.primaryCta.icon}
-                  </Link>
-                </Button>
+                <MagneticButton strength={0.3}>
+                  <Button variant="primary" size="lg" asChild className="gap-2 group h-12 px-7 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <Link to={variant.primaryCta.to}>
+                      {variant.primaryCta.label}
+                      {variant.primaryCta.icon}
+                    </Link>
+                  </Button>
+                </MagneticButton>
                 <Button
                   variant="secondary"
                   size="lg"
