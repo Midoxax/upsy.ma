@@ -8,7 +8,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "dark",
+  theme: "light",
   toggleTheme: () => {},
 });
 
@@ -20,7 +20,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       const saved = localStorage.getItem("u-psy-theme") as Theme;
       if (saved) return saved;
     }
-    return "dark";
+    return "light";
   });
 
   useEffect(() => {
