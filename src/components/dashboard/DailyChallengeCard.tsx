@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Ember } from "@/lib/motion";
 
 export const DailyChallengeCard = () => {
   const { data, isLoading } = useDailyChallenge();
@@ -44,9 +45,11 @@ export const DailyChallengeCard = () => {
 
       <div className="flex gap-2 pt-1">
         {done ? (
-          <div className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm font-medium">
-            <CheckCircle2 className="w-4 h-4" /> Completed today
-          </div>
+          <Ember className="flex-1">
+            <div className="flex items-center justify-center gap-2 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm font-medium">
+              <CheckCircle2 className="w-4 h-4" /> Completed today
+            </div>
+          </Ember>
         ) : (
           <>
             {c.action_url && (
