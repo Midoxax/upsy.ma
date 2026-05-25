@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { NourEmergence, Pulse } from "@/lib/motion";
 
 type Msg = { role: "user" | "assistant"; content: string; id: string };
 
@@ -221,7 +222,7 @@ const AIAssistant = () => {
               <p className="text-sm font-semibold leading-none">Nour</p>
               <p className="text-xs text-muted-foreground leading-none mt-0.5">AI wellness companion</p>
             </div>
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse ml-1" />
+            <Pulse size={8} colorClass="bg-green-500" className="ml-1" />
           </div>
           <div className="flex items-center gap-2">
             {messages.length > 0 && (
@@ -239,8 +240,8 @@ const AIAssistant = () => {
         <div className="container-custom max-w-2xl py-6 space-y-4">
           {isFirstMessage && (
             <div className="text-center py-8 space-y-4">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-teal-500/15 to-blue-500/15 flex items-center justify-center mx-auto">
-                <Sparkles className="h-9 w-9 text-teal-500" />
+              <div className="mx-auto">
+                <NourEmergence size={160} />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">
