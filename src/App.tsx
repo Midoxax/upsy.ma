@@ -20,7 +20,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BreadcrumbWrapper } from "@/components/BreadcrumbWrapper";
 import SEOHead from "@/components/SEOHead";
-import { AuroraBackground } from "@/lib/motion";
+import { AuroraBackground, SmoothScrollProvider } from "@/lib/motion";
 import Index from "./pages/Index";
 
 // Lazy-loaded pages — keeps the initial bundle small
@@ -212,14 +212,16 @@ const App = () => (
           <BrowserRouter>
             <LocaleProvider>
               <ErrorBoundary>
-                <div className="min-h-screen flex flex-col bg-background relative">
-                  <AuroraBackground />
-                  <Header />
-                  <ScrollToTop />
-                  <BreadcrumbWrapper />
-                  <AnimatedRoutes />
-                  <Footer />
-                </div>
+                <SmoothScrollProvider>
+                  <div className="min-h-screen flex flex-col bg-background relative">
+                    <AuroraBackground />
+                    <Header />
+                    <ScrollToTop />
+                    <BreadcrumbWrapper />
+                    <AnimatedRoutes />
+                    <Footer />
+                  </div>
+                </SmoothScrollProvider>
               </ErrorBoundary>
             </LocaleProvider>
           </BrowserRouter>

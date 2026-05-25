@@ -6,3 +6,5 @@ export { default as AuroraBackground } from "./components/AuroraBackground";
 export { default as BreathingOrb } from "./components/BreathingOrb";
 export { default as WordReveal } from "./components/WordReveal";
 export { default as MagneticButton } from "./components/MagneticButton";
+export { default as NourEmergence } from "./components/NourEmergence";
+export { default as SmoothScrollProvider } from "./components/SmoothScrollProvider";
