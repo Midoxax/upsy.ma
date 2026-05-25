@@ -1,6 +1,15 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+
+// Luxe Light Theme Fonts — Fraunces (display italic), Manrope (body/UI), JetBrains Mono (micro)
+import "@fontsource/fraunces/400-italic.css";
+import "@fontsource/fraunces/600-italic.css";
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/jetbrains-mono/500.css";
+
 import { initPostHog } from "./lib/analytics/posthog";
 import { initSentry } from "./lib/analytics/sentry";
 
