@@ -8,6 +8,7 @@ import type { UserIntent } from "@/stores/intentStore";
 import SectionDivider from "@/components/home/SectionDivider";
 import type { DividerVariant, DividerColor } from "@/components/home/SectionDivider";
 import SEOHead from "@/components/SEOHead";
+import { Chapter } from "@/lib/motion";
 
 // Lazy-loaded sections (all except Hero to reduce initial bundle)
 const TrustSection = lazy(() => import("@/components/home/TrustSection"));
@@ -312,9 +313,16 @@ const Index = () => {
       {orderedSections.map((section, index) => {
         const Section = section.component;
         const divider = dividerSequence[index % dividerSequence.length];
+        const isHero = section.key === "hero";
         return (
           <Suspense key={section.key} fallback={<SectionFallback />}>
-            <Section />
+            {isHero ? (
+              <Section />
+            ) : (
+              <Chapter amount={0.12}>
+                <Section />
+              </Chapter>
+            )}
             {index < orderedSections.length - 1 && (
               <SectionDivider variant={divider.variant} color={divider.color} flip={divider.flip} />
             )}

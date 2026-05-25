@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { DUR, EASE } from "@/lib/motion";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -20,10 +21,10 @@ const ScrollReveal = ({ children, delay = 0, direction = "up" }: ScrollRevealPro
       initial={{ opacity: 0, ...directionOffset[direction] }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ 
-        duration: 0.6, 
+      transition={{
+        duration: DUR.slow,
         delay,
-        ease: [0.25, 0.4, 0.25, 1]
+        ease: EASE.exhale,
       }}
     >
       {children}
