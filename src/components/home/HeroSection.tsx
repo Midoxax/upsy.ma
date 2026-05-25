@@ -65,7 +65,7 @@ function RotatingWord() {
 
   if (prefersReducedMotion) {
     return (
-      <span className="block w-full mt-1 text-center italic font-serif text-primary" aria-live="polite">
+      <span className="block w-full mt-1 text-center accent-italic text-secondary dark:text-primary" aria-live="polite">
         {problem} → {solution}
       </span>
     );
@@ -80,7 +80,7 @@ function RotatingWord() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -30, opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-          className={`absolute inset-x-0 text-center italic font-serif ${color}`}
+          className={`absolute inset-x-0 text-center accent-italic ${color}`}
         >
           {word}
           {showSolution && (

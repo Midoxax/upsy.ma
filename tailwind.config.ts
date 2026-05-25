@@ -15,6 +15,9 @@ export default {
     extend: {
       fontFamily: {
         outfit: ['Outfit', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        fraunces: ['Fraunces', 'Georgia', 'serif'],
+        manrope: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
         /* U.Psy Brand Colors */
