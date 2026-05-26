@@ -4,6 +4,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
+import { useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Calendar, DollarSign, Users, CreditCard, Video, Award, FileText, BarChart3, LifeBuoy } from "lucide-react";
 import { ProfileTab } from "@/components/dashboard/ProfileTab";
@@ -21,10 +22,19 @@ import PatientDashboard from "@/pages/PatientDashboard";
 import OrganizationDashboard from "@/pages/OrganizationDashboard";
 import AthleteHub from "@/pages/AthleteHub";
 
-const PsychologistDashboard = () => (
+const PsychologistDashboard = () => {
+  const tabsTopRef = useRef<HTMLDivElement>(null);
+  const handleTabChange = () => {
+    // Scroll the tab list back into view so panel content starts at the top.
+    requestAnimationFrame(() => {
+      tabsTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+  return (
   <section className="section-spacing">
     <div className="container-custom">
-      <Tabs defaultValue="profile" className="space-y-6">
+      <div ref={tabsTopRef} className="scroll-mt-20" />
+      <Tabs defaultValue="profile" className="space-y-6" onValueChange={handleTabChange}>
         <TabsList className="flex flex-wrap h-auto gap-1">
           <TabsTrigger value="profile" className="gap-1.5">
             <User className="h-4 w-4" />
@@ -86,7 +96,8 @@ const PsychologistDashboard = () => (
       </Tabs>
     </div>
   </section>
-);
+  );
+};
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Administrator",
