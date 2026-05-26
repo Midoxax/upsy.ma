@@ -2320,6 +2320,337 @@ export type Database = {
         }
         Relationships: []
       }
+      ops_director_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          thread_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          thread_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_director_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "ops_director_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_director_threads: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          id: string
+          title: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          title?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          title?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_director_threads_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "ops_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_director_threads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "ops_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          end_at: string | null
+          event_type: string
+          id: string
+          intake: Json
+          start_at: string | null
+          status: Database["public"]["Enums"]["ops_event_status"]
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          end_at?: string | null
+          event_type: string
+          id?: string
+          intake?: Json
+          start_at?: string | null
+          status?: Database["public"]["Enums"]["ops_event_status"]
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          end_at?: string | null
+          event_type?: string
+          id?: string
+          intake?: Json
+          start_at?: string | null
+          status?: Database["public"]["Enums"]["ops_event_status"]
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "ops_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_protocol_phases: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string
+          id: string
+          order_index: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          order_index?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          order_index?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_protocol_phases_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "ops_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_task_events: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          from_state: Database["public"]["Enums"]["ops_task_state"] | null
+          id: string
+          note: string | null
+          task_id: string
+          to_state: Database["public"]["Enums"]["ops_task_state"]
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          from_state?: Database["public"]["Enums"]["ops_task_state"] | null
+          id?: string
+          note?: string | null
+          task_id: string
+          to_state: Database["public"]["Enums"]["ops_task_state"]
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          from_state?: Database["public"]["Enums"]["ops_task_state"] | null
+          id?: string
+          note?: string | null
+          task_id?: string
+          to_state?: Database["public"]["Enums"]["ops_task_state"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_task_events_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "ops_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_tasks: {
+        Row: {
+          created_at: string
+          deadline: string | null
+          dependencies: string[]
+          description: string | null
+          escalation: Json
+          event_id: string
+          id: string
+          owner_role: string | null
+          owner_user_id: string | null
+          phase_id: string | null
+          proof_required: boolean
+          proof_url: string | null
+          psych_safety_flag: boolean
+          state: Database["public"]["Enums"]["ops_task_state"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string | null
+          dependencies?: string[]
+          description?: string | null
+          escalation?: Json
+          event_id: string
+          id?: string
+          owner_role?: string | null
+          owner_user_id?: string | null
+          phase_id?: string | null
+          proof_required?: boolean
+          proof_url?: string | null
+          psych_safety_flag?: boolean
+          state?: Database["public"]["Enums"]["ops_task_state"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deadline?: string | null
+          dependencies?: string[]
+          description?: string | null
+          escalation?: Json
+          event_id?: string
+          id?: string
+          owner_role?: string | null
+          owner_user_id?: string | null
+          phase_id?: string | null
+          proof_required?: boolean
+          proof_url?: string | null
+          psych_safety_flag?: boolean
+          state?: Database["public"]["Enums"]["ops_task_state"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_tasks_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "ops_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_tasks_phase_id_fkey"
+            columns: ["phase_id"]
+            isOneToOne: false
+            referencedRelation: "ops_protocol_phases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_workspace_members: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["ops_member_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ops_member_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ops_member_role"]
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "ops_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_workspaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          kind: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          kind?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       org_aggregate_reports: {
         Row: {
           created_at: string
@@ -5513,6 +5844,14 @@ export type Database = {
         }
         Returns: number
       }
+      ops_has_workspace_access: {
+        Args: { _user: string; _workspace: string }
+        Returns: boolean
+      }
+      ops_workspace_role: {
+        Args: { _user: string; _workspace: string }
+        Returns: Database["public"]["Enums"]["ops_member_role"]
+      }
       org_pulse_aggregate: {
         Args: { _org_id: string; _survey_id?: string }
         Returns: Json
@@ -5693,6 +6032,22 @@ export type Database = {
         | "elite"
         | "coach"
         | "organization"
+      ops_event_status:
+        | "draft"
+        | "planning"
+        | "active"
+        | "completed"
+        | "archived"
+      ops_member_role: "director" | "operator" | "viewer"
+      ops_task_state:
+        | "pending"
+        | "active"
+        | "blocked"
+        | "delayed"
+        | "escalated"
+        | "validated"
+        | "completed"
+        | "archived"
       space_type: "topic" | "cohort" | "region" | "ama" | "private"
       streak_kind: "learn" | "train" | "reflect"
       treatment_plan_status: "draft" | "active" | "revised" | "completed"
@@ -5859,6 +6214,24 @@ export const Constants = {
         "elite",
         "coach",
         "organization",
+      ],
+      ops_event_status: [
+        "draft",
+        "planning",
+        "active",
+        "completed",
+        "archived",
+      ],
+      ops_member_role: ["director", "operator", "viewer"],
+      ops_task_state: [
+        "pending",
+        "active",
+        "blocked",
+        "delayed",
+        "escalated",
+        "validated",
+        "completed",
+        "archived",
       ],
       space_type: ["topic", "cohort", "region", "ama", "private"],
       streak_kind: ["learn", "train", "reflect"],
