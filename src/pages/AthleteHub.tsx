@@ -20,7 +20,7 @@ import JournalPanel from "@/components/athlete/JournalPanel";
 const AthleteHub = () => {
   const { user } = useAuth();
   const { t, locale } = useLocale();
-  const { checkins, protocols, journal, latestScore, submitCheckin, logProtocol, addJournalEntry } = useAthleteHub();
+  const { checkins, protocols, journal, latestScore, submitCheckin, logProtocol, addJournalEntry, synthesizeEntry } = useAthleteHub();
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [activeProtocol, setActiveProtocol] = useState<Protocol | null>(null);
 
@@ -161,7 +161,7 @@ const AthleteHub = () => {
 
           {/* Journal + AI Coach CTA */}
           <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6">
-            <JournalPanel entries={journal} onAdd={addJournalEntry} />
+            <JournalPanel entries={journal} onAdd={addJournalEntry} onSynthesize={synthesizeEntry} />
 
             <div className="space-y-4">
               <Link
