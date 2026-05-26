@@ -2062,34 +2062,43 @@ export type Database = {
       }
       journal_entries: {
         Row: {
+          ai_summary: string | null
           content: string
           created_at: string | null
           id: string
           mood_tag: string | null
           prompt: string | null
+          synthesized_at: string | null
           tags: string[] | null
+          themes: string[]
           title: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          ai_summary?: string | null
           content: string
           created_at?: string | null
           id?: string
           mood_tag?: string | null
           prompt?: string | null
+          synthesized_at?: string | null
           tags?: string[] | null
+          themes?: string[]
           title?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          ai_summary?: string | null
           content?: string
           created_at?: string | null
           id?: string
           mood_tag?: string | null
           prompt?: string | null
+          synthesized_at?: string | null
           tags?: string[] | null
+          themes?: string[]
           title?: string | null
           updated_at?: string | null
           user_id?: string
