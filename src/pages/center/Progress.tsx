@@ -9,6 +9,7 @@ import {
   useQuests,
   useMyQuestProgress,
   useMyXpTotal,
+  type UserQuestProgress,
 } from "@/hooks/useProgression";
 import { SkillTreeMap } from "@/components/progression/SkillTreeMap";
 import { QuestCard } from "@/components/progression/QuestCard";
@@ -20,8 +21,8 @@ const ProgressPage = () => {
   const { data: xpTotal = 0 } = useMyXpTotal();
 
   const progressByQuest = useMemo(() => {
-    const map = new Map<string, (typeof progress extends Array<infer T> ? T : never)>();
-    (progress ?? []).forEach((p) => map.set(p.quest_slug, p as any));
+    const map = new Map<string, UserQuestProgress>();
+    (progress ?? []).forEach((p) => map.set(p.quest_slug, p));
     return map;
   }, [progress]);
 
