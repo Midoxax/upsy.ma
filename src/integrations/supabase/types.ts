@@ -469,6 +469,45 @@ export type Database = {
         }
         Relationships: []
       }
+      athlete_protocols: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          duration_minutes: number
+          focus_areas: string[]
+          id: string
+          is_published: boolean
+          slug: string
+          steps: Json
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          duration_minutes: number
+          focus_areas?: string[]
+          id?: string
+          is_published?: boolean
+          slug: string
+          steps?: Json
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          focus_areas?: string[]
+          id?: string
+          is_published?: boolean
+          slug?: string
+          steps?: Json
+          title?: string
+        }
+        Relationships: []
+      }
       athlete_subscriptions: {
         Row: {
           amount_eur: number
@@ -3230,6 +3269,41 @@ export type Database = {
         }
         Relationships: []
       }
+      protocol_completions: {
+        Row: {
+          completed_at: string
+          duration_minutes: number | null
+          id: string
+          protocol_id: string
+          rating: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          duration_minutes?: number | null
+          id?: string
+          protocol_id: string
+          rating?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          duration_minutes?: number | null
+          id?: string
+          protocol_id?: string
+          rating?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_completions_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_protocols"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       provisioning_attempts: {
         Row: {
           admin_user_id: string | null
@@ -3681,6 +3755,45 @@ export type Database = {
             referencedColumns: ["slug"]
           },
         ]
+      }
+      readiness_checkins: {
+        Row: {
+          cognitive_load: number
+          created_at: string
+          energy: number
+          id: string
+          mood: number
+          note: string | null
+          score: number
+          sleep: number
+          stress: number
+          user_id: string
+        }
+        Insert: {
+          cognitive_load: number
+          created_at?: string
+          energy: number
+          id?: string
+          mood: number
+          note?: string | null
+          score: number
+          sleep: number
+          stress: number
+          user_id: string
+        }
+        Update: {
+          cognitive_load?: number
+          created_at?: string
+          energy?: number
+          id?: string
+          mood?: number
+          note?: string | null
+          score?: number
+          sleep?: number
+          stress?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       referral_credits: {
         Row: {
