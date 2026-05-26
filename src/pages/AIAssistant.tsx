@@ -10,9 +10,10 @@ import { useToast } from "@/hooks/use-toast";
 import CrisisModal from "@/components/dashboard/CrisisModal";
 import {
   Send, Loader2, Plus, Wind, BookOpen, Heart, Brain,
-  Sparkles, Moon, Target, Lock,
+  Sparkles, Moon, Target, Lock, Heart as HeartIcon, Activity, GraduationCap, Notebook,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { NourEmergence, Pulse } from "@/lib/motion";
 
@@ -23,6 +24,50 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant
 const DISTRESS_PATTERNS = /\b(suicid|kill\s*my\s*self|end\s*(my|it\s*all)|don'?t\s*want\s*to\s*live|self[- ]?harm|hurt\s*myself|no\s*reason\s*to\s*live|hopeless|overdose)\b/i;
 
 type Locale = "en" | "fr" | "ar";
+
+type Personality = "companion" | "coach" | "tutor" | "reflective";
+
+const PERSONALITY_META: Record<
+  Personality,
+  { icon: typeof HeartIcon; label: Record<Locale, string>; subtitle: Record<Locale, string> }
+> = {
+  companion: {
+    icon: HeartIcon,
+    label: { en: "Companion", fr: "Compagnon", ar: "رفيق" },
+    subtitle: {
+      en: "AI wellness companion",
+      fr: "Compagnon de bien-être",
+      ar: "رفيق العافية",
+    },
+  },
+  coach: {
+    icon: Activity,
+    label: { en: "Coach", fr: "Coach", ar: "مدرّب" },
+    subtitle: {
+      en: "Performance coach",
+      fr: "Coach de performance",
+      ar: "مدرّب الأداء",
+    },
+  },
+  tutor: {
+    icon: GraduationCap,
+    label: { en: "Tutor", fr: "Tuteur", ar: "مرشد" },
+    subtitle: {
+      en: "Socratic lesson tutor",
+      fr: "Tuteur de leçon socratique",
+      ar: "مرشد الدروس",
+    },
+  },
+  reflective: {
+    icon: Notebook,
+    label: { en: "Reflective", fr: "Réflexif", ar: "تأمّلي" },
+    subtitle: {
+      en: "Journal reflection",
+      fr: "Réflexion de journal",
+      ar: "تأمّل اليوميات",
+    },
+  },
+};
 
 const QUICK_PROMPTS: Record<Locale, { icon: typeof Wind; label: string; msg: string }[]> = {
   en: [
@@ -133,6 +178,20 @@ const AIAssistant = () => {
   const l: Locale = locale === "fr" ? "fr" : locale === "ar" ? "ar" : "en";
   const isRtl = l === "ar";
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPersonality = ((): Personality => {
+    const p = searchParams.get("mode");
+    return p === "coach" || p === "tutor" || p === "reflective" ? p : "companion";
+  })();
+  const [personality, setPersonality] = useState<Personality>(initialPersonality);
+
+  const changePersonality = (p: Personality) => {
+    setPersonality(p);
+    const next = new URLSearchParams(searchParams);
+    if (p === "companion") next.delete("mode"); else next.set("mode", p);
+    setSearchParams(next, { replace: true });
+  };
+
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -171,6 +230,7 @@ const AIAssistant = () => {
       context: {
         firstName: userProfile?.name ?? null,
         locale: l,
+        personality,
       },
     };
 
@@ -249,7 +309,7 @@ const AIAssistant = () => {
       setIsLoading(false);
       setTimeout(() => textareaRef.current?.focus(), 50);
     }
-  }, [messages, isLoading, toast]);
+  }, [messages, isLoading, toast, l, personality, userProfile?.name]);
 
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -276,11 +336,41 @@ const AIAssistant = () => {
             </div>
             <div>
               <p className="text-sm font-semibold leading-none">Nour</p>
-              <p className="text-xs text-muted-foreground leading-none mt-0.5">AI wellness companion</p>
+              <p className="text-xs text-muted-foreground leading-none mt-0.5">
+                {PERSONALITY_META[personality].subtitle[l]}
+              </p>
             </div>
             <Pulse size={8} colorClass="bg-green-500" className="ml-1" />
           </div>
           <div className="flex items-center gap-2">
+            <div
+              className="hidden sm:flex items-center gap-1 rounded-full border border-border bg-surface p-0.5"
+              role="tablist"
+              aria-label="Nour personality"
+            >
+              {(Object.keys(PERSONALITY_META) as Personality[]).map((p) => {
+                const Icon = PERSONALITY_META[p].icon;
+                const active = personality === p;
+                return (
+                  <button
+                    key={p}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => changePersonality(p)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs transition-all",
+                      active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                    title={PERSONALITY_META[p].subtitle[l]}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    <span>{PERSONALITY_META[p].label[l]}</span>
+                  </button>
+                );
+              })}
+            </div>
             {messages.length > 0 && (
               <Button variant="ghost" size="sm" onClick={resetConversation} className="gap-1.5 text-xs">
                 <Plus className="h-3.5 w-3.5" />
