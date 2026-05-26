@@ -156,7 +156,7 @@ const Header = () => {
             ) : (
               <>
                 <Link
-                  to={addLocalePrefix('/auth', locale)}
+                  to={authHref}
                   className="text-sm text-foreground/70 hover:text-foreground transition-colors px-3 py-2"
                 >
                   {t('nav.login')}
@@ -263,7 +263,7 @@ const Header = () => {
                 ) : (
                   <div className="flex gap-2 px-3">
                     <Button variant="secondary" size="sm" asChild className="flex-1">
-                      <Link to={addLocalePrefix('/auth', locale)} onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link to={authHref} onClick={() => setIsMobileMenuOpen(false)}>
                         {t('nav.login')}
                       </Link>
                     </Button>
