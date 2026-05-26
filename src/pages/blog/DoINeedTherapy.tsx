@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
+import BlogAuthor from "@/components/blog/BlogAuthor";
+import RelatedArticles from "@/components/blog/RelatedArticles";
 import { ArrowRight, AlertCircle, CheckCircle2, HelpCircle, TrendingUp, Heart } from "lucide-react";
 
 const DoINeedTherapy = () => {
@@ -163,6 +165,14 @@ const DoINeedTherapy = () => {
               </div>
             </ScrollReveal>
           </div>
+            <ScrollReveal>
+              <BlogAuthor />
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <RelatedArticles currentSlug="do-i-need-therapy" />
+            </ScrollReveal>
+
         </article>
       </main>
     </>

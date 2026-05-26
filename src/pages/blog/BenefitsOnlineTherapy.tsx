@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
+import BlogAuthor from "@/components/blog/BlogAuthor";
+import RelatedArticles from "@/components/blog/RelatedArticles";
 import { ArrowRight, Globe, Clock, Shield, Laptop, Heart } from "lucide-react";
 
 const BenefitsOnlineTherapy = () => {
@@ -102,6 +104,14 @@ const BenefitsOnlineTherapy = () => {
               </section>
             </ScrollReveal>
           </div>
+            <ScrollReveal>
+              <BlogAuthor />
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <RelatedArticles currentSlug="benefits-online-therapy" />
+            </ScrollReveal>
+
         </article>
       </main>
     </>

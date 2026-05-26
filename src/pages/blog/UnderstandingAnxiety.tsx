@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
+import BlogAuthor from "@/components/blog/BlogAuthor";
+import RelatedArticles from "@/components/blog/RelatedArticles";
 import { ArrowRight, AlertCircle, Brain, Heart, Shield } from "lucide-react";
 
 const UnderstandingAnxiety = () => {
@@ -133,6 +135,14 @@ const UnderstandingAnxiety = () => {
               </section>
             </ScrollReveal>
           </div>
+            <ScrollReveal>
+              <BlogAuthor />
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <RelatedArticles currentSlug="understanding-anxiety" />
+            </ScrollReveal>
+
         </article>
       </main>
     </>
