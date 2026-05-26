@@ -7,6 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
 import BlogAuthor from "@/components/blog/BlogAuthor";
 import RelatedArticles from "@/components/blog/RelatedArticles";
+import heroImg from "@/assets/blog/need-therapy.jpg";
 import { ArrowRight, AlertCircle, CheckCircle2, HelpCircle, TrendingUp, Heart } from "lucide-react";
 
 const DoINeedTherapy = () => {
@@ -66,6 +67,12 @@ const DoINeedTherapy = () => {
             </ScrollReveal>
           </div>
         </section>
+        <div className="container-custom max-w-4xl -mt-10 md:-mt-14 mb-8 md:mb-12">
+          <div className="blog-hero-need-therapy rounded-2xl overflow-hidden border border-border/40 shadow-xl">
+            <img src={heroImg} alt="Open journal and pen — self-reflection on therapy" width={1024} height={1024} className="w-full h-auto object-cover aspect-[16/9]" />
+          </div>
+        </div>
+
 
         {/* Content */}
         <article className="py-16 md:py-24">
