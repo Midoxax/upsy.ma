@@ -13,6 +13,7 @@ import {
   ShieldCheck, Download, FileCheck2, Info,
 } from "lucide-react";
 import { useAnamnesis, type AnamnesisSection } from "@/hooks/useAnamnesis";
+import { useScrollResetOnOpen } from "@/hooks/useScrollResetOnOpen";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/contexts/LocaleContext";
 import jsPDF from "jspdf";
@@ -61,6 +62,7 @@ const AnamnesisDrawer = ({
   const [stepIdx, setStepIdx] = useState(0);
   const [local, setLocal] = useState<Record<string, any>>({});
   const [reviewNotes, setReviewNotes] = useState("");
+  const scrollRef = useScrollResetOnOpen<HTMLDivElement>(open, [stepIdx]);
 
   const stepKey = STEP_KEYS[stepIdx];
   const stepLabel = t(`anamnesis.steps.${stepKey}.label`);
@@ -284,7 +286,7 @@ const AnamnesisDrawer = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-xl overflow-y-auto">
+      <SheetContent ref={scrollRef} side="right" className="w-full sm:max-w-xl overflow-y-auto">
         <SheetHeader className="pb-4">
           <SheetTitle className="flex items-center gap-2">
             {t("anamnesis.title")} {clientName && <Badge variant="outline">{clientName}</Badge>}

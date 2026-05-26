@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DataPrivacyNotice from "@/components/DataPrivacyNotice";
+import { useScrollResetOnOpen } from "@/hooks/useScrollResetOnOpen";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -56,6 +57,7 @@ const MatchingFormModal = ({ open, onClose, specialties, languages }: MatchingFo
   const [loading, setLoading] = useState(false);
   const [matches, setMatches] = useState<PsychologistProfile[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const scrollRef = useScrollResetOnOpen<HTMLDivElement>(open, [showResults]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -132,7 +134,7 @@ const MatchingFormModal = ({ open, onClose, specialties, languages }: MatchingFo
   if (showResults) {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent ref={scrollRef} className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Your Top Matches</DialogTitle>
             <DialogDescription>Based on your preferences, here are your best matches</DialogDescription>
@@ -145,7 +147,7 @@ const MatchingFormModal = ({ open, onClose, specialties, languages }: MatchingFo
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent ref={scrollRef} className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Find Your Perfect Match</DialogTitle>
           <DialogDescription>Tell us what you're looking for and we'll match you with the best psychologists</DialogDescription>

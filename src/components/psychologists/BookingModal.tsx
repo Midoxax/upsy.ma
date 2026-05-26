@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useScrollResetOnOpen } from "@/hooks/useScrollResetOnOpen";
 import {
   Dialog,
   DialogContent,
@@ -68,6 +69,7 @@ const BookingModal = ({
   const { user } = useAuth();
   const { t } = useLocale();
   const [step, setStep] = useState<BookingStep>("type");
+  const scrollRef = useScrollResetOnOpen<HTMLDivElement>(open, [step]);
   const [sessionType, setSessionType] = useState<"online" | "in_person">(
     offersOnline ? "online" : "in_person"
   );
@@ -402,7 +404,7 @@ const BookingModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent ref={scrollRef} className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{stepTitles[step]}</DialogTitle>
           <DialogDescription>
