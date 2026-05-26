@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
+import BlogAuthor from "@/components/blog/BlogAuthor";
+import RelatedArticles from "@/components/blog/RelatedArticles";
 
 const UnderstandingDepression = () => {
   const { t, locale } = useLocale();
@@ -116,6 +118,12 @@ const UnderstandingDepression = () => {
                 </div>
               </ScrollReveal>
             </div>
+          </div>
+        </section>
+        <section className="pb-16 md:pb-24">
+          <div className="container-custom max-w-4xl space-y-12">
+            <ScrollReveal><BlogAuthor /></ScrollReveal>
+            <ScrollReveal><RelatedArticles currentSlug="understanding-depression" /></ScrollReveal>
           </div>
         </section>
       </main>
