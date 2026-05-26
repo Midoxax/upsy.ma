@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import type { Database } from "@/integrations/supabase/types";
@@ -14,6 +14,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
   const { user, loading: authLoading } = useAuth();
   const { roles, isAdmin, loading: roleLoading } = useUserRole();
+  const location = useLocation();
 
   const loading = authLoading || (role ? roleLoading : false);
 
@@ -25,7 +26,12 @@ export const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
     );
   }
 
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) {
+    const back = location.pathname + location.search;
+    const safe = back && !back.startsWith("/auth") ? back : "";
+    const target = safe ? `/auth?redirect=${encodeURIComponent(safe)}` : "/auth";
+    return <Navigate to={target} replace />;
+  }
 
   if (role) {
     const required = Array.isArray(role) ? role : [role];
