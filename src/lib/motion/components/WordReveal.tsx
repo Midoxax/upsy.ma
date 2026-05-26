@@ -15,7 +15,7 @@ const WordReveal = ({ text, className = "", as = "h1", delay = 0 }: WordRevealPr
   const Tag = motion[as] as typeof motion.h1;
 
   if (reduced) {
-    const Static = as as keyof JSX.IntrinsicElements;
+    const Static = as as any;
     return <Static className={className}>{text}</Static>;
   }
 

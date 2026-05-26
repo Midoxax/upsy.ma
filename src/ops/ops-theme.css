@@ -68,6 +68,28 @@
 }
 .ops-pulse { animation: ops-pulse 1.6s ease-out infinite; }
 
+/* Flash highlight when a row receives a realtime update */
+@keyframes ops-flash {
+  0% { background: hsl(var(--ops-accent) / 0.22); }
+  100% { background: transparent; }
+}
+.ops-flash { animation: ops-flash 1200ms ease-out 1; border-radius: 8px; }
+
+/* Floating Director quick-prompt */
+.ops-fab {
+  position: fixed; right: 28px; bottom: 28px; z-index: 40;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 20px; border-radius: 999px;
+  background: linear-gradient(180deg, hsl(var(--ops-accent) / 0.22), hsl(var(--ops-accent) / 0.08));
+  border: 1px solid hsl(var(--ops-accent) / 0.55);
+  color: hsl(var(--ops-accent));
+  font-family: "JetBrains Mono", monospace; font-size: 12px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  box-shadow: 0 0 32px hsl(var(--ops-accent) / 0.25), inset 0 0 0 1px hsl(var(--ops-accent) / 0.1);
+  backdrop-filter: blur(12px); transition: all 220ms ease;
+}
+.ops-fab:hover { transform: translateY(-2px); box-shadow: 0 0 48px hsl(var(--ops-accent) / 0.45); }
+
 @keyframes ops-scan {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100%); }
