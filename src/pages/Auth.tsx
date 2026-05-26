@@ -147,10 +147,12 @@ const Auth = () => {
     const setter = provider === "google" ? setIsGoogleLoading : setIsAppleLoading;
     setter(true);
     try {
-      // Flag so the homepage knows to forward this session to /my-space
-      // once the OAuth round-trip lands back on "/".
+      // Forward the user back to the page they came from after the OAuth
+      // round-trip. Fall back to /my-space when no redirect is set.
+      const redirectTo = new URLSearchParams(window.location.search).get("redirect");
+      const safe = redirectTo && !redirectTo.startsWith("/auth") ? redirectTo : "/my-space";
       try {
-        sessionStorage.setItem("upsy:post-oauth-redirect", "/my-space");
+        sessionStorage.setItem("upsy:post-oauth-redirect", safe);
       } catch {}
       const { error } = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
@@ -201,7 +203,8 @@ const Auth = () => {
         throw new Error("Passwords do not match");
       }
 
-      const { error } = await signUp(signupData.email, signupData.password, signupData.fullName);
+      const redirectTo = new URLSearchParams(window.location.search).get("redirect") || undefined;
+      const { error } = await signUp(signupData.email, signupData.password, signupData.fullName, redirectTo);
       if (error) {
         toast({ title: t('auth.signupFailed'), description: error.message, variant: "destructive" });
       } else {
