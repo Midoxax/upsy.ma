@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import CrisisModal from "@/components/dashboard/CrisisModal";
 import {
   Send, Loader2, Plus, Wind, BookOpen, Heart, Brain,
-  Sparkles,
+  Sparkles, Moon, Target, Lock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -30,18 +30,24 @@ const QUICK_PROMPTS: Record<Locale, { icon: typeof Wind; label: string; msg: str
     { icon: BookOpen, label: "Journal",     msg: "Give me a meaningful journaling prompt for today." },
     { icon: Heart,    label: "Anxious",     msg: "I'm feeling anxious. Can you help me ground myself?" },
     { icon: Brain,    label: "Burnout",     msg: "I think I might be burning out. What can I do?" },
+    { icon: Moon,     label: "Can't sleep", msg: "I can't sleep. Help me wind down." },
+    { icon: Target,   label: "Focus",       msg: "I can't focus today. Help me reset." },
   ],
   fr: [
     { icon: Wind,     label: "Respiration", msg: "Guide-moi dans un exercice de respiration apaisante." },
     { icon: BookOpen, label: "Journal",     msg: "Donne-moi une question de journal pour aujourd'hui." },
     { icon: Heart,    label: "Anxieux",     msg: "Je me sens anxieux. Peux-tu m'aider à m'ancrer ?" },
     { icon: Brain,    label: "Burnout",     msg: "Je crois que je suis en burnout. Que puis-je faire ?" },
+    { icon: Moon,     label: "Sommeil",     msg: "Je n'arrive pas à dormir. Aide-moi à me détendre." },
+    { icon: Target,   label: "Focus",       msg: "Je n'arrive pas à me concentrer. Aide-moi à recadrer." },
   ],
   ar: [
     { icon: Wind,     label: "تنفّس",       msg: "ساعدني في تمرين تنفس مهدئ الآن." },
     { icon: BookOpen, label: "تدوين",       msg: "اقترح عليّ سؤال تدوين عميق لهذا اليوم." },
     { icon: Heart,    label: "قلق",         msg: "أشعر بالقلق. ساعدني في تمرين تأريض." },
     { icon: Brain,    label: "إرهاق",       msg: "أعتقد أنني أعاني من الإرهاق. ماذا أفعل؟" },
+    { icon: Moon,     label: "نوم",         msg: "لا أستطيع النوم. ساعدني على الاسترخاء." },
+    { icon: Target,   label: "تركيز",       msg: "لا أستطيع التركيز اليوم. ساعدني على إعادة الضبط." },
   ],
 };
 
@@ -105,14 +111,17 @@ const TypingDots = () => (
     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center text-xs font-bold text-teal-600 flex-shrink-0">
       N
     </div>
-    <div className="bg-surface border border-border rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1">
-      {[0, 1, 2].map((i) => (
-        <div
-          key={i}
-          className="w-2 h-2 rounded-full bg-muted-foreground/40"
-          style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
-        />
-      ))}
+    <div className="bg-surface border border-border rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-2">
+      <span className="text-xs text-muted-foreground italic">Nour is thinking</span>
+      <div className="flex items-center gap-1">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-teal-500/60"
+            style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
+          />
+        ))}
+      </div>
     </div>
   </div>
 );
@@ -298,7 +307,7 @@ const AIAssistant = () => {
                   {SUBTITLE[l]}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto pt-2">
+              <div className="grid grid-cols-2 gap-2 max-w-md mx-auto pt-2">
                 {QUICK_PROMPTS[l].map(({ icon: Icon, label, msg }) => (
                   <button
                     key={label}
@@ -309,6 +318,12 @@ const AIAssistant = () => {
                     <span className="text-muted-foreground group-hover:text-foreground">{label}</span>
                   </button>
                 ))}
+              </div>
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground/70 pt-2">
+                <Lock className="h-3 w-3" />
+                <span>
+                  {l === "fr" ? "Tes échanges restent privés." : l === "ar" ? "محادثاتك تبقى خاصة." : "Your conversations stay private."}
+                </span>
               </div>
             </div>
           )}
