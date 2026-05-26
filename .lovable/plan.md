@@ -1,309 +1,129 @@
 
-# U.Psy 2.0 — Performance Psychology Ecosystem
+# UPSY OPS — MVP Vertical Slice
 
-A complete restructure positioning U.Psy as the fusion of **Skool + WHOOP + Headspace + MasterClass + Apple-grade UX**, organized around two flagship ecosystems sitting above the existing therapy directory.
+A cinematic, standalone operations layer mounted at `/ops`, visually disconnected from the U.Psy marketing site. Three.js + GSAP allowed inside `/ops/*` only. Claude (Anthropic) powers the AI Operations Director.
 
----
+## Scope of this build
 
-## 1. Product Vision
+In:
+- `/ops` landing (cinematic command center entry)
+- Workspace switcher (multi-tenant scaffold, single seeded org: LSSPM)
+- Realtime Command Center dashboard shell
+- **Dynamic SOP / Protocol Engine** (the hero feature)
+- Operational task system tied to generated SOPs
+- Claude-powered AI Ops Director (generation + chat)
+- Auth gate (reuses existing Lovable Cloud auth)
 
-**One-liner:** The operating system for psychological performance — where mental health, sport psychology, and human potential converge.
+Out (later phases):
+- Finance/logistics intelligence
+- Psychological safety workflows (schema seeded, no UI)
+- Supplier/procurement, transport, accommodation modules
+- Mobile-first polish (desktop-first for MVP)
 
-**Three pillars (new IA):**
-1. **Care** — existing directory, booking, clinical tools (kept, deprioritized in nav)
-2. **Training Center** — Skool-style community + learning + certification ecosystem
-3. **Athlete Hub** — WHOOP-style mental performance intelligence dashboard
-
-Care funds trust. Training Center funds growth. Athlete Hub funds prestige and B2B.
-
----
-
-## 2. Information Architecture (new top nav)
-
-```
-Care            Training Center        Athlete Hub        For Organizations
- ├ Find a       ├ Communities          ├ Dashboard         ├ Teams
- │  specialist  ├ Courses & Tracks     ├ Readiness         ├ Pulse
- ├ Get Matched  ├ Live & Events        ├ Protocols         ├ Programs
- ├ Programs     ├ Certifications       ├ Journal & Mood    └ Analytics
- └ Crisis       └ Mentors              └ AI Coach
-```
-
-Auth zone collapses `/my-space` into a contextual workspace that swaps based on the user's **primary identity** (Client, Student, Practitioner, Athlete, Coach, Org).
-
----
-
-## 3. Membership Architecture
-
-| Tier | Audience | Price (MAD/mo) | Unlocks |
-|---|---|---|---|
-| **Discover** | Public | Free | Community read, 3 lessons/mo, mood log, 5 AI msgs/day |
-| **Student** | Learners | 99 | Full library, cohort access, basic certificate prep |
-| **Athlete** | Performers | 199 | Athlete Hub, protocols, AI coach, readiness analytics |
-| **Practitioner** | Specialists | 499 | Pro community, clinical CE credits, supervision groups |
-| **Elite** | Top 1% | 1499 | Mentor matching, private mastermind, white-glove AI |
-| **Coach** | Trainers | 299 | Team dashboard (10 athletes), session feedback tools |
-| **Organization / Gym** | B2B | Custom | Multi-seat, branded portal, pulse + analytics, SSO |
-
-**Mechanics:** annual save 20%, founding-member badge (first 500/tier), gifting, student verification, scholarship pool funded by Elite (1 free Student seat per Elite sub — prestige + ESG story).
-
----
-
-## 4. Training Center / Community Ecosystem
-
-**Surfaces**
-- `/center` — feed (intelligent: people you follow + tracks you're in + curated)
-- `/center/c/:slug` — community spaces (topic, regional, cohort, expert AMA)
-- `/center/learn` — Netflix-grade course browser with tracks
-- `/center/learn/:course` — lesson player + comments + assignments
-- `/center/live` — calendar (AMAs, cohorts, workshops, group coaching)
-- `/center/certifications` — pathways with visual progression maps
-- `/center/mentors` — directory + booking for 1:1 mentorship
-
-**Anti-toxicity engine**
-- No public like counts (private only)
-- Reactions instead of comments on low-signal posts
-- AI pre-moderation (Gemini Flash) flags hostility / off-topic before publish
-- Slow-mode in heated threads; "cool-down" prompt when sentiment dips
-- No infinite scroll — sessions end with a "completion" screen ("You've caught up — go train")
-
-**Engagement loops (healthy)**
-- Daily 10-min lesson nudge tied to streak
-- Weekly cohort check-in
-- Monthly challenge (skill, not vanity)
-- Quarterly certification milestone
-
----
-
-## 5. Gamification System
-
-**Core mechanics**
-- **XP** for actions weighted by depth (lesson complete > comment > reaction)
-- **Skill trees** per domain (Mindfulness, Resilience, Combat Psychology, Clinical Foundations…)
-- **Streaks** — separate streaks for Learn / Train / Reflect (so one bad day doesn't kill everything)
-- **Ranks** — Apprentice → Practitioner → Specialist → Master → Mentor (gated by XP + assessments + community contribution)
-- **Seasons** — 12-week themes with leaderboards in private cohorts only (no global)
-- **Badges** — earned for outcomes, never for vanity ("Completed 30-day visualization protocol")
-- **Quests** — multi-step missions ("Pre-fight Prep" = 5 lessons + 7 breathing sessions + 1 coach check-in)
-
-**Psychologically healthy guardrails:** no public global leaderboards, no loss-aversion notifications ("you'll lose your streak!"), opt-out per mechanic, streak freezes (2/month free, more with tier).
-
----
-
-## 6. Athlete Hub / Performance Ecosystem
-
-**Dashboard layout (immersive, ambient)**
-```
-┌─ Readiness Ring (0-100)  ─┬─ Today's Focus ─┐
-│  composite of: mood,      │  protocol card  │
-│  sleep, stress, HRV-in,   │  + AI insight   │
-│  cognitive load           │                 │
-├───────────────────────────┴─────────────────┤
-│  Trends (7/30/90d)   Streaks   Next Event   │
-├─────────────────────────────────────────────┤
-│  Protocols  │  Journal  │  AI Coach  │ Team │
-└─────────────────────────────────────────────┘
-```
-
-**Modules**
-- **Readiness Score** — daily composite, explainable ("Stress high + sleep short")
-- **Protocols** — guided audio/video sessions (visualization, box-breathing, pre-comp ritual, post-loss recovery)
-- **Mood + Stress + Energy** logs (3-tap entry, < 8 seconds)
-- **Cognitive load tracker** — quick Stroop / reaction game weekly
-- **Burnout detector** — rolling 14-day trend triggers alert + AI conversation + optional specialist referral
-- **Competition prep flow** — 14/7/3/1-day countdown protocols
-- **Journal** with AI summaries, theme detection, exportable to specialist
-- **Coach portal** — read-only athlete cards, session feedback, RPE
-- **Team dashboards** — anonymized k=5 aggregates for gyms/federations
-
-**Integrations (V2):** Apple Health, Garmin, WHOOP, Oura — read-only HRV, sleep, RHR feeding the Readiness composite.
-
----
-
-## 7. AI Systems
-
-**One AI surface ("Nour"), multiple personalities scoped by context:**
-- *Companion* (general support, free tier capped)
-- *Coach* (Athlete Hub, performance lens)
-- *Tutor* (in lesson player, Socratic)
-- *Reflective* (journal, after-entry summaries)
-- *Triage* (intake forms, never diagnoses, routes to specialist)
-
-**Architecture**
-- Lovable AI Gateway, default `google/gemini-2.5-flash` for chat, `gpt-5-mini` for journal synthesis, `gemini-2.5-pro` for clinical brief generation
-- System prompts include user context: tier, streak, recent mood, current protocol — never PHI to model when journal opt-out is set
-- All AI responses stream (SSE) with the existing `ai-assistant` edge function as base
-- **Hard rails:** crisis keyword detector (already exists via `crisis-screening`) → SOS Amitié protocol; never claims clinical diagnosis; always offers human option
-
----
-
-## 8. UX / Motion Direction
-
-**Visual system (extends current Maroon/Beige/Gold tokens)**
-- Add **performance accent**: `--athletic-cyan: 188 78% 52%` (only inside Athlete Hub)
-- Glass surfaces: 3 depths (`--glass-1/2/3`) with backdrop-blur 12/20/32px
-- Ambient backgrounds: AuroraBackground (already exists) per ecosystem with hue shifts
-- Type scale unchanged (Outfit/Inter) — adds `font-display` weight 500 for hero metrics
-
-**Motion language (extends current tokens)**
-- Readiness ring uses `SPRING.breath`
-- Skill-tree node unlocks: `EASE.exhale` 700ms + soft gold pulse
-- Lesson completion: full-screen celebration (subtle confetti, no sound by default)
-- Page transitions: shared element on athlete card → profile (Framer Motion `layoutId`)
-
-**No new 3D libs.** Pure CSS + Framer Motion (per existing constraint). Three.js stays banned.
-
----
-
-## 9. Database Schema (additions)
+## Architecture
 
 ```text
--- Membership
-plans                  (tier, price_mad, features jsonb, stripe_price_id)
-user_memberships       (user_id, tier, status, current_period_end, …)
-
--- Community
-community_spaces       (slug, name, tier_required, type: topic|cohort|region|ama)
-space_members          (space_id, user_id, role)
-posts                  (space_id, author_id, body, attachments, ai_score, is_hidden)
-post_reactions         (post_id, user_id, kind)  -- private counts
-comments               (post_id, parent_id, author_id, body)
-
--- Learning
-tracks                 (slug, title, level, tier_required)
-courses                (track_id, slug, title, hours, instructor_id)
-lessons                (course_id, order, type: video|audio|reading|exercise, content_url, duration_s)
-enrollments            (user_id, course_id, progress_pct, completed_at)
-lesson_progress        (user_id, lesson_id, completed_at, time_spent_s)
-assignments            (lesson_id, prompt, rubric jsonb)
-assignment_submissions (assignment_id, user_id, body, ai_feedback, grade)
-
--- Gamification
-xp_events              (user_id, action, xp, source_id, source_type, created_at)
-skill_trees            (slug, domain, tree jsonb)
-user_skill_nodes       (user_id, tree_slug, node_id, unlocked_at)
-streaks                (user_id, kind: learn|train|reflect, current, best, last_at)
-badges                 (slug, name, criteria jsonb, tier)
-user_badges            (user_id, badge_slug, earned_at)
-quests                 (slug, title, steps jsonb, xp_reward)
-user_quest_progress    (user_id, quest_slug, step_idx, completed_at)
-seasons                (slug, starts_at, ends_at, theme)
-
--- Athlete Hub
-athlete_metrics_daily  (user_id, date, mood, stress, energy, sleep_h, hrv, cognitive_score, readiness)
-protocols              (slug, category, duration_min, tier_required, media_url, script jsonb)
-protocol_sessions      (user_id, protocol_slug, started_at, completed_at, rating, notes)
-journal_entries        (user_id, body_encrypted, ai_summary, themes text[], mood_at_write)
-team_athletes          (coach_id, athlete_id, joined_at, status)  -- consent-based
-team_aggregates_daily  (team_id, date, n, readiness_avg, mood_avg, stress_avg)  -- k≥5
-
--- Certifications
-certifications         (slug, name, requirements jsonb, tier_required)
-user_certifications    (user_id, cert_slug, issued_at, pdf_url, verification_code)
-
--- Mentors / Live
-mentor_profiles        (user_id, bio, hourly_mad, specialties text[])
-mentor_bookings        (mentor_id, mentee_id, scheduled_at, status, …)
-live_events            (slug, host_id, starts_at, tier_required, capacity, recording_url)
-event_attendees        (event_id, user_id, joined_at)
+/ops                          → Cinematic landing (Three.js hero)
+/ops/auth                     → Operator login
+/ops/[workspace]              → Workspace shell
+  ├── /command                → Realtime command center
+  ├── /events                 → Event list
+  ├── /events/[id]            → Event detail + generated SOP
+  ├── /events/new             → SOP Engine intake → AI generation
+  ├── /tasks                  → Task board (Kanban + list)
+  └── /director               → Claude AI Ops Director chat
 ```
 
-All `public.*` tables: GRANTs + RLS + indexes on `(user_id, created_at)` patterns. Reuse existing `has_role`, add `has_tier(_user, _tier)` security-definer.
+Layout: `OpsLayout` (dedicated, full-bleed, dark, no U.Psy header/footer).
+Theme: scoped CSS variables under `.ops-theme` — black base, single neon cyan accent (`hsl(180 100% 60%)`), glass surfaces, futuristic mono+sans pairing.
 
----
+## Visual / motion stack (scoped to /ops)
 
-## 10. Monetization & Retention
+- `@react-three/fiber@^8.18` + `@react-three/drei@^9.122` + `three@^0.160`
+- `gsap@^3.12`
+- Framer Motion (already present)
+- Lazy-loaded via `React.lazy` so marketing routes don't pay the bundle cost
+- Hero: WebGL particle network ("operational nervous system")
+- Command center: ambient grid shader background, cursor parallax
+- Reduced-motion fallback: static gradient + CSS-only glow
 
-**Revenue mix target (12 months):**
-- 40% subscriptions (Athlete + Practitioner + Elite carry margin)
-- 25% B2B (orgs, gyms, federations)
-- 20% therapy commission (existing)
-- 10% certifications (one-time + renewal)
-- 5% live events / cohorts
+## Dynamic SOP / Protocol Engine (core)
 
-**Retention engines:**
-- Cohort-based courses (8-week, fixed start) — completion rates 5-10× self-paced
-- Streaks with freezes (loss aversion without toxicity)
-- Quarterly certification milestones (sunk-cost progression)
-- Private community identity (rank visible only inside spaces — *belonging*, not status)
-- Annual "Athlete Year in Review" (Spotify Wrapped style — Dec drop)
+Intake form captures: event type, participants, duration, budget, city, overnight, media exposure, VIP, public/private, psychological sensitivity, risk level.
 
----
+Flow:
+1. Operator fills intake → `protocol_drafts` row created
+2. Edge function `ops-generate-protocol` calls Claude with a structured tool-call schema
+3. Claude returns: phases → tasks (owner role, deadline offset, dependencies, escalation, proof type, psych-safety flags)
+4. Persisted to `ops_events`, `ops_protocol_phases`, `ops_tasks`
+5. UI renders generated SOP with edit/approve, then materializes tasks on approval
 
-## 11. Growth & Differentiation
+Re-generation: operator can ask the Director to "tighten timeline" / "add calm room" — patch-style updates via a second tool call.
 
-**Acquisition:**
-- Free Readiness Assessment (viral hook, no signup for first run)
-- Coach affiliate program (20% recurring for first year)
-- Federation partnerships (MMA Maroc, Athlétisme, e-sports) — free org seats in exchange for case studies
-- Founder content (Mehdi's authority on combat psychology — already positioned in memory)
+## Task & accountability system
 
-**Differentiation vs Skool/WHOOP/Headspace:**
-- Only platform fusing **community + protocols + clinical safety net + multilingual MENA**
-- Only one with **human specialist fallback** built-in (crisis routing, referral one-click)
-- Only one with **Moroccan Law 09-08 compliance + Arabic RTL**
+States: `pending | active | blocked | delayed | escalated | validated | completed | archived`.
+Each task: owner, deadline, dependencies[], proof_required, attachments[], comments[], escalation_chain[], state_log[].
+Delay detection via a `pg_cron` job (`ops-task-watcher`) that flips overdue → delayed and notifies via Supabase Realtime.
 
----
+## Realtime Command Center
 
-## 12. Roadmap
+Single-screen tactical view:
+- Event timeline (horizontal, GSAP scrub)
+- Task flow rail with live state pulses (Supabase Realtime on `ops_tasks`)
+- KPI tiles (open/blocked/escalated counts)
+- Activity feed (last 50 ops events)
+- Director quick-prompt pinned bottom-right
 
-### MVP (8 weeks) — Foundations
-1. Membership tiers table + `has_tier` + tier-gated routes/components
-2. Community spaces (topic + cohort) with posts, reactions, AI moderation hook
-3. Athlete Hub v1: daily metrics, readiness composite, 5 protocols, journal
-4. Gamification v1: XP events, streaks, 20 starter badges, 1 skill tree (Mindfulness)
-5. AI surface unified as "Nour" with 3 personalities (Companion/Coach/Tutor)
-6. Stripe integration for tiers (via Lovable payments tool)
+## AI Ops Director (Claude)
 
-### V1 (weeks 9-20) — Depth
-- Courses + cohorts with live events
-- Certifications + visual progression dashboards
-- Coach portal + team dashboards (k≥5 aggregates)
-- Quests, seasons, full skill trees (5 domains)
-- AI journal synthesis + burnout detector
+- Edge function `ops-director` — SSE stream from Claude `claude-sonnet-4-5-20250929` via Anthropic API
+- Tools: `generate_protocol`, `patch_protocol`, `escalate_task`, `summarize_event`
+- Context: current workspace, active event, recent task state changes
+- Secret required: `ANTHROPIC_API_KEY`
 
-### V2 (weeks 21-36) — Premium
-- Wearable integrations (Apple Health, WHOOP read-only)
-- White-label org portals + SSO (SAML already supported)
-- Mobile app (React Native) — Athlete Hub-first
-- Mentor marketplace + supervision groups
-- Year-in-review + virality hooks
+## Database (new tables, all RLS + GRANTs)
 
-### V3 — Scale
-- International expansion (Gulf, Francophone Africa) — pricing localization
-- API for federations
-- AI fine-tuned on (consented, de-identified) journal corpus
+- `ops_workspaces` (tenants — LSSPM seeded)
+- `ops_workspace_members` (user_id, workspace_id, role: `director|operator|viewer`)
+- `ops_events` (workspace_id, type, intake jsonb, status, dates)
+- `ops_protocol_phases` (event_id, order, title, description)
+- `ops_tasks` (event_id, phase_id, owner_user_id, owner_role, state, deadline, deps uuid[], proof_required, escalation jsonb)
+- `ops_task_events` (task_id, actor, from_state, to_state, note, ts)
+- `ops_director_threads` + `ops_director_messages` (Claude conversation history)
+- Security-definer helper `ops_has_workspace_access(user_id, workspace_id)` to avoid recursive RLS
 
----
+All policies scope via `ops_has_workspace_access`. `service_role` granted for edge functions. No anon access.
 
-## 13. Engineering Notes
+## Edge functions
 
-**Build with Lovable:**
-- All UI, edge functions, RLS, migrations, Framer Motion, Stripe via Lovable payments
-- Reuse: AuroraBackground, BreathingOrb, motion tokens, design system, i18n (EN/FR/AR-RTL)
-- New shared components: `<TierGate>`, `<XPBadge>`, `<ReadinessRing>`, `<SkillTree>`, `<ProtocolPlayer>`, `<CommunityFeed>`, `<LessonPlayer>`
+- `ops-generate-protocol` (Anthropic, tool-call, returns structured SOP)
+- `ops-director` (Anthropic, SSE stream, multi-turn with tools)
+- `ops-task-watcher` (cron, flips overdue tasks, emits realtime events)
 
-**Custom-code carefully:**
-- Readiness composite algorithm (edge function, tested)
-- AI moderation pre-publish (edge function, < 800ms p95)
-- Streak engine (transactional, idempotent, timezone-aware Africa/Casablanca)
+## Files to create (high-level)
 
-**Performance budget:**
-- Athlete Hub LCP < 1.8s, dashboard FCP < 1s
-- Lesson player video uses HLS via existing storage
-- Lazy-load everything below Athlete Hub fold
-- React Query with 60s staleTime for metrics
+- `src/ops/` — fully isolated tree
+  - `OpsApp.tsx`, `OpsLayout.tsx`, `ops-theme.css`
+  - `pages/` Landing, Command, Events, EventDetail, NewEvent, Tasks, Director
+  - `components/three/` HeroNetwork, GridShader, CursorParallax
+  - `components/sop/` IntakeForm, GeneratedSOPViewer, PhaseCard
+  - `components/tasks/` TaskBoard, TaskCard, StateBadge, EscalationTimeline
+  - `components/director/` DirectorChat, QuickPrompt
+  - `hooks/` useOpsWorkspace, useOpsEvents, useOpsTasks (Realtime), useDirector
+- `src/App.tsx` — add lazy `/ops/*` route
+- Migration: tables above
+- Edge functions: three listed
+- Seed: one `ops_workspaces` row for LSSPM
 
----
+## Required secret
 
-## 14. What I need from you to start
+`ANTHROPIC_API_KEY` — will be requested via the secrets tool before edge functions are wired.
 
-Confirm scope for the first build slice — I recommend **MVP step 1+2+4** in parallel:
+## What it will feel like
 
-1. **Membership tiers** (DB + Stripe + `<TierGate>` + pricing page redesign)
-2. **Community Spaces v1** (DB + feed + post composer + AI moderation hook)
-3. **Gamification v1** (XP ledger + streaks + first skill tree + badge case)
+Black room. A slow particle network breathes behind the headline "Operational Nervous System." Hover any tile and the grid behind it ripples. Open an event, watch tasks pulse cyan when a teammate flips their state in another browser. Ask the Director "we just added 200 attendees," and the SOP rewires itself in front of you.
 
-Athlete Hub v1 (step 3 of MVP) as the second slice, since it's the most distinctive surface and deserves focused design polish.
+## Not in this slice
 
-Or — if you want a different first slice (e.g. lead with Athlete Hub for differentiation), say so and I'll resequence.
+Finance dashboards, supplier CRM, calm-room workflows, transport orchestration, mobile layout, organization onboarding wizard, theming per tenant. All have schema hooks reserved but no UI.
