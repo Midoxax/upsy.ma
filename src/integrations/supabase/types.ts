@@ -624,6 +624,42 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          category: string
+          created_at: string
+          criteria: Json
+          description: string | null
+          icon: string | null
+          is_active: boolean
+          name: string
+          slug: string
+          tier: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          icon?: string | null
+          is_active?: boolean
+          name: string
+          slug: string
+          tier?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          icon?: string | null
+          is_active?: boolean
+          name?: string
+          slug?: string
+          tier?: string
+        }
+        Relationships: []
+      }
       booking_reminders_sent: {
         Row: {
           booking_id: string
@@ -1013,6 +1049,113 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      community_posts: {
+        Row: {
+          ai_moderation_score: number | null
+          attachments: Json
+          author_id: string
+          body: string
+          comment_count: number
+          created_at: string
+          hidden_reason: string | null
+          id: string
+          is_hidden: boolean
+          reaction_count: number
+          space_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_moderation_score?: number | null
+          attachments?: Json
+          author_id: string
+          body: string
+          comment_count?: number
+          created_at?: string
+          hidden_reason?: string | null
+          id?: string
+          is_hidden?: boolean
+          reaction_count?: number
+          space_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_moderation_score?: number | null
+          attachments?: Json
+          author_id?: string
+          body?: string
+          comment_count?: number
+          created_at?: string
+          hidden_reason?: string | null
+          id?: string
+          is_hidden?: boolean
+          reaction_count?: number
+          space_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "community_spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_spaces: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_published: boolean
+          member_count: number
+          name: string
+          post_count: number
+          slug: string
+          tier_required: Database["public"]["Enums"]["membership_tier"]
+          type: Database["public"]["Enums"]["space_type"]
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          member_count?: number
+          name: string
+          post_count?: number
+          slug: string
+          tier_required?: Database["public"]["Enums"]["membership_tier"]
+          type?: Database["public"]["Enums"]["space_type"]
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          member_count?: number
+          name?: string
+          post_count?: number
+          slug?: string
+          tier_required?: Database["public"]["Enums"]["membership_tier"]
+          type?: Database["public"]["Enums"]["space_type"]
+          updated_at?: string
+        }
+        Relationships: []
       }
       contact_submissions: {
         Row: {
@@ -1979,6 +2122,51 @@ export type Database = {
           },
         ]
       }
+      membership_plans: {
+        Row: {
+          created_at: string
+          features: Json
+          is_active: boolean
+          name: string
+          price_annual_mad: number
+          price_monthly_mad: number
+          sort_order: number
+          stripe_price_annual: string | null
+          stripe_price_monthly: string | null
+          tagline: string | null
+          tier: Database["public"]["Enums"]["membership_tier"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          features?: Json
+          is_active?: boolean
+          name: string
+          price_annual_mad?: number
+          price_monthly_mad?: number
+          sort_order?: number
+          stripe_price_annual?: string | null
+          stripe_price_monthly?: string | null
+          tagline?: string | null
+          tier: Database["public"]["Enums"]["membership_tier"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          features?: Json
+          is_active?: boolean
+          name?: string
+          price_annual_mad?: number
+          price_monthly_mad?: number
+          sort_order?: number
+          stripe_price_annual?: string | null
+          stripe_price_monthly?: string | null
+          tagline?: string | null
+          tier?: Database["public"]["Enums"]["membership_tier"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mood_entries: {
         Row: {
           created_at: string | null
@@ -2872,6 +3060,86 @@ export type Database = {
         }
         Relationships: []
       }
+      post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          parent_id: string | null
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          parent_id?: string | null
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          parent_id?: string | null
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -3366,6 +3634,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      quests: {
+        Row: {
+          badge_slug: string | null
+          category: string
+          created_at: string
+          description: string | null
+          is_active: boolean
+          slug: string
+          steps: Json
+          tier_required: Database["public"]["Enums"]["membership_tier"]
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          badge_slug?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          is_active?: boolean
+          slug: string
+          steps?: Json
+          tier_required?: Database["public"]["Enums"]["membership_tier"]
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          badge_slug?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          is_active?: boolean
+          slug?: string
+          steps?: Json
+          tier_required?: Database["public"]["Enums"]["membership_tier"]
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quests_badge_slug_fkey"
+            columns: ["badge_slug"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       referral_credits: {
         Row: {
@@ -3884,6 +4199,68 @@ export type Database = {
           },
         ]
       }
+      skill_trees: {
+        Row: {
+          created_at: string
+          description: string | null
+          domain: string
+          is_active: boolean
+          name: string
+          slug: string
+          tree: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          domain: string
+          is_active?: boolean
+          name: string
+          slug: string
+          tree?: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          domain?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          tree?: Json
+        }
+        Relationships: []
+      }
+      space_members: {
+        Row: {
+          id: string
+          joined_at: string
+          role: string
+          space_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          role?: string
+          space_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          role?: string
+          space_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_members_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "community_spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       specialist_boosts: {
         Row: {
           amount_eur: number | null
@@ -4395,6 +4772,48 @@ export type Database = {
           },
         ]
       }
+      user_memberships: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          tier: Database["public"]["Enums"]["membership_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["membership_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["membership_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           created_at: string | null
@@ -4428,6 +4847,44 @@ export type Database = {
         }
         Relationships: []
       }
+      user_quest_progress: {
+        Row: {
+          completed_at: string | null
+          id: string
+          quest_slug: string
+          started_at: string
+          state: Json
+          step_idx: number
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          quest_slug: string
+          started_at?: string
+          state?: Json
+          step_idx?: number
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          quest_slug?: string
+          started_at?: string
+          state?: Json
+          step_idx?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_quest_progress_quest_slug_fkey"
+            columns: ["quest_slug"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -4445,6 +4902,71 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_skill_nodes: {
+        Row: {
+          id: string
+          node_id: string
+          tree_slug: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          node_id: string
+          tree_slug: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          node_id?: string
+          tree_slug?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_skill_nodes_tree_slug_fkey"
+            columns: ["tree_slug"]
+            isOneToOne: false
+            referencedRelation: "skill_trees"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      user_streaks: {
+        Row: {
+          best_days: number
+          current_days: number
+          freezes_available: number
+          id: string
+          kind: Database["public"]["Enums"]["streak_kind"]
+          last_activity_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_days?: number
+          current_days?: number
+          freezes_available?: number
+          id?: string
+          kind: Database["public"]["Enums"]["streak_kind"]
+          last_activity_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_days?: number
+          current_days?: number
+          freezes_available?: number
+          id?: string
+          kind?: Database["public"]["Enums"]["streak_kind"]
+          last_activity_date?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -4502,6 +5024,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      xp_events: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          metadata: Json
+          source_id: string | null
+          source_type: string | null
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          source_id?: string | null
+          source_type?: string | null
+          user_id: string
+          xp: number
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          source_id?: string | null
+          source_type?: string | null
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -4804,6 +5359,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_tier: {
+        Args: {
+          _tier: Database["public"]["Enums"]["membership_tier"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       increment_ai_usage: { Args: never; Returns: number }
       inspect_provisioning_state: {
         Args: { _application_id: string }
@@ -4840,6 +5402,17 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      record_xp: {
+        Args: {
+          p_action: string
+          p_metadata?: Json
+          p_source_id?: string
+          p_source_type?: string
+          p_streak?: Database["public"]["Enums"]["streak_kind"]
+          p_xp?: number
+        }
+        Returns: Json
       }
       replace_availability_for_day: {
         Args: { _day: number; _ranges: Json }
@@ -4956,6 +5529,16 @@ export type Database = {
         | "reading"
         | "reflection"
         | "other"
+      membership_tier:
+        | "discover"
+        | "student"
+        | "athlete"
+        | "practitioner"
+        | "elite"
+        | "coach"
+        | "organization"
+      space_type: "topic" | "cohort" | "region" | "ama" | "private"
+      streak_kind: "learn" | "train" | "reflect"
       treatment_plan_status: "draft" | "active" | "revised" | "completed"
     }
     CompositeTypes: {
@@ -5112,6 +5695,17 @@ export const Constants = {
         "reflection",
         "other",
       ],
+      membership_tier: [
+        "discover",
+        "student",
+        "athlete",
+        "practitioner",
+        "elite",
+        "coach",
+        "organization",
+      ],
+      space_type: ["topic", "cohort", "region", "ama", "private"],
+      streak_kind: ["learn", "train", "reflect"],
       treatment_plan_status: ["draft", "active", "revised", "completed"],
     },
   },
