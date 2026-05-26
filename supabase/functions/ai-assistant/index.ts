@@ -97,7 +97,17 @@ serve(async (req) => {
       }
     }
 
-    const { messages } = await req.json();
+    const { messages, context } = await req.json();
+    const firstName = typeof context?.firstName === "string" ? context.firstName.slice(0, 40) : null;
+    const locale = ["en", "fr", "ar"].includes(context?.locale) ? context.locale : "en";
+    const localeLine =
+      locale === "fr"
+        ? "The user prefers French. Respond in French unless they switch."
+        : locale === "ar"
+          ? "المستخدم يفضل العربية. أجب بالعربية ما لم يغير اللغة."
+          : "The user prefers English. Respond in English unless they switch.";
+    const nameLine = firstName ? `The user's first name is "${firstName}". Use it sparingly and naturally.` : "";
+    const dynamicSystem = [SYSTEM_PROMPT, "## Session context", localeLine, nameLine].filter(Boolean).join("\n");
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -110,7 +120,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: dynamicSystem },
           ...messages,
         ],
         stream: true,
