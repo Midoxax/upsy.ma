@@ -22,6 +22,7 @@ import { BreadcrumbWrapper } from "@/components/BreadcrumbWrapper";
 import SEOHead from "@/components/SEOHead";
 import { AuroraBackground, SmoothScrollProvider } from "@/lib/motion";
 import Index from "./pages/Index";
+const OpsApp = lazy(() => import("./ops/OpsApp"));
 
 // Lazy-loaded pages — keeps the initial bundle small
 const About = lazy(() => import("./pages/About"));
@@ -179,6 +180,7 @@ const AppRoutes = () => (
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const isOps = location.pathname.startsWith("/ops");
 
   // Update body data-theme attribute based on current route
   useEffect(() => {
@@ -192,6 +194,9 @@ const AnimatedRoutes = () => {
       <Suspense fallback={<LazyFallback />}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+          {/* UPSY OPS — standalone cinematic area, no shared chrome */}
+          <Route path="/ops/*" element={<OpsApp />} />
+
           {/* Root locale (English / default) */}
           <Route path="/" element={<Outlet />}>
             {AppRoutes()}
@@ -221,14 +226,7 @@ const App = () => (
             <LocaleProvider>
               <ErrorBoundary>
                 <SmoothScrollProvider>
-                  <div className="min-h-screen flex flex-col bg-background relative">
-                    <AuroraBackground />
-                    <Header />
-                    <ScrollToTop />
-                    <BreadcrumbWrapper />
-                    <AnimatedRoutes />
-                    <Footer />
-                  </div>
+                  <AppShell />
                 </SmoothScrollProvider>
               </ErrorBoundary>
             </LocaleProvider>
