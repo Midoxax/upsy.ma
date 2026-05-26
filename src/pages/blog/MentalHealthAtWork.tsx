@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
+import BlogAuthor from "@/components/blog/BlogAuthor";
+import RelatedArticles from "@/components/blog/RelatedArticles";
 import { ArrowRight, Briefcase, TrendingUp, Users, AlertTriangle } from "lucide-react";
 
 const MentalHealthAtWork = () => {
@@ -141,6 +143,14 @@ const MentalHealthAtWork = () => {
               </section>
             </ScrollReveal>
           </div>
+            <ScrollReveal>
+              <BlogAuthor />
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <RelatedArticles currentSlug="mental-health-at-work" />
+            </ScrollReveal>
+
         </article>
       </main>
     </>

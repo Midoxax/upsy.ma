@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
+import BlogAuthor from "@/components/blog/BlogAuthor";
+import RelatedArticles from "@/components/blog/RelatedArticles";
 import { ArrowRight, CheckCircle2, Search, Heart, Shield, Users } from "lucide-react";
 
 const FindRightPsychologist = () => {
@@ -146,6 +148,14 @@ const FindRightPsychologist = () => {
               </div>
             </ScrollReveal>
           </div>
+            <ScrollReveal>
+              <BlogAuthor />
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <RelatedArticles currentSlug="find-right-psychologist" />
+            </ScrollReveal>
+
         </article>
       </main>
     </>
