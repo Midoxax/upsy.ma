@@ -51,7 +51,11 @@ export const NewEvent = () => {
         body: { workspace_id: current.id, intake: form },
       });
       if (error) throw error;
-      const eventId = (data as any)?.event_id;
+      const payload = data as any;
+      if (payload?.error === 'rate_limited' || payload?.error === 'payment_required') {
+        throw new Error(payload.message);
+      }
+      const eventId = payload?.event_id;
       if (!eventId) throw new Error("No event returned");
       nav(`/ops/${slug}/events/${eventId}`);
     } catch (e) {
