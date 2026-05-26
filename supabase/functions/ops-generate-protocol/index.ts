@@ -1,14 +1,16 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const TOOL = {
-  name: 'create_protocol',
-  description: 'Create a full operational protocol for an event with phases and tasks.',
-  input_schema: {
+  type: 'function',
+  function: {
+    name: 'create_protocol',
+    description: 'Create a full operational protocol for an event with phases and tasks.',
+    parameters: {
     type: 'object',
     properties: {
       title: { type: 'string' },
@@ -41,6 +43,7 @@ const TOOL = {
       },
     },
     required: ['title', 'phases'],
+    },
   },
 };
 
@@ -48,7 +51,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
+    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
     const authHeader = req.headers.get('Authorization') ?? '';
     const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, {
@@ -79,33 +82,33 @@ Deno.serve(async (req) => {
 
     const userPrompt = `Generate the protocol for this operation:\n${JSON.stringify(intake, null, 2)}`;
 
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+    const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 4096,
-        system: systemPrompt,
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
         tools: [TOOL],
-        tool_choice: { type: 'tool', name: 'create_protocol' },
-        messages: [{ role: 'user', content: userPrompt }],
+        tool_choice: { type: 'function', function: { name: 'create_protocol' } },
       }),
     });
 
-    if (!claudeRes.ok) {
-      const errText = await claudeRes.text();
-      console.error('Claude error:', claudeRes.status, errText);
-      return new Response(JSON.stringify({ error: `Claude ${claudeRes.status}: ${errText}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (!aiRes.ok) {
+      const errText = await aiRes.text();
+      console.error('AI error:', aiRes.status, errText);
+      return new Response(JSON.stringify({ error: `AI ${aiRes.status}: ${errText}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const claudeJson = await claudeRes.json();
-    const toolUse = claudeJson.content?.find((c: any) => c.type === 'tool_use');
-    if (!toolUse) throw new Error('No tool_use in Claude response');
-    const protocol = toolUse.input as { title: string; phases: Array<{ title: string; description?: string; tasks: any[] }> };
+    const aiJson = await aiRes.json();
+    const toolCall = aiJson.choices?.[0]?.message?.tool_calls?.[0];
+    if (!toolCall) throw new Error('No tool_call in AI response');
+    const protocol = JSON.parse(toolCall.function.arguments) as { title: string; phases: Array<{ title: string; description?: string; tasks: any[] }> };
 
     // Compute deadlines: use start_at if available, else now + 30d
     const baseDate = intake.start_at ? new Date(intake.start_at) : new Date(Date.now() + 30 * 86400000);
