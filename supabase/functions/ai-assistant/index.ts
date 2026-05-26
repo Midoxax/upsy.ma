@@ -46,6 +46,47 @@ If the user mentions suicide, self-harm, wanting to die, harming someone else, o
 - Never collect or store sensitive personal data.
 - If asked legal, medical, or financial questions outside mental wellness — redirect kindly.`;
 
+/**
+ * Personality modes — one Nour, four lenses. Each adds a focused layer on top
+ * of the base system prompt and never overrides the crisis protocol or hard limits.
+ */
+const PERSONALITIES = {
+  companion: {
+    label: "Companion",
+    prompt: `## Mode: Companion (default)
+Stay broad, warm, and supportive. Reflect first, then offer one small tool. No performance framing unless the user asks.`,
+  },
+  coach: {
+    label: "Coach",
+    prompt: `## Mode: Performance Coach
+You are speaking to an athlete or high-performer inside the Athlete Hub.
+- Lead with performance vocabulary: readiness, arousal control, focus, recovery, ritual, flow.
+- Reference protocols by name when relevant (box breathing, visualization, pre-comp ritual, post-loss recovery).
+- Be direct and operational — short answers, action-first. Less reflection, more next move.
+- When the user logs a number (mood, sleep, RPE), acknowledge it briefly and translate it into a recommendation.
+- Never minimize. If readiness signals look red, name it and propose deload or a check-in with a coach.`,
+  },
+  tutor: {
+    label: "Tutor",
+    prompt: `## Mode: Lesson Tutor
+You are inside a lesson player. Be Socratic.
+- Ask one focused question to help the learner reason — do not give the full answer first.
+- When you do explain, keep it under 120 words and end with a check for understanding.
+- Use concrete examples from sport, work, or daily life.
+- If the learner asks "what's the answer?", offer a hint, then the answer with the reasoning trace.`,
+  },
+  reflective: {
+    label: "Reflective",
+    prompt: `## Mode: Reflective Journal
+You are summarising and exploring a journal entry the user just wrote.
+- Start by mirroring 1–2 themes you noticed. Quote a short phrase if it helps.
+- Surface emotion words the user did not name explicitly, gently.
+- Offer exactly one open question to deepen the reflection — never a list.
+- Do not advise unless asked. Hold space; do not fix.`,
+  },
+} as const;
+type Personality = keyof typeof PERSONALITIES;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -100,6 +141,10 @@ serve(async (req) => {
     const { messages, context } = await req.json();
     const firstName = typeof context?.firstName === "string" ? context.firstName.slice(0, 40) : null;
     const locale = ["en", "fr", "ar"].includes(context?.locale) ? context.locale : "en";
+    const personality: Personality =
+      typeof context?.personality === "string" && context.personality in PERSONALITIES
+        ? (context.personality as Personality)
+        : "companion";
     const localeLine =
       locale === "fr"
         ? "The user prefers French. Respond in French unless they switch."
@@ -107,7 +152,15 @@ serve(async (req) => {
           ? "المستخدم يفضل العربية. أجب بالعربية ما لم يغير اللغة."
           : "The user prefers English. Respond in English unless they switch.";
     const nameLine = firstName ? `The user's first name is "${firstName}". Use it sparingly and naturally.` : "";
-    const dynamicSystem = [SYSTEM_PROMPT, "## Session context", localeLine, nameLine].filter(Boolean).join("\n");
+    const dynamicSystem = [
+      SYSTEM_PROMPT,
+      PERSONALITIES[personality].prompt,
+      "## Session context",
+      localeLine,
+      nameLine,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
