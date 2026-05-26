@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DataPrivacyNotice from "@/components/DataPrivacyNotice";
+import { useScrollResetOnOpen } from "@/hooks/useScrollResetOnOpen";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -33,6 +34,7 @@ interface ProposalRequestModalProps {
 export function ProposalRequestModal({ open, onOpenChange }: ProposalRequestModalProps) {
   const { t } = useLocale();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const scrollRef = useScrollResetOnOpen<HTMLDivElement>(open);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -104,7 +106,7 @@ export function ProposalRequestModal({ open, onOpenChange }: ProposalRequestModa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent ref={scrollRef} className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">{t("proposalRequest.title")}</DialogTitle>
         </DialogHeader>
