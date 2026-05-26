@@ -20,21 +20,23 @@ const ProgressPage = () => {
   const { data: progress } = useMyQuestProgress();
   const { data: xpTotal = 0 } = useMyXpTotal();
 
-  const progressByQuest = useMemo(() => {
-    const map = new Map<string, UserQuestProgress>();
-    (progress ?? []).forEach((p) => map.set(p.quest_slug, p));
+  const progressByQuest = useMemo<Record<string, UserQuestProgress>>(() => {
+    const map: Record<string, UserQuestProgress> = {};
+    (progress ?? []).forEach((p) => {
+      map[p.quest_slug] = p;
+    });
     return map;
   }, [progress]);
 
   const activeQuests = (quests ?? []).filter((q) => {
-    const p = progressByQuest.get(q.slug);
+    const p = progressByQuest[q.slug];
     return p && !p.completed_at;
   });
   const completedQuests = (quests ?? []).filter(
-    (q) => progressByQuest.get(q.slug)?.completed_at,
+    (q) => progressByQuest[q.slug]?.completed_at,
   );
   const availableQuests = (quests ?? []).filter(
-    (q) => !progressByQuest.get(q.slug),
+    (q) => !progressByQuest[q.slug],
   );
 
   return (
@@ -109,7 +111,7 @@ const ProgressPage = () => {
                           <QuestCard
                             key={q.slug}
                             quest={q}
-                            progress={progressByQuest.get(q.slug)}
+                            progress={progressByQuest[q.slug]}
                           />
                         ))}
                       </Grid>
@@ -137,7 +139,7 @@ const ProgressPage = () => {
                     <QuestCard
                       key={q.slug}
                       quest={q}
-                      progress={progressByQuest.get(q.slug)}
+                      progress={progressByQuest[q.slug]}
                     />
                   ))}
                 </Grid>
