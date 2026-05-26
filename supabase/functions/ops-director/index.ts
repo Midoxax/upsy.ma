@@ -45,6 +45,12 @@ Deno.serve(async (req) => {
 
     if (!aiRes.ok) {
       const errText = await aiRes.text();
+      if (aiRes.status === 429) {
+        return new Response(JSON.stringify({ error: 'rate_limited', message: 'AI rate limit reached. Try again in a moment.' }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      if (aiRes.status === 402) {
+        return new Response(JSON.stringify({ error: 'payment_required', message: 'AI credits exhausted. Add funds in Settings → Workspace → Usage.' }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
       return new Response(JSON.stringify({ error: `AI ${aiRes.status}: ${errText}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 

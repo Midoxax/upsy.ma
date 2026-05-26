@@ -6,6 +6,13 @@ import { Loader2, Send, Sparkles } from "lucide-react";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+const QUICK_PROMPTS = [
+  "Summarize all active operations and flag risks",
+  "Which tasks are overdue or need escalation?",
+  "Draft a psychological safety briefing for the team",
+  "Suggest a tighter timeline for our next event",
+];
+
 export const Director = () => {
   const { workspace: slug } = useParams<{ workspace: string }>();
   const { current } = useOpsWorkspaces(slug);
@@ -13,8 +20,8 @@ export const Director = () => {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const send = async () => {
-    const text = input.trim();
+  const send = async (override?: string) => {
+    const text = (override ?? input).trim();
     if (!text || !current) return;
     const next: Msg[] = [...messages, { role: "user", content: text }];
     setMessages(next); setInput(""); setBusy(true);
@@ -23,7 +30,8 @@ export const Director = () => {
         body: { workspace_id: current.id, messages: next },
       });
       if (error) throw error;
-      const reply = (data as any)?.reply ?? "(no reply)";
+      const payload = data as any;
+      const reply = payload?.message ?? payload?.reply ?? "(no reply)";
       setMessages(m => [...m, { role: "assistant", content: reply }]);
     } catch (e) {
       setMessages(m => [...m, { role: "assistant", content: `Error: ${e instanceof Error ? e.message : "failed"}` }]);
@@ -39,8 +47,21 @@ export const Director = () => {
 
       <div className="ops-glass flex-1 p-6 overflow-y-auto space-y-4">
         {messages.length === 0 && (
-          <div className="text-white/40 text-sm">
-            Ask the Director to generate, adjust, or analyze operations. Example: <em>"We just added 200 attendees, rewire the protocol."</em>
+          <div className="space-y-4">
+            <div className="text-white/40 text-sm">
+              Ask the Director to generate, adjust, or analyze operations.
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {QUICK_PROMPTS.map(q => (
+                <button
+                  key={q}
+                  onClick={() => send(q)}
+                  className="text-xs px-3 py-2 rounded-full border border-[hsl(var(--ops-accent)/0.3)] bg-[hsl(var(--ops-accent)/0.06)] hover:bg-[hsl(var(--ops-accent)/0.14)] text-white/80 transition"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {messages.map((m, i) => (
@@ -58,7 +79,7 @@ export const Director = () => {
         <input className="ops-input flex-1" value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && !busy && send()}
           placeholder="Ask the Director…" />
-        <button className="ops-btn" onClick={send} disabled={busy || !input.trim()}>
+        <button className="ops-btn" onClick={() => send()} disabled={busy || !input.trim()}>
           <Send className="h-4 w-4" />
         </button>
       </div>
