@@ -10,7 +10,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, redirectAfter?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -110,8 +110,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/my-space`;
+  const signUp = async (email: string, password: string, fullName: string, redirectAfter?: string) => {
+    // After email verification, land on /auth so we can finalize and forward
+    // the user to the page they originally tried to access (?redirect=).
+    const safe = redirectAfter && !redirectAfter.startsWith("/auth") ? redirectAfter : "";
+    const redirectUrl = safe
+      ? `${window.location.origin}/auth?verified=1&redirect=${encodeURIComponent(safe)}`
+      : `${window.location.origin}/my-space`;
     
     const { data, error } = await supabase.auth.signUp({
       email,
