@@ -79,7 +79,7 @@ export const Director = () => {
         <input className="ops-input flex-1" value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && !busy && send()}
           placeholder="Ask the Director…" />
-        <button className="ops-btn" onClick={send} disabled={busy || !input.trim()}>
+        <button className="ops-btn" onClick={() => send()} disabled={busy || !input.trim()}>
           <Send className="h-4 w-4" />
         </button>
       </div>
