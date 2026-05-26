@@ -17,7 +17,16 @@ const OrganizationDashboard = () => {
   return (
     <section className="section-spacing">
       <div className="container-custom">
-        <Tabs defaultValue="overview" className="space-y-6">
+        <div id="org-tabs-top" className="scroll-mt-20" />
+        <Tabs
+          defaultValue="overview"
+          className="space-y-6"
+          onValueChange={() => {
+            requestAnimationFrame(() => {
+              document.getElementById("org-tabs-top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+          }}
+        >
           <TabsList className="flex flex-wrap h-auto gap-1">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="h-4 w-4" />

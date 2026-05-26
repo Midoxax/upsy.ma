@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, ChevronDown, Umbrella, Globe, Heart, BookOpen, Award } from "lucide-react";
@@ -15,9 +15,26 @@ import ViewAsSwitcher from "@/components/ViewAsSwitcher";
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
   const { locale, t } = useLocale();
+
+  // Scroll-aware glass header: light over hero, solid after scroll.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Build a redirect-aware /auth path so post-login returns to current page.
+  const authHref = (() => {
+    const path = location.pathname + location.search;
+    const safe = path && !path.startsWith("/auth") && !path.startsWith("/reset-password") ? path : "";
+    const base = addLocalePrefix("/auth", locale);
+    return safe ? `${base}?redirect=${encodeURIComponent(safe)}` : base;
+  })();
 
   // Consolidated nav: 5 items max + dropdowns
   type NavDropdownItem = { name: string; href: string; icon?: React.ComponentType<any>; featured?: boolean };
@@ -59,7 +76,13 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-sm">
+    <header
+      className={`sticky top-0 z-50 transition-[background-color,backdrop-filter,box-shadow,border-color] duration-300 ${
+        scrolled
+          ? "bg-background/95 backdrop-blur-xl border-b border-border/80 shadow-md"
+          : "bg-background/60 backdrop-blur-md border-b border-border/20"
+      }`}
+    >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -133,7 +156,7 @@ const Header = () => {
             ) : (
               <>
                 <Link
-                  to={addLocalePrefix('/auth', locale)}
+                  to={authHref}
                   className="text-sm text-foreground/70 hover:text-foreground transition-colors px-3 py-2"
                 >
                   {t('nav.login')}
@@ -240,7 +263,7 @@ const Header = () => {
                 ) : (
                   <div className="flex gap-2 px-3">
                     <Button variant="secondary" size="sm" asChild className="flex-1">
-                      <Link to={addLocalePrefix('/auth', locale)} onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link to={authHref} onClick={() => setIsMobileMenuOpen(false)}>
                         {t('nav.login')}
                       </Link>
                     </Button>

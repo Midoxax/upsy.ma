@@ -157,7 +157,18 @@ const PatientDashboard = () => {
 
       <section className="section-spacing liquid-bg">
         <div className="container-custom">
-          <Tabs defaultValue="overview" className="space-y-6">
+          <div id="patient-tabs-top" className="scroll-mt-20" />
+          <Tabs
+            defaultValue="overview"
+            className="space-y-6"
+            onValueChange={() => {
+              requestAnimationFrame(() => {
+                document
+                  .getElementById("patient-tabs-top")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              });
+            }}
+          >
             <TabsList className="flex flex-wrap h-auto gap-1">
               <TabsTrigger value="overview" className="gap-1.5">
                 <BarChart3 className="h-4 w-4" />
