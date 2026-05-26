@@ -40,6 +40,9 @@ const Psychologists = lazy(() => import("./pages/Psychologists"));
 const PsychologistProfile = lazy(() => import("./pages/PsychologistProfile"));
 const SpecialistPricing = lazy(() => import("./pages/SpecialistPricing"));
 const Pricing = lazy(() => import("./pages/Pricing"));
+const Membership = lazy(() => import("./pages/Membership"));
+const CenterHome = lazy(() => import("./pages/center/CenterHome"));
+const SpaceView = lazy(() => import("./pages/center/SpaceView"));
 const Auth = lazy(() => import("./pages/Auth"));
 const MySpace = lazy(() => import("./pages/MySpace"));
 const Apply = lazy(() => import("./pages/Apply"));
@@ -123,6 +126,9 @@ const AppRoutes = () => (
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
    <Route path="pricing-specialists" element={<PageTransition><SpecialistPricing /></PageTransition>} />
     <Route path="pricing" element={<PageTransition><Pricing /></PageTransition>} />
+    <Route path="membership" element={<PageTransition><Membership /></PageTransition>} />
+    <Route path="center" element={<PageTransition><CenterHome /></PageTransition>} />
+    <Route path="center/c/:slug" element={<PageTransition><SpaceView /></PageTransition>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
     <Route path="apply/wizard" element={<ProtectedRoute><PageTransition><ApplyWizard /></PageTransition></ProtectedRoute>} />
