@@ -80,7 +80,7 @@ export const NewEvent = () => {
           <div>
             <label className="ops-label">Event type</label>
             <select className="ops-select" value={form.event_type} onChange={e => update("event_type", e.target.value)}>
-              {EVENT_TYPES.map(t => <option key={t} value={t}>{t.replaceAll("_"," ")}</option>)}
+              {EVENT_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, " ")}</option>)}
             </select>
           </div>
           <div>
