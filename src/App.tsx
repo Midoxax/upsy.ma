@@ -43,6 +43,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Membership = lazy(() => import("./pages/Membership"));
 const CenterHome = lazy(() => import("./pages/center/CenterHome"));
 const SpaceView = lazy(() => import("./pages/center/SpaceView"));
+const CenterProgress = lazy(() => import("./pages/center/Progress"));
 const Auth = lazy(() => import("./pages/Auth"));
 const MySpace = lazy(() => import("./pages/MySpace"));
 const Apply = lazy(() => import("./pages/Apply"));
@@ -129,6 +130,7 @@ const AppRoutes = () => (
     <Route path="membership" element={<PageTransition><Membership /></PageTransition>} />
     <Route path="center" element={<PageTransition><CenterHome /></PageTransition>} />
     <Route path="center/c/:slug" element={<PageTransition><SpaceView /></PageTransition>} />
+    <Route path="center/progress" element={<ProtectedRoute><PageTransition><CenterProgress /></PageTransition></ProtectedRoute>} />
     <Route path="auth" element={<PageTransition><Auth /></PageTransition>} />
     <Route path="apply" element={<PageTransition><Apply /></PageTransition>} />
     <Route path="apply/wizard" element={<ProtectedRoute><PageTransition><ApplyWizard /></PageTransition></ProtectedRoute>} />
