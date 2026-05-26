@@ -69,6 +69,7 @@ const BookingModal = ({
   const { user } = useAuth();
   const { t } = useLocale();
   const [step, setStep] = useState<BookingStep>("type");
+  const scrollRef = useScrollResetOnOpen<HTMLDivElement>(open, [step]);
   const [sessionType, setSessionType] = useState<"online" | "in_person">(
     offersOnline ? "online" : "in_person"
   );
