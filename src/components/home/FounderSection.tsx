@@ -13,6 +13,7 @@ const FounderSection = () => {
   return (
     <section className="section-spacing">
       <div className="container-custom">
+       <div className="mx-auto" style={{ maxWidth: "1100px" }}>
         <ScrollReveal>
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-16 items-center">
             {/* Photo — smaller, authoritative */}
@@ -47,16 +48,39 @@ const FounderSection = () => {
                 {t("founder.sectionDesc") || "Mehdi Felji designed U.Psy from operational experience — in elite sport, humanitarian contexts, and institutional systems. The platform is built to diagnose, match, and train. Not to browse."}
               </p>
 
-              {/* Proof bullets */}
-              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+              {/* 3 proof cards */}
+              <div className="grid sm:grid-cols-3 gap-3 pt-2">
                 {[
-                  { icon: Brain, label: t("founder.proof1") || "Clinical Psychology" },
-                  { icon: Target, label: t("founder.proof2") || "Performance Psychology" },
-                  { icon: Award, label: t("founder.proof3") || "Accredited Network" },
+                  {
+                    icon: Brain,
+                    label: t("founder.proof1") || "Clinical Psychology",
+                    detail: t("founder.proof1Detail") || "CBT · Schema · EMDR practice",
+                  },
+                  {
+                    icon: Target,
+                    label: t("founder.proof2") || "Performance Psychology",
+                    detail: t("founder.proof2Detail") || "Elite sport · high-stakes contexts",
+                  },
+                  {
+                    icon: Award,
+                    label: t("founder.proof3") || "Accredited Network",
+                    detail: t("founder.proof3Detail") || "5-tier specialist vetting",
+                  },
                 ].map((item, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
-                    <item.icon className="w-3.5 h-3.5" /> {item.label}
-                  </span>
+                  <div
+                    key={i}
+                    className="rounded-u-md border border-border/60 bg-surface/60 backdrop-blur-sm p-4 text-left hover:border-secondary/40 transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-md bg-secondary/10 text-secondary flex items-center justify-center mb-2">
+                      <item.icon className="w-4 h-4" />
+                    </div>
+                    <div className="text-sm font-semibold text-foreground leading-tight">
+                      {item.label}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 leading-snug">
+                      {item.detail}
+                    </div>
+                  </div>
                 ))}
               </div>
 
@@ -68,6 +92,7 @@ const FounderSection = () => {
             </div>
           </div>
         </ScrollReveal>
+       </div>
       </div>
     </section>
   );
