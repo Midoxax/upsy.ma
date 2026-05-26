@@ -215,6 +215,29 @@ const AnimatedRoutes = () => {
   );
 };
 
+const AppShell = () => {
+  const location = useLocation();
+  const isOps = location.pathname.startsWith("/ops");
+  if (isOps) {
+    return (
+      <div className="min-h-screen bg-background">
+        <ScrollToTop />
+        <AnimatedRoutes />
+      </div>
+    );
+  }
+  return (
+    <div className="min-h-screen flex flex-col bg-background relative">
+      <AuroraBackground />
+      <Header />
+      <ScrollToTop />
+      <BreadcrumbWrapper />
+      <AnimatedRoutes />
+      <Footer />
+    </div>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
