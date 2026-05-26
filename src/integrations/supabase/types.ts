@@ -5508,6 +5508,24 @@ export type Database = {
         Args: { _org_id: string; _survey_id?: string }
         Returns: Json
       }
+      quest_increment: {
+        Args: { _delta?: number; _quest_slug: string; _step_id: string }
+        Returns: {
+          completed_at: string | null
+          id: string
+          quest_slug: string
+          started_at: string
+          state: Json
+          step_idx: number
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_quest_progress"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -5608,6 +5626,22 @@ export type Database = {
               updated_at: string
             }[]
           }
+      skill_unlock: {
+        Args: { _node_id: string; _tree_slug: string }
+        Returns: {
+          id: string
+          node_id: string
+          tree_slug: string
+          unlocked_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_skill_nodes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       validate_coupon: {
         Args: { _amount_mad: number; _applies_to: string; _code: string }
         Returns: {
