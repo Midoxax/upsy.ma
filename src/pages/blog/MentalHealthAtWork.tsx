@@ -7,6 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import BlogArticleSchema from "@/components/BlogArticleSchema";
 import BlogAuthor from "@/components/blog/BlogAuthor";
 import RelatedArticles from "@/components/blog/RelatedArticles";
+import heroImg from "@/assets/blog/mental-health-work.jpg";
 import { ArrowRight, Briefcase, TrendingUp, Users, AlertTriangle } from "lucide-react";
 
 const MentalHealthAtWork = () => {
@@ -41,6 +42,12 @@ const MentalHealthAtWork = () => {
             </ScrollReveal>
           </div>
         </section>
+        <div className="container-custom max-w-4xl -mt-10 md:-mt-14 mb-8 md:mb-12">
+          <div className="blog-hero-mental-health-work rounded-2xl overflow-hidden border border-border/40 shadow-xl">
+            <img src={heroImg} alt="Calm workspace with plant — mental health at work" width={1024} height={1024} className="w-full h-auto object-cover aspect-[16/9]" />
+          </div>
+        </div>
+
 
         <article className="py-16 md:py-24">
           <div className="container-custom max-w-3xl space-y-16">
