@@ -58,7 +58,16 @@ const SpecialistDashboard = () => {
           <div className="space-y-6 min-w-0">
             <UpcomingSessionsCard />
 
-            <Tabs defaultValue="profile" className="space-y-6">
+            <div id="specialist-tabs-top" className="scroll-mt-20" />
+            <Tabs
+              defaultValue="profile"
+              className="space-y-6"
+              onValueChange={() => {
+                requestAnimationFrame(() => {
+                  document.getElementById("specialist-tabs-top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+              }}
+            >
               <TabsList className="flex flex-wrap h-auto gap-1">
                 <TabsTrigger value="profile" className="gap-1.5">
                   <User className="h-4 w-4" />
