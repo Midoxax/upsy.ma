@@ -22,12 +22,53 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant
 
 const DISTRESS_PATTERNS = /\b(suicid|kill\s*my\s*self|end\s*(my|it\s*all)|don'?t\s*want\s*to\s*live|self[- ]?harm|hurt\s*myself|no\s*reason\s*to\s*live|hopeless|overdose)\b/i;
 
-const QUICK_PROMPTS = [
-  { icon: Wind,     label: "Breathing",   msg: "Guide me through a calming breathing exercise right now." },
-  { icon: BookOpen, label: "Journal",     msg: "Give me a meaningful journaling prompt for today." },
-  { icon: Heart,    label: "Anxious",     msg: "I'm feeling anxious. Can you help me ground myself?" },
-  { icon: Brain,    label: "Burnout",     msg: "I think I might be burning out at work. What can I do?" },
-];
+type Locale = "en" | "fr" | "ar";
+
+const QUICK_PROMPTS: Record<Locale, { icon: typeof Wind; label: string; msg: string }[]> = {
+  en: [
+    { icon: Wind,     label: "Breathing",   msg: "Guide me through a calming breathing exercise right now." },
+    { icon: BookOpen, label: "Journal",     msg: "Give me a meaningful journaling prompt for today." },
+    { icon: Heart,    label: "Anxious",     msg: "I'm feeling anxious. Can you help me ground myself?" },
+    { icon: Brain,    label: "Burnout",     msg: "I think I might be burning out. What can I do?" },
+  ],
+  fr: [
+    { icon: Wind,     label: "Respiration", msg: "Guide-moi dans un exercice de respiration apaisante." },
+    { icon: BookOpen, label: "Journal",     msg: "Donne-moi une question de journal pour aujourd'hui." },
+    { icon: Heart,    label: "Anxieux",     msg: "Je me sens anxieux. Peux-tu m'aider à m'ancrer ?" },
+    { icon: Brain,    label: "Burnout",     msg: "Je crois que je suis en burnout. Que puis-je faire ?" },
+  ],
+  ar: [
+    { icon: Wind,     label: "تنفّس",       msg: "ساعدني في تمرين تنفس مهدئ الآن." },
+    { icon: BookOpen, label: "تدوين",       msg: "اقترح عليّ سؤال تدوين عميق لهذا اليوم." },
+    { icon: Heart,    label: "قلق",         msg: "أشعر بالقلق. ساعدني في تمرين تأريض." },
+    { icon: Brain,    label: "إرهاق",       msg: "أعتقد أنني أعاني من الإرهاق. ماذا أفعل؟" },
+  ],
+};
+
+const greetingFor = (locale: string, name?: string) => {
+  const hour = new Date().getHours();
+  const l: Locale = locale === "fr" ? "fr" : locale === "ar" ? "ar" : "en";
+  const part =
+    l === "fr"
+      ? hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir"
+      : l === "ar"
+        ? hour < 12 ? "صباح الخير" : hour < 18 ? "مساء النور" : "مساء الخير"
+        : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  if (name) return `${part}, ${name} 👋`;
+  return l === "fr" ? `${part}, je suis Nour` : l === "ar" ? `${part}، أنا نور` : `${part}, I'm Nour`;
+};
+
+const SUBTITLE: Record<Locale, string> = {
+  en: "Your safe space to talk, reflect, and find calm. I'm here whenever you need me.",
+  fr: "Un espace sûr pour parler, réfléchir et retrouver le calme. Je suis là quand tu as besoin.",
+  ar: "مساحة آمنة للحديث والتأمل واستعادة الهدوء. أنا هنا عندما تحتاجني.",
+};
+
+const DISCLAIMER: Record<Locale, { lead: string; link: string; crisis: string }> = {
+  en: { lead: "Nour is not a therapist. For serious concerns,", link: "speak with a professional", crisis: "In crisis? Call SOS Amitié Maroc 0801 00 0180 (24/7)." },
+  fr: { lead: "Nour n'est pas un thérapeute. Pour des préoccupations sérieuses,", link: "parlez à un professionnel", crisis: "En crise ? Appelez SOS Amitié Maroc 0801 00 0180 (24h/24)." },
+  ar: { lead: "نور ليس معالجاً نفسياً. للحالات الجدية،", link: "تحدث مع مختص", crisis: "في حالة أزمة؟ اتصل بـ SOS Amitié Maroc 0801 00 0180 (24/7)." },
+};
 
 const MsgBubble = ({ msg }: { msg: Msg }) => {
   const isUser = msg.role === "user";
@@ -80,6 +121,8 @@ const AIAssistant = () => {
   const { user } = useAuth();
   const { locale } = useLocale();
   const { toast } = useToast();
+  const l: Locale = locale === "fr" ? "fr" : locale === "ar" ? "ar" : "en";
+  const isRtl = l === "ar";
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -116,6 +159,10 @@ const AIAssistant = () => {
 
     const payload = {
       messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
+      context: {
+        firstName: userProfile?.name ?? null,
+        locale: l,
+      },
     };
 
     // Check user message for distress keywords
@@ -239,20 +286,20 @@ const AIAssistant = () => {
       <div className="flex-1 overflow-y-auto">
         <div className="container-custom max-w-2xl py-6 space-y-4">
           {isFirstMessage && (
-            <div className="text-center py-8 space-y-4">
+            <div className="text-center py-8 space-y-4" dir={isRtl ? "rtl" : "ltr"}>
               <div className="mx-auto">
                 <NourEmergence size={160} />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">
-                  {userProfile?.name ? `Bonjour, ${userProfile.name} 👋` : "Hello, I'm Nour"}
+                  {greetingFor(l, userProfile?.name)}
                 </h2>
                 <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
-                  Your safe space to talk, reflect, and find calm. I'm here whenever you need me.
+                  {SUBTITLE[l]}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto pt-2">
-                {QUICK_PROMPTS.map(({ icon: Icon, label, msg }) => (
+                {QUICK_PROMPTS[l].map(({ icon: Icon, label, msg }) => (
                   <button
                     key={label}
                     onClick={() => sendMessage(msg)}
@@ -319,12 +366,15 @@ const AIAssistant = () => {
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>
-          <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
-            Nour is not a therapist. For serious concerns, please{" "}
-            <Link to="/psychologists" className="underline hover:text-muted-foreground">
-              speak with a professional
-            </Link>.
-          </p>
+          <div className="text-[11px] text-muted-foreground/60 text-center mt-2 space-y-1" dir={isRtl ? "rtl" : "ltr"}>
+            <p>
+              {DISCLAIMER[l].lead}{" "}
+              <Link to="/psychologists" className="underline hover:text-muted-foreground">
+                {DISCLAIMER[l].link}
+              </Link>.
+            </p>
+            <p className="text-amber-700/70 dark:text-amber-400/60">{DISCLAIMER[l].crisis}</p>
+          </div>
         </div>
       </div>
 
