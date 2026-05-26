@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ChevronDown, Umbrella, Globe, Heart, BookOpen, Award } from "lucide-react";
+import {
+  Menu, X, User, ChevronDown, Umbrella, Heart, Award,
+  HeartPulse, GraduationCap, Activity, Building2, Users, Sparkles,
+  BookOpen, Brain, Trophy, Stethoscope, Compass, Crown,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
@@ -36,33 +40,64 @@ const Header = () => {
     return safe ? `${base}?redirect=${encodeURIComponent(safe)}` : base;
   })();
 
-  // Consolidated nav: 5 items max + dropdowns
-  type NavDropdownItem = { name: string; href: string; icon?: React.ComponentType<any>; featured?: boolean };
-  const navigation: { name: string; href: string; dropdown?: NavDropdownItem[] }[] = [
-    { name: t('nav.findPsychologist'), href: "/psychologists" },
+  // U.Psy 2.0 IA — 5 top-level pillars
+  type NavDropdownItem = { name: string; href: string; icon?: React.ComponentType<any>; featured?: boolean; desc?: string };
+  const navigation: { name: string; href: string; icon?: React.ComponentType<any>; dropdown?: NavDropdownItem[] }[] = [
     {
-      name: t('nav.programs'),
-      href: "/services",
+      name: "Care",
+      href: "/psychologists",
+      icon: HeartPulse,
       dropdown: [
-        { name: t('nav.individualServices'), href: "/services" },
-        { name: t('nav.pricing') || "Pricing", href: "/pricing" },
-        { name: t('nav.forOrganizations'), href: "/services/consulting-for-organizations" },
-        { name: t('nav.getMatched'), href: "/get-matched" },
+        { name: "Find a psychologist", href: "/psychologists", icon: Stethoscope, desc: "Browse accredited specialists" },
+        { name: "Get matched", href: "/get-matched", icon: Compass, desc: "6-step intelligent matching" },
+        { name: "Self-assessment", href: "/assessment-lab", icon: Brain, desc: "Clinical screenings (GAD-7, PHQ-9)" },
+        { name: "Programs & services", href: "/services", icon: BookOpen },
       ],
     },
-    { name: t('nav.learning'), href: "/resources" },
-    { name: t('nav.blog'), href: "/blog" },
-    { name: t('nav.research'), href: "/talent-innovation-hub" },
     {
-      name: t('nav.about'),
+      name: "Training Center",
+      href: "/center",
+      icon: GraduationCap,
+      dropdown: [
+        { name: "Communities", href: "/center", icon: Users, featured: true, desc: "Spaces, feeds, discussions" },
+        { name: "Courses & learning", href: "/learn", icon: BookOpen, desc: "Cohort-based & self-paced" },
+        { name: "Certifications", href: "/learn?tab=certifications", icon: Award, desc: "Performance Psychology pathways" },
+        { name: "Mentors", href: "/psychologists?type=mentor", icon: Sparkles, desc: "1:1 elite guidance" },
+      ],
+    },
+    {
+      name: "Athlete Hub",
+      href: "/athlete-hub",
+      icon: Activity,
+      dropdown: [
+        { name: "Performance dashboard", href: "/athlete-hub", icon: Trophy, featured: true, desc: "Readiness, protocols, journal" },
+        { name: "AI Coach (Nour)", href: "/ai-assistant", icon: Sparkles, desc: "Performance & reflective AI" },
+        { name: "For athletes", href: "/for-athletes", icon: Activity, desc: "Why elite performers train here" },
+      ],
+    },
+    {
+      name: "For Organizations",
+      href: "/for-organizations",
+      icon: Building2,
+      dropdown: [
+        { name: "Teams & enterprises", href: "/for-organizations", icon: Building2, desc: "Pulse, programs, dashboards" },
+        { name: "Consulting", href: "/services/consulting-for-organizations", icon: Stethoscope },
+        { name: "Talent Innovation Hub", href: "/talent-innovation-hub", icon: Brain, desc: "Research & applied science" },
+        { name: "Apply as an organization", href: "/apply/organization", icon: Award },
+      ],
+    },
+    {
+      name: "About",
       href: "/about",
       dropdown: [
-        { name: t('nav.ourStory'), href: "/about" },
-        { name: t('founder.navLabel') || "Founder", href: "/founder", icon: Award, featured: true },
-        { name: "The Moroccan Umbrella", href: "/moroccan-umbrella", icon: Umbrella, featured: true },
-        { name: t('psf.navLabel') !== 'psf.navLabel' ? t('psf.navLabel') : "Psychologues Sans Frontières", href: "/psf", icon: Heart, featured: true },
+        { name: "Membership", href: "/membership", icon: Crown, featured: true, desc: "7 tiers — Discover → Elite" },
+        { name: "Founder", href: "/founder", icon: Award, featured: true },
+        { name: "Our story", href: "/about" },
+        { name: "The Moroccan Umbrella", href: "/moroccan-umbrella", icon: Umbrella },
+        { name: "Psychologues Sans Frontières", href: "/psf", icon: Heart },
+        { name: "Blog", href: "/blog", icon: BookOpen },
         { name: t('nav.contact'), href: "/contact" },
-        { name: t('nav.applyAccreditation'), href: "/apply" },
+        { name: "Apply for accreditation", href: "/apply" },
         { name: "For specialists · Pricing", href: "/pricing-specialists" },
       ],
     },
