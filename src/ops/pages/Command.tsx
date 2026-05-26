@@ -1,8 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useOpsWorkspaces, useOpsEvents, useOpsWorkspaceTasks } from "../hooks/useOps";
 import { motion } from "framer-motion";
 import StateBadge from "../components/StateBadge";
-import { Activity, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, Clock, Sparkles } from "lucide-react";
+import gsap from "gsap";
 
 export const Command = () => {
   const { workspace: slug } = useParams<{ workspace: string }>();
@@ -14,6 +16,40 @@ export const Command = () => {
   const blocked = tasks.filter(t => ["blocked","delayed"].includes(t.state)).length;
   const escalated = tasks.filter(t => t.state === "escalated").length;
   const done = tasks.filter(t => ["completed","validated"].includes(t.state)).length;
+
+  // Counter animation for KPI tiles
+  const kpiRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const prevKpi = useRef<number[]>([0, 0, 0, 0]);
+  useEffect(() => {
+    const next = [open, blocked, escalated, done];
+    next.forEach((v, i) => {
+      const el = kpiRefs.current[i];
+      if (!el) return;
+      const from = prevKpi.current[i] ?? 0;
+      const obj = { n: from };
+      gsap.to(obj, {
+        n: v, duration: 0.7, ease: "power2.out",
+        onUpdate: () => { el.textContent = String(Math.round(obj.n)); },
+      });
+    });
+    prevKpi.current = next;
+  }, [open, blocked, escalated, done]);
+
+  // Flash recently-updated task rows
+  const seen = useRef<Map<string, string>>(new Map());
+  const [flash, setFlash] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    const fresh = new Set<string>();
+    for (const t of tasks) {
+      const prev = seen.current.get(t.id);
+      if (prev && prev !== t.updated_at) fresh.add(t.id);
+      seen.current.set(t.id, t.updated_at);
+    }
+    if (fresh.size === 0) return;
+    setFlash(fresh);
+    const tm = setTimeout(() => setFlash(new Set()), 1300);
+    return () => clearTimeout(tm);
+  }, [tasks]);
 
   return (
     <div className="p-8 max-w-[1600px] mx-auto">
@@ -45,7 +81,9 @@ export const Command = () => {
               <div className="ops-label">{k.label}</div>
               <k.icon className={`h-4 w-4 ${k.color}`} />
             </div>
-            <div className="ops-display text-4xl mt-3 tabular-nums">{k.value}</div>
+            <div className="ops-display text-4xl mt-3 tabular-nums">
+              <span ref={el => (kpiRefs.current[i] = el)}>0</span>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -79,7 +117,10 @@ export const Command = () => {
           ) : (
             <ul className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
               {tasks.slice(0, 20).map(t => (
-                <li key={t.id} className="flex items-start justify-between gap-3 pb-3 border-b border-white/5">
+                <li
+                  key={t.id}
+                  className={`flex items-start justify-between gap-3 pb-3 border-b border-white/5 px-2 -mx-2 ${flash.has(t.id) ? "ops-flash" : ""}`}
+                >
                   <div className="min-w-0 flex-1">
                     <div className="text-sm text-white/85 truncate">{t.title}</div>
                     <div className="ops-mono text-[10px] text-white/40 truncate">{t.event_title}</div>
@@ -91,6 +132,11 @@ export const Command = () => {
           )}
         </div>
       </div>
+
+      {/* Pinned Director quick-prompt */}
+      <Link to={`/ops/${slug}/director`} className="ops-fab">
+        <Sparkles className="h-4 w-4" /> Ask Director
+      </Link>
     </div>
   );
 };
