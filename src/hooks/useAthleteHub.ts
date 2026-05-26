@@ -32,6 +32,9 @@ export type JournalEntry = {
   content: string;
   mood_tag: string | null;
   created_at: string;
+  ai_summary?: string | null;
+  themes?: string[] | null;
+  synthesized_at?: string | null;
 };
 
 // Score = weighted blend on a 0-100 scale.
@@ -64,7 +67,7 @@ export function useAthleteHub() {
         : Promise.resolve({ data: [], error: null } as any),
       supabase.from("athlete_protocols").select("*").eq("is_published", true).order("duration_minutes"),
       user
-        ? supabase.from("journal_entries").select("id,title,content,mood_tag,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10)
+        ? supabase.from("journal_entries").select("id,title,content,mood_tag,created_at,ai_summary,themes,synthesized_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10)
         : Promise.resolve({ data: [], error: null } as any),
     ]);
     if (cRes.data) setCheckins(cRes.data as Checkin[]);
@@ -100,7 +103,15 @@ export function useAthleteHub() {
     return { error };
   }, [user, load]);
 
+  const synthesizeEntry = useCallback(async (entryId: string) => {
+    const { data, error } = await supabase.functions.invoke("journal-synthesize", {
+      body: { entry_id: entryId },
+    });
+    if (!error) await load();
+    return { error, data };
+  }, [load]);
+
   const latestScore = checkins[0]?.score ?? null;
 
-  return { checkins, protocols, journal, loading, latestScore, submitCheckin, logProtocol, addJournalEntry, reload: load };
+  return { checkins, protocols, journal, loading, latestScore, submitCheckin, logProtocol, addJournalEntry, synthesizeEntry, reload: load };
 }
