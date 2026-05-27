@@ -155,6 +155,35 @@
   border-color: hsl(var(--ops-accent) / 0.35);
 }
 
+/* Tactical corner brackets for panels */
+.ops-bracket {
+  position: relative;
+}
+.ops-bracket::before,
+.ops-bracket::after {
+  content: "";
+  position: absolute;
+  width: 8px; height: 8px;
+  border-color: hsl(var(--ops-accent) / 0.35);
+  pointer-events: none;
+  transition: all 300ms ease;
+}
+.ops-bracket::before {
+  top: -1px; left: -1px;
+  border-top: 1px solid; border-left: 1px solid;
+  border-top-left-radius: 14px;
+}
+.ops-bracket::after {
+  bottom: -1px; right: -1px;
+  border-bottom: 1px solid; border-right: 1px solid;
+  border-bottom-right-radius: 14px;
+}
+.ops-bracket:hover::before,
+.ops-bracket:hover::after {
+  border-color: hsl(var(--ops-accent) / 0.7);
+  width: 14px; height: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ops-pulse, .ops-scanline::after { animation: none; }
 }
