@@ -188,7 +188,7 @@ export const EventDetail = () => {
                       <div className="flex items-center gap-2">
                         <span className="text-white/90 text-sm group-hover:text-white transition-colors">{t.title}</span>
                         {t.psych_safety_flag && (
-                          <ShieldAlert className="h-3.5 w-3.5 text-orange-300" title="Psychological safety flag" />
+                          <ShieldAlert className="h-3.5 w-3.5 text-orange-300" aria-label="Psychological safety flag" />
                         )}
                       </div>
                       <div className="ops-mono text-[10px] text-white/40 mt-1 flex gap-3 flex-wrap">
