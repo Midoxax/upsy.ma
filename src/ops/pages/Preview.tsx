@@ -502,6 +502,147 @@ const FooterStrip = () => (
 
 export default Preview;
 
+/* ─── Manifesto marquee ────────────────────────────────────────────────── */
+const MANIFESTO = [
+  "MESURER CE QUI COMPTE",
+  "PROTÉGER CE QUI EST FRAGILE",
+  "GOUVERNER CE QUI EST CRITIQUE",
+  "AUTOMATISER L'OPÉRATIONNEL",
+  "LAISSER LE CLINIQUE AU CLINICIEN",
+  "AUDITER CHAQUE DÉCISION",
+];
+const ManifestoMarquee = () => (
+  <section className="uos-manifesto" aria-label="Manifesto">
+    <div className="uos-manifesto-track">
+      {[...MANIFESTO, ...MANIFESTO].map((m, i) => (
+        <span key={i} className="uos-manifesto-item">
+          <span className="uos-manifesto-dot" />
+          {m}
+        </span>
+      ))}
+    </div>
+  </section>
+);
+
+/* ─── Outcome metrics (big animated counters) ───────────────────────────── */
+const useCountUp = (target: number, start: boolean, duration = 1600) => {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setN(target * eased);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [start, target, duration]);
+  return n;
+};
+const Counter = ({ value, suffix = "", decimals = 0 }: { value: number; suffix?: string; decimals?: number }) => {
+  const [vis, setVis] = useState(false);
+  const n = useCountUp(value, vis);
+  return (
+    <motion.span onViewportEnter={() => setVis(true)} viewport={{ once: true }}>
+      {n.toFixed(decimals)}{suffix}
+    </motion.span>
+  );
+};
+const OUTCOMES = [
+  { v: 73, s: "%", k: "RÉDUCTION TEMPS ADMIN", note: "vs. process manuel" },
+  { v: 4.2, s: "x", d: 1, k: "VITESSE D'ESCALADE", note: "détection → action" },
+  { v: 99.97, s: "%", d: 2, k: "DISPONIBILITÉ SYSTÈME", note: "12 mois glissants" },
+  { v: 0, s: "", k: "FUITES DE DONNÉES", note: "depuis le déploiement" },
+];
+const OutcomeMetrics = () => (
+  <section className="uos-section uos-outcomes">
+    <div className="uos-section-head">
+      <span className="uos-mono uos-section-k">/ RÉSULTATS</span>
+      <h2>Mesuré. Pas raconté.</h2>
+    </div>
+    <div className="uos-outcomes-grid">
+      {OUTCOMES.map((o, i) => (
+        <motion.div key={o.k}
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-15%" }}
+          transition={{ delay: i * 0.1, duration: 0.7 }}
+          className="uos-outcome">
+          <div className="uos-outcome-v">
+            <Counter value={o.v} suffix={o.s} decimals={o.d ?? 0} />
+          </div>
+          <div className="uos-outcome-k uos-mono">{o.k}</div>
+          <div className="uos-outcome-note">{o.note}</div>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
+
+/* ─── Voices of the system ──────────────────────────────────────────────── */
+const VOICES = [
+  { q: "Pour la première fois, notre coordination clinique ne dépend plus d'un Excel partagé. Le système tient.", who: "Directrice médicale", org: "Réseau clinique · Casablanca" },
+  { q: "On a vu un cas escalader en 11 minutes au lieu de 48 heures. Ça change ce qu'on peut promettre aux familles.", who: "Coordinateur d'urgence", org: "Programme humanitaire" },
+  { q: "Le copilote ne décide rien. Il pré-mâche. Mes psychologues récupèrent leur soirée. Personne ne se sent remplacé.", who: "Responsable de cellule", org: "Institution sportive" },
+];
+const VoicesOfSystem = () => (
+  <section className="uos-section">
+    <div className="uos-section-head">
+      <span className="uos-mono uos-section-k">/ VOIX DU SYSTÈME</span>
+      <h2>Ceux qui l'opèrent en parlent.</h2>
+    </div>
+    <div className="uos-voices">
+      {VOICES.map((v, i) => (
+        <motion.figure key={i} className="uos-voice"
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ delay: i * 0.12, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+          <Quote size={18} className="uos-voice-icon" />
+          <blockquote>{v.q}</blockquote>
+          <figcaption>
+            <span className="uos-voice-who">{v.who}</span>
+            <span className="uos-mono uos-voice-org">{v.org}</span>
+          </figcaption>
+        </motion.figure>
+      ))}
+    </div>
+  </section>
+);
+
+/* ─── Roadmap horizon (4-step timeline) ─────────────────────────────────── */
+const HORIZON = [
+  { tag: "T0", icon: Target, label: "FONDATIONS", desc: "Workspaces, copilote, opérations temps-réel.", state: "LIVE" },
+  { tag: "T+1", icon: Compass, label: "SCORING UNIFIÉ", desc: "Cohortes, signaux faibles, alertes prédictives.", state: "Q2" },
+  { tag: "T+2", icon: Layers, label: "INTÉGRATIONS SOUVERAINES", desc: "EMR, paie, biofeedback, dossiers institutionnels.", state: "Q3" },
+  { tag: "T+3", icon: Flag, label: "MENA → ∞", desc: "Multi-pays, multi-langue, gouvernance régionale.", state: "2026" },
+];
+const RoadmapHorizon = () => (
+  <section className="uos-section">
+    <div className="uos-section-head">
+      <span className="uos-mono uos-section-k">/ HORIZON</span>
+      <h2>Une trajectoire. Pas un backlog.</h2>
+    </div>
+    <div className="uos-horizon">
+      <div className="uos-horizon-line" />
+      {HORIZON.map((h, i) => (
+        <motion.div key={h.label} className="uos-horizon-step"
+          initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ delay: i * 0.12, duration: 0.7 }}>
+          <div className="uos-horizon-node">
+            <h.icon size={14} />
+          </div>
+          <span className="uos-mono uos-horizon-tag">{h.tag} · {h.state}</span>
+          <h3 className="uos-horizon-label">{h.label}</h3>
+          <p className="uos-horizon-desc">{h.desc}</p>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
+
 /* ─── Signal feed (terminal stream between hero and positioning) ────────── */
 const FEED_LINES = [
   ["02:14:08", "LSSPM", "session.completed", "alliance +3"],
