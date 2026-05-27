@@ -1,0 +1,459 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight, Activity, Brain, Zap, Shield, Radio } from "lucide-react";
+import "./preview.css";
+
+/**
+ * UPSY OS — Cinematic prototype.
+ * Scoped to /ops/preview. Cyan/black sovereign aesthetic per CSO spec.
+ * CSS + Framer Motion only — no Three.js (memory constraint).
+ */
+export const Preview = () => {
+  // Load spec fonts only on this page
+  useEffect(() => {
+    const links = [
+      "https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap",
+    ];
+    const nodes = links.map(href => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = href; document.head.appendChild(l); return l;
+    });
+    return () => { nodes.forEach(n => n.remove()); };
+  }, []);
+
+  return (
+    <div className="upsy-os">
+      <NeuralField />
+      <NavBar />
+      <Hero />
+      <PositioningReveal />
+      <EcosystemMap />
+      <ThreeModes />
+      <CopilotShowcase />
+      <TrustSignals />
+      <FinalCTA />
+      <FooterStrip />
+    </div>
+  );
+};
+
+/* ─── Ambient neural environment (CSS-only, fakes Three.js) ─────────────── */
+const NeuralField = () => {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 2000], [0, -300]);
+  const y2 = useTransform(scrollY, [0, 2000], [0, -120]);
+  return (
+    <>
+      <motion.div className="uos-field uos-field-1" style={{ y: y1 }} aria-hidden />
+      <motion.div className="uos-field uos-field-2" style={{ y: y2 }} aria-hidden />
+      <div className="uos-grid-overlay" aria-hidden />
+      <div className="uos-vignette" aria-hidden />
+    </>
+  );
+};
+
+/* ─── Nav ───────────────────────────────────────────────────────────────── */
+const NavBar = () => (
+  <header className="uos-nav">
+    <div className="uos-nav-inner">
+      <div className="uos-brand">
+        <span className="uos-brand-mark"><span className="uos-brand-dot" /></span>
+        <span className="uos-brand-name">UPSY<span className="uos-brand-os">/OS</span></span>
+      </div>
+      <nav className="uos-nav-links">
+        <a href="#positioning">Système</a>
+        <a href="#ecosystem">Écosystème</a>
+        <a href="#modes">Modes</a>
+        <a href="#copilot">Copilote</a>
+      </nav>
+      <div className="uos-nav-cta">
+        <span className="uos-nav-status"><span className="uos-status-dot" /> SYS ONLINE</span>
+        <Link to="/ops" className="uos-btn-ghost">Accéder</Link>
+      </div>
+    </div>
+  </header>
+);
+
+/* ─── Section 1: Hero ───────────────────────────────────────────────────── */
+const Hero = () => (
+  <section className="uos-hero">
+    <div className="uos-hero-grid">
+      <div className="uos-hero-left">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="uos-eyebrow"
+        >
+          <Radio size={11} /> UPSY OPERATING SYSTEM · v1.0
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, filter: "blur(8px)", y: 24 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 1.1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="uos-hero-title"
+        >
+          L'infrastructure psychologique<br />
+          <span className="uos-accent-text">de demain.</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="uos-hero-sub"
+        >
+          Clinique. Sport. Développement. Gouverné par UPSY.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.75 }}
+          className="uos-hero-ctas"
+        >
+          <button className="uos-btn-primary">
+            Entrer dans l'écosystème <ArrowUpRight size={14} />
+          </button>
+          <Link to="/ops" className="uos-btn-ghost">Explorer le système</Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ delay: 1.1, duration: 1 }}
+          className="uos-telemetry"
+        >
+          {[
+            ["UPTIME", "99.97%"], ["WORKSPACES", "12"],
+            ["AI CALLS / 24H", "2,184"], ["LATENCY P95", "84ms"],
+          ].map(([k, v]) => (
+            <div key={k as string} className="uos-telem-item">
+              <div className="uos-telem-k">{k}</div>
+              <div className="uos-telem-v">{v}</div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Right: ambient instrument panel */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className="uos-hero-instrument"
+      >
+        <InstrumentPanel />
+      </motion.div>
+    </div>
+
+    <div className="uos-scroll-cue">
+      <span>SCROLL</span>
+      <div className="uos-scroll-line"><div className="uos-scroll-dot" /></div>
+    </div>
+  </section>
+);
+
+const InstrumentPanel = () => (
+  <div className="uos-instr">
+    <div className="uos-instr-header">
+      <span className="uos-mono uos-instr-tag">SYSTEM · LIVE</span>
+      <span className="uos-instr-dot uos-pulse" />
+    </div>
+
+    {/* Orbital radar */}
+    <div className="uos-radar">
+      <svg viewBox="0 0 400 400" width="100%" height="100%">
+        <defs>
+          <radialGradient id="radarG" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="hsl(192, 100%, 50%)" stopOpacity="0.25" />
+            <stop offset="70%" stopColor="hsl(192, 100%, 50%)" stopOpacity="0.02" />
+            <stop offset="100%" stopColor="transparent" />
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="180" fill="url(#radarG)" />
+        {[60, 110, 160].map((r, i) => (
+          <motion.circle
+            key={r} cx="200" cy="200" r={r}
+            stroke="rgba(0,212,255,0.18)" strokeWidth="1" fill="none"
+            animate={{ r: [r, r + 4, r] }}
+            transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
+          />
+        ))}
+        {/* Orbiting nodes */}
+        {[
+          { r: 60, dur: 18, label: "LSSPM" },
+          { r: 110, dur: 26, label: "UFC GYM" },
+          { r: 110, dur: 26, label: "BEING", offset: 180 },
+          { r: 160, dur: 38, label: "UIC" },
+          { r: 160, dur: 38, label: "CLINIQUES", offset: 120 },
+          { r: 160, dur: 38, label: "INSTIT.", offset: 240 },
+        ].map((n, i) => (
+          <g key={i}>
+            <motion.g
+              animate={{ rotate: 360 }}
+              transition={{ duration: n.dur, repeat: Infinity, ease: "linear" }}
+              style={{ transformOrigin: "200px 200px", transformBox: "fill-box" }}
+            >
+              <g transform={`rotate(${n.offset ?? 0} 200 200)`}>
+                <circle cx={200 + n.r} cy="200" r="3" fill="hsl(192, 100%, 60%)" />
+                <text x={200 + n.r + 8} y="204" fontSize="8" fontFamily="JetBrains Mono"
+                  fill="rgba(240,240,245,0.6)" letterSpacing="1.5">{n.label}</text>
+              </g>
+            </motion.g>
+          </g>
+        ))}
+        {/* Core */}
+        <circle cx="200" cy="200" r="6" fill="hsl(192, 100%, 70%)" />
+        <circle cx="200" cy="200" r="14" stroke="hsl(192, 100%, 60%)" strokeWidth="1" fill="none" opacity="0.4" />
+      </svg>
+    </div>
+
+    <div className="uos-instr-grid">
+      <div className="uos-instr-cell">
+        <span className="uos-mono uos-cell-k">CHARGE</span>
+        <div className="uos-bar"><motion.div className="uos-bar-fill" initial={{ width: 0 }} animate={{ width: "68%" }} transition={{ delay: 1, duration: 1.4 }} /></div>
+        <span className="uos-mono uos-cell-v">68%</span>
+      </div>
+      <div className="uos-instr-cell">
+        <span className="uos-mono uos-cell-k">BURN RISK</span>
+        <span className="uos-mono uos-cell-tag uos-tag-ok">LOW</span>
+      </div>
+      <div className="uos-instr-cell">
+        <span className="uos-mono uos-cell-k">FLAGGED CASES</span>
+        <span className="uos-mono uos-cell-tag uos-tag-alert">2</span>
+      </div>
+    </div>
+  </div>
+);
+
+/* ─── Section 2: Positioning reveal ─────────────────────────────────────── */
+const PositioningReveal = () => {
+  const lines = [
+    "UPSY n'est pas un outil.",
+    "UPSY est votre système opérationnel.",
+    "Psychologie. Performance. Infrastructure.",
+  ];
+  return (
+    <section id="positioning" className="uos-positioning">
+      <div className="uos-positioning-inner">
+        {lines.map((line, i) => (
+          <motion.p
+            key={i}
+            initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0)" }}
+            viewport={{ once: true, margin: "-20%" }}
+            transition={{ duration: 1, delay: i * 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className={i === 2 ? "uos-pos-line uos-pos-accent" : "uos-pos-line"}
+          >
+            {line}
+          </motion.p>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+/* ─── Section 3: Ecosystem map ──────────────────────────────────────────── */
+const ECOSYSTEM = [
+  { name: "LSSPM", desc: "Coordination clinique nationale", angle: 0 },
+  { name: "UFC GYM MOROCCO", desc: "Performance athlétique", angle: 60 },
+  { name: "SOLETERRE / BEING", desc: "Programmes humanitaires", angle: 120 },
+  { name: "INSTITUTIONS", desc: "Gouvernance & exécution", angle: 180 },
+  { name: "CLINIQUES", desc: "Opérations cliniques privées", angle: 240 },
+  { name: "UIC", desc: "Recherche & formation", angle: 300 },
+];
+const EcosystemMap = () => {
+  const [hover, setHover] = useState<number | null>(null);
+  return (
+    <section id="ecosystem" className="uos-section">
+      <div className="uos-section-head">
+        <span className="uos-mono uos-section-k">/ ÉCOSYSTÈME</span>
+        <h2>Six workspaces. Un seul système nerveux.</h2>
+      </div>
+      <div className="uos-eco-stage">
+        <div className="uos-eco-core">
+          <div className="uos-eco-core-inner">
+            <span className="uos-mono">UPSY</span>
+            <span className="uos-mono uos-eco-core-sub">OS · CORE</span>
+          </div>
+          <div className="uos-eco-core-ring" />
+        </div>
+        {ECOSYSTEM.map((n, i) => {
+          const rad = (n.angle * Math.PI) / 180;
+          const x = 50 + Math.cos(rad) * 36;
+          const y = 50 + Math.sin(rad) * 36;
+          return (
+            <motion.button
+              key={n.name}
+              onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}
+              className={`uos-eco-node ${hover === i ? "is-hover" : ""}`}
+              style={{ left: `${x}%`, top: `${y}%` }}
+              initial={{ opacity: 0, scale: 0.7 }} whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.6 }}
+            >
+              <span className="uos-eco-dot" />
+              <span className="uos-eco-label">{n.name}</span>
+              {hover === i && <span className="uos-eco-desc">{n.desc}</span>}
+            </motion.button>
+          );
+        })}
+        {/* connecting lines */}
+        <svg className="uos-eco-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {ECOSYSTEM.map((n) => {
+            const rad = (n.angle * Math.PI) / 180;
+            const x = 50 + Math.cos(rad) * 36;
+            const y = 50 + Math.sin(rad) * 36;
+            return <line key={n.name} x1="50" y1="50" x2={x} y2={y} stroke="rgba(0,212,255,0.15)" strokeWidth="0.15" />;
+          })}
+        </svg>
+      </div>
+    </section>
+  );
+};
+
+/* ─── Section 4: Three modes ────────────────────────────────────────────── */
+const MODES = [
+  { tag: "01", label: "FOCUS MODE", who: "Pour les psychologues",
+    items: ["Session active", "Notes IA · révisables", "Zéro distraction"], icon: Brain },
+  { tag: "02", label: "OPERATIONS MODE", who: "Pour les coordinateurs",
+    items: ["Coordination temps réel", "Flux opérationnel", "Alertes & escalades"], icon: Activity },
+  { tag: "03", label: "INTELLIGENCE MODE", who: "Pour les directions",
+    items: ["KPIs stratégiques", "Prévisions IA", "Tableau exécutif"], icon: Zap },
+];
+const ThreeModes = () => (
+  <section id="modes" className="uos-section">
+    <div className="uos-section-head">
+      <span className="uos-mono uos-section-k">/ MODES OPÉRATIONNELS</span>
+      <h2>Une interface. Trois postures.</h2>
+    </div>
+    <div className="uos-modes-grid">
+      {MODES.map((m, i) => (
+        <motion.div key={m.label}
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-15%" }}
+          transition={{ delay: i * 0.12, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="uos-mode-card"
+        >
+          <div className="uos-mode-head">
+            <span className="uos-mono uos-mode-tag">{m.tag}</span>
+            <m.icon size={16} className="uos-mode-icon" />
+          </div>
+          <h3 className="uos-mode-label">{m.label}</h3>
+          <p className="uos-mode-who">{m.who}</p>
+          <ul className="uos-mode-list">
+            {m.items.map(it => <li key={it}><span className="uos-mode-bullet" />{it}</li>)}
+          </ul>
+          <div className="uos-mode-accent" />
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
+
+/* ─── Section 5: AI Copilot showcase ────────────────────────────────────── */
+const CopilotShowcase = () => {
+  const draft = "Patient présente diminution marquée du score d'alliance (-12pts). Recommandation : revoir cadre thérapeutique session N+1. Signaux de retrait détectés sur les 3 dernières sessions. Risque modéré de dropout sous 30 jours.";
+  const [typed, setTyped] = useState("");
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    if (!started) return;
+    let i = 0;
+    const id = setInterval(() => {
+      i++; setTyped(draft.slice(0, i));
+      if (i >= draft.length) clearInterval(id);
+    }, 18);
+    return () => clearInterval(id);
+  }, [started]);
+
+  return (
+    <section id="copilot" className="uos-section">
+      <div className="uos-section-head">
+        <span className="uos-mono uos-section-k">/ COPILOTE CLINIQUE</span>
+        <h2>Transparent. Éthique. Humain.</h2>
+      </div>
+      <div className="uos-copilot-grid">
+        <motion.div
+          initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.8 }}
+          onViewportEnter={() => setStarted(true)}
+          className="uos-copilot-left"
+        >
+          <div className="uos-copilot-scenario">
+            <span className="uos-mono uos-copilot-k">SCÉNARIO · CAS #4827</span>
+            <p>Session 6 / 12. Le patient a manqué deux rendez-vous. Notes cliniques en attente. Évaluation de l'alliance thérapeutique à compléter.</p>
+            <div className="uos-copilot-meta">
+              <span><Shield size={11} /> Données chiffrées · workspace LSSPM</span>
+              <span><Activity size={11} /> 3 signaux de risque détectés</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.15 }}
+          className="uos-copilot-output"
+        >
+          <div className="uos-copilot-output-head">
+            <span className="uos-mono">IA · DRAFT</span>
+            <span className="uos-mono uos-copilot-stamp">RÉVISABLE · JAMAIS AUTO-ENREGISTRÉ</span>
+          </div>
+          <p className="uos-copilot-text">
+            {typed}<span className="uos-caret">▍</span>
+          </p>
+          <div className="uos-copilot-actions">
+            <button className="uos-btn-ghost">Réécrire</button>
+            <button className="uos-btn-primary">Accepter et éditer <ArrowUpRight size={12} /></button>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+/* ─── Section 6: Trust signals ──────────────────────────────────────────── */
+const TrustSignals = () => (
+  <section className="uos-section uos-trust">
+    <h3 className="uos-trust-title">Adopté par les institutions qui définissent le standard.</h3>
+    <div className="uos-trust-logos">
+      {["UFC GYM MOROCCO", "UIC", "SOLETERRE", "LSSPM"].map(l => (
+        <span key={l} className="uos-logo">{l}</span>
+      ))}
+    </div>
+    <div className="uos-trust-counters">
+      {[
+        ["PSYCHOLOGUES", "240+"], ["SESSIONS", "18,420"],
+        ["INSTITUTIONS", "12"], ["PAYS", "4"],
+      ].map(([k, v]) => (
+        <motion.div key={k as string} className="uos-trust-counter"
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+        >
+          <div className="uos-trust-v">{v}</div>
+          <div className="uos-mono uos-trust-k">{k}</div>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
+
+/* ─── Section 7: Final CTA ──────────────────────────────────────────────── */
+const FinalCTA = () => (
+  <section className="uos-final">
+    <div className="uos-final-glow" aria-hidden />
+    <motion.h2
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }} transition={{ duration: 1 }}
+      className="uos-final-title"
+    >
+      Rejoignez l'infrastructure.
+    </motion.h2>
+    <div className="uos-final-ctas">
+      <button className="uos-btn-primary uos-btn-lg">Demander une démo <ArrowUpRight size={14} /></button>
+      <Link to="/ops" className="uos-btn-ghost uos-btn-lg">Explorer UPSY</Link>
+    </div>
+  </section>
+);
+
+const FooterStrip = () => (
+  <footer className="uos-foot">
+    <span className="uos-mono">UPSY OS · v1.0 · CASABLANCA → MENA → ∞</span>
+    <span className="uos-mono">SECURE · TENANT-ISOLATED · LAW 09-08</span>
+  </footer>
+);
+
+export default Preview;
