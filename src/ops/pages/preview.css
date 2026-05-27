@@ -28,6 +28,32 @@
 
 .uos-mono { font-family: "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0.08em; }
 
+/* ─── Global polish (scoped to /ops/preview) ─── */
+.upsy-os h1, .upsy-os h2, .upsy-os h3 {
+  font-optical-sizing: auto;
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+.upsy-os p { text-wrap: pretty; }
+.upsy-os ::selection { background: rgba(0,212,255,0.22); color: var(--text); }
+.upsy-os :focus-visible {
+  outline: 1px solid rgba(0,212,255,0.6);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.upsy-os ::-webkit-scrollbar { width: 6px; height: 6px; }
+.upsy-os ::-webkit-scrollbar-track { background: var(--bg); }
+.upsy-os ::-webkit-scrollbar-thumb {
+  background: rgba(0,212,255,0.25);
+  border-radius: 3px;
+}
+.upsy-os ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.45); }
+/* Touch targets ≥44px on mobile */
+@media (max-width: 480px) {
+  .upsy-os .uos-btn-primary,
+  .upsy-os .uos-btn-ghost { min-height: 44px; }
+}
+
 /* ─── Ambient field ─── */
 .uos-field {
   position: fixed; inset: -20% -10%; pointer-events: none; z-index: 0;
