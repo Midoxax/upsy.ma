@@ -579,10 +579,65 @@ const FinalCTA = () => (
   </section>
 );
 
+/* ─── Global Footer ─────────────────────────────────────────────────────── */
 const FooterStrip = () => (
   <footer className="uos-foot">
-    <span className="uos-mono">UPSY OS · v1.0 · CASABLANCA → MENA → ∞</span>
-    <span className="uos-mono">SECURE · TENANT-ISOLATED · LAW 09-08</span>
+    <div className="uos-foot-inner">
+      {/* Column 1: Brand + Bio */}
+      <div className="uos-foot-col uos-foot-brand">
+        <div className="uos-foot-brandmark">
+          <span className="uos-brand-mark"><span className="uos-brand-dot" /></span>
+          <span className="uos-foot-brandname">UPSY<span className="uos-brand-os">/OS</span></span>
+        </div>
+        <p className="uos-foot-bio">
+          U.Psy est le système d'exploitation de la psychologie de performance. Infrastructure souveraine, conforme Law 09-08, pour praticiens, cliniques et institutions au Maroc et au-delà.
+        </p>
+        <div className="uos-foot-socials">
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin size={16} /></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram size={16} /></a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube size={16} /></a>
+        </div>
+      </div>
+
+      {/* Column 2: Contact */}
+      <div className="uos-foot-col">
+        <span className="uos-mono uos-foot-col-title">CONTACT</span>
+        <a href="mailto:contact@upsy.ma" className="uos-foot-link">
+          <Mail size={13} /> contact@upsy.ma
+        </a>
+        <a href="https://wa.me/212000000000" target="_blank" rel="noopener noreferrer" className="uos-foot-link">
+          <Phone size={13} /> WhatsApp
+        </a>
+      </div>
+
+      {/* Column 3: Navigation */}
+      <div className="uos-foot-col">
+        <span className="uos-mono uos-foot-col-title">NAVIGATION</span>
+        <a href="#positioning" className="uos-foot-link">Système</a>
+        <a href="#ecosystem" className="uos-foot-link">Écosystème</a>
+        <a href="#modes" className="uos-foot-link">Modes</a>
+        <a href="#tiers" className="uos-foot-link">Tarifs</a>
+      </div>
+
+      {/* Column 4: Legal */}
+      <div className="uos-foot-col">
+        <span className="uos-mono uos-foot-col-title">LÉGAL</span>
+        <Link to="/privacy" className="uos-foot-link">Politique de confidentialité</Link>
+        <Link to="/terms" className="uos-foot-link">Conditions d'utilisation</Link>
+        <Link to="/cookies" className="uos-foot-link">Cookies</Link>
+      </div>
+    </div>
+
+    {/* Bottom bar */}
+    <div className="uos-foot-bar">
+      <span className="uos-mono">UPSY OS · v1.0 · CASABLANCA → MENA → ∞</span>
+      <span className="uos-mono">SECURE · TENANT-ISOLATED · LAW 09-08</span>
+      <div className="uos-foot-lang">
+        <Globe size={11} />
+        <span className="uos-mono">FR</span>
+        <span className="uos-mono uos-foot-lang-dim">EN · AR</span>
+      </div>
+    </div>
   </footer>
 );
 
