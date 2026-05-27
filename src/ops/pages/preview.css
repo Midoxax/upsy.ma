@@ -551,6 +551,12 @@
   z-index: 40; display: flex; align-items: center; gap: 14px;
 }
 @media (max-width: 1180px) { .uos-rail { display: none; } }
+/* Reserve left gutter for the rail so it never overlaps content */
+@media (min-width: 1181px) {
+  .uos-hero, .uos-section, .uos-signal, .uos-manifesto, .uos-positioning,
+  .uos-trust, .uos-outcomes, .uos-final, .uos-foot-inner { padding-left: 120px; }
+  .uos-nav-inner { padding-left: 120px; }
+}
 .uos-rail-track {
   width: 1px; height: 240px; background: rgba(255,255,255,0.06); position: relative;
 }
