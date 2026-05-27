@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Activity, Network, ShieldAlert, Cpu } from "lucide-react";
+import {
+  ArrowRight, Activity, Network, ShieldAlert, Cpu, Radio, Sparkles,
+} from "lucide-react";
 import "../ops-theme.css";
-
-const HeroNetwork = lazy(() => import("../components/HeroNetwork"));
+import { HeroField } from "../components/HeroField";
 
 const modules = [
   { icon: Network, title: "Dynamic SOP Engine", desc: "Generate operational protocols from event context. Phases, tasks, dependencies, escalation paths." },
@@ -18,15 +18,16 @@ export const OpsLanding = () => {
     <div className="ops-theme min-h-screen overflow-hidden">
       {/* Hero */}
       <section className="relative h-screen flex flex-col">
-        <Suspense fallback={null}>
-          <HeroNetwork />
-        </Suspense>
+        <HeroField />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(var(--ops-bg))]" />
 
         {/* Top bar */}
         <div className="relative z-10 flex items-center justify-between px-8 py-6">
-          <div className="flex items-baseline gap-3">
-            <span className="ops-mono text-xs tracking-[0.3em] text-white/40">U.PSY //</span>
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-md border border-[hsl(var(--ops-accent)/0.5)] bg-[hsl(var(--ops-accent)/0.08)] flex items-center justify-center">
+              <Radio className="h-3.5 w-3.5 ops-accent ops-pulse" />
+            </div>
+            <span className="ops-mono text-[10px] tracking-[0.3em] text-white/40">U.PSY //</span>
             <span className="ops-display text-2xl">UPSY <span className="ops-accent ops-glow">OPS</span></span>
           </div>
           <div className="flex items-center gap-3">
@@ -40,13 +41,14 @@ export const OpsLanding = () => {
           <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              className="ops-mono text-xs tracking-[0.3em] ops-accent mb-6"
+              className="ops-mono text-xs tracking-[0.3em] ops-accent mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(var(--ops-accent)/0.35)] bg-[hsl(var(--ops-accent)/0.06)]"
             >
-              OPERATIONAL NERVOUS SYSTEM · v1.0
+              <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--ops-accent))] ops-pulse" />
+              OPERATIONAL NERVOUS SYSTEM · v1.0 · ONLINE
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
-              className="ops-display text-6xl md:text-7xl leading-[1.05]"
+              className="ops-display text-6xl md:text-7xl leading-[1.05] mt-6"
             >
               The operating system<br />
               for <span className="ops-accent ops-glow">institutional operations.</span>
@@ -64,23 +66,31 @@ export const OpsLanding = () => {
               className="mt-10 flex gap-4"
             >
               <Link to="/ops/lsspm/command" className="ops-btn">Enter Command Center <ArrowRight className="h-4 w-4" /></Link>
-              <Link to="/ops/lsspm/events/new" className="ops-btn ops-btn-ghost">Generate Protocol</Link>
+              <Link to="/ops/lsspm/events/new" className="ops-btn ops-btn-ghost">
+                <Sparkles className="h-4 w-4" /> Generate Protocol
+              </Link>
             </motion.div>
           </div>
         </div>
 
         {/* Live KPIs strip */}
-        <div className="relative z-10 border-t border-white/5 px-8 py-5 ops-mono text-xs grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="relative z-10 border-t border-white/5 px-8 py-5 ops-mono text-xs grid grid-cols-2 md:grid-cols-4 gap-6 bg-[hsl(var(--ops-bg)/0.5)] backdrop-blur-sm">
           {[
-            ["TENANTS ONLINE", "12"],
-            ["ACTIVE OPS", "47"],
-            ["AI INVOCATIONS / DAY", "2,184"],
-            ["UPTIME", "99.97%"],
-          ].map(([k, v]) => (
-            <div key={k}>
-              <div className="text-white/30">{k}</div>
-              <div className="ops-accent text-lg mt-1">{v}</div>
-            </div>
+            ["TENANTS ONLINE", "12", true],
+            ["ACTIVE OPS", "47", true],
+            ["AI INVOCATIONS / DAY", "2,184", false],
+            ["UPTIME", "99.97%", false],
+          ].map(([k, v, live]) => (
+            <motion.div
+              key={k as string}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+            >
+              <div className="text-white/30 flex items-center gap-1.5">
+                {live ? <span className="h-1 w-1 rounded-full bg-[hsl(var(--ops-accent))] ops-pulse" /> : null}
+                {k}
+              </div>
+              <div className="ops-accent text-lg mt-1 ops-display">{v}</div>
+            </motion.div>
           ))}
         </div>
       </section>
