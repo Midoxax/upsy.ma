@@ -118,6 +118,15 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   const handleAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setMobileOpen(false);
@@ -126,15 +135,13 @@ const NavBar = () => {
   };
 
   return (
-    <header className={`uos-nav${scrolled ? " is-scrolled" : ""}`}>
+    <header className={`uos-nav${scrolled ? " is-scrolled" : ""}${mobileOpen ? " is-mobile-open" : ""}`}>
       <div className="uos-nav-inner">
-        {/* Brand */}
         <a href="#" className="uos-brand" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
           <span className="uos-brand-mark"><span className="uos-brand-dot" /></span>
           <span className="uos-brand-name">UPSY<span className="uos-brand-os">/OS</span></span>
         </a>
 
-        {/* Desktop links */}
         <nav className="uos-nav-links">
           {NAV_LINKS.map((l) => (
             <a key={l.href} href={l.href} onClick={(e) => handleAnchor(e, l.href)}>
@@ -143,34 +150,55 @@ const NavBar = () => {
           ))}
         </nav>
 
-        {/* Desktop CTAs */}
         <div className="uos-nav-cta">
           <Link to="/signup" className="uos-btn-ghost uos-btn-sm">Book a Call</Link>
           <Link to="/signup" className="uos-btn-primary uos-btn-sm">Start Free</Link>
         </div>
 
-        {/* Mobile toggle */}
         <button
           className={`uos-nav-toggle${mobileOpen ? " is-open" : ""}`}
           onClick={() => setMobileOpen((p) => !p)}
           aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
         >
           <span /><span /><span />
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile slide-out overlay */}
+      <div
+        className={`uos-nav-overlay${mobileOpen ? " is-open" : ""}`}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden
+      />
+      {/* Mobile slide-out panel */}
       <div className={`uos-nav-drawer${mobileOpen ? " is-open" : ""}`}>
+        <div className="uos-nav-drawer-head">
+          <span className="uos-mono uos-nav-drawer-label">NAVIGATION</span>
+          <button
+            className="uos-nav-drawer-close"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          >
+            <span /><span />
+          </button>
+        </div>
         <nav className="uos-nav-drawer-links">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} onClick={(e) => handleAnchor(e, l.href)}>
+          {NAV_LINKS.map((l, i) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={(e) => handleAnchor(e, l.href)}
+              style={{ transitionDelay: mobileOpen ? `${80 + i * 40}ms` : "0ms" }}
+            >
+              <span className="uos-mono uos-nav-drawer-num">{String(i + 1).padStart(2, "0")}</span>
               {l.label}
             </a>
           ))}
         </nav>
         <div className="uos-nav-drawer-cta">
-          <Link to="/signup" className="uos-btn-ghost uos-btn-lg">Book a Call</Link>
-          <Link to="/signup" className="uos-btn-primary uos-btn-lg">Start Free</Link>
+          <Link to="/signup" className="uos-btn-ghost">Book a Call</Link>
+          <Link to="/signup" className="uos-btn-primary">Start Free</Link>
         </div>
       </div>
     </header>
