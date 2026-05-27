@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, Activity, Brain, Zap, Shield, Radio } from "lucide-react";
+import { ArrowUpRight, Activity, Brain, Zap, Shield, Radio, Database, Cpu, Layers, Lock } from "lucide-react";
 import "./preview.css";
 
 /**
@@ -25,16 +25,56 @@ export const Preview = () => {
   return (
     <div className="upsy-os">
       <NeuralField />
+      <CursorSpotlight />
+      <SectionRail />
       <NavBar />
       <Hero />
+      <SignalFeed />
       <PositioningReveal />
       <EcosystemMap />
+      <ArchitectureStack />
       <ThreeModes />
       <CopilotShowcase />
+      <AccessTiers />
       <TrustSignals />
       <FinalCTA />
       <FooterStrip />
     </div>
+  );
+};
+
+/* ─── Cursor spotlight (mouse-tracked radial glow) ──────────────────────── */
+const CursorSpotlight = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const onMove = (e: MouseEvent) => {
+      el.style.setProperty("--mx", `${e.clientX}px`);
+      el.style.setProperty("--my", `${e.clientY}px`);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+  return <div ref={ref} className="uos-spotlight" aria-hidden />;
+};
+
+/* ─── Left section rail (scroll progress index) ─────────────────────────── */
+const RAIL = ["HERO", "SIGNAL", "POSITION", "ECOSYSTEM", "ARCH", "MODES", "COPILOT", "TIERS", "TRUST", "ENTER"];
+const SectionRail = () => {
+  const { scrollYProgress } = useScroll();
+  const h = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  return (
+    <aside className="uos-rail" aria-hidden>
+      <div className="uos-rail-track"><motion.div className="uos-rail-fill" style={{ height: h }} /></div>
+      <ul className="uos-rail-list">
+        {RAIL.map((l, i) => (
+          <li key={l}>
+            <span className="uos-mono uos-rail-idx">{String(i + 1).padStart(2, "0")}</span>
+            <span className="uos-mono uos-rail-lbl">{l}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
   );
 };
 
