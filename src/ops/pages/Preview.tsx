@@ -97,27 +97,85 @@ const NeuralField = () => {
   );
 };
 
-/* ─── Nav ───────────────────────────────────────────────────────────────── */
-const NavBar = () => (
-  <header className="uos-nav">
-    <div className="uos-nav-inner">
-      <div className="uos-brand">
-        <span className="uos-brand-mark"><span className="uos-brand-dot" /></span>
-        <span className="uos-brand-name">UPSY<span className="uos-brand-os">/OS</span></span>
+/* ─── Sticky global header ──────────────────────────────────────────────── */
+const NAV_LINKS = [
+  { label: "Système", href: "#positioning" },
+  { label: "Écosystème", href: "#ecosystem" },
+  { label: "Modes", href: "#modes" },
+  { label: "Copilote", href: "#copilot" },
+  { label: "Tarifs", href: "#tiers" },
+  { label: "Témoignages", href: "#voices" },
+];
+
+const NavBar = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <header className={`uos-nav${scrolled ? " is-scrolled" : ""}`}>
+      <div className="uos-nav-inner">
+        {/* Brand */}
+        <a href="#" className="uos-brand" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+          <span className="uos-brand-mark"><span className="uos-brand-dot" /></span>
+          <span className="uos-brand-name">UPSY<span className="uos-brand-os">/OS</span></span>
+        </a>
+
+        {/* Desktop links */}
+        <nav className="uos-nav-links">
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} href={l.href} onClick={(e) => handleAnchor(e, l.href)}>
+              {l.label}
+            </a>
+          ))}
+        </nav>
+
+        {/* Desktop CTAs */}
+        <div className="uos-nav-cta">
+          <Link to="/signup" className="uos-btn-ghost uos-btn-sm">Book a Call</Link>
+          <Link to="/signup" className="uos-btn-primary uos-btn-sm">Start Free</Link>
+        </div>
+
+        {/* Mobile toggle */}
+        <button
+          className={`uos-nav-toggle${mobileOpen ? " is-open" : ""}`}
+          onClick={() => setMobileOpen((p) => !p)}
+          aria-label="Toggle menu"
+        >
+          <span /><span /><span />
+        </button>
       </div>
-      <nav className="uos-nav-links">
-        <a href="#positioning">Système</a>
-        <a href="#ecosystem">Écosystème</a>
-        <a href="#modes">Modes</a>
-        <a href="#copilot">Copilote</a>
-      </nav>
-      <div className="uos-nav-cta">
-        <span className="uos-nav-status"><span className="uos-status-dot" /> SYS ONLINE</span>
-        <Link to="/ops" className="uos-btn-ghost">Accéder</Link>
+
+      {/* Mobile drawer */}
+      <div className={`uos-nav-drawer${mobileOpen ? " is-open" : ""}`}>
+        <nav className="uos-nav-drawer-links">
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} href={l.href} onClick={(e) => handleAnchor(e, l.href)}>
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <div className="uos-nav-drawer-cta">
+          <Link to="/signup" className="uos-btn-ghost uos-btn-lg">Book a Call</Link>
+          <Link to="/signup" className="uos-btn-primary uos-btn-lg">Start Free</Link>
+        </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 /* ─── Section 1: Hero ───────────────────────────────────────────────────── */
 const Hero = () => (
@@ -588,7 +646,7 @@ const VOICES = [
   { q: "Le copilote ne décide rien. Il pré-mâche. Mes psychologues récupèrent leur soirée. Personne ne se sent remplacé.", who: "Responsable de cellule", org: "Institution sportive" },
 ];
 const VoicesOfSystem = () => (
-  <section className="uos-section">
+  <section id="voices" className="uos-section">
     <div className="uos-section-head">
       <span className="uos-mono uos-section-k">/ VOIX DU SYSTÈME</span>
       <h2>Ceux qui l'opèrent en parlent.</h2>
@@ -730,7 +788,7 @@ const TIERS = [
     feat: ["Intelligence Mode", "Workspaces illimités", "Données souveraines", "Intégrations sur mesure", "Account director"] },
 ];
 const AccessTiers = () => (
-  <section className="uos-section">
+  <section id="tiers" className="uos-section">
     <div className="uos-section-head">
       <span className="uos-mono uos-section-k">/ ACCÈS</span>
       <h2>Trois niveaux d'engagement.</h2>
