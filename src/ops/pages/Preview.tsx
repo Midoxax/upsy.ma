@@ -646,7 +646,7 @@ const VOICES = [
   { q: "Le copilote ne décide rien. Il pré-mâche. Mes psychologues récupèrent leur soirée. Personne ne se sent remplacé.", who: "Responsable de cellule", org: "Institution sportive" },
 ];
 const VoicesOfSystem = () => (
-  <section className="uos-section">
+  <section id="voices" className="uos-section">
     <div className="uos-section-head">
       <span className="uos-mono uos-section-k">/ VOIX DU SYSTÈME</span>
       <h2>Ceux qui l'opèrent en parlent.</h2>
@@ -788,7 +788,7 @@ const TIERS = [
     feat: ["Intelligence Mode", "Workspaces illimités", "Données souveraines", "Intégrations sur mesure", "Account director"] },
 ];
 const AccessTiers = () => (
-  <section className="uos-section">
+  <section id="tiers" className="uos-section">
     <div className="uos-section-head">
       <span className="uos-mono uos-section-k">/ ACCÈS</span>
       <h2>Trois niveaux d'engagement.</h2>
