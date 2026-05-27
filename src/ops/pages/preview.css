@@ -292,6 +292,9 @@
   font-family: "Sora", sans-serif; font-weight: 200; font-size: clamp(44px, 6vw, 84px);
   line-height: 1; letter-spacing: -0.03em; margin: 24px 0 0;
 }
+@media (max-width: 480px) {
+  .uos-hero-title { font-size: clamp(34px, 9vw, 44px); line-height: 1.05; }
+}
 .uos-hero-sub {
   font-family: "Sora", sans-serif; font-weight: 300; color: var(--text-dim);
   font-size: clamp(15px, 1.4vw, 18px); margin-top: 24px; max-width: 480px; letter-spacing: 0;
@@ -595,6 +598,15 @@
 .uos-rail-list li { display: flex; gap: 8px; align-items: baseline; font-size: 8.5px; color: var(--text-faint); }
 .uos-rail-idx { color: var(--accent); opacity: 0.5; }
 .uos-rail-lbl { letter-spacing: 0.2em; }
+.uos-rail-list li {
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+.uos-rail-list li.is-active { color: var(--text); }
+.uos-rail-list li.is-active .uos-rail-idx { opacity: 1; }
+.uos-rail-list li.is-active .uos-rail-lbl {
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent-glow);
+}
 
 /* ─── Signal feed ─── */
 .uos-signal { position: relative; z-index: 2; padding: 40px 32px 80px; }
