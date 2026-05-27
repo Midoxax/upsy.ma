@@ -496,3 +496,105 @@
 .uos-tier-list li { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text); font-family: "Sora", sans-serif; font-weight: 300; }
 .uos-tier-tick { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--accent); position: relative; flex-shrink: 0; }
 .uos-tier-tick::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+/* ─── Manifesto marquee ─── */
+.uos-manifesto {
+  position: relative; z-index: 2;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 0; overflow: hidden;
+  background: linear-gradient(180deg, transparent, rgba(0,212,255,0.025), transparent);
+}
+.uos-manifesto-track {
+  display: flex; gap: 60px; white-space: nowrap;
+  animation: uos-marquee 48s linear infinite;
+  font-family: "Sora", sans-serif; font-weight: 300;
+  font-size: 24px; letter-spacing: 0.06em;
+  color: var(--text);
+}
+.uos-manifesto-item { display: inline-flex; align-items: center; gap: 28px; }
+.uos-manifesto-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 12px var(--accent);
+}
+@keyframes uos-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── Outcomes ─── */
+.uos-outcomes-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+  border-radius: 4px; overflow: hidden;
+}
+@media (max-width: 900px) { .uos-outcomes-grid { grid-template-columns: repeat(2, 1fr); } }
+.uos-outcome {
+  background: var(--bg); padding: 36px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: background 0.4s ease;
+}
+.uos-outcome:hover { background: var(--bg-elev); }
+.uos-outcome-v {
+  font-family: "Sora", sans-serif; font-weight: 200;
+  font-size: clamp(48px, 5.5vw, 72px); line-height: 1;
+  color: var(--accent); letter-spacing: -0.03em;
+  text-shadow: 0 0 24px rgba(0,212,255,0.25);
+}
+.uos-outcome-k { font-size: 10px; color: var(--text-dim); letter-spacing: 0.14em; }
+.uos-outcome-note { font-family: "Sora", sans-serif; font-size: 13px; color: var(--text-faint); font-weight: 300; }
+
+/* ─── Voices ─── */
+.uos-voices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 900px) { .uos-voices { grid-template-columns: 1fr; } }
+.uos-voice {
+  margin: 0; padding: 28px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; display: flex; flex-direction: column; gap: 18px;
+  position: relative; transition: border-color 0.3s, transform 0.3s;
+}
+.uos-voice:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.uos-voice-icon { color: var(--accent); opacity: 0.6; }
+.uos-voice blockquote {
+  margin: 0; font-family: "Sora", sans-serif; font-weight: 300;
+  font-size: 17px; line-height: 1.55; color: var(--text); letter-spacing: -0.005em;
+}
+.uos-voice figcaption {
+  display: flex; flex-direction: column; gap: 4px;
+  border-top: 1px solid var(--border); padding-top: 16px; margin-top: auto;
+}
+.uos-voice-who { font-family: "Sora", sans-serif; font-size: 13px; color: var(--text); font-weight: 400; }
+.uos-voice-org { font-size: 10px; color: var(--text-dim); letter-spacing: 0.12em; }
+
+/* ─── Horizon roadmap ─── */
+.uos-horizon {
+  position: relative; display: grid;
+  grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 40px;
+}
+@media (max-width: 900px) { .uos-horizon { grid-template-columns: 1fr; } }
+.uos-horizon-line {
+  position: absolute; top: 60px; left: 4%; right: 4%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.35;
+}
+@media (max-width: 900px) { .uos-horizon-line { display: none; } }
+.uos-horizon-step {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 0 4px; position: relative;
+}
+.uos-horizon-node {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--border-strong); background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent); margin-bottom: 12px;
+  box-shadow: 0 0 0 6px var(--bg), 0 0 24px rgba(0,212,255,0.18);
+  position: relative; z-index: 1;
+}
+.uos-horizon-tag { font-size: 10px; color: var(--accent); letter-spacing: 0.14em; }
+.uos-horizon-label {
+  font-family: "Sora", sans-serif; font-weight: 400;
+  font-size: 18px; color: var(--text); margin: 0; letter-spacing: -0.01em;
+}
+.uos-horizon-desc {
+  font-family: "Sora", sans-serif; font-weight: 300; font-size: 13px;
+  color: var(--text-dim); line-height: 1.5; margin: 0;
+}
