@@ -63,18 +63,46 @@ const CursorSpotlight = () => {
 };
 
 /* ─── Left section rail (scroll progress index) ─────────────────────────── */
-const RAIL = ["HERO", "SIGNAL", "POSITION", "ECOSYSTEM", "ARCH", "MODES", "COPILOT", "TIERS", "TRUST", "ENTER"];
+const RAIL: { label: string; sel: string }[] = [
+  { label: "HERO",      sel: ".uos-hero" },
+  { label: "SIGNAL",    sel: ".uos-signal" },
+  { label: "POSITION",  sel: "#positioning" },
+  { label: "ECOSYSTEM", sel: "#ecosystem" },
+  { label: "ARCH",      sel: ".uos-stack" },
+  { label: "MODES",     sel: "#modes" },
+  { label: "COPILOT",   sel: "#copilot" },
+  { label: "TIERS",     sel: "#tiers" },
+  { label: "TRUST",     sel: ".uos-trust" },
+  { label: "ENTER",     sel: ".uos-final" },
+];
 const SectionRail = () => {
   const { scrollYProgress } = useScroll();
   const h = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      let idx = 0;
+      RAIL.forEach((r, i) => {
+        const el = document.querySelector(r.sel);
+        if (!el) return;
+        const top = (el as HTMLElement).getBoundingClientRect().top;
+        if (top < vh * 0.5) idx = i;
+      });
+      setActive(idx);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return (
     <aside className="uos-rail" aria-hidden>
       <div className="uos-rail-track"><motion.div className="uos-rail-fill" style={{ height: h }} /></div>
       <ul className="uos-rail-list">
-        {RAIL.map((l, i) => (
-          <li key={l}>
+        {RAIL.map((r, i) => (
+          <li key={r.label} className={i === active ? "is-active" : ""}>
             <span className="uos-mono uos-rail-idx">{String(i + 1).padStart(2, "0")}</span>
-            <span className="uos-mono uos-rail-lbl">{l}</span>
+            <span className="uos-mono uos-rail-lbl">{r.label}</span>
           </li>
         ))}
       </ul>
