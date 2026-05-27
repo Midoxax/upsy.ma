@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useOpsWorkspaces, useOpsEvents, useOpsWorkspaceTasks } from "../hooks/useOps";
 import { motion, AnimatePresence } from "framer-motion";
 import StateBadge from "../components/StateBadge";
-import { Activity, AlertTriangle, CheckCircle2, Clock, Sparkles, Zap, TrendingUp, Shield } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, Clock, Zap, TrendingUp, Shield } from "lucide-react";
 import gsap from "gsap";
+import { QuickPrompt } from "../components/director/QuickPrompt";
 
 export const Command = () => {
   const { workspace: slug } = useParams<{ workspace: string }>();
@@ -197,9 +198,7 @@ export const Command = () => {
       </div>
 
       {/* Pinned Director quick-prompt */}
-      <Link to={`/ops/${slug}/director`} className="ops-fab">
-        <Sparkles className="h-4 w-4" /> Ask Director
-      </Link>
+      <QuickPrompt workspaceId={current?.id} workspaceSlug={slug} />
     </div>
   );
 };
