@@ -151,8 +151,8 @@ const NavBar = () => {
         </nav>
 
         <div className="uos-nav-cta">
-          <Link to="/signup" className="uos-btn-ghost uos-btn-sm">Book a Call</Link>
-          <Link to="/signup" className="uos-btn-primary uos-btn-sm">Start Free</Link>
+          <Link to="/contact" className="uos-btn-ghost uos-btn-sm">Book a Call</Link>
+          <Link to="/auth" className="uos-btn-primary uos-btn-sm">Start Free</Link>
         </div>
 
         <button
@@ -197,8 +197,8 @@ const NavBar = () => {
           ))}
         </nav>
         <div className="uos-nav-drawer-cta">
-          <Link to="/signup" className="uos-btn-ghost">Book a Call</Link>
-          <Link to="/signup" className="uos-btn-primary">Start Free</Link>
+          <Link to="/contact" className="uos-btn-ghost">Book a Call</Link>
+          <Link to="/auth" className="uos-btn-primary">Start Free</Link>
         </div>
       </div>
     </header>
@@ -238,10 +238,10 @@ const Hero = () => (
           transition={{ duration: 0.8, delay: 0.75 }}
           className="uos-hero-ctas"
         >
-          <button className="uos-btn-primary">
+          <Link to="/auth" className="uos-btn-primary">
             Entrer dans l'écosystème <ArrowUpRight size={14} />
-          </button>
-          <Link to="/ops" className="uos-btn-ghost">Explorer le système</Link>
+          </Link>
+          <Link to="/contact" className="uos-btn-ghost">Réserver un appel</Link>
         </motion.div>
 
         <motion.div
@@ -573,8 +573,8 @@ const FinalCTA = () => (
       Rejoignez l'infrastructure.
     </motion.h2>
     <div className="uos-final-ctas">
-      <button className="uos-btn-primary uos-btn-lg">Demander une démo <ArrowUpRight size={14} /></button>
-      <Link to="/ops" className="uos-btn-ghost uos-btn-lg">Explorer UPSY</Link>
+      <Link to="/contact" className="uos-btn-primary uos-btn-lg">Demander une démo <ArrowUpRight size={14} /></Link>
+      <Link to="/auth" className="uos-btn-ghost uos-btn-lg">Créer un compte</Link>
     </div>
   </section>
 );
@@ -892,9 +892,9 @@ const AccessTiers = () => (
           <ul className="uos-tier-list">
             {t.feat.map(f => <li key={f}><span className="uos-tier-tick" />{f}</li>)}
           </ul>
-          <button className={t.featured ? "uos-btn-primary" : "uos-btn-ghost"}>
+          <Link to="/contact" className={t.featured ? "uos-btn-primary" : "uos-btn-ghost"}>
             Demander l'accès <ArrowUpRight size={12} />
-          </button>
+          </Link>
         </motion.div>
       ))}
     </div>
