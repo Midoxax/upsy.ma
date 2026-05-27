@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, Activity, Brain, Zap, Shield, Radio } from "lucide-react";
+import { ArrowUpRight, Activity, Brain, Zap, Shield, Radio, Database, Cpu, Layers, Lock } from "lucide-react";
 import "./preview.css";
 
 /**
@@ -25,16 +25,56 @@ export const Preview = () => {
   return (
     <div className="upsy-os">
       <NeuralField />
+      <CursorSpotlight />
+      <SectionRail />
       <NavBar />
       <Hero />
+      <SignalFeed />
       <PositioningReveal />
       <EcosystemMap />
+      <ArchitectureStack />
       <ThreeModes />
       <CopilotShowcase />
+      <AccessTiers />
       <TrustSignals />
       <FinalCTA />
       <FooterStrip />
     </div>
+  );
+};
+
+/* ─── Cursor spotlight (mouse-tracked radial glow) ──────────────────────── */
+const CursorSpotlight = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const onMove = (e: MouseEvent) => {
+      el.style.setProperty("--mx", `${e.clientX}px`);
+      el.style.setProperty("--my", `${e.clientY}px`);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+  return <div ref={ref} className="uos-spotlight" aria-hidden />;
+};
+
+/* ─── Left section rail (scroll progress index) ─────────────────────────── */
+const RAIL = ["HERO", "SIGNAL", "POSITION", "ECOSYSTEM", "ARCH", "MODES", "COPILOT", "TIERS", "TRUST", "ENTER"];
+const SectionRail = () => {
+  const { scrollYProgress } = useScroll();
+  const h = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  return (
+    <aside className="uos-rail" aria-hidden>
+      <div className="uos-rail-track"><motion.div className="uos-rail-fill" style={{ height: h }} /></div>
+      <ul className="uos-rail-list">
+        {RAIL.map((l, i) => (
+          <li key={l}>
+            <span className="uos-mono uos-rail-idx">{String(i + 1).padStart(2, "0")}</span>
+            <span className="uos-mono uos-rail-lbl">{l}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
   );
 };
 
@@ -457,3 +497,120 @@ const FooterStrip = () => (
 );
 
 export default Preview;
+
+/* ─── Signal feed (terminal stream between hero and positioning) ────────── */
+const FEED_LINES = [
+  ["02:14:08", "LSSPM", "session.completed", "alliance +3"],
+  ["02:14:11", "UFC-GYM", "biofeedback.sync", "HRV nominal"],
+  ["02:14:14", "BEING", "intake.received", "triage queued"],
+  ["02:14:18", "UIC", "cohort.scored", "GAD-7 cohort #14"],
+  ["02:14:22", "LSSPM", "risk.flag", "case #4827 → escalate"],
+  ["02:14:25", "OS", "router.ok", "p95 84ms · 12 ws"],
+  ["02:14:29", "CLINIC", "note.draft", "ai · revisable"],
+  ["02:14:33", "OS", "vault.seal", "session #18420 sealed"],
+];
+const SignalFeed = () => (
+  <section className="uos-signal" aria-label="Live signal feed">
+    <div className="uos-signal-inner">
+      <div className="uos-signal-head">
+        <span className="uos-mono">/ LIVE SIGNAL · UPSY/OS BUS</span>
+        <span className="uos-mono uos-signal-rate">~ 2,184 EVT / 24H</span>
+      </div>
+      <div className="uos-signal-stream">
+        <div className="uos-signal-track">
+          {[...FEED_LINES, ...FEED_LINES].map((row, i) => (
+            <div key={i} className="uos-signal-row">
+              <span className="uos-mono uos-sig-t">{row[0]}</span>
+              <span className="uos-mono uos-sig-w">{row[1]}</span>
+              <span className="uos-mono uos-sig-e">{row[2]}</span>
+              <span className="uos-mono uos-sig-v">{row[3]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+/* ─── Architecture stack (4 protocol layers) ────────────────────────────── */
+const STACK = [
+  { tag: "L4", label: "GOVERNANCE", desc: "Tenants, rôles, conformité 09-08, audit",
+    items: ["RLS strict", "Audit ledger", "Sceau de session"], icon: Lock },
+  { tag: "L3", label: "INTELLIGENCE", desc: "Copilote, scoring, prévisions, signaux",
+    items: ["Gemini 2.5", "GPT-5", "Modèles in-house"], icon: Cpu },
+  { tag: "L2", label: "OPERATIONS", desc: "Tâches, routage, SLA, escalades, événements",
+    items: ["Bus temps-réel", "Workflows SOP", "Webhooks"], icon: Layers },
+  { tag: "L1", label: "DATA", desc: "Sessions, dossiers, biofeedback, cohortes",
+    items: ["Postgres chiffré", "Vault", "Object storage"], icon: Database },
+];
+const ArchitectureStack = () => (
+  <section className="uos-section">
+    <div className="uos-section-head">
+      <span className="uos-mono uos-section-k">/ ARCHITECTURE</span>
+      <h2>Quatre couches. Aucune ambiguïté.</h2>
+    </div>
+    <div className="uos-stack">
+      {STACK.map((s, i) => (
+        <motion.div key={s.label} className="uos-stack-row"
+          initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ delay: i * 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+          <div className="uos-stack-tag">
+            <span className="uos-mono">{s.tag}</span>
+            <s.icon size={14} />
+          </div>
+          <div className="uos-stack-body">
+            <div className="uos-stack-head">
+              <h3>{s.label}</h3>
+              <p>{s.desc}</p>
+            </div>
+            <div className="uos-stack-items">
+              {s.items.map(it => <span key={it} className="uos-stack-chip uos-mono">{it}</span>)}
+            </div>
+          </div>
+          <div className="uos-stack-bar"><span style={{ width: `${(STACK.length - i) * 22 + 12}%` }} /></div>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
+
+/* ─── Access tiers ──────────────────────────────────────────────────────── */
+const TIERS = [
+  { name: "STANDARD", price: "Sur invitation", who: "Praticiens indépendants",
+    feat: ["Focus Mode", "Copilote clinique", "1 workspace", "Support email"] },
+  { name: "PRO", price: "Contrat annuel", who: "Cliniques & cabinets",
+    feat: ["Operations Mode", "Multi-praticiens", "5 workspaces", "Routage & SLA", "SSO"], featured: true },
+  { name: "SOVEREIGN", price: "Sur mesure", who: "Institutions & écosystèmes",
+    feat: ["Intelligence Mode", "Workspaces illimités", "Données souveraines", "Intégrations sur mesure", "Account director"] },
+];
+const AccessTiers = () => (
+  <section className="uos-section">
+    <div className="uos-section-head">
+      <span className="uos-mono uos-section-k">/ ACCÈS</span>
+      <h2>Trois niveaux d'engagement.</h2>
+    </div>
+    <div className="uos-tiers">
+      {TIERS.map((t, i) => (
+        <motion.div key={t.name}
+          initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ delay: i * 0.1, duration: 0.7 }}
+          className={`uos-tier ${t.featured ? "is-featured" : ""}`}>
+          {t.featured && <span className="uos-mono uos-tier-badge">RECOMMANDÉ</span>}
+          <div className="uos-tier-head">
+            <span className="uos-mono uos-tier-name">{t.name}</span>
+            <span className="uos-mono uos-tier-price">{t.price}</span>
+          </div>
+          <p className="uos-tier-who">{t.who}</p>
+          <ul className="uos-tier-list">
+            {t.feat.map(f => <li key={f}><span className="uos-tier-tick" />{f}</li>)}
+          </ul>
+          <button className={t.featured ? "uos-btn-primary" : "uos-btn-ghost"}>
+            Demander l'accès <ArrowUpRight size={12} />
+          </button>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
