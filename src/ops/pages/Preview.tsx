@@ -624,7 +624,7 @@ const FooterStrip = () => (
         <span className="uos-mono uos-foot-col-title">LÉGAL</span>
         <Link to="/privacy" className="uos-foot-link">Politique de confidentialité</Link>
         <Link to="/terms" className="uos-foot-link">Conditions d'utilisation</Link>
-        <Link to="/cookies" className="uos-foot-link">Cookies</Link>
+        <Link to="/legal" className="uos-foot-link">Mentions légales</Link>
       </div>
     </div>
 
