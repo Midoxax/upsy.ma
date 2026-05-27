@@ -11,6 +11,7 @@ const EventDetail = lazy(() => import("./pages/EventDetail"));
 const NewEvent = lazy(() => import("./pages/NewEvent"));
 const Tasks = lazy(() => import("./pages/Tasks"));
 const Director = lazy(() => import("./pages/Director"));
+const Preview = lazy(() => import("./pages/Preview"));
 
 const Fallback = () => (
   <div className="p-10 text-white/40 ops-mono text-xs">LOADING…</div>
@@ -20,6 +21,7 @@ export const OpsApp = () => (
   <Suspense fallback={<Fallback />}>
     <Routes>
       <Route index element={<OpsLanding />} />
+      <Route path="preview" element={<Preview />} />
       <Route path=":workspace" element={<ProtectedRoute><OpsLayout /></ProtectedRoute>}>
         <Route index element={<Navigate to="command" replace />} />
         <Route path="command" element={<Command />} />
