@@ -2722,7 +2722,7 @@ export type Database = {
           org_id: string
           sentiment_text?: string | null
           stress_level: number
-          submission_token: string
+          submission_token?: string
           submitted_at?: string
           survey_id: string
           workload_level: number
