@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Sparkles, X } from "lucide-react";
 import { FilterState } from "@/types/psychologist";
 import { usePsychologists } from "@/hooks/usePsychologists";
 import { PsychologistFilters } from "@/components/psychologists/PsychologistFilters";
@@ -33,6 +35,10 @@ import SEOHead from "@/components/SEOHead";
 const Psychologists = () => {
   const { t } = useLocale();
   const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pillar = searchParams.get("pillar");
+  const source = searchParams.get("source");
+  const pillarQ = searchParams.get("q") || "";
   const [filters, setFilters] = useState<FilterState>({
     specialties: [],
     languages: [],
@@ -46,6 +52,43 @@ const Psychologists = () => {
     maxPrice: 2000,
   });
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (pillarQ && !searchQuery) setSearchQuery(pillarQ);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pillarQ]);
+
+  const pillarBanner = useMemo(() => {
+    if (!pillar) return null;
+    const map: Record<string, { title: string; body: string }> = {
+      focus: {
+        title: "Matched for your Focus results",
+        body: "Showing psychologists trained in attention protocols, performance coaching, and ADHD support.",
+      },
+      regulation: {
+        title: "Matched for your Emotional Regulation results",
+        body: "Showing psychologists trained in anxiety, CBT, ACT, and rumination-focused work.",
+      },
+      recovery: {
+        title: "Matched for your Recovery & Energy results",
+        body: "Showing psychologists trained in CBT-I for sleep, burnout recovery, and nervous-system regulation.",
+      },
+      meaning: {
+        title: "Matched for your Meaning & Connection results",
+        body: "Showing psychologists trained in values-based (ACT), relational, and existential work.",
+      },
+    };
+    return map[pillar] || null;
+  }, [pillar]);
+
+  const clearPillar = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("pillar");
+    next.delete("q");
+    next.delete("source");
+    setSearchParams(next, { replace: true });
+    setSearchQuery("");
+  };
 
   const { data, isLoading } = usePsychologists({ filters, page, pageSize: 12 });
   const totalPages = data ? Math.ceil(data.total / data.pageSize) : 0;
@@ -267,6 +310,27 @@ const Psychologists = () => {
 
             {/* Psychologists Grid */}
             <div className="space-y-6">
+              {pillarBanner && (
+                <div className="glass-card p-5 md:p-6 border border-u-gold/30" role="status" aria-live="polite">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: 'rgba(255,179,0,0.12)', border: '1px solid rgba(255,179,0,0.35)' }}>
+                      <Sparkles className="w-5 h-5 text-u-gold" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-u-gold mb-1">
+                        {source === "free-score" ? "From your Mental Performance Score" : "Matched view"}
+                      </div>
+                      <h3 className="text-h4 mb-1">{pillarBanner.title}</h3>
+                      <p className="text-sm text-u-gray-300">{pillarBanner.body}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={clearPillar} aria-label="Clear pillar filter">
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {/* Results Count */}
               {data && (
                 <div className="flex items-center justify-between">

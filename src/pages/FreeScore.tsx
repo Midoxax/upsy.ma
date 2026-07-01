@@ -150,6 +150,14 @@ export default function FreeScore() {
       meaning: { en: "Meaning & connection", fr: "Sens & connexion", ar: "المعنى والتواصل" },
     };
     const weakest = (Object.entries(pillarScores) as [Pillar, number][]).sort((a, b) => a[1] - b[1])[0];
+    const pillarQuery: Record<Pillar, string> = {
+      focus: "attention",
+      regulation: "anxiety",
+      recovery: "sleep",
+      meaning: "relationships",
+    };
+    const matchHref = (p: Pillar) => `/psychologists?pillar=${p}&q=${encodeURIComponent(pillarQuery[p])}&source=free-score`;
+    const ctaMatchLabel = lang === "fr" ? "Voir vos psychologues correspondants" : lang === "ar" ? "شاهد الأخصائيين المناسبين" : "See your matched psychologists";
     const recoCopy: Record<Pillar, Record<"en" | "fr" | "ar", string>> = {
       focus: {
         en: "Your weakest pillar is Focus. A performance psychologist can build you a daily attention protocol in 4–6 sessions.",
@@ -197,13 +205,28 @@ export default function FreeScore() {
                   {lang === "fr" ? "Répartition par pilier" : lang === "ar" ? "التفصيل حسب الركيزة" : "Breakdown by pillar"}
                 </h3>
                 {(Object.keys(pillarScores) as Pillar[]).map((p) => (
-                  <div key={p} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>{pillarLabels[p][lang]}</span>
+                  <Link
+                    key={p}
+                    to={matchHref(p)}
+                    onClick={() => captureEvent("free_score_pillar_click", { pillar: p, score: pillarScores[p] })}
+                    className="block space-y-1 rounded-md px-2 py-1 -mx-2 hover:bg-muted/40 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  >
+                    <div className="flex justify-between text-sm items-center">
+                      <span className="flex items-center gap-2">
+                        {pillarLabels[p][lang]}
+                        {p === weakest[0] && (
+                          <span className="text-[10px] uppercase tracking-widest text-primary">
+                            {lang === "fr" ? "Prioritaire" : lang === "ar" ? "أولوية" : "Priority"}
+                          </span>
+                        )}
+                      </span>
                       <span className="font-mono tabular-nums">{pillarScores[p]}</span>
                     </div>
                     <Progress value={pillarScores[p]} className="h-1.5" />
-                  </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {lang === "fr" ? "Voir les psychologues →" : lang === "ar" ? "عرض الأخصائيين ←" : "See matched psychologists →"}
+                    </div>
+                  </Link>
                 ))}
               </div>
 
@@ -216,12 +239,15 @@ export default function FreeScore() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button asChild size="lg">
-                  <Link to="/get-matched">{t.ctaMatch}</Link>
+                  <Link
+                    to={matchHref(weakest[0])}
+                    onClick={() => captureEvent("free_score_cta_match", { pillar: weakest[0], score })}
+                  >
+                    {ctaMatchLabel}
+                  </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link to="/psychologists">
-                    {lang === "fr" ? "Voir les psychologues" : lang === "ar" ? "عرض الأخصائيين" : "Browse psychologists"}
-                  </Link>
+                  <Link to="/get-matched">{t.ctaMatch}</Link>
                 </Button>
               </div>
 
