@@ -15,7 +15,7 @@ const UnderstandingDepression = () => {
 
   return (
     <>
-      <SEOHead path="/blog/understanding-depression" />
+      <SEOHead path="/blog/understanding-depression" title={"Understanding Depression — Signs, Causes & Paths to Recovery | U.Psy"} description={"Learn to recognize depression, why it happens, and the therapies that actually help — with guidance from accredited psychologists."} />
       <BlogArticleSchema
         title={t("blog.depression.title") || "Understanding Depression: Signs, Causes, and Hope"}
         description={t("blog.depression.intro") || "Depression is more than feeling sad. Learn about the signs, causes, and pathways to recovery."}
