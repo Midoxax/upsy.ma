@@ -105,8 +105,8 @@ html.lenis body {
     --text-body: 17px;
     --text-body-mobile: 16px;
     --text-small: 15px;
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-sans: 'Geist', 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-sans: 'Work Sans', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
 
     /* ── Light Liquid-Glass Tokens (Crystal Museum) ── */
     --glass-bg: rgba(255,255,255,0.40);
@@ -197,13 +197,14 @@ html.lenis body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "ss01", "cv11";
+    font-feature-settings: "ss01";
   }
 
-  /* Editorial serif headings site-wide — trust + warmth without going clinical */
+  /* Editorial luxe headings site-wide — Instrument Serif carries the magazine energy */
   h1, h2, h3, .text-display, .text-h1, .text-h2, .text-h3 {
     font-family: var(--font-display);
-    font-feature-settings: "ss01", "ss02", "ss04";
+    font-weight: 400;
+    letter-spacing: -0.02em;
   }
 
   /* Tabular numerals for price/data */
@@ -307,10 +308,10 @@ html.lenis body {
 
   /* ── Luxe italic accent (Fraunces) ── */
   .accent-italic {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Instrument Serif', Georgia, serif;
     font-style: italic;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    letter-spacing: -0.005em;
   }
 
   .glass-card:active {
@@ -646,4 +647,86 @@ html.lenis body {
     to { opacity: 1; transform: translateY(0); }
   }
   .mega-menu { animation: megaMenuSlide 300ms ease-out; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MARKETING NIGHT MODE — Deep-night default for public pages.
+   Scoped by `.marketing-night` wrapper on Index/marketing routes.
+   Preserves Maroon/Beige/Gold identity, just inverted for cinema.
+   ═══════════════════════════════════════════════════════════════ */
+.marketing-night {
+  --background: 348 40% 5%;          /* near-black burgundy */
+  --foreground: 36 30% 96%;          /* ivory text */
+  --card: 348 30% 8%;
+  --card-foreground: 36 30% 96%;
+  --popover: 348 30% 8%;
+  --popover-foreground: 36 30% 96%;
+  --primary: 45 96% 60%;             /* luminous gold */
+  --primary-foreground: 348 60% 8%;
+  --secondary: 350 76% 40%;          /* deep maroon */
+  --secondary-foreground: 36 30% 96%;
+  --muted: 348 20% 14%;
+  --muted-foreground: 36 15% 70%;
+  --accent: 350 76% 45%;
+  --accent-foreground: 36 30% 96%;
+  --border: 36 20% 22%;
+  --input: 348 20% 14%;
+  --ring: 45 96% 60%;
+  --upsy-maroon: 350 76% 40%;
+  --upsy-beige: 36 30% 96%;
+  --upsy-gold: 45 96% 60%;
+  --glass-bg: rgba(30, 8, 14, 0.55);
+  --glass-border-color: rgba(242, 183, 5, 0.14);
+  --glass-shadow: 0 32px 80px -20px rgba(0, 0, 0, 0.6);
+  --glass-shadow-hover: 0 40px 100px -20px rgba(242, 183, 5, 0.25), 0 0 0 1px rgba(242, 183, 5, 0.35);
+  --liquid-atmosphere:
+    radial-gradient(60% 55% at 15% 10%, rgba(163, 38, 58, 0.35), transparent 60%),
+    radial-gradient(50% 50% at 90% 95%, rgba(242, 183, 5, 0.12), transparent 60%),
+    radial-gradient(70% 60% at 50% 50%, rgba(30, 8, 14, 0.9), transparent 80%),
+    hsl(var(--background));
+  background: var(--liquid-atmosphere);
+  color: hsl(var(--foreground));
+}
+
+.marketing-night .glass-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(242, 183, 5, 0.12);
+  backdrop-filter: blur(20px) saturate(140%);
+}
+
+/* Grain overlay for cinematic depth */
+.marketing-night::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+}
+
+/* Aurora sweep — living background */
+@keyframes aurora-sweep {
+  0%, 100% { transform: translate3d(-10%, -5%, 0) rotate(-8deg); opacity: 0.55; }
+  50%      { transform: translate3d(10%, 5%, 0) rotate(8deg); opacity: 0.85; }
+}
+.marketing-night .aurora-layer {
+  position: absolute;
+  inset: -20% -10%;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 35% at 30% 40%, hsl(350 76% 45% / 0.45), transparent 60%),
+    radial-gradient(40% 30% at 70% 60%, hsl(45 96% 55% / 0.22), transparent 60%);
+  filter: blur(60px);
+  animation: aurora-sweep 22s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Gold text gradient utility for hero highlight words */
+.text-gold-gradient {
+  background: linear-gradient(120deg, hsl(45 96% 65%), hsl(38 96% 52%), hsl(45 96% 70%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

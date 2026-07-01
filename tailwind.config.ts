@@ -14,13 +14,14 @@ export default {
     },
     extend: {
       fontFamily: {
-        // Conversion type system
-        sans: ['Geist', 'Manrope', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Fraunces', 'Georgia', 'serif'],
-        fraunces: ['Fraunces', 'Georgia', 'serif'],
+        // Marketing type system — Editorial luxe
+        sans: ['Work Sans', 'Geist', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Instrument Serif', 'Georgia', 'serif'],
+        serif: ['Instrument Serif', 'Georgia', 'serif'],
         // Legacy aliases (kept so no existing class breaks)
-        outfit: ['Geist', 'Manrope', 'Inter', 'system-ui', 'sans-serif'],
-        manrope: ['Geist', 'Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        fraunces: ['Instrument Serif', 'Georgia', 'serif'],
+        outfit: ['Work Sans', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
+        manrope: ['Work Sans', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       colors: {

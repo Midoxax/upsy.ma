@@ -2,21 +2,17 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-// Conversion type system — Fraunces (editorial serif headings), Geist (UI/body), JetBrains Mono (numerals)
-import "@fontsource/fraunces/400.css";
-import "@fontsource/fraunces/500.css";
-import "@fontsource/fraunces/600.css";
-import "@fontsource/fraunces/700.css";
-import "@fontsource/fraunces/400-italic.css";
-import "@fontsource/fraunces/600-italic.css";
+// Marketing type system — Instrument Serif (editorial luxe headlines) + Work Sans (body/UI)
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource/work-sans/400.css";
+import "@fontsource/work-sans/500.css";
+import "@fontsource/work-sans/600.css";
+import "@fontsource/work-sans/700.css";
+// Geist kept for existing UI chrome fallback; Fraunces + Manrope removed.
 import "@fontsource/geist-sans/400.css";
 import "@fontsource/geist-sans/500.css";
 import "@fontsource/geist-sans/600.css";
-import "@fontsource/geist-sans/700.css";
-// Manrope retained as body fallback during migration
-import "@fontsource/manrope/400.css";
-import "@fontsource/manrope/500.css";
-import "@fontsource/manrope/700.css";
 import "@fontsource/jetbrains-mono/500.css";
 
 import { initPostHog } from "./lib/analytics/posthog";

@@ -62,7 +62,7 @@ const Index = () => {
   useIntentSignals();
 
   return (
-    <main className="flex-1">
+    <main className="flex-1 marketing-night">
       <SEOHead
         path="/"
         title="U.Psy — Book an accredited psychologist in Morocco"
