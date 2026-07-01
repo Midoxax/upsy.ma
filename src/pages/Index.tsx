@@ -10,6 +10,10 @@ import { Chapter } from "@/lib/motion";
 const TrustSection = lazy(() => import("@/components/home/TrustSection"));
 const FeaturedPsychologistsSection = lazy(() => import("@/components/home/FeaturedPsychologistsSection"));
 const HowItWorksSection = lazy(() => import("@/components/home/HowItWorksSection"));
+const WhyUsSection = lazy(() => import("@/components/home/WhyUsSection"));
+const ProgramsSection = lazy(() => import("@/components/home/ProgramsSection"));
+const FounderSection = lazy(() => import("@/components/home/FounderSection"));
+const OrganizationsSection = lazy(() => import("@/components/home/OrganizationsSection"));
 const HomePricingSection = lazy(() => import("@/components/home/HomePricingSection"));
 const TestimonialsSection = lazy(() => import("@/components/home/TestimonialsSection"));
 const HomeFAQSection = lazy(() => import("@/components/home/HomeFAQSection"));
@@ -36,8 +40,12 @@ const homeSequence = [
   { key: "trust", Component: TrustSection },
   { key: "featured-psychologists", Component: FeaturedPsychologistsSection },
   { key: "how-it-works", Component: HowItWorksSection },
+  { key: "why-us", Component: WhyUsSection },
+  { key: "programs", Component: ProgramsSection },
   { key: "pricing", Component: HomePricingSection },
+  { key: "organizations", Component: OrganizationsSection },
   { key: "testimonials", Component: TestimonialsSection },
+  { key: "founder", Component: FounderSection },
   { key: "faq", Component: HomeFAQSection },
   { key: "final-cta", Component: FinalCTASection },
 ];
@@ -65,8 +73,8 @@ const Index = () => {
     <main className="flex-1 marketing-night">
       <SEOHead
         path="/"
-        title="U.Psy — Book an accredited psychologist in Morocco"
-        description="Book a 50-min session with an accredited psychologist in Morocco. Video or in-person, in Arabic, French, or English. Free rebook if not the right fit."
+        title="U.Psy — Book an accredited psychologist. Worldwide, in any timezone."
+        description="Book a 50-min session with an accredited psychologist — video anywhere in the world, or in-person in select cities. Arabic, French, English, Spanish or Portuguese. Free rebook if not the right fit."
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Organization",
@@ -74,9 +82,9 @@ const Index = () => {
           url: "https://upsy.ma",
           logo: "https://upsy.ma/favicon.png",
           description:
-            "Book accredited psychologists in Morocco. Video or in-person sessions with a free rebook guarantee.",
+            "Book accredited psychologists worldwide. Video sessions in any timezone or in-person visits in select cities, with a free rebook guarantee.",
           founder: { "@type": "Person", name: "Mehdi Felji", jobTitle: "Founder" },
-          areaServed: "Morocco",
+          areaServed: "Worldwide",
         }}
       />
       <HeroSection />
