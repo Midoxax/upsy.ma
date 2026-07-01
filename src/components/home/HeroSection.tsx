@@ -431,7 +431,7 @@ const HeroSection = () => {
                 )}
               </p>
 
-              {/* CTAs — now includes Book a Call */}
+              {/* CTAs — one primary, one secondary. No third choice. */}
               <motion.div
                 className="flex flex-col sm:flex-row gap-3 justify-center pt-2"
                 initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
@@ -440,30 +440,25 @@ const HeroSection = () => {
               >
                 <MagneticButton strength={0.3}>
                   <Button variant="primary" size="lg" asChild className="gap-2 group h-12 px-7 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                    <Link to={variant.primaryCta.to}>
-                      {variant.primaryCta.label}
-                      {variant.primaryCta.icon}
+                    <Link to="/psychologists">
+                      Book your first session
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                     </Link>
                   </Button>
                 </MagneticButton>
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  asChild
-                  className="gap-2 h-12 px-6 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <Link to="/book-a-call">
-                    <Phone className="h-4 w-4" />
-                    {t("home.hero.bookACall")}
-                  </Link>
-                </Button>
                 <Button variant="ghost" size="lg" asChild className="h-12 px-6 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                  <Link to={variant.secondaryCta.to} className="inline-flex items-center gap-2">
-                    {variant.secondaryCta.icon}
-                    {variant.secondaryCta.label}
+                  <Link to="/get-matched" className="inline-flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    Take the 2-min match quiz
                   </Link>
                 </Button>
               </motion.div>
+
+              {/* Guarantee microcopy — the conversion trust lever */}
+              <p className="text-sm text-muted-foreground/80 -mt-2">
+                <ShieldCheck className="inline h-4 w-4 text-primary mr-1.5 -mt-0.5" />
+                Not the right fit? Free rebook with another psychologist — guaranteed.
+              </p>
 
               {/* Trust strip */}
               <div className="pt-10 mt-2 border-t border-border/60 max-w-3xl mx-auto">
