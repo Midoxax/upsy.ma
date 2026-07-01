@@ -3,7 +3,9 @@ import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { trackCTAClick } from "@/lib/analytics/gtm";
 import { Brain, Focus, Zap, Target, TrendingUp, ShieldCheck } from "lucide-react";
+
 
 const FAQ = [
   {
@@ -102,10 +104,24 @@ export default function MentalPerformance() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/free-score">Get your free Mental Performance Score</Link>
+                <Link
+                  to="/free-score"
+                  onClick={() =>
+                    trackCTAClick("Start Free", "hero", "/mental-performance", { cta_action: "score_start" })
+                  }
+                >
+                  Get your free Mental Performance Score
+                </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/psychologists">Book a performance psychologist</Link>
+                <Link
+                  to="/psychologists"
+                  onClick={() =>
+                    trackCTAClick("Book a Call", "hero", "/mental-performance", { cta_action: "book_intent" })
+                  }
+                >
+                  Book a performance psychologist
+                </Link>
               </Button>
             </div>
             <p className="mt-6 text-sm text-muted-foreground font-mono tabular-nums">
@@ -221,10 +237,24 @@ export default function MentalPerformance() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Button asChild size="lg">
-              <Link to="/free-score">Start free assessment</Link>
+              <Link
+                to="/free-score"
+                onClick={() =>
+                  trackCTAClick("Start Free", "bottom_cta", "/mental-performance", { cta_action: "score_start" })
+                }
+              >
+                Start free assessment
+              </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/psychologists">Meet the psychologists</Link>
+              <Link
+                to="/psychologists"
+                onClick={() =>
+                  trackCTAClick("Book a Call", "bottom_cta", "/mental-performance", { cta_action: "book_intent" })
+                }
+              >
+                Meet the psychologists
+              </Link>
             </Button>
           </div>
         </section>
