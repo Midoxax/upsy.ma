@@ -45,7 +45,7 @@ const HeroSection = () => {
             >
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-[11px] uppercase tracking-[0.25em] text-primary/90 font-medium">
-                Now booking · Casablanca · Rabat · Online
+                Now booking worldwide · Video & In-person
               </span>
             </motion.div>
 
@@ -66,8 +66,8 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.35 }}
               className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed"
             >
-              Book an accredited psychologist in under 2 minutes. Video or in-person, in Arabic, French, or English —
-              with a free rebook if the fit isn't right.
+              Book an accredited psychologist in under 2 minutes. Video anywhere in the world, or in-person in select cities —
+              in Arabic, French, English, Spanish or Portuguese. Free rebook if the fit isn't right.
             </motion.p>
 
             <motion.div
@@ -127,8 +127,8 @@ const HeroSection = () => {
               className="relative w-full max-w-sm space-y-4"
             >
               {[
-                { k: "MAD 600", v: "Transparent per-session pricing" },
-                { k: "< 2 min", v: "From landing to booked slot" },
+                { k: "40+", v: "Countries served — sessions in your timezone" },
+                { k: "< 2 min", v: "From landing to a booked slot" },
                 { k: "5-tier", v: "Accreditation system for every psychologist" },
               ].map((s) => (
                 <div
@@ -138,7 +138,7 @@ const HeroSection = () => {
                   <div className="font-mono text-2xl text-primary tabular-nums whitespace-nowrap">
                     {s.k}
                   </div>
-                  <div className="text-sm text-muted-foreground leading-tight">{s.v}</div>
+                  <div className="text-sm font-sans text-muted-foreground leading-tight">{s.v}</div>
                 </div>
               ))}
             </motion.div>

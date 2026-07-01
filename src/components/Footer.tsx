@@ -54,14 +54,14 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-4">
             <div className="mb-5">
-              <span className="text-foreground font-bold text-2xl tracking-tight">U.Psy</span>
-              <span className="text-muted-foreground text-xs ml-2">by Mehdi Felji</span>
+              <span className="text-foreground font-display font-normal text-3xl tracking-tight">U.<span className="accent-italic text-primary">Psy</span></span>
+              <span className="text-muted-foreground text-xs ml-2 font-sans">by Mehdi Felji</span>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm">
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm font-sans">
               {t('footer.strapline') || 'A modern mental-health platform combining psychological care, education, and performance support.'}
             </p>
 
-            <div className="space-y-2.5 text-sm mb-6">
+            <div className="space-y-2.5 text-sm mb-6 font-sans">
               <p className="text-muted-foreground">
                 <span className="text-foreground font-medium">{t('footer.email')}:</span>{" "}
                 <a href="mailto:mypersonalpsychologist212@gmail.com" className="hover:text-primary transition-colors">
@@ -70,7 +70,7 @@ const Footer = () => {
               </p>
               <p className="text-muted-foreground">
                 <span className="text-foreground font-medium">{t('footer.whatsapp')}:</span>{" "}
-                <a href="https://wa.me/212668594699" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/212668594699" className="text-primary hover:underline font-mono tabular-nums" target="_blank" rel="noopener noreferrer">
                   +212 668-594699
                 </a>
               </p>
@@ -105,13 +105,13 @@ const Footer = () => {
           {/* Link Columns */}
           {columns.map((col) => (
             <div key={col.title} className="lg:col-span-2">
-              <h3 className="text-foreground font-semibold text-sm uppercase tracking-wider mb-4">{col.title}</h3>
+              <h3 className="text-foreground font-display text-base tracking-wide mb-4">{col.title}</h3>
               <div className="space-y-2.5">
                 {col.links.map((link) => (
                   <Link
                     key={link.name}
                     to={addLocalePrefix(link.href, locale)}
-                    className="text-muted-foreground hover:text-primary text-sm block transition-colors"
+                    className="text-muted-foreground hover:text-primary text-sm block transition-colors font-sans"
                   >
                     {link.name}
                   </Link>
@@ -122,7 +122,7 @@ const Footer = () => {
 
           {/* Language Switcher Column */}
           <div className="lg:col-span-2">
-            <h3 className="text-foreground font-semibold text-sm uppercase tracking-wider mb-4">Language</h3>
+            <h3 className="text-foreground font-display text-base tracking-wide mb-4">Language</h3>
             <LanguageSwitcher compact />
           </div>
         </div>
@@ -138,11 +138,11 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-muted-foreground text-xs">
-            © {new Date().getFullYear()} U.Psy by Mehdi Felji. {t('header.copyright') || 'All rights reserved.'}
+          <p className="text-muted-foreground text-xs font-sans">
+            © <span className="font-mono tabular-nums">{new Date().getFullYear()}</span> U.Psy by Mehdi Felji. {t('header.copyright') || 'All rights reserved.'}
           </p>
-          <p className="text-muted-foreground text-xs flex items-center gap-1">
-            Made with <Heart className="w-3 h-3 text-secondary fill-secondary" /> in Morocco
+          <p className="text-muted-foreground text-xs flex items-center gap-1 font-sans">
+            Made with <Heart className="w-3 h-3 text-secondary fill-secondary" /> in Morocco — serving clients worldwide
           </p>
         </div>
       </div>
