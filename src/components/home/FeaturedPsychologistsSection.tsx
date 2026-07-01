@@ -164,13 +164,13 @@ const FeaturedPsychologistsSection = () => {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-lg text-foreground leading-tight truncate">
+                        <h3 className="font-display text-xl font-medium text-foreground leading-tight truncate tracking-tight">
                           {psych.full_name}
                         </h3>
                         <p className="text-sm text-muted-foreground truncate">{specialty}</p>
                         <div className="flex items-center gap-1.5 mt-1.5">
                           <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                          <span className="text-sm font-medium text-foreground font-mono">4.9</span>
+                          <span className="text-sm font-medium text-foreground font-mono tabular-nums">4.9</span>
                           <span className="text-xs text-muted-foreground">({reviews})</span>
                         </div>
                       </div>
@@ -208,7 +208,7 @@ const FeaturedPsychologistsSection = () => {
                     <div className="mt-auto p-5 pt-0">
                       <div className="flex items-baseline justify-between mb-3">
                         <div>
-                          <span className="text-2xl font-semibold text-foreground font-mono">
+                          <span className="font-mono tabular-nums text-2xl font-semibold text-foreground">
                             MAD {price}
                           </span>
                           <span className="text-xs text-muted-foreground ml-1.5">

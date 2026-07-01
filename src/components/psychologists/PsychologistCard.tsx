@@ -83,7 +83,7 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-lg text-u-white leading-tight">{psychologist.full_name}</h3>
+          <h3 className="font-display text-xl font-medium tracking-tight text-u-white leading-tight">{psychologist.full_name}</h3>
           <div className="flex items-center gap-1 shrink-0 ml-2" title={`${rating} from ${reviews} reviews`}>
             <Star className="w-3.5 h-3.5 fill-u-gold text-u-gold" />
             <span className="text-sm font-semibold text-u-gold tabular-nums">{rating.toFixed(1)}</span>
@@ -129,7 +129,7 @@ export const PsychologistCard = ({ psychologist }: PsychologistCardProps) => {
         </div>
 
         {psychologist.hourly_rate_mad && (
-          <p className="font-bold text-lg mb-2 tabular-nums" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+          <p className="font-mono font-bold text-lg mb-2 tabular-nums">
             <span className="text-u-gold">MAD {psychologist.hourly_rate_mad}</span>
             <span className="text-xs font-normal text-u-gray-400 ml-1"> / 50-min session</span>
           </p>
