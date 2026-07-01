@@ -39,6 +39,15 @@ const Psychologists = () => {
   const pillar = searchParams.get("pillar");
   const source = searchParams.get("source");
   const pillarQ = searchParams.get("q") || "";
+
+  // Pillar → filter presets (specialties + therapy approaches).
+  const PILLAR_FILTERS: Record<string, { specialties: string[]; therapyApproaches: string[] }> = {
+    focus:      { specialties: [],                                               therapyApproaches: ["CBT", "Mindfulness"] },
+    regulation: { specialties: ["Anxiety & Stress", "Anger Management"],         therapyApproaches: ["CBT", "ACT", "DBT"] },
+    recovery:   { specialties: ["Sleep Disorders", "Burnout"],                   therapyApproaches: ["Mindfulness", "CBT"] },
+    meaning:    { specialties: ["Grief & Loss", "Couples Therapy", "Family Therapy"], therapyApproaches: ["Humanistic", "ACT"] },
+  };
+
   const [filters, setFilters] = useState<FilterState>({
     specialties: [],
     languages: [],
@@ -57,6 +66,19 @@ const Psychologists = () => {
     if (pillarQ && !searchQuery) setSearchQuery(pillarQ);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pillarQ]);
+
+  // Seed filters from pillar score presets (only when user hasn't tweaked yet).
+  useEffect(() => {
+    if (!pillar) return;
+    const preset = PILLAR_FILTERS[pillar];
+    if (!preset) return;
+    setFilters((prev) =>
+      prev.specialties.length === 0 && prev.therapyApproaches.length === 0
+        ? { ...prev, specialties: preset.specialties, therapyApproaches: preset.therapyApproaches }
+        : prev
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pillar]);
 
   const pillarBanner = useMemo(() => {
     if (!pillar) return null;
@@ -88,6 +110,7 @@ const Psychologists = () => {
     next.delete("source");
     setSearchParams(next, { replace: true });
     setSearchQuery("");
+    setFilters((prev) => ({ ...prev, specialties: [], therapyApproaches: [] }));
   };
 
   const { data, isLoading } = usePsychologists({ filters, page, pageSize: 12 });
