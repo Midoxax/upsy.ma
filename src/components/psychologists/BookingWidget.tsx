@@ -333,15 +333,17 @@ export const BookingWidget = ({
             </div>
           </div>
 
-          <div className="text-sm space-y-1 text-muted-foreground">
-            <p><span className="text-foreground font-medium">With:</span> {psychologistName}</p>
+          <div className="text-sm space-y-1.5 text-muted-foreground font-sans">
+            <p><span className="text-foreground font-medium">With:</span> <span className="font-display">{psychologistName}</span></p>
             <p>
               <span className="text-foreground font-medium">When:</span>{" "}
-              {format(new Date(selectedSlot), "EEEE d MMMM 'at' HH:mm", { locale: dateLocale })}
+              <span className="font-mono tabular-nums text-foreground/90">
+                {format(new Date(selectedSlot), "EEEE d MMMM 'at' HH:mm", { locale: dateLocale })}
+              </span>
             </p>
-            <p><span className="text-foreground font-medium">Duration:</span> 50 minutes</p>
+            <p><span className="text-foreground font-medium">Duration:</span> <span className="font-mono tabular-nums">50</span> minutes</p>
             {hourlyRate && (
-              <p><span className="text-foreground font-medium">Fee:</span> {hourlyRate} MAD</p>
+              <p><span className="text-foreground font-medium">Fee:</span> <span className="font-mono tabular-nums text-foreground">{hourlyRate}</span> MAD</p>
             )}
           </div>
 

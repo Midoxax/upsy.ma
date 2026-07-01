@@ -256,8 +256,10 @@ const Auth = () => {
           <div className="flex justify-center mb-4">
             <Brain className="w-12 h-12 text-primary" />
           </div>
-          <CardTitle className="text-h2">{t('auth.portalTitle')}</CardTitle>
-          <CardDescription>{t('auth.portalDesc')}</CardDescription>
+          <CardTitle className="font-display text-3xl md:text-4xl font-normal tracking-tight">
+            {t('auth.portalTitle')}
+          </CardTitle>
+          <CardDescription className="font-sans text-base">{t('auth.portalDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
