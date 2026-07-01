@@ -94,17 +94,19 @@ html.lenis body {
     --section-spacing: 80px;
     --section-spacing-mobile: 56px;
 
-    /* ── Typography Scale ── */
-    --text-display: 72px;
-    --text-h1: 48px;
-    --text-h1-mobile: 36px;
-    --text-h2: 36px;
-    --text-h2-mobile: 28px;
-    --text-h3: 26px;
-    --text-h3-mobile: 22px;
-    --text-body: 18px;
+    /* ── Typography Scale (Conversion overhaul) ── */
+    --text-display: 68px;
+    --text-h1: 44px;
+    --text-h1-mobile: 34px;
+    --text-h2: 32px;
+    --text-h2-mobile: 26px;
+    --text-h3: 22px;
+    --text-h3-mobile: 20px;
+    --text-body: 17px;
     --text-body-mobile: 16px;
-    --text-small: 14px;
+    --text-small: 15px;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-sans: 'Geist', 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
 
     /* ── Light Liquid-Glass Tokens (Crystal Museum) ── */
     --glass-bg: rgba(255,255,255,0.40);
@@ -187,12 +189,26 @@ html.lenis body {
   }
 
   body {
-    @apply bg-background text-foreground font-outfit;
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.65;
+    letter-spacing: -0.005em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* Editorial serif headings site-wide — trust + warmth without going clinical */
+  h1, h2, h3, .text-display, .text-h1, .text-h2, .text-h3 {
+    font-family: var(--font-display);
+    font-feature-settings: "ss01", "ss02", "ss04";
+  }
+
+  /* Tabular numerals for price/data */
+  .font-mono, [data-numeric] {
+    font-variant-numeric: tabular-nums;
   }
 
   /* ── Typography Classes ── */
