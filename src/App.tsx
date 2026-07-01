@@ -78,6 +78,7 @@ const MindfulnessForBeginners = lazy(() => import("./pages/blog/MindfulnessForBe
 const HowToImproveFocus = lazy(() => import("./pages/blog/HowToImproveFocus"));
 const HowToClearBrainFog = lazy(() => import("./pages/blog/HowToClearBrainFog"));
 const FreeScore = lazy(() => import("./pages/FreeScore"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const MentalPerformance = lazy(() => import("./pages/MentalPerformance"));
 const MentalToughnessAthletes = lazy(() => import("./pages/MentalToughnessAthletes"));
 const Invite = lazy(() => import("./pages/Invite"));
