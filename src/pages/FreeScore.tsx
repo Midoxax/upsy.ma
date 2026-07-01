@@ -10,18 +10,23 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { captureEvent } from "@/lib/analytics/posthog";
+import { Link } from "react-router-dom";
 
-const QUESTIONS = [
-  { key: "mood", q: { en: "How is your mood this week?", fr: "Comment est votre humeur cette semaine ?", ar: "كيف هو مزاجك هذا الأسبوع؟" } },
-  { key: "sleep", q: { en: "How well are you sleeping?", fr: "Comment dormez-vous ?", ar: "كيف ينامك ؟" } },
-  { key: "stress", q: { en: "How stressed do you feel?", fr: "À quel point êtes-vous stressé ?", ar: "ما مدى توترك؟" } },
-  { key: "energy", q: { en: "Energy level today?", fr: "Niveau d'énergie aujourd'hui ?", ar: "مستوى طاقتك اليوم؟" } },
-  { key: "focus", q: { en: "Ability to focus?", fr: "Capacité de concentration ?", ar: "قدرتك على التركيز؟" } },
-  { key: "relationships", q: { en: "Quality of close relationships?", fr: "Qualité de vos relations proches ?", ar: "جودة علاقاتك القريبة؟" } },
-  { key: "purpose", q: { en: "Sense of purpose?", fr: "Sentiment de sens ?", ar: "الإحساس بالهدف؟" } },
-  { key: "anxiety", q: { en: "Frequency of anxious thoughts?", fr: "Fréquence des pensées anxieuses ?", ar: "وتيرة الأفكار القلقة؟" } },
-  { key: "recovery", q: { en: "Ability to recover from setbacks?", fr: "Capacité à rebondir ?", ar: "القدرة على التعافي؟" } },
-  { key: "growth", q: { en: "Feeling of growth lately?", fr: "Sentiment de progression ?", ar: "الإحساس بالنمو؟" } },
+type Pillar = "focus" | "regulation" | "recovery" | "meaning";
+
+const QUESTIONS: Array<{ key: string; pillar: Pillar; invert?: boolean; q: Record<"en" | "fr" | "ar", string> }> = [
+  { key: "mood", pillar: "regulation", q: { en: "How is your mood this week?", fr: "Comment est votre humeur cette semaine ?", ar: "كيف هو مزاجك هذا الأسبوع؟" } },
+  { key: "sleep", pillar: "recovery", q: { en: "How well are you sleeping?", fr: "Comment dormez-vous ?", ar: "كيف تنام؟" } },
+  { key: "stress", pillar: "regulation", invert: true, q: { en: "How stressed do you feel?", fr: "À quel point êtes-vous stressé ?", ar: "ما مدى توترك؟" } },
+  { key: "energy", pillar: "recovery", q: { en: "Energy level today?", fr: "Niveau d'énergie aujourd'hui ?", ar: "مستوى طاقتك اليوم؟" } },
+  { key: "focus", pillar: "focus", q: { en: "Ability to focus?", fr: "Capacité de concentration ?", ar: "قدرتك على التركيز؟" } },
+  { key: "relationships", pillar: "meaning", q: { en: "Quality of close relationships?", fr: "Qualité de vos relations proches ?", ar: "جودة علاقاتك القريبة؟" } },
+  { key: "purpose", pillar: "meaning", q: { en: "Sense of purpose?", fr: "Sentiment de sens ?", ar: "الإحساس بالهدف؟" } },
+  { key: "anxiety", pillar: "regulation", invert: true, q: { en: "Frequency of anxious thoughts?", fr: "Fréquence des pensées anxieuses ?", ar: "وتيرة الأفكار القلقة؟" } },
+  { key: "recovery", pillar: "recovery", q: { en: "Ability to recover from setbacks?", fr: "Capacité à rebondir ?", ar: "القدرة على التعافي؟" } },
+  { key: "growth", pillar: "meaning", q: { en: "Feeling of growth lately?", fr: "Sentiment de progression ?", ar: "الإحساس بالنمو؟" } },
+  { key: "attention", pillar: "focus", invert: true, q: { en: "How often does your mind wander when you need to concentrate?", fr: "À quelle fréquence votre esprit s'égare-t-il quand vous devez vous concentrer ?", ar: "كم مرة يشرد ذهنك عندما تحتاج للتركيز؟" } },
+  { key: "rumination", pillar: "regulation", invert: true, q: { en: "How often do the same worries loop in your head?", fr: "À quelle fréquence les mêmes soucis tournent-ils en boucle ?", ar: "كم مرة تتكرر نفس الهموم في رأسك؟" } },
 ];
 
 export default function FreeScore() {
@@ -34,6 +39,7 @@ export default function FreeScore() {
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [score, setScore] = useState<number | null>(null);
+  const [pillarScores, setPillarScores] = useState<Record<Pillar, number> | null>(null);
 
   const total = QUESTIONS.length;
   const isFormStep = step >= total;
@@ -99,22 +105,36 @@ export default function FreeScore() {
       return;
     }
     setSubmitting(true);
-    const sum = Object.values(answers).reduce((a, b) => a + b, 0);
+    // Compute overall + per-pillar (invert reverse-scored items)
+    const scored: Record<string, number> = {};
+    QUESTIONS.forEach((q) => {
+      const v = answers[q.key] ?? 3;
+      scored[q.key] = q.invert ? 6 - v : v;
+    });
+    const sum = Object.values(scored).reduce((a, b) => a + b, 0);
     const computed = Math.round((sum / (total * 5)) * 100);
+    const byPillar: Record<Pillar, { sum: number; n: number }> = {
+      focus: { sum: 0, n: 0 }, regulation: { sum: 0, n: 0 }, recovery: { sum: 0, n: 0 }, meaning: { sum: 0, n: 0 },
+    };
+    QUESTIONS.forEach((q) => { byPillar[q.pillar].sum += scored[q.key]; byPillar[q.pillar].n += 1; });
+    const pillars = Object.fromEntries(
+      (Object.keys(byPillar) as Pillar[]).map((p) => [p, Math.round((byPillar[p].sum / (byPillar[p].n * 5)) * 100)])
+    ) as Record<Pillar, number>;
     try {
       const { error } = await supabase.from("growth_leads").insert({
         email: email.toLowerCase().trim(),
         full_name: name.trim() || null,
         source: "free_score",
         score_total: computed,
-        score_breakdown: answers,
+        score_breakdown: { answers, pillars },
         locale: lang,
         consent_marketing: consent,
         nurture_stage: "d0",
       });
       if (error) throw error;
-      captureEvent("free_score_completed", { score: computed });
+      captureEvent("free_score_completed", { score: computed, ...pillars });
       setScore(computed);
+      setPillarScores(pillars);
     } catch (e: any) {
       toast.error(e.message ?? "Submission failed");
     } finally {
@@ -122,23 +142,94 @@ export default function FreeScore() {
     }
   };
 
-  if (score !== null) {
+  if (score !== null && pillarScores !== null) {
+    const pillarLabels: Record<Pillar, Record<"en" | "fr" | "ar", string>> = {
+      focus: { en: "Focus", fr: "Concentration", ar: "التركيز" },
+      regulation: { en: "Emotional regulation", fr: "Régulation émotionnelle", ar: "التنظيم العاطفي" },
+      recovery: { en: "Recovery & energy", fr: "Récupération & énergie", ar: "التعافي والطاقة" },
+      meaning: { en: "Meaning & connection", fr: "Sens & connexion", ar: "المعنى والتواصل" },
+    };
+    const weakest = (Object.entries(pillarScores) as [Pillar, number][]).sort((a, b) => a[1] - b[1])[0];
+    const recoCopy: Record<Pillar, Record<"en" | "fr" | "ar", string>> = {
+      focus: {
+        en: "Your weakest pillar is Focus. A performance psychologist can build you a daily attention protocol in 4–6 sessions.",
+        fr: "Votre pilier le plus faible est la Concentration. Un psychologue de la performance peut construire un protocole d'attention en 4-6 séances.",
+        ar: "أضعف ركيزة لديك هي التركيز. يمكن لطبيب نفسي متخصص في الأداء بناء بروتوكول يومي في 4-6 جلسات.",
+      },
+      regulation: {
+        en: "Emotional regulation is your growth edge. CBT + ACT protocols reduce rumination and reactivity within 6–8 weeks.",
+        fr: "La régulation émotionnelle est votre marge de progression. Les protocoles TCC + ACT réduisent la rumination en 6-8 semaines.",
+        ar: "التنظيم العاطفي هو مجال تطورك. تُقلل بروتوكولات CBT + ACT من الاجترار خلال 6-8 أسابيع.",
+      },
+      recovery: {
+        en: "Recovery is running low. Start with CBT-I for sleep and a nervous-system down-regulation protocol.",
+        fr: "La récupération est faible. Commencez par le TCC-I pour le sommeil et un protocole de régulation nerveuse.",
+        ar: "التعافي منخفض. ابدأ ببروتوكول CBT-I للنوم وتنظيم الجهاز العصبي.",
+      },
+      meaning: {
+        en: "Meaning & connection is your lowest pillar. Values-based work (ACT) and relational sessions shift this fast.",
+        fr: "Sens & connexion est votre pilier le plus bas. Le travail basé sur les valeurs (ACT) change cela rapidement.",
+        ar: "المعنى والتواصل هو أدنى ركيزة. العمل القائم على القيم (ACT) يُغير ذلك بسرعة.",
+      },
+    };
+    const band =
+      score >= 75 ? { en: "Strong", fr: "Solide", ar: "قوي" } :
+      score >= 55 ? { en: "Balanced", fr: "Équilibré", ar: "متوازن" } :
+      score >= 35 ? { en: "Strained", fr: "Tendu", ar: "متوتر" } :
+                    { en: "At risk", fr: "À risque", ar: "في خطر" };
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
-        <Card className="max-w-lg w-full glass-card">
-          <CardHeader>
-            <CardTitle className="text-center font-display">{t.yourScore}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-6">
-            <div className="text-7xl font-bold text-primary font-display">{score}</div>
-            <Progress value={score} className="h-3" />
-            <p className="text-sm text-muted-foreground">{t.footnote}</p>
-            <Button asChild size="lg" className="w-full">
-              <a href="/get-matched">{t.ctaMatch}</a>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <SEOHead path="/free-score" title={`${t.yourScore} — U.Psy`} description={t.subtitle} />
+        <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+          <Card className="max-w-2xl w-full glass-card">
+            <CardHeader>
+              <CardTitle className="text-center font-display text-2xl">{t.yourScore}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="text-center space-y-3">
+                <div className="text-7xl font-mono tabular-nums font-bold text-primary font-display">{score}</div>
+                <p className="text-sm uppercase tracking-[0.18em] text-muted-foreground">{band[lang]}</p>
+                <Progress value={score} className="h-3" />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-display text-lg">
+                  {lang === "fr" ? "Répartition par pilier" : lang === "ar" ? "التفصيل حسب الركيزة" : "Breakdown by pillar"}
+                </h3>
+                {(Object.keys(pillarScores) as Pillar[]).map((p) => (
+                  <div key={p} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>{pillarLabels[p][lang]}</span>
+                      <span className="font-mono tabular-nums">{pillarScores[p]}</span>
+                    </div>
+                    <Progress value={pillarScores[p]} className="h-1.5" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-u-card border border-border bg-muted/30 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-primary mb-2">
+                  {lang === "fr" ? "Votre prochaine étape" : lang === "ar" ? "خطوتك التالية" : "Your next step"}
+                </p>
+                <p className="text-sm leading-relaxed">{recoCopy[weakest[0]][lang]}</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Button asChild size="lg">
+                  <Link to="/get-matched">{t.ctaMatch}</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/psychologists">
+                    {lang === "fr" ? "Voir les psychologues" : lang === "ar" ? "عرض الأخصائيين" : "Browse psychologists"}
+                  </Link>
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground text-center">{t.footnote}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
