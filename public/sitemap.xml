@@ -841,16 +841,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://upsy.ma/blog/understanding-anxiety</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://upsy.ma/blog/understanding-depression</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://upsy.ma/blog/how-to-improve-focus</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -859,5 +849,15 @@
     <loc>https://upsy.ma/blog/how-to-clear-brain-fog</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://upsy.ma/blog/understanding-anxiety</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://upsy.ma/blog/understanding-depression</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>
