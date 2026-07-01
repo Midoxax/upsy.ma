@@ -38,6 +38,7 @@ const TalentInnovationHub = lazy(() => import("./pages/TalentInnovationHub"));
 const MoroccanUmbrella = lazy(() => import("./pages/MoroccanUmbrella"));
 const PsychologuesSansFrontieres = lazy(() => import("./pages/PsychologuesSansFrontieres"));
 const Psychologists = lazy(() => import("./pages/Psychologists"));
+const Press = lazy(() => import("./pages/Press"));
 const PsychologistProfile = lazy(() => import("./pages/PsychologistProfile"));
 const SpecialistPricing = lazy(() => import("./pages/SpecialistPricing"));
 const Pricing = lazy(() => import("./pages/Pricing"));
