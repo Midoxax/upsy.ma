@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { format, addDays, startOfDay, isSameDay, isPast } from "date-fns";
 import { fr, ar } from "date-fns/locale";
-import { Calendar, Clock, Video, MapPin, Phone, ChevronLeft, ChevronRight, Loader2, CheckCircle } from "lucide-react";
+import { Calendar, Clock, Video, MapPin, Phone, ChevronLeft, ChevronRight, Loader2, CheckCircle, ShieldCheck, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +27,17 @@ const SESSION_TYPES = [
 
 type SessionType = "video" | "in_person" | "phone";
 
+const PENDING_KEY = "upsy.pendingBooking";
+
+type PendingBooking = {
+  psychologistId: string;
+  scheduled_at: string;
+  session_type: SessionType;
+  notes: string;
+  amount_mad?: number;
+  return_path: string;
+};
+
 export const BookingWidget = ({
   psychologistId,
   psychologistName,
@@ -37,6 +48,7 @@ export const BookingWidget = ({
   const { locale } = useLocale();
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const dateLocale = locale === "fr" ? fr : locale === "ar" ? ar : undefined;
 
@@ -59,6 +71,52 @@ export const BookingWidget = ({
 
   const availableSlots = slots.filter((s) => s.is_available);
 
+  // Resume a pending booking after sign-in/sign-up
+  const resumedRef = useRef(false);
+  useEffect(() => {
+    if (!user || resumedRef.current) return;
+    try {
+      const raw = sessionStorage.getItem(PENDING_KEY);
+      if (!raw) return;
+      const pending: PendingBooking = JSON.parse(raw);
+      if (pending.psychologistId !== psychologistId) return;
+      resumedRef.current = true;
+      sessionStorage.removeItem(PENDING_KEY);
+      setSelectedDate(new Date(pending.scheduled_at));
+      setSelectedSlot(pending.scheduled_at);
+      setSessionType(pending.session_type);
+      setNotes(pending.notes || "");
+      setStep("confirm");
+      (async () => {
+        try {
+          await createBooking.mutateAsync({
+            psychologist_id: psychologistId,
+            scheduled_at: pending.scheduled_at,
+            session_type: pending.session_type,
+            duration_minutes: 50,
+            patient_notes: pending.notes || undefined,
+            amount_mad: pending.amount_mad,
+          });
+          setStep("success");
+          toast({
+            title: "Slot reserved",
+            description: "We saved the time you picked before you signed in.",
+          });
+        } catch (err) {
+          toast({
+            title: "Couldn't finalize your slot",
+            description: err instanceof Error ? err.message : "Please pick a time again.",
+            variant: "destructive",
+          });
+          setStep("confirm");
+        }
+      })();
+    } catch {
+      /* ignore corrupted state */
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, psychologistId]);
+
   const handleDateSelect = (date: Date) => {
     if (isPast(date) && !isSameDay(date, new Date())) return;
     setSelectedDate(date);
@@ -72,7 +130,31 @@ export const BookingWidget = ({
   };
 
   const handleConfirm = async () => {
-    if (!selectedSlot || !user) return;
+    if (!selectedSlot) return;
+
+    // Slot-before-signup: stash intent, send to auth, resume on return.
+    if (!user) {
+      const pending: PendingBooking = {
+        psychologistId,
+        scheduled_at: selectedSlot,
+        session_type: sessionType,
+        notes,
+        amount_mad: hourlyRate ?? undefined,
+        return_path: `${window.location.pathname}#booking`,
+      };
+      try {
+        sessionStorage.setItem(PENDING_KEY, JSON.stringify(pending));
+      } catch {
+        /* ignore quota */
+      }
+      toast({
+        title: "Slot held for you",
+        description: "Create your account to confirm. Your time won't be given away.",
+      });
+      navigate(`/auth?redirect=${encodeURIComponent(pending.return_path)}`);
+      return;
+    }
+
     try {
       await createBooking.mutateAsync({
         psychologist_id: psychologistId,
@@ -277,9 +359,13 @@ export const BookingWidget = ({
           </div>
 
           {!user && (
-            <p className="text-xs text-amber-600 bg-amber-500/10 rounded-lg px-3 py-2">
-              You need to be signed in to book a session.
-            </p>
+            <div className="flex items-start gap-2 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+              <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-500" />
+              <span>
+                Pick your time now — we'll hold it while you create your account.
+                Free rebook if it's not the right fit.
+              </span>
+            </div>
           )}
 
           <div className="flex gap-2">
@@ -290,10 +376,19 @@ export const BookingWidget = ({
               variant="primary"
               size="sm"
               onClick={handleConfirm}
-              disabled={createBooking.isPending || !user}
+              disabled={createBooking.isPending}
               className="flex-1"
             >
-              {createBooking.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm booking"}
+              {createBooking.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : user ? (
+                "Confirm booking"
+              ) : (
+                <span className="flex items-center gap-1.5">
+                  <Lock className="h-3.5 w-3.5" />
+                  Continue to book
+                </span>
+              )}
             </Button>
           </div>
         </div>
