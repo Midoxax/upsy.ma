@@ -60,6 +60,7 @@ const AIAssistant = lazy(() => import("./pages/AIAssistant"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const Applications = lazy(() => import("./pages/admin/Applications"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminGrowthLeads = lazy(() => import("./pages/admin/GrowthLeads"));
 const VideoCall = lazy(() => import("./pages/VideoCall"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MfaSetup = lazy(() => import("./pages/MfaSetup"));
@@ -157,6 +158,7 @@ const AppRoutes = () => (
     <Route path="notifications" element={<ProtectedRoute><PageTransition><Notifications /></PageTransition></ProtectedRoute>} />
     <Route path="admin" element={<AdminRoute><PageTransition><AdminDashboard /></PageTransition></AdminRoute>} />
     <Route path="admin/applications" element={<AdminRoute><PageTransition><Applications /></PageTransition></AdminRoute>} />
+    <Route path="admin/growth-leads" element={<AdminRoute><PageTransition><AdminGrowthLeads /></PageTransition></AdminRoute>} />
     <Route path="session/:sessionId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
     <Route path="brand" element={<PageTransition><BrandGuidelines /></PageTransition>} />
     <Route path="founder" element={<PageTransition><Founder /></PageTransition>} />
