@@ -59,12 +59,11 @@ export default function MentalPerformance() {
   return (
     <>
       <SEOHead
+        path="/mental-performance"
         title="Mental Performance Training — Focus, Toughness, Clarity | U.Psy"
         description="Measure, train, and sustain elite mental performance. Assessments, coaching, and protocols for focus, mental toughness, stress recovery, and decision-making."
-        canonicalPath="/mental-performance"
-      >
-        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
-      </SEOHead>
+        jsonLd={faqJsonLd}
+      />
 
       <main className="min-h-screen">
         {/* Hero */}
