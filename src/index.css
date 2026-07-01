@@ -105,8 +105,11 @@ html.lenis body {
     --text-body: 17px;
     --text-body-mobile: 16px;
     --text-small: 15px;
-    --font-display: 'Instrument Serif', Georgia, serif;
-    --font-sans: 'Work Sans', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+    --font-serif-alt: 'Cormorant Garamond', 'Fraunces', Georgia, serif;
+    --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+    --font-arabic: 'Amiri', serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
     /* ── Light Liquid-Glass Tokens (Crystal Museum) ── */
     --glass-bg: rgba(255,255,255,0.40);
@@ -306,12 +309,22 @@ html.lenis body {
     border-color: hsl(var(--primary) / 0.35);
   }
 
-  /* ── Luxe italic accent (Fraunces) ── */
+  /* ── Luxe italic accent (Cormorant Garamond — softer counterpoint to Fraunces) ── */
   .accent-italic {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Cormorant Garamond', 'Fraunces', Georgia, serif;
     font-style: italic;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: -0.005em;
+  }
+
+  /* ── Arabic script scoping ── */
+  :lang(ar), [dir="rtl"] {
+    font-family: var(--font-arabic);
+  }
+  :lang(ar) h1, :lang(ar) h2, :lang(ar) h3,
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 {
+    font-family: var(--font-arabic);
+    font-weight: 700;
   }
 
   .glass-card:active {
