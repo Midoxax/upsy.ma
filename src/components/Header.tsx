@@ -128,6 +128,9 @@ const Header = () => {
               className="h-12 w-auto transition-all duration-200 dark:brightness-110"
               style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}
             />
+            <span className="hidden sm:inline font-display text-2xl font-medium tracking-tight text-foreground leading-none">
+              U.<span className="italic accent-italic text-primary">Psy</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
