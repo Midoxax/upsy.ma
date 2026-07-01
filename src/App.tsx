@@ -166,6 +166,7 @@ const AppRoutes = () => (
     <Route path="blog/how-to-support-a-loved-one" element={<PageTransition><HowToSupportALovedOne /></PageTransition>} />
     <Route path="blog/mindfulness-for-beginners" element={<PageTransition><MindfulnessForBeginners /></PageTransition>} />
     <Route path="free-score" element={<PageTransition><FreeScore /></PageTransition>} />
+   <Route path="mental-performance" element={<PageTransition><MentalPerformance /></PageTransition>} />
     <Route path="invite/:code" element={<PageTransition><Invite /></PageTransition>} />
     <Route path="for-athletes" element={<PageTransition><ForAthletes /></PageTransition>} />
     <Route path="for-organizations" element={<PageTransition><ForOrganizations /></PageTransition>} />
