@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SEOHead from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { captureEvent } from "@/lib/analytics/posthog";
+import { pushDataLayer } from "@/lib/analytics/gtm";
 import { Link } from "react-router-dom";
 
 type Pillar = "focus" | "regulation" | "recovery" | "meaning";
@@ -44,6 +45,18 @@ export default function FreeScore() {
   const total = QUESTIONS.length;
   const isFormStep = step >= total;
   const progress = Math.min((step / (total + 1)) * 100, 100);
+
+  // Fire quiz_start once on mount.
+  useEffect(() => {
+    pushDataLayer({
+      event: "quiz_start",
+      quiz_id: "mental_performance_score",
+      total_questions: total,
+      locale: lang,
+      page_path: "/free-score",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const t = {
     en: {
@@ -133,6 +146,19 @@ export default function FreeScore() {
       });
       if (error) throw error;
       captureEvent("free_score_completed", { score: computed, ...pillars });
+      pushDataLayer({
+        event: "quiz_submit",
+        quiz_id: "mental_performance_score",
+        score_total: computed,
+        focus: pillars.focus,
+        regulation: pillars.regulation,
+        recovery: pillars.recovery,
+        meaning: pillars.meaning,
+        weakest_pillar: (Object.entries(pillars) as [Pillar, number][]).sort((a, b) => a[1] - b[1])[0][0],
+        consent_marketing: consent,
+        locale: lang,
+        page_path: "/free-score",
+      });
       setScore(computed);
       setPillarScores(pillars);
 
@@ -310,6 +336,17 @@ export default function FreeScore() {
                       variant={answers[QUESTIONS[step].key] === v ? "default" : "outline"}
                       onClick={() => {
                         setAnswers({ ...answers, [QUESTIONS[step].key]: v });
+                        pushDataLayer({
+                          event: "quiz_answer",
+                          quiz_id: "mental_performance_score",
+                          question_key: QUESTIONS[step].key,
+                          question_pillar: QUESTIONS[step].pillar,
+                          question_index: step + 1,
+                          total_questions: total,
+                          value: v,
+                          locale: lang,
+                          page_path: "/free-score",
+                        });
                         setTimeout(() => setStep(step + 1), 200);
                       }}
                     >
