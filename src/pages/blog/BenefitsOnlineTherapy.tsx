@@ -22,7 +22,7 @@ const BenefitsOnlineTherapy = () => {
 
   return (
     <>
-      <SEOHead path="/blog/benefits-online-therapy" />
+      <SEOHead path="/blog/benefits-online-therapy" title={"The Benefits of Online Therapy — Is It as Effective as In-Person? | U.Psy"} description={"The research, the pros, the trade-offs — and how to get the most out of online therapy sessions."} />
       <BlogArticleSchema
         title={t("blog.online.title") || "The Benefits of Online Therapy"}
         description={t("blog.online.intro") || "Online therapy has transformed mental health care. Discover why more people are choosing virtual sessions."}

@@ -15,7 +15,7 @@ const UnderstandingAnxiety = () => {
 
   return (
     <>
-      <SEOHead path="/blog/understanding-anxiety" />
+      <SEOHead path="/blog/understanding-anxiety" title={"Understanding Anxiety — Causes, Symptoms & How to Manage It | U.Psy"} description={"What anxiety really is, how it shows up in daily life, and evidence-based ways to manage it — from breathing to therapy."} />
       <BlogArticleSchema
         title={t("blog.anxiety.title") || "Understanding Anxiety: What It Is and How to Manage It"}
         description={t("blog.anxiety.intro") || "Anxiety is one of the most common mental health experiences. Learn what it really means and practical steps to manage it."}

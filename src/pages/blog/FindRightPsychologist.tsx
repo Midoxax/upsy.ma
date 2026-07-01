@@ -15,7 +15,7 @@ const FindRightPsychologist = () => {
 
   return (
     <>
-      <SEOHead path="/blog/find-right-psychologist" />
+      <SEOHead path="/blog/find-right-psychologist" title={"How to Find the Right Psychologist for You | U.Psy"} description={"A clear framework for choosing the right psychologist: modality, credentials, chemistry, and what to ask in the first call."} />
       <BlogArticleSchema
         title={t("blog.findPsych.title") || "How to Find the Right Psychologist for You"}
         description={t("blog.findPsych.intro") || "Finding the right psychologist can feel overwhelming. This guide breaks down the process into simple, actionable steps."}

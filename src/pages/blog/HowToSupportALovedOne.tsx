@@ -15,7 +15,7 @@ const HowToSupportALovedOne = () => {
 
   return (
     <>
-      <SEOHead path="/blog/how-to-support-a-loved-one" />
+      <SEOHead path="/blog/how-to-support-a-loved-one" title={"How to Support a Loved One Struggling with Mental Health | U.Psy"} description={"Practical scripts and boundaries for supporting a partner, friend, or family member through anxiety, depression, or burnout."} />
       <BlogArticleSchema
         title={t("blog.support.title") || "How to Support a Loved One with Mental Health Challenges"}
         description={t("blog.support.intro") || "When someone you care about is struggling, knowing how to help can make a real difference."}

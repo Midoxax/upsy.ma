@@ -15,7 +15,7 @@ const MindfulnessForBeginners = () => {
 
   return (
     <>
-      <SEOHead path="/blog/mindfulness-for-beginners" />
+      <SEOHead path="/blog/mindfulness-for-beginners" title={"Mindfulness for Beginners — A Simple 7-Day Starter Guide | U.Psy"} description={"A beginner-friendly guide to mindfulness: what it is, why it works, and a 7-day plan you can start today in 10 minutes a day."} />
       <BlogArticleSchema
         title={t("blog.mindfulness.title") || "Mindfulness for Beginners: A Practical Guide"}
         description={t("blog.mindfulness.intro") || "Mindfulness can reduce stress, improve focus, and enhance emotional well-being."}

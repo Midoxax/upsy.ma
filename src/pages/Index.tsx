@@ -75,17 +75,32 @@ const Index = () => {
         path="/"
         title="U.Psy — Book an accredited psychologist. Worldwide, in any timezone."
         description="Book a 50-min session with an accredited psychologist — video anywhere in the world, or in-person in select cities. Arabic, French, English, Spanish or Portuguese. Free rebook if not the right fit."
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "U.Psy",
-          url: "https://upsy.ma",
-          logo: "https://upsy.ma/favicon.png",
-          description:
-            "Book accredited psychologists worldwide. Video sessions in any timezone or in-person visits in select cities, with a free rebook guarantee.",
-          founder: { "@type": "Person", name: "Mehdi Felji", jobTitle: "Founder" },
-          areaServed: "Worldwide",
-        }}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "U.Psy",
+            url: "https://upsy.ma",
+            logo: "https://upsy.ma/favicon.png",
+            description:
+              "Book accredited psychologists worldwide. Video sessions in any timezone or in-person visits in select cities, with a free rebook guarantee.",
+            founder: { "@type": "Person", name: "Mehdi Felji", jobTitle: "Founder" },
+            areaServed: "Worldwide",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              { "@type": "Question", name: "What if I don't click with my psychologist?", acceptedAnswer: { "@type": "Answer", text: "You get a free rebook with a different psychologist — no questions asked. The first session is about finding the right person, not paying twice to try again." } },
+              { "@type": "Question", name: "How much does a session cost?", acceptedAnswer: { "@type": "Answer", text: "From MAD 600 / EUR 55 / USD 60 for a single 50-min session. Packs of 4 save ~8%. Ongoing monthly care from MAD 2,400." } },
+              { "@type": "Question", name: "Is it confidential?", acceptedAnswer: { "@type": "Answer", text: "Fully confidential. We follow Moroccan Law 09-08. Nothing is shared with your employer, insurance, or family without your written consent. Sessions are encrypted end-to-end." } },
+              { "@type": "Question", name: "In what language are sessions held?", acceptedAnswer: { "@type": "Answer", text: "Arabic (Darija & MSA), French, English — and Spanish, Portuguese, or Italian with select specialists." } },
+              { "@type": "Question", name: "Video or in-person?", acceptedAnswer: { "@type": "Answer", text: "Both. Every psychologist offers secure video sessions worldwide. In-person visits are available in select cities." } },
+              { "@type": "Question", name: "Do you take insurance?", acceptedAnswer: { "@type": "Answer", text: "We issue a compliant invoice you can submit to CNSS/CNOPS or private health plans. Most private policies reimburse 40–70% of psychology sessions." } },
+              { "@type": "Question", name: "How fast can I book?", acceptedAnswer: { "@type": "Answer", text: "Most psychologists have slots within 48 hours. Some offer same-day sessions. Availability is shown live on each profile." } },
+            ],
+          },
+        ]}
       />
       <HeroSection />
       {homeSequence.map(({ key, Component }) => (

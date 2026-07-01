@@ -15,7 +15,7 @@ const MentalHealthAtWork = () => {
 
   return (
     <>
-      <SEOHead path="/blog/mental-health-at-work" />
+      <SEOHead path="/blog/mental-health-at-work" title={"Mental Health at Work — Burnout, Boundaries & Employer Support | U.Psy"} description={"How to spot burnout early, set boundaries that hold, and get real mental-health support from your employer."} />
       <BlogArticleSchema
         title={t("blog.work.title") || "Mental Health at Work: Why It Matters"}
         description={t("blog.work.intro") || "Workplace mental health affects productivity, relationships, and overall well-being."}

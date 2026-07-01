@@ -622,6 +622,141 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/blog" />
   </url>
   <url>
+    <loc>https://upsy.ma/install</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/install" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/install" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/install" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/install" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/fr/install</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/install" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/install" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/install" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/install" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/ar/install</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/install" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/install" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/install" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/install" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/skool</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/skool" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/skool" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/skool" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/skool" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/fr/skool</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/skool" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/skool" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/skool" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/skool" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/ar/skool</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/skool" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/skool" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/skool" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/skool" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/privacy" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/fr/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/privacy" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/ar/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/privacy" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/terms" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/fr/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/terms" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/ar/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/terms" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/moroccan-umbrella</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/moroccan-umbrella" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/fr/moroccan-umbrella</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/moroccan-umbrella" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/ar/moroccan-umbrella</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/moroccan-umbrella" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/moroccan-umbrella" />
+  </url>
+  <url>
     <loc>https://upsy.ma/blog/benefits-online-therapy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

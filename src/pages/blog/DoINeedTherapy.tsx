@@ -39,7 +39,7 @@ const DoINeedTherapy = () => {
 
   return (
     <>
-      <SEOHead path="/blog/do-i-need-therapy" />
+      <SEOHead path="/blog/do-i-need-therapy" title={"Do I Need Therapy? 10 Signs It's Time to Talk to a Psychologist | U.Psy"} description={"Ten honest signs it's time to see a psychologist — and how to choose the right one for your situation."} />
       <BlogArticleSchema
         title={t("blog.therapy.title") || "Do I Need Therapy? Signs It Might Be Time"}
         description={t("blog.therapy.intro") || "Wondering if therapy is right for you? Here are key signs and myths debunked."}
