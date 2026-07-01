@@ -104,10 +104,24 @@ export default function MentalPerformance() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/free-score">Get your free Mental Performance Score</Link>
+                <Link
+                  to="/free-score"
+                  onClick={() =>
+                    trackCTAClick("Start Free", "hero", "/mental-performance", { cta_action: "score_start" })
+                  }
+                >
+                  Get your free Mental Performance Score
+                </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/psychologists">Book a performance psychologist</Link>
+                <Link
+                  to="/psychologists"
+                  onClick={() =>
+                    trackCTAClick("Book a Call", "hero", "/mental-performance", { cta_action: "book_intent" })
+                  }
+                >
+                  Book a performance psychologist
+                </Link>
               </Button>
             </div>
             <p className="mt-6 text-sm text-muted-foreground font-mono tabular-nums">
