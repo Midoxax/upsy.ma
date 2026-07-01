@@ -1,129 +1,119 @@
+# Conversion Overhaul — U.Psy
 
-# UPSY OPS — MVP Vertical Slice
+Traffic is fine; the site isn't asking for the sale. This plan fixes the four blockers you flagged (price/trust unclear, too many paths, weak psychologist proof, booking friction), refreshes typography, and rewrites public pages to funnel every visitor into ONE next action per screen.
 
-A cinematic, standalone operations layer mounted at `/ops`, visually disconnected from the U.Psy marketing site. Three.js + GSAP allowed inside `/ops/*` only. Claude (Anthropic) powers the AI Operations Director.
+Guiding rule going forward: **every public page has exactly one primary CTA and one secondary CTA.** No third option above the fold.
 
-## Scope of this build
+---
 
-In:
-- `/ops` landing (cinematic command center entry)
-- Workspace switcher (multi-tenant scaffold, single seeded org: LSSPM)
-- Realtime Command Center dashboard shell
-- **Dynamic SOP / Protocol Engine** (the hero feature)
-- Operational task system tied to generated SOPs
-- Claude-powered AI Ops Director (generation + chat)
-- Auth gate (reuses existing Lovable Cloud auth)
+## 1. Typography & visual polish (foundation)
 
-Out (later phases):
-- Finance/logistics intelligence
-- Psychological safety workflows (schema seeded, no UI)
-- Supplier/procurement, transport, accommodation modules
-- Mobile-first polish (desktop-first for MVP)
+New pairing, installed via `@fontsource` (no CDN):
 
-## Architecture
+- **Headings:** Fraunces (editorial serif — trust, warmth, premium clinical)
+- **UI / Body:** Geist (modern, high-legibility sans — SaaS feel)
+- **Numerals / price / data:** Geist Mono (pricing, timers, stats)
 
-```text
-/ops                          → Cinematic landing (Three.js hero)
-/ops/auth                     → Operator login
-/ops/[workspace]              → Workspace shell
-  ├── /command                → Realtime command center
-  ├── /events                 → Event list
-  ├── /events/[id]            → Event detail + generated SOP
-  ├── /events/new             → SOP Engine intake → AI generation
-  ├── /tasks                  → Task board (Kanban + list)
-  └── /director               → Claude AI Ops Director chat
-```
+Kept: Outfit/Inter tokens remain as fallback so nothing breaks mid-migration.
 
-Layout: `OpsLayout` (dedicated, full-bleed, dark, no U.Psy header/footer).
-Theme: scoped CSS variables under `.ops-theme` — black base, single neon cyan accent (`hsl(180 100% 60%)`), glass surfaces, futuristic mono+sans pairing.
+Type scale rebuilt (mobile → desktop):
+- Display 44/56, H1 36/48, H2 28/36, H3 22/26, Body 17/1.65, Small 15, Caption 13
+- Max measure 68ch on body copy, 22ch on hero headlines
+- Tighter tracking on serif headlines (-0.02em), looser on all-caps eyebrows (+0.12em)
 
-## Visual / motion stack (scoped to /ops)
+Also: unify button sizes (single `hero` size for primary CTAs), stronger focus rings, remove the 3–4 competing accent colors currently on the home page in favor of Maroon primary + Gold accent only.
 
-- `@react-three/fiber@^8.18` + `@react-three/drei@^9.122` + `three@^0.160`
-- `gsap@^3.12`
-- Framer Motion (already present)
-- Lazy-loaded via `React.lazy` so marketing routes don't pay the bundle cost
-- Hero: WebGL particle network ("operational nervous system")
-- Command center: ambient grid shader background, cursor parallax
-- Reduced-motion fallback: static gradient + CSS-only glow
+## 2. Homepage — one funnel, not four
 
-## Dynamic SOP / Protocol Engine (core)
+Current homepage tries to serve exploring / researching / ready / skeptical simultaneously via dynamic reordering. That's diluting conversion. New structure:
 
-Intake form captures: event type, participants, duration, budget, city, overnight, media exposure, VIP, public/private, psychological sensitivity, risk level.
+1. **Hero** — one headline, one sub, ONE primary CTA "Book a session" + secondary "Take the 2-min match quiz". Kill the third link. Add: "First session guarantee — not the right fit? Free rebook."
+2. **Proof bar** — logos + "1,200+ sessions delivered", accreditation, press.
+3. **Featured psychologists (3)** — real cards with photo, name, credentials badge, price/session, next available slot ("Tomorrow 18:30"), instant "Book" button. This is the money section — move it up.
+4. **How it works** — 3 steps max, all leading to Book.
+5. **Pricing** — transparent table (see §4).
+6. **Testimonials** — 3 real quotes with photos + outcome ("Anxiety score -6 in 8 weeks").
+7. **FAQ (conversion-focused)** — refund, confidentiality, insurance, language, first-session process.
+8. **Final CTA** — repeat hero CTA.
 
-Flow:
-1. Operator fills intake → `protocol_drafts` row created
-2. Edge function `ops-generate-protocol` calls Claude with a structured tool-call schema
-3. Claude returns: phases → tasks (owner role, deadline offset, dependencies, escalation, proof type, psych-safety flags)
-4. Persisted to `ops_events`, `ops_protocol_phases`, `ops_tasks`
-5. UI renders generated SOP with edit/approve, then materializes tasks on approval
+Retire secondary sections from the home route (Learning, Research, PSF, Community, Organizations). They stay accessible via nav but no longer compete for hero attention.
 
-Re-generation: operator can ask the Director to "tighten timeline" / "add calm room" — patch-style updates via a second tool call.
+## 3. Psychologist directory + profile — proof heavy
 
-## Task & accountability system
+Directory card redesign:
+- Photo, name, one-line specialty, credentials badge, star rating + review count
+- **Price / 50-min session** shown up front
+- **Next available slot** shown up front (live from calendar)
+- Single "Book" button (opens booking modal directly, no profile detour required)
 
-States: `pending | active | blocked | delayed | escalated | validated | completed | archived`.
-Each task: owner, deadline, dependencies[], proof_required, attachments[], comments[], escalation_chain[], state_log[].
-Delay detection via a `pg_cron` job (`ops-task-watcher`) that flips overdue → delayed and notifies via Supabase Realtime.
+Profile page: add a sticky right-rail booking widget with price, next 5 slots, and "Book now" — visible on every scroll position.
 
-## Realtime Command Center
+## 4. Pricing page (new)
 
-Single-screen tactical view:
-- Event timeline (horizontal, GSAP scrub)
-- Task flow rail with live state pulses (Supabase Realtime on `ops_tasks`)
-- KPI tiles (open/blocked/escalated counts)
-- Activity feed (last 50 ops events)
-- Director quick-prompt pinned bottom-right
+Right now pricing is fragmented. Create `/pricing` (public) with three clear cards:
+- **Single session** — MAD X, one 50-min session, video or in-person
+- **Focus pack (4 sessions)** — MAD Y (save Z%), best for a focused issue
+- **Ongoing care (monthly)** — MAD W/mo, weekly sessions + Nour AI + journaling
 
-## AI Ops Director (Claude)
+Under the cards: refund policy, what's included, how billing works, "free rebook if not the right fit". Link to it from header, hero, and every psychologist card.
 
-- Edge function `ops-director` — SSE stream from Claude `claude-sonnet-4-5-20250929` via Anthropic API
-- Tools: `generate_protocol`, `patch_protocol`, `escalate_task`, `summarize_event`
-- Context: current workspace, active event, recent task state changes
-- Secret required: `ANTHROPIC_API_KEY`
+## 5. Booking friction — cut steps
 
-## Database (new tables, all RLS + GRANTs)
+Current flow requires account before seeing availability. New flow:
+1. Pick psychologist → see slots immediately (no login)
+2. Pick slot → email + phone only (magic-link account created in background)
+3. Pay → confirmed
 
-- `ops_workspaces` (tenants — LSSPM seeded)
-- `ops_workspace_members` (user_id, workspace_id, role: `director|operator|viewer`)
-- `ops_events` (workspace_id, type, intake jsonb, status, dates)
-- `ops_protocol_phases` (event_id, order, title, description)
-- `ops_tasks` (event_id, phase_id, owner_user_id, owner_role, state, deadline, deps uuid[], proof_required, escalation jsonb)
-- `ops_task_events` (task_id, actor, from_state, to_state, note, ts)
-- `ops_director_threads` + `ops_director_messages` (Claude conversation history)
-- Security-definer helper `ops_has_workspace_access(user_id, workspace_id)` to avoid recursive RLS
+Add: express Google sign-in on the payment step. Preserve pending booking through auth redirect (already partially wired). Post-booking screen shows Jitsi link + calendar add + "prepare for your session" checklist.
 
-All policies scope via `ops_has_workspace_access`. `service_role` granted for edge functions. No anon access.
+## 6. Copy rewrite (all client-facing pages)
 
-## Edge functions
+Every headline and CTA rewritten against: **specific, benefit-first, one-verb CTAs**. Examples:
+- "Take the First Step" → "Book your first session"
+- "Browse Specialists" → "See psychologists available this week"
+- "Run Your Diagnostic" → "Take the 2-min match quiz"
 
-- `ops-generate-protocol` (Anthropic, tool-call, returns structured SOP)
-- `ops-director` (Anthropic, SSE stream, multi-turn with tools)
-- `ops-task-watcher` (cron, flips overdue tasks, emits realtime events)
+Pages in scope for copy pass: Home, Psychologists, Psychologist profile, Get Matched, Pricing (new), Services, Membership, For Athletes, For Organizations, Contact, Auth, Footer.
 
-## Files to create (high-level)
+## 7. Trust layer (site-wide)
 
-- `src/ops/` — fully isolated tree
-  - `OpsApp.tsx`, `OpsLayout.tsx`, `ops-theme.css`
-  - `pages/` Landing, Command, Events, EventDetail, NewEvent, Tasks, Director
-  - `components/three/` HeroNetwork, GridShader, CursorParallax
-  - `components/sop/` IntakeForm, GeneratedSOPViewer, PhaseCard
-  - `components/tasks/` TaskBoard, TaskCard, StateBadge, EscalationTimeline
-  - `components/director/` DirectorChat, QuickPrompt
-  - `hooks/` useOpsWorkspace, useOpsEvents, useOpsTasks (Realtime), useDirector
-- `src/App.tsx` — add lazy `/ops/*` route
-- Migration: tables above
-- Edge functions: three listed
-- Seed: one `ops_workspaces` row for LSSPM
+- Sticky footer trust strip: "Accredited psychologists · Encrypted sessions · Law 09-08 compliant · Free rebook guarantee"
+- Add security/confidentiality mini-page linked from footer + booking
+- Real testimonials with photos + first name + city (with consent) replace generic quotes
+- Add review counts + average rating to psychologist cards, backed by existing reviews table
 
-## Required secret
+## 8. B2B path (kept separate, not diluting B2C)
 
-`ANTHROPIC_API_KEY` — will be requested via the secrets tool before edge functions are wired.
+Single entry point `/for-organizations` with one CTA → proposal request form. Removed from home hero. Nav item stays.
 
-## What it will feel like
+---
 
-Black room. A slow particle network breathes behind the headline "Operational Nervous System." Hover any tile and the grid behind it ripples. Open an event, watch tasks pulse cyan when a teammate flips their state in another browser. Ask the Director "we just added 200 attendees," and the SOP rewires itself in front of you.
+## Order of work (so you see revenue impact fast)
 
-## Not in this slice
+1. Type system + button/CTA unification (site-wide, 1 pass)
+2. Homepage rebuild (biggest conversion lever)
+3. Psychologist card redesign + directory
+4. Pricing page (new)
+5. Booking flow: slot-before-signup
+6. Profile page sticky booking rail
+7. Copy pass across remaining public pages
+8. Trust strip + FAQ + testimonials
 
-Finance dashboards, supplier CRM, calm-room workflows, transport orchestration, mobile layout, organization onboarding wizard, theming per tenant. All have schema hooks reserved but no UI.
+Each step is shippable independently — you don't wait for the whole thing to see lift.
+
+---
+
+## Technical notes
+
+- Fonts: `bun add @fontsource/fraunces @fontsource/geist-sans @fontsource/geist-mono`, import in `src/main.tsx`, register in `tailwind.config.ts` as `font-display`, `font-sans`, `font-mono`. Keep existing Outfit/Inter tokens as fallback for one release.
+- Homepage: simplify `src/pages/Index.tsx` — remove dynamic reorder for the retired sections; keep intent engine only for micro-copy variants in hero.
+- New route `/pricing` → `src/pages/Pricing.tsx` (file exists, will be rewritten).
+- Booking flow: adjust `useBooking`, `BookingWidget`, `BookingModal` to allow slot selection pre-auth; defer account creation to the payment step via magic link.
+- No schema changes required for phases 1–7. Phase 8 (rating aggregate on cards) may add a small view over `reviews` — will surface a migration then.
+- Everything stays within the locked design memory (Maroon/Beige/Gold, no heavy 3D, Framer only).
+
+## What I need from you before building
+
+- Confirm the 3 pricing tiers and the actual MAD amounts (or say "use current values from `platform_pricing`").
+- Confirm the "free rebook if not the right fit" guarantee is something you'll honor — it's the single strongest trust lever.
+- 3 real testimonials (name, city, one-line outcome, optional photo) — or approval to use placeholder quotes marked as such until you provide real ones.
