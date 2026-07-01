@@ -5992,6 +5992,23 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      start_daily_challenge: {
+        Args: { p_challenge_id: string }
+        Returns: {
+          assigned_for_date: string
+          challenge_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_daily_challenges"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       validate_coupon: {
         Args: { _amount_mad: number; _applies_to: string; _code: string }
         Returns: {
