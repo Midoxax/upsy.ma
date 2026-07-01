@@ -484,29 +484,6 @@ const HeroSection = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* ── Preview Cards ── */}
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 max-w-4xl mx-auto"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6 }}
-          >
-            {previewCardSlots.map((card) => (
-              <Link
-                key={card.keyBase}
-                to={card.href}
-                className="group glass-card p-5 text-start transition-all duration-300 hover:border-primary/30 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
-              >
-                <span className="text-2xl mb-2 block" aria-hidden="true">{card.icon}</span>
-                <h3 className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                  {t(`home.hero.preview.${card.keyBase}Title`)}
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {t(`home.hero.preview.${card.keyBase}Desc`)}
-                </p>
-              </Link>
-            ))}
-          </motion.div>
         </div>
       </div>
 
