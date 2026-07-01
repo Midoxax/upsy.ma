@@ -86,10 +86,10 @@ export default function HomePricingSection() {
                   Most chosen
                 </span>
               )}
-              <h3 className="font-display text-2xl font-semibold mb-1">{tier.name}</h3>
+              <h3 className="font-display text-2xl font-medium tracking-tight mb-1">{tier.name}</h3>
               <p className="text-sm text-muted-foreground mb-5">{tier.tagline}</p>
               <div className="mb-5">
-                <span className="font-mono text-4xl font-semibold text-foreground" data-numeric>
+                <span className="font-mono tabular-nums text-4xl font-semibold text-foreground" data-numeric>
                   {tier.price}
                 </span>
                 <span className="text-sm text-muted-foreground ml-2">{tier.cadence}</span>
