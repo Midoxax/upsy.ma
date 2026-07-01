@@ -78,6 +78,7 @@ const MindfulnessForBeginners = lazy(() => import("./pages/blog/MindfulnessForBe
 const HowToImproveFocus = lazy(() => import("./pages/blog/HowToImproveFocus"));
 const HowToClearBrainFog = lazy(() => import("./pages/blog/HowToClearBrainFog"));
 const FreeScore = lazy(() => import("./pages/FreeScore"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const MentalPerformance = lazy(() => import("./pages/MentalPerformance"));
 const MentalToughnessAthletes = lazy(() => import("./pages/MentalToughnessAthletes"));
 const Invite = lazy(() => import("./pages/Invite"));
@@ -143,6 +144,7 @@ const AppRoutes = () => (
     <Route path="reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
     <Route path="auth/mfa-setup" element={<ProtectedRoute><PageTransition><MfaSetup /></PageTransition></ProtectedRoute>} />
     <Route path="get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+    <Route path="unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
     <Route path="dashboard" element={<ProtectedRoute><RoleRouter /></ProtectedRoute>} />
     <Route path="dashboard/client" element={<ProtectedRoute><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><PatientDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
     <Route path="dashboard/specialist" element={<ProtectedRoute role="psychologist"><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><SpecialistDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
