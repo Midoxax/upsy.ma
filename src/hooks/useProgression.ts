@@ -155,12 +155,9 @@ export const useStartQuest = () => {
   return useMutation({
     mutationFn: async (quest_slug: string) => {
       if (!user) throw new Error("not authenticated");
-      const { error } = await supabase
-        .from("user_quest_progress")
-        .upsert(
-          { user_id: user.id, quest_slug, step_idx: 0, state: {} },
-          { onConflict: "user_id,quest_slug" },
-        );
+      const { error } = await supabase.rpc("quest_start" as any, {
+        _quest_slug: quest_slug,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
