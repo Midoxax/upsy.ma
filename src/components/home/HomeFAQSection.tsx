@@ -16,6 +16,18 @@ const faqs = [
     a: "Yes — when the root cause is psychological (anxiety, ADHD traits, burnout, perfectionism) rather than tooling. We screen for it in session 1 using validated instruments (GAD-7, PHQ-9, adult ADHD), then build a focus protocol you can run daily. Most clients report measurable change within 3–4 weeks.",
   },
   {
+    q: "What causes brain fog and how do I clear it?",
+    a: "Brain fog is usually a stack: poor sleep architecture, chronic stress load, unregulated anxiety, post-viral inflammation, or nutrient gaps. A psychologist maps which drivers apply to you, treats the psychological load (CBT-I for sleep, stress protocols, rumination work), and refers out for medical drivers. Most people feel a clear lift in 2–4 weeks.",
+  },
+  {
+    q: "How do high performers train their mind — athletes, founders, executives?",
+    a: "Same three levers: (1) baseline measurement (attention, recovery, emotional regulation, decision quality), (2) targeted protocols — visualization, arousal control, cognitive defusion, pre-performance routines, (3) weekly reps under simulated pressure. Our performance psychologists work with pro athletes, C-suite operators, and founders on the same stack.",
+  },
+  {
+    q: "How is this different from meditation apps or self-help?",
+    a: "Apps give you generic exercises. A psychologist runs assessment → diagnosis → personalized protocol → weekly accountability → measurable outcomes. You're not guessing which technique to try — you're running the specific one that fits your profile, with someone tracking whether it's working.",
+  },
+  {
     q: "What if I don't click with my psychologist?",
     a: "You get a free rebook with a different psychologist — no questions asked. The first session is about finding the right person, not paying twice to try again.",
   },
