@@ -14,9 +14,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        outfit: ['Outfit', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        // Conversion type system
+        sans: ['Geist', 'Manrope', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
         fraunces: ['Fraunces', 'Georgia', 'serif'],
-        manrope: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        // Legacy aliases (kept so no existing class breaks)
+        outfit: ['Geist', 'Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        manrope: ['Geist', 'Manrope', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
