@@ -58,6 +58,8 @@ const EN_ONLY_ROUTES: Entry[] = [
   { path: "/blog/how-to-support-a-loved-one", priority: "0.5" },
   { path: "/blog/mental-health-at-work", priority: "0.5" },
   { path: "/blog/mindfulness-for-beginners", priority: "0.5" },
+  { path: "/blog/how-to-improve-focus", priority: "0.6" },
+  { path: "/blog/how-to-clear-brain-fog", priority: "0.6" },
   { path: "/blog/understanding-anxiety", priority: "0.5" },
   { path: "/blog/understanding-depression", priority: "0.5" },
 ];

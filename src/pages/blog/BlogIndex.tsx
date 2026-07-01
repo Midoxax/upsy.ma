@@ -107,6 +107,28 @@ const articles: BlogArticle[] = [
     readTime: "6 min",
     color: "bg-accent/10 text-accent-foreground",
   },
+  {
+    slug: "how-to-improve-focus",
+    titleKey: "blog.focus.title",
+    descKey: "blog.focus.intro",
+    fallbackTitle: "How to Improve Focus and Concentration",
+    fallbackDesc: "Focus is not a personality trait — it's a trainable skill. The four evidence-based levers, a 4-week protocol, and when to get help.",
+    category: "Performance",
+    categoryKey: "blog.performance",
+    readTime: "7 min",
+    color: "bg-primary/10 text-primary",
+  },
+  {
+    slug: "how-to-clear-brain-fog",
+    titleKey: "blog.brainFog.title",
+    descKey: "blog.brainFog.intro",
+    fallbackTitle: "How to Clear Brain Fog — Causes, Fixes and When to See a Doctor",
+    fallbackDesc: "Brain fog is a signal, not a personality flaw. The five most common drivers, a 2-week clarity protocol, and the bloodwork to ask for.",
+    category: "Performance",
+    categoryKey: "blog.performance",
+    readTime: "7 min",
+    color: "bg-primary/10 text-primary",
+  },
 ];
 
 const BlogIndex = () => {
