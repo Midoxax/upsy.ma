@@ -150,6 +150,14 @@ export default function FreeScore() {
       meaning: { en: "Meaning & connection", fr: "Sens & connexion", ar: "المعنى والتواصل" },
     };
     const weakest = (Object.entries(pillarScores) as [Pillar, number][]).sort((a, b) => a[1] - b[1])[0];
+    const pillarQuery: Record<Pillar, string> = {
+      focus: "attention",
+      regulation: "anxiety",
+      recovery: "sleep",
+      meaning: "relationships",
+    };
+    const matchHref = (p: Pillar) => `/psychologists?pillar=${p}&q=${encodeURIComponent(pillarQuery[p])}&source=free-score`;
+    const ctaMatchLabel = lang === "fr" ? "Voir vos psychologues correspondants" : lang === "ar" ? "شاهد الأخصائيين المناسبين" : "See your matched psychologists";
     const recoCopy: Record<Pillar, Record<"en" | "fr" | "ar", string>> = {
       focus: {
         en: "Your weakest pillar is Focus. A performance psychologist can build you a daily attention protocol in 4–6 sessions.",
