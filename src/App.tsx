@@ -76,6 +76,7 @@ const UnderstandingDepression = lazy(() => import("./pages/blog/UnderstandingDep
 const HowToSupportALovedOne = lazy(() => import("./pages/blog/HowToSupportALovedOne"));
 const MindfulnessForBeginners = lazy(() => import("./pages/blog/MindfulnessForBeginners"));
 const FreeScore = lazy(() => import("./pages/FreeScore"));
+const MentalPerformance = lazy(() => import("./pages/MentalPerformance"));
 const Invite = lazy(() => import("./pages/Invite"));
 const ForAthletes = lazy(() => import("./pages/funnels/ForAthletes"));
 const ForOrganizations = lazy(() => import("./pages/funnels/ForOrganizations"));
