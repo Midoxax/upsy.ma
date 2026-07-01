@@ -23,6 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Users, Search, Shield, Globe, FlaskConical, SlidersHorizontal, BarChart3 } from "lucide-react";
+import { ClipboardCheck, MessageCircle, CalendarCheck, Repeat, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -138,6 +139,93 @@ const Psychologists = () => {
               </div>
             </div>
           </ScrollReveal>
+        </div>
+      </section>
+
+      <MaroonDivider />
+
+      {/* How to find the right psychologist */}
+      <section className="section-spacing liquid-bg">
+        <div className="container-custom max-w-5xl">
+          <ScrollReveal>
+            <div className="text-center mb-12 space-y-3">
+              <h2 className="text-h2">How to find the right psychologist</h2>
+              <p className="text-body text-u-gray-300 max-w-2xl mx-auto">
+                Choosing well matters more than choosing fast. Four steps we recommend to every client — whether you book here or elsewhere.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                icon: ClipboardCheck,
+                step: "01",
+                title: "Name the goal, not just the pain",
+                body: "Write one sentence: what would be different in your life 3 months from now? Anxiety relief, decision clarity, sleep, performance, a specific relationship. This filters 80% of the directory.",
+              },
+              {
+                icon: Search,
+                step: "02",
+                title: "Match the method to the goal",
+                body: "CBT for anxiety and thought loops. Schema/psychodynamic for recurring relationship patterns. EMDR for trauma. Performance psychology for competition, focus, decision-load. Filter by approach, not just city.",
+              },
+              {
+                icon: MessageCircle,
+                step: "03",
+                title: "Use the first session as an interview",
+                body: "You are hiring a specialist. Ask: how do you work, what does progress look like, when would you refer me out. If you don't feel safe, curious, or respected — it's not the right fit.",
+              },
+              {
+                icon: Repeat,
+                step: "04",
+                title: "Give it 3 sessions, then decide",
+                body: "Rapport is real data. If after three sessions you don't feel movement or a working alliance, rebook with someone else. On U.Psy the first rebook is free — that's the guarantee.",
+              },
+            ].map((item) => (
+              <div key={item.step} className="glass-card p-6 space-y-3">
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(255,179,0,0.1)', border: '1px solid rgba(255,179,0,0.3)' }}>
+                    <item.icon className="w-5 h-5 text-u-gold" />
+                  </div>
+                  <div>
+                    <div className="font-mono text-xs text-u-gold tracking-widest mb-1">{item.step}</div>
+                    <h3 className="text-h4 mb-2">{item.title}</h3>
+                    <p className="text-sm text-u-gray-300 leading-relaxed">{item.body}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <MaroonDivider />
+
+      {/* Inquiry CTA */}
+      <section className="section-spacing liquid-bg">
+        <div className="container-custom">
+          <div className="glass-card p-10 md:p-14 max-w-3xl mx-auto text-center">
+            <ScrollReveal>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+                style={{ background: 'rgba(255,179,0,0.1)', border: '2px solid rgba(255,179,0,0.3)' }}>
+                <Mail className="w-8 h-8 text-u-gold" />
+              </div>
+              <h2 className="text-h2 mb-4">Still not sure who to book?</h2>
+              <p className="text-body text-u-gray-300 max-w-xl mx-auto mb-8">
+                Tell us your situation in a few lines. Our clinical team responds within 24 hours with 2–3 named recommendations — free, confidential, no obligation.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="primary" size="lg" asChild>
+                  <Link to="/contact"><Mail className="mr-2 h-4 w-4" /> Send an inquiry</Link>
+                </Button>
+                <Button variant="secondary" size="lg" asChild>
+                  <Link to="/get-matched"><CalendarCheck className="mr-2 h-4 w-4" /> Take the 2-min match</Link>
+                </Button>
+              </div>
+            </ScrollReveal>
+          </div>
         </div>
       </section>
 
