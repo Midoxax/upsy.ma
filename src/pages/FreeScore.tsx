@@ -239,12 +239,15 @@ export default function FreeScore() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button asChild size="lg">
-                  <Link to="/get-matched">{t.ctaMatch}</Link>
+                  <Link
+                    to={matchHref(weakest[0])}
+                    onClick={() => captureEvent("free_score_cta_match", { pillar: weakest[0], score })}
+                  >
+                    {ctaMatchLabel}
+                  </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link to="/psychologists">
-                    {lang === "fr" ? "Voir les psychologues" : lang === "ar" ? "عرض الأخصائيين" : "Browse psychologists"}
-                  </Link>
+                  <Link to="/get-matched">{t.ctaMatch}</Link>
                 </Button>
               </div>
 
