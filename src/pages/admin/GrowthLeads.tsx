@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { downloadCsv } from "@/lib/admin/csv";
 import { Download, Loader2, Search } from "lucide-react";
-import SEOHead from "@/components/seo/SEOHead";
+import SEOHead from "@/components/SEOHead";
 
 type Lead = {
   id: string;
@@ -94,7 +94,7 @@ export default function GrowthLeads() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <SEOHead title="Growth Leads — Admin" description="Review and export growth leads" noIndex />
+      <SEOHead path="/admin/growth-leads" title="Growth Leads — Admin" description="Review and export growth leads" />
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
           <h1 className="font-display text-3xl">Growth Leads</h1>
