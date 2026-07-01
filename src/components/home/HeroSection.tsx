@@ -1,157 +1,131 @@
-// src/components/home/HeroSection.tsx — Marketing hero, deep-night cinematic
-import { lazy, Suspense } from "react";
+// src/components/home/HeroSection.tsx — "Geometric Monolith" hero
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, ShieldCheck, Star } from "lucide-react";
-import { MagneticButton } from "@/lib/motion";
-
-const HeroScene = lazy(() => import("@/components/three/HeroScene"));
-
-const prefersReducedMotion =
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+import { ArrowRight, Sparkles } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const HeroSection = () => {
-  return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden">
-      <div className="absolute inset-0" aria-hidden="true">
-        <div className="aurora-layer" />
-        {!prefersReducedMotion && (
-          <div className="absolute inset-0 opacity-90">
-            <Suspense fallback={null}>
-              <HeroScene />
-            </Suspense>
-          </div>
-        )}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 60% at 20% 50%, hsl(348 40% 4% / 0.85) 0%, hsl(348 40% 4% / 0.3) 50%, transparent 80%)",
-          }}
-        />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
-      </div>
+  const { t } = useLocale();
 
-      <div className="container-custom relative z-10 py-24 md:py-32">
-        <div className="grid lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-7 space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm"
+  return (
+    <section className="relative min-h-[92vh] w-full bg-[#1E080E] flex items-center justify-center overflow-hidden">
+      {/* Ambient gold aura */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] rounded-full opacity-60 blur-3xl"
+        style={{ background: "radial-gradient(closest-side, hsl(45 96% 52% / 0.18), transparent 70%)" }}
+      />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background z-[1]" aria-hidden="true" />
+
+      <div className="relative z-10 w-full max-w-7xl px-6 md:px-8 py-24 md:py-28 flex flex-col lg:flex-row items-center gap-14 lg:gap-8">
+        {/* Left — Frosted glass content column */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
+          className="relative w-full lg:w-3/5"
+        >
+          <div
+            className="relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-8 md:p-12 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]"
+            style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 30px 80px -30px rgba(0,0,0,0.6)" }}
+          >
+            <motion.span
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15, duration: 0.6 }}
+              className="block font-sans text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] text-[#F2B705] mb-6"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-[11px] uppercase tracking-[0.25em] text-primary/90 font-medium">
-                Now booking worldwide · Video & In-person
-              </span>
-            </motion.div>
+              Institutional Psychology System
+            </motion.span>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-display font-normal leading-[0.95] tracking-[-0.02em] text-[clamp(2.75rem,7.5vw,6rem)] text-foreground"
+              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.8 }}
+              className="font-display text-[#FFF8F0] leading-[1.05] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,5.5rem)] mb-8"
             >
-              The psychology<br />
-              <span className="italic accent-italic text-gold-gradient">infrastructure</span>{" "}
-              behind<br />people who perform.
+              The Infrastructure<br />
+              <span className="italic font-light opacity-90">of Peak Human<br />Performance</span>
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed"
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.7 }}
+              className="font-sans font-light text-lg md:text-xl text-[#FFF8F0]/70 max-w-xl leading-relaxed mb-10"
             >
-              Book an accredited psychologist in under 2 minutes. Video anywhere in the world, or in-person in select cities —
-              in Arabic, French, English, Spanish or Portuguese. Free rebook if the fit isn't right.
+              Moving beyond therapy into precision architecture. U.Psy builds the cognitive
+              frameworks elite athletes, founders, and operators need to sustain pressure — without compromise.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.6 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <MagneticButton strength={0.3}>
-                <Button
-                  size="lg"
-                  asChild
-                  className="group h-14 px-8 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_20px_50px_-15px_hsl(45_96%_60%/0.55)]"
-                >
-                  <Link to="/psychologists" className="inline-flex items-center gap-2">
-                    Book your first session
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-              </MagneticButton>
-              <Button
-                variant="ghost"
-                size="lg"
-                asChild
-                className="h-14 px-6 text-base text-foreground/90 hover:bg-white/5 border border-white/10"
+              <Link
+                to="/free-score"
+                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#F2B705] text-[#1E080E] font-sans font-bold text-sm tracking-wide rounded-sm transition-shadow hover:shadow-[0_0_40px_rgba(242,183,5,0.35)]"
               >
-                <Link to="/get-matched" className="inline-flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  Take the 2-min match quiz
-                </Link>
-              </Button>
+                <span className="relative z-10">Get Your Performance Score</span>
+                <ArrowRight className="relative z-10 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              </Link>
+              <Link
+                to="/psychologists"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[#FFF8F0]/20 text-[#FFF8F0] font-sans font-medium text-sm tracking-wide rounded-sm hover:bg-[#FFF8F0]/5 hover:border-[#F2B705]/60 transition-colors"
+              >
+                <Sparkles className="h-4 w-4 text-[#F2B705]" />
+                Book a session
+              </Link>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground pt-2"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75, duration: 0.6 }}
+              className="mt-14 pt-6 border-t border-[#FFF8F0]/10"
             >
-              <span className="inline-flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-primary" />
-                Free rebook guarantee
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Star className="h-4 w-4 fill-primary text-primary" />
-                <span className="font-medium text-foreground/90">4.9</span>
-                <span>· 240+ sessions</span>
-              </span>
+              <p className="text-[#FFF8F0]/40 text-[9px] uppercase tracking-[0.3em] font-sans font-bold mb-5">
+                Deployed across high-stakes environments
+              </p>
+              <div className="flex flex-wrap items-center gap-x-10 gap-y-4 opacity-50">
+                <span className="font-display text-lg font-bold text-white tracking-tight">OLYMPIC</span>
+                <span className="font-sans text-sm font-light text-white tracking-[0.3em]">EQUITY.H</span>
+                <span className="font-display text-xl font-black text-white italic">CORE</span>
+                <span className="font-sans text-sm font-medium text-white underline underline-offset-4 decoration-1">STRATOS</span>
+                <span className="font-mono text-xs text-white/80 tabular-nums">4.9 ★ · 240+ sessions</span>
+              </div>
             </motion.div>
           </div>
+        </motion.div>
 
-          <div className="lg:col-span-5 hidden lg:flex justify-end">
+        {/* Right — Geometric lattice */}
+        <div className="relative w-full lg:w-2/5 h-[360px] lg:h-[600px] flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 1.1, ease: [0.2, 1, 0.3, 1] }}
+            className="relative w-full h-full flex items-center justify-center"
+          >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="relative w-full max-w-sm space-y-4"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 flex items-center justify-center"
             >
-              {[
-                { k: "40+", v: "Countries served — sessions in your timezone" },
-                { k: "< 2 min", v: "From landing to a booked slot" },
-                { k: "5-tier", v: "Accreditation system for every psychologist" },
-              ].map((s) => (
-                <div
-                  key={s.k}
-                  className="glass-card !p-5 flex items-center gap-4 border border-primary/15"
-                >
-                  <div className="font-mono text-2xl text-primary tabular-nums whitespace-nowrap">
-                    {s.k}
-                  </div>
-                  <div className="text-sm font-sans text-muted-foreground leading-tight">{s.v}</div>
-                </div>
-              ))}
+              <svg viewBox="0 0 200 200" className="w-full h-full max-w-md stroke-[#F2B705]/50 fill-none drop-shadow-[0_0_20px_rgba(242,183,5,0.12)]">
+                <path d="M100 10 L180 50 L180 150 L100 190 L20 150 L20 50 Z" strokeWidth="0.5" />
+                <path d="M100 10 L100 190 M20 50 L180 150 M180 50 L20 150" strokeWidth="0.3" strokeDasharray="4 4" />
+                <circle cx="100" cy="100" r="30" strokeWidth="0.3" />
+                <path d="M100 40 L160 100 L100 160 L40 100 Z" strokeWidth="0.5" />
+                <path d="M100 40 L100 10 M160 100 L180 50 M160 100 L180 150 M100 160 L100 190 M40 100 L20 150 M40 100 L20 50" strokeWidth="0.4" />
+                <circle cx="100" cy="10" r="2" fill="#F2B705" className="animate-pulse" />
+                <circle cx="180" cy="50" r="1.5" fill="#F2B705" />
+                <circle cx="180" cy="150" r="1.5" fill="#F2B705" />
+                <circle cx="100" cy="190" r="2" fill="#F2B705" className="animate-pulse" />
+                <circle cx="20" cy="150" r="1.5" fill="#F2B705" />
+                <circle cx="20" cy="50" r="1.5" fill="#F2B705" />
+                <circle cx="100" cy="100" r="3" fill="#F2B705" />
+              </svg>
             </motion.div>
-          </div>
+            <div
+              aria-hidden="true"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] blur-3xl opacity-60"
+              style={{ background: "radial-gradient(closest-side, hsl(45 96% 52% / 0.15), transparent 70%)" }}
+            />
+          </motion.div>
         </div>
-      </div>
-
-      <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
-        aria-hidden="true"
-      >
-        <span className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground/60">Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-primary/50 to-transparent" />
       </div>
     </section>
   );
