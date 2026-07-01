@@ -4,6 +4,18 @@ import { Plus, Minus } from "lucide-react";
 
 const faqs = [
   {
+    q: "How do I actually improve my mental performance?",
+    a: "Mental performance improves the same way physical performance does — measure a baseline, target the weakest link (focus, sleep, emotional regulation, or recovery), train it for 6–8 weeks with a psychologist, then re-measure. Our psychologists use validated protocols (CBT, ACT, EMDR, performance psychology) matched to your goal, not generic advice.",
+  },
+  {
+    q: "How do I build mental toughness and stop overthinking?",
+    a: "Mental toughness isn't willpower — it's trained tolerance for discomfort plus a clean decision framework. In 4–6 sessions you learn to separate signal from noise, run cognitive defusion on intrusive thoughts, and rehearse pressure situations. Athletes, founders, and executives use the same protocol.",
+  },
+  {
+    q: "Can a psychologist really help me focus and be more productive?",
+    a: "Yes — when the root cause is psychological (anxiety, ADHD traits, burnout, perfectionism) rather than tooling. We screen for it in session 1 using validated instruments (GAD-7, PHQ-9, adult ADHD), then build a focus protocol you can run daily. Most clients report measurable change within 3–4 weeks.",
+  },
+  {
     q: "What if I don't click with my psychologist?",
     a: "You get a free rebook with a different psychologist — no questions asked. The first session is about finding the right person, not paying twice to try again.",
   },
