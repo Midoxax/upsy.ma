@@ -205,13 +205,28 @@ export default function FreeScore() {
                   {lang === "fr" ? "Répartition par pilier" : lang === "ar" ? "التفصيل حسب الركيزة" : "Breakdown by pillar"}
                 </h3>
                 {(Object.keys(pillarScores) as Pillar[]).map((p) => (
-                  <div key={p} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>{pillarLabels[p][lang]}</span>
+                  <Link
+                    key={p}
+                    to={matchHref(p)}
+                    onClick={() => captureEvent("free_score_pillar_click", { pillar: p, score: pillarScores[p] })}
+                    className="block space-y-1 rounded-md px-2 py-1 -mx-2 hover:bg-muted/40 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  >
+                    <div className="flex justify-between text-sm items-center">
+                      <span className="flex items-center gap-2">
+                        {pillarLabels[p][lang]}
+                        {p === weakest[0] && (
+                          <span className="text-[10px] uppercase tracking-widest text-primary">
+                            {lang === "fr" ? "Prioritaire" : lang === "ar" ? "أولوية" : "Priority"}
+                          </span>
+                        )}
+                      </span>
                       <span className="font-mono tabular-nums">{pillarScores[p]}</span>
                     </div>
                     <Progress value={pillarScores[p]} className="h-1.5" />
-                  </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {lang === "fr" ? "Voir les psychologues →" : lang === "ar" ? "عرض الأخصائيين ←" : "See matched psychologists →"}
+                    </div>
+                  </Link>
                 ))}
               </div>
 
