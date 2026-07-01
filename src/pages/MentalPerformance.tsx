@@ -47,6 +47,25 @@ export default function MentalPerformance() {
     })),
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://upsy.ma",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Mental Performance",
+        item: "https://upsy.ma/mental-performance",
+      },
+    ],
+  };
+
   const pillars = [
     { icon: Focus, title: "Attention Control", desc: "Train the ability to hold and release focus at will — the core skill under every high-stakes output." },
     { icon: Zap, title: "Stress Recovery", desc: "Move from reactive to regulated. Nervous-system tools that shorten recovery from setbacks and pressure." },
@@ -62,7 +81,7 @@ export default function MentalPerformance() {
         path="/mental-performance"
         title="Mental Performance Training — Focus, Toughness, Clarity | U.Psy"
         description="Measure, train, and sustain elite mental performance. Assessments, coaching, and protocols for focus, mental toughness, stress recovery, and decision-making."
-        jsonLd={faqJsonLd}
+        jsonLd={[breadcrumbJsonLd, faqJsonLd]}
       />
 
       <main className="min-h-screen">
