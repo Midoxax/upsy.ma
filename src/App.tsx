@@ -75,6 +75,8 @@ const MentalHealthAtWork = lazy(() => import("./pages/blog/MentalHealthAtWork"))
 const UnderstandingDepression = lazy(() => import("./pages/blog/UnderstandingDepression"));
 const HowToSupportALovedOne = lazy(() => import("./pages/blog/HowToSupportALovedOne"));
 const MindfulnessForBeginners = lazy(() => import("./pages/blog/MindfulnessForBeginners"));
+const HowToImproveFocus = lazy(() => import("./pages/blog/HowToImproveFocus"));
+const HowToClearBrainFog = lazy(() => import("./pages/blog/HowToClearBrainFog"));
 const FreeScore = lazy(() => import("./pages/FreeScore"));
 const MentalPerformance = lazy(() => import("./pages/MentalPerformance"));
 const MentalToughnessAthletes = lazy(() => import("./pages/MentalToughnessAthletes"));
@@ -166,6 +168,8 @@ const AppRoutes = () => (
     <Route path="blog/understanding-depression" element={<PageTransition><UnderstandingDepression /></PageTransition>} />
     <Route path="blog/how-to-support-a-loved-one" element={<PageTransition><HowToSupportALovedOne /></PageTransition>} />
     <Route path="blog/mindfulness-for-beginners" element={<PageTransition><MindfulnessForBeginners /></PageTransition>} />
+    <Route path="blog/how-to-improve-focus" element={<PageTransition><HowToImproveFocus /></PageTransition>} />
+    <Route path="blog/how-to-clear-brain-fog" element={<PageTransition><HowToClearBrainFog /></PageTransition>} />
     <Route path="free-score" element={<PageTransition><FreeScore /></PageTransition>} />
    <Route path="mental-performance" element={<PageTransition><MentalPerformance /></PageTransition>} />
     <Route path="mental-toughness-athletes" element={<PageTransition><MentalToughnessAthletes /></PageTransition>} />
