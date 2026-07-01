@@ -5875,6 +5875,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      quest_start: { Args: { _quest_slug: string }; Returns: Json }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
