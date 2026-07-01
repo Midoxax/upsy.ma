@@ -144,6 +144,7 @@ const AppRoutes = () => (
     <Route path="reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
     <Route path="auth/mfa-setup" element={<ProtectedRoute><PageTransition><MfaSetup /></PageTransition></ProtectedRoute>} />
     <Route path="get-matched" element={<PageTransition><GetMatched /></PageTransition>} />
+    <Route path="unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
     <Route path="dashboard" element={<ProtectedRoute><RoleRouter /></ProtectedRoute>} />
     <Route path="dashboard/client" element={<ProtectedRoute><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><PatientDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
     <Route path="dashboard/specialist" element={<ProtectedRoute role="psychologist"><PageTransition><ErrorBoundary fallback={<DashboardErrorFallback />}><SpecialistDashboard /></ErrorBoundary></PageTransition></ProtectedRoute>} />
