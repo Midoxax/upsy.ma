@@ -38,6 +38,7 @@ const TalentInnovationHub = lazy(() => import("./pages/TalentInnovationHub"));
 const MoroccanUmbrella = lazy(() => import("./pages/MoroccanUmbrella"));
 const PsychologuesSansFrontieres = lazy(() => import("./pages/PsychologuesSansFrontieres"));
 const Psychologists = lazy(() => import("./pages/Psychologists"));
+const Press = lazy(() => import("./pages/Press"));
 const PsychologistProfile = lazy(() => import("./pages/PsychologistProfile"));
 const SpecialistPricing = lazy(() => import("./pages/SpecialistPricing"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -131,6 +132,7 @@ const AppRoutes = () => (
     <Route path="moroccan-umbrella" element={<PageTransition><MoroccanUmbrella /></PageTransition>} />
     <Route path="psf" element={<PageTransition><PsychologuesSansFrontieres /></PageTransition>} />
     <Route path="psychologists" element={<PageTransition><Psychologists /></PageTransition>} />
+    <Route path="press" element={<PageTransition><Press /></PageTransition>} />
     <Route path="psychologists/:id" element={<PageTransition><PsychologistProfile /></PageTransition>} />
    <Route path="pricing-specialists" element={<PageTransition><SpecialistPricing /></PageTransition>} />
     <Route path="pricing" element={<PageTransition><Pricing /></PageTransition>} />
