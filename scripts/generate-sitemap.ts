@@ -41,6 +41,11 @@ const ROUTES: Entry[] = [
   { path: "/legal", changefreq: "yearly", priority: "0.3" },
   { path: "/apply", changefreq: "monthly", priority: "0.5" },
   { path: "/blog", changefreq: "weekly", priority: "0.7" },
+  { path: "/install", changefreq: "yearly", priority: "0.3" },
+  { path: "/skool", changefreq: "monthly", priority: "0.5" },
+  { path: "/privacy", changefreq: "yearly", priority: "0.3" },
+  { path: "/terms", changefreq: "yearly", priority: "0.3" },
+  { path: "/moroccan-umbrella", changefreq: "monthly", priority: "0.6" },
 ];
 
 // English-only content (blog posts).

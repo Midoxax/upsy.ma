@@ -12,7 +12,7 @@ interface SEOHeadProps {
 }
 
 const DEFAULT_TITLE = 'U.Psy — Performance Psychology Platform for Morocco';
-const DEFAULT_DESCRIPTION = "U.Psy is Morocco's performance psychology platform. Find accredited psychologists, take clinical self-assessments, and access tailored mental health programs.";
+const DEFAULT_DESCRIPTION = "Book accredited psychologists worldwide. Video sessions in any timezone, or in-person in select cities. Free rebook if not the right fit.";
 const DEFAULT_OG_IMAGE = 'https://upsy.ma/og-image.png';
 
 const SEOHead = ({ path, title, description, ogImage, ogType = 'website', jsonLd }: SEOHeadProps) => {
