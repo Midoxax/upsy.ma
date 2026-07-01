@@ -325,6 +325,33 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/mental-performance" />
   </url>
   <url>
+    <loc>https://upsy.ma/mental-toughness-athletes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/mental-toughness-athletes" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/fr/mental-toughness-athletes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/mental-toughness-athletes" />
+  </url>
+  <url>
+    <loc>https://upsy.ma/ar/mental-toughness-athletes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://upsy.ma/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://upsy.ma/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://upsy.ma/fr/mental-toughness-athletes" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://upsy.ma/ar/mental-toughness-athletes" />
+  </url>
+  <url>
     <loc>https://upsy.ma/pricing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

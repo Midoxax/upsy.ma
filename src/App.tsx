@@ -77,6 +77,7 @@ const HowToSupportALovedOne = lazy(() => import("./pages/blog/HowToSupportALoved
 const MindfulnessForBeginners = lazy(() => import("./pages/blog/MindfulnessForBeginners"));
 const FreeScore = lazy(() => import("./pages/FreeScore"));
 const MentalPerformance = lazy(() => import("./pages/MentalPerformance"));
+const MentalToughnessAthletes = lazy(() => import("./pages/MentalToughnessAthletes"));
 const Invite = lazy(() => import("./pages/Invite"));
 const ForAthletes = lazy(() => import("./pages/funnels/ForAthletes"));
 const ForOrganizations = lazy(() => import("./pages/funnels/ForOrganizations"));
@@ -167,6 +168,7 @@ const AppRoutes = () => (
     <Route path="blog/mindfulness-for-beginners" element={<PageTransition><MindfulnessForBeginners /></PageTransition>} />
     <Route path="free-score" element={<PageTransition><FreeScore /></PageTransition>} />
    <Route path="mental-performance" element={<PageTransition><MentalPerformance /></PageTransition>} />
+    <Route path="mental-toughness-athletes" element={<PageTransition><MentalToughnessAthletes /></PageTransition>} />
     <Route path="invite/:code" element={<PageTransition><Invite /></PageTransition>} />
     <Route path="for-athletes" element={<PageTransition><ForAthletes /></PageTransition>} />
     <Route path="for-organizations" element={<PageTransition><ForOrganizations /></PageTransition>} />
