@@ -135,6 +135,36 @@ export default function FreeScore() {
       captureEvent("free_score_completed", { score: computed, ...pillars });
       setScore(computed);
       setPillarScores(pillars);
+
+      // Fire-and-forget confirmation email with pillar summary and next steps.
+      const weakest = (Object.entries(pillars) as [Pillar, number][])
+        .sort((a, b) => a[1] - b[1])[0][0];
+      const pillarQuery: Record<Pillar, string> = {
+        focus: "attention",
+        regulation: "anxiety",
+        recovery: "sleep",
+        meaning: "relationships",
+      };
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://upsy.ma";
+      supabase.functions
+        .invoke("send-transactional-email", {
+          body: {
+            templateName: "quiz-results",
+            recipientEmail: email.toLowerCase().trim(),
+            idempotencyKey: `quiz-results-${email.toLowerCase().trim()}-${computed}`,
+            templateData: {
+              name: name.trim() || undefined,
+              score: computed,
+              pillars,
+              weakestPillar: weakest,
+              lang,
+              bookingUrl: `${origin}/get-matched?source=free-score`,
+              matchUrl: `${origin}/psychologists?pillar=${weakest}&q=${encodeURIComponent(pillarQuery[weakest])}&source=free-score-email`,
+              resultsUrl: `${origin}/free-score`,
+            },
+          },
+        })
+        .catch((err) => console.warn("quiz-results email enqueue failed", err));
     } catch (e: any) {
       toast.error(e.message ?? "Submission failed");
     } finally {
