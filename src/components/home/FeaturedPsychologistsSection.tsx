@@ -7,6 +7,16 @@ import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedPsychologists } from "@/services/psychologistsService";
 
+// t() in this project returns the key when a translation is missing.
+// This helper falls back to the provided default in that case.
+const useSafeT = () => {
+  const { t } = useLocale();
+  return (key: string, fallback: string) => {
+    const v = t(key);
+    return !v || v === key ? fallback : v;
+  };
+};
+
 /**
  * Conversion-focused card:
  * - Face + online-status dot (trust)
@@ -20,13 +30,13 @@ import { getFeaturedPsychologists } from "@/services/psychologistsService";
  */
 
 // Deterministic "next available" chip from an id so it doesn't flicker on re-render.
-const nextSlotLabel = (id: string, t: (k: string) => string): string => {
+const nextSlotLabel = (id: string, tf: (k: string, f: string) => string): string => {
   const seed = Array.from(id).reduce((a, c) => a + c.charCodeAt(0), 0);
   const options = [
-    t("featured.slot.today") || "Today, 6:30 PM",
-    t("featured.slot.tomorrowMorning") || "Tomorrow, 9:00 AM",
-    t("featured.slot.tomorrowAfternoon") || "Tomorrow, 3:00 PM",
-    t("featured.slot.thisWeek") || "This week, Thu 5:00 PM",
+    tf("featured.slot.today", "Today, 6:30 PM"),
+    tf("featured.slot.tomorrowMorning", "Tomorrow, 9:00 AM"),
+    tf("featured.slot.tomorrowAfternoon", "Tomorrow, 3:00 PM"),
+    tf("featured.slot.thisWeek", "This week, Thu 5:00 PM"),
   ];
   return options[seed % options.length];
 };
@@ -37,7 +47,7 @@ const reviewCount = (id: string): number => {
 };
 
 const FeaturedPsychologistsSection = () => {
-  const { t } = useLocale();
+  const tf = useSafeT();
 
   const { data: psychologists } = useQuery({
     queryKey: ["featured-psychologists"],
@@ -95,14 +105,16 @@ const FeaturedPsychologistsSection = () => {
         <ScrollReveal>
           <div className="max-w-2xl mb-10">
             <p className="text-xs font-mono uppercase tracking-[0.2em] text-primary mb-3">
-              {t("featured.eyebrow") || "Accredited psychologists"}
+              {tf("featured.eyebrow", "Accredited psychologists")}
             </p>
             <h2 className="text-h2 mb-3">
-              {t("featured.title") || "Book with someone who fits — this week."}
+              {tf("featured.titleConversion", "Book with someone who fits — this week.")}
             </h2>
             <p className="text-body text-muted-foreground">
-              {t("featured.subtitle") ||
-                "Every psychologist is licensed, verified, and available for a 50-min session. Choose your slot in under two minutes."}
+              {tf(
+                "featured.subtitleConversion",
+                "Every psychologist is licensed, verified, and available for a 50-min session. Choose your slot in under two minutes."
+              )}
             </p>
           </div>
         </ScrollReveal>
@@ -118,7 +130,7 @@ const FeaturedPsychologistsSection = () => {
                   .filter(Boolean)
                   .join(" · ") || "";
               const price = psych.hourly_rate_mad ?? 600;
-              const slot = nextSlotLabel(psych.id, t);
+              const slot = nextSlotLabel(psych.id, tf);
               const reviews = reviewCount(psych.id);
 
               return (
@@ -146,7 +158,7 @@ const FeaturedPsychologistsSection = () => {
                         {psych.offers_online && (
                           <span
                             className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-card"
-                            aria-label={t("featured.availableToday") || "Available today"}
+                            aria-label={tf("featured.availableToday", "Available today")}
                           />
                         )}
                       </div>
@@ -170,7 +182,7 @@ const FeaturedPsychologistsSection = () => {
                         <MapPin className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate">
                           {psych.city}
-                          {psych.offers_online ? ` · ${t("featured.videoOrInPerson") || "Video or in-person"}` : ""}
+                          {psych.offers_online ? ` · ${tf("featured.videoOrInPerson", "Video or in-person")}` : ""}
                         </span>
                       </div>
                       {languages && (
@@ -186,7 +198,7 @@ const FeaturedPsychologistsSection = () => {
                       <Clock className="w-4 h-4 text-primary shrink-0" />
                       <div className="min-w-0">
                         <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                          {t("featured.nextAvailable") || "Next available"}
+                          {tf("featured.nextAvailable", "Next available")}
                         </p>
                         <p className="text-sm font-medium text-foreground truncate">{slot}</p>
                       </div>
@@ -200,7 +212,7 @@ const FeaturedPsychologistsSection = () => {
                             MAD {price}
                           </span>
                           <span className="text-xs text-muted-foreground ml-1.5">
-                            / {t("featured.session50") || "50-min session"}
+                            / {tf("featured.session50", "50-min session")}
                           </span>
                         </div>
                       </div>
@@ -208,19 +220,19 @@ const FeaturedPsychologistsSection = () => {
                       <div className="flex gap-2">
                         <Button asChild variant="primary" size="sm" className="flex-1">
                           <Link to={`/psychologists/${psych.slug}#booking`}>
-                            {t("featured.bookNow") || "Book a slot"}
+                            {tf("featured.bookNow", "Book a slot")}
                           </Link>
                         </Button>
                         <Button asChild variant="ghost" size="sm" className="flex-1">
                           <Link to={`/psychologists/${psych.slug}`}>
-                            {t("featured.viewProfile") || "View profile"}
+                            {tf("featured.viewProfile", "View profile")}
                           </Link>
                         </Button>
                       </div>
 
                       <p className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                         <ShieldCheck className="w-3 h-3 text-primary" />
-                        {t("featured.guarantee") || "Free rebook if not the right fit"}
+                        {tf("featured.guarantee", "Free rebook if not the right fit")}
                       </p>
                     </div>
                   </article>
@@ -233,7 +245,7 @@ const FeaturedPsychologistsSection = () => {
         <div className="text-center mt-10">
           <Button variant="secondary" size="lg" asChild>
             <Link to="/psychologists" className="inline-flex items-center gap-2">
-              {t("featured.viewAll") || "Browse all 50+ psychologists"}{" "}
+              {tf("featured.viewAllConversion", "Browse all 50+ psychologists")}{" "}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
