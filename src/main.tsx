@@ -2,17 +2,22 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-// Marketing type system — Instrument Serif (editorial luxe headlines) + Work Sans (body/UI)
-import "@fontsource/instrument-serif/400.css";
-import "@fontsource/instrument-serif/400-italic.css";
-import "@fontsource/work-sans/400.css";
-import "@fontsource/work-sans/500.css";
-import "@fontsource/work-sans/600.css";
-import "@fontsource/work-sans/700.css";
-// Geist kept for existing UI chrome fallback; Fraunces + Manrope removed.
-import "@fontsource/geist-sans/400.css";
-import "@fontsource/geist-sans/500.css";
-import "@fontsource/geist-sans/600.css";
+// Marketing type system — Fraunces / Cormorant Garamond display + Manrope body + Amiri (Arabic) + JetBrains Mono
+import "@fontsource/fraunces/400.css";
+import "@fontsource/fraunces/500.css";
+import "@fontsource/fraunces/600.css";
+import "@fontsource/fraunces/700.css";
+import "@fontsource/fraunces/400-italic.css";
+import "@fontsource/cormorant-garamond/400.css";
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/600.css";
+import "@fontsource/cormorant-garamond/400-italic.css";
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/600.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/amiri/400.css";
+import "@fontsource/amiri/700.css";
 import "@fontsource/jetbrains-mono/500.css";
 
 import { initPostHog } from "./lib/analytics/posthog";

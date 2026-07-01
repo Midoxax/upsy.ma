@@ -14,14 +14,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        // Marketing type system — Editorial luxe
-        sans: ['Work Sans', 'Geist', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Instrument Serif', 'Georgia', 'serif'],
-        serif: ['Instrument Serif', 'Georgia', 'serif'],
+        // Marketing type system — Editorial luxe (Fraunces + Cormorant + Manrope)
+        sans: ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
+        serif: ['Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
+        cormorant: ['Cormorant Garamond', 'Georgia', 'serif'],
+        arabic: ['Amiri', 'serif'],
         // Legacy aliases (kept so no existing class breaks)
-        fraunces: ['Instrument Serif', 'Georgia', 'serif'],
-        outfit: ['Work Sans', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
-        manrope: ['Work Sans', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
+        fraunces: ['Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
+        outfit: ['Manrope', 'system-ui', 'sans-serif'],
+        manrope: ['Manrope', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
