@@ -165,7 +165,7 @@ const HeroSection = () => {
                   98.4
                 </span>
                 <span className="text-[10px] text-[hsl(var(--gold-accent))] font-black tracking-[0.3em] uppercase mt-1">
-                  Sync Index
+                  {c.syncIndex}
                 </span>
                 <div className="absolute -top-3 -left-3 text-[hsl(var(--gold-accent))] text-xs font-mono opacity-60">+</div>
                 <div className="absolute -bottom-3 -right-3 text-[hsl(var(--gold-accent))] text-xs font-mono opacity-60">+</div>
@@ -174,17 +174,17 @@ const HeroSection = () => {
               {/* Card — Adrenaline Buffer */}
               <MetricCard
                 className="absolute -top-4 left-1/2 -translate-x-1/2 w-52"
-                label="Adrenaline Buffer"
+                label={c.adrenalineBuffer}
                 delay={0.6}
                 anim="float-a"
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-[8px] font-mono text-[hsl(var(--gold-accent))] uppercase tracking-wider">
-                    Adrenaline Buffer
+                    {c.adrenalineBuffer}
                   </span>
                   <span className="w-2 h-2 rounded-full bg-[hsl(var(--gold-accent))] animate-ping" />
                 </div>
-                <div className="text-xl font-bold text-white font-mono">ACTIVE</div>
+                <div className="text-xl font-bold text-white font-mono">{c.adrenalineActive}</div>
                 <div className="w-full bg-white/10 h-1 mt-2 rounded-full overflow-hidden">
                   <div className="bg-[hsl(var(--gold-accent))] h-full w-[88%]" />
                 </div>
@@ -193,36 +193,36 @@ const HeroSection = () => {
               {/* Card — Decision Latency */}
               <MetricCard
                 className="absolute top-1/2 -right-16 -translate-y-1/2 w-44"
-                label="Decision Latency"
+                label={c.decisionLatency}
                 delay={0.75}
                 anim="float-b"
               >
                 <span className="text-[8px] font-mono text-[#FAFAFA]/50 uppercase tracking-wider block mb-1">
-                  Decision Latency
+                  {c.decisionLatency}
                 </span>
                 <div className="text-2xl font-bold text-white font-mono tabular-nums">
                   140<span className="text-xs text-[hsl(var(--gold-accent))] ml-0.5">ms</span>
                 </div>
                 <div className="text-[9px] text-emerald-400 font-bold mt-1 uppercase">
-                  -12% · Optimal Range
+                  {c.decisionDelta}
                 </div>
               </MetricCard>
 
               {/* Card — Cognitive Load */}
               <MetricCard
                 className="absolute bottom-0 -left-12 w-52"
-                label="Cognitive Load"
+                label={c.cognitiveLoad}
                 delay={0.9}
                 anim="float-c"
               >
                 <span className="text-[8px] font-mono text-[#FAFAFA]/50 uppercase tracking-wider block mb-1">
-                  Cognitive Load
+                  {c.cognitiveLoad}
                 </span>
                 <div className="flex items-end gap-1">
                   <div className="w-3 h-6 bg-[hsl(var(--gold-accent))]" />
                   <div className="w-3 h-4 bg-[hsl(var(--gold-accent))]/40" />
                   <div className="w-3 h-2 bg-[hsl(var(--gold-accent))]/20" />
-                  <span className="ml-3 text-xl font-bold text-white font-mono">LOW</span>
+                  <span className="ml-3 text-xl font-bold text-white font-mono">{c.cognitiveLow}</span>
                 </div>
               </MetricCard>
 
@@ -240,16 +240,14 @@ const HeroSection = () => {
       <div className="absolute bottom-0 left-0 w-full border-t border-white/5 py-6 bg-[#0D0406]/80 backdrop-blur-sm z-10">
         <div className="container-custom flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-[10px] text-[#FAFAFA]/40 uppercase tracking-[0.4em] font-black">
-            Performance Tiers
+            {c.performanceTiers}
           </div>
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
-            {["Series A Founders", "Special Ops Teams", "F1 Strategists", "Chess Grandmasters"].map(
-              (t) => (
-                <span key={t} className="font-display italic text-[#FAFAFA]/45 text-sm">
-                  {t}
-                </span>
-              ),
-            )}
+            {c.tiers.map((tier) => (
+              <span key={tier} className="font-display italic text-[#FAFAFA]/45 text-sm">
+                {tier}
+              </span>
+            ))}
           </div>
         </div>
       </div>
