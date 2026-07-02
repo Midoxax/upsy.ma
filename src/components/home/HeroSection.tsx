@@ -63,12 +63,7 @@ const HeroSection = () => {
       {/* --- Left vertical ticker (desktop) --- */}
       <div className="absolute left-4 top-0 bottom-0 w-8 hidden xl:flex flex-col overflow-hidden opacity-20 pointer-events-none border-x border-[hsl(var(--gold-accent))]/10 z-10">
         <div className="flex flex-col gap-8 py-4 animate-[ticker-vertical_22s_linear_infinite]">
-          {[
-            "Neural Status: Synchronized",
-            "System Load: 12.4%",
-            "Signal Latency: 0.02ms",
-            "Neural Status: Synchronized",
-          ].map((s, i) => (
+          {c.tickerItems.map((s, i) => (
             <span
               key={i}
               className="[writing-mode:vertical-rl] rotate-180 text-[9px] font-mono text-[hsl(var(--gold-accent))] tracking-widest uppercase"
@@ -91,7 +86,7 @@ const HeroSection = () => {
               className="flex items-center gap-4 uppercase tracking-[0.3em] text-[hsl(var(--gold-accent))] text-[10px] font-black"
             >
               <span className="w-12 h-[2px] bg-[hsl(var(--gold-accent))]" />
-              <span>The Architecture of Dominance</span>
+            <span>{c.eyebrow}</span>
             </motion.div>
 
             <motion.div
@@ -101,15 +96,15 @@ const HeroSection = () => {
               className="space-y-5"
             >
               <h1 className="font-display font-semibold leading-[0.9] tracking-tight text-[clamp(2.75rem,7.5vw,6rem)] text-[#FAFAFA]">
-                Are You Operating
+                {c.headlineLine1}
                 <br />
                 <span className="relative italic font-bold text-gold-gradient">
-                  At Your Ceiling?
+                  {c.headlineLine2}
                   <span className="absolute -bottom-2 left-0 w-full h-1 bg-[hsl(var(--gold-accent))]/20" />
                 </span>
               </h1>
               <p className="font-display italic text-xl md:text-2xl text-[#FAFAFA]/80">
-                The 2ms difference between good and elite.
+                {c.tagline}
               </p>
             </motion.div>
 
@@ -119,8 +114,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.35 }}
               className="max-w-lg text-lg text-[#FAFAFA]/70 leading-relaxed font-light"
             >
-              Why do the world's most capable leaders and athletes fail at the finish line?
-              U.Psy replaces clinical guesswork with neuro-performance infrastructure — designed for high-stakes decision cycles.
+              {c.body}
             </motion.p>
 
             <motion.div
@@ -136,7 +130,7 @@ const HeroSection = () => {
                   className="group h-14 px-8 text-[11px] tracking-[0.2em] font-bold bg-[hsl(var(--gold-accent))] text-[#0D0406] hover:bg-[hsl(var(--gold-accent))]/90 rounded-none shadow-[0_20px_50px_-15px_hsl(45_96%_60%/0.55)]"
                 >
                   <Link to="/free-score" className="inline-flex items-center gap-2">
-                    COMMENCE ASSESSMENT
+                    {c.ctaPrimary}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -147,7 +141,7 @@ const HeroSection = () => {
                 size="lg"
                 className="h-14 px-8 text-[11px] tracking-[0.2em] font-bold text-[#FAFAFA] border border-white/20 hover:bg-white/5 rounded-none"
               >
-                <Link to="/get-matched">MATCH WITH A SPECIALIST</Link>
+                <Link to="/get-matched">{c.ctaSecondary}</Link>
               </Button>
             </motion.div>
           </div>
