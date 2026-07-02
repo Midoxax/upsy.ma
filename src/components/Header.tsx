@@ -120,7 +120,7 @@ const Header = () => {
       }`}
     >
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link
             to="/"
@@ -130,7 +130,7 @@ const Header = () => {
             <img
               src={logo}
               alt="U.Psy logo"
-              className="h-9 md:h-11 lg:h-12 w-auto max-w-[140px] md:max-w-[180px] lg:max-w-[220px] object-contain transition-all duration-200 dark:brightness-110"
+              className="h-10 md:h-12 lg:h-16 w-auto max-w-[40px] md:max-w-[48px] lg:max-w-[64px] object-contain transition-all duration-200 dark:brightness-110"
             />
           </Link>
 
