@@ -55,7 +55,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-4">
             <div className="mb-5 flex items-center gap-3">
-              <img src={logoAsset.url} alt="U.Psy" className="h-10 w-auto dark:brightness-110" />
+              <img src={logoAsset.url} alt="U.Psy logo" className="h-10 w-auto dark:brightness-110" />
               <span className="text-muted-foreground text-xs font-sans">by Mehdi Felji</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm font-sans">
