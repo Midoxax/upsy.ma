@@ -85,7 +85,7 @@ const Index = () => {
             "@type": "Organization",
             name: "U.Psy",
             url: "https://upsy.ma",
-            logo: "https://upsy.ma/favicon.png",
+            logo: "https://upsy.ma/__l5e/assets-v1/2edf1a4b-29b9-4195-8a74-121993b46fe3/upsy-logo.png",
             description:
               "Book accredited psychologists worldwide. Video sessions in any timezone or in-person visits in select cities, with a free rebook guarantee.",
             founder: { "@type": "Person", name: "Mehdi Felji", jobTitle: "Founder" },
