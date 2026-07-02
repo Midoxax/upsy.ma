@@ -11,8 +11,7 @@ import { getFeaturedPsychologists } from "@/services/psychologistsService";
 // t() in this project returns the key when a translation is missing.
 // This helper falls back to the provided default in that case.
 const useSafeT = () => {
-  const { t } = useLocale();
-  const { locale } = useLocale();
+  const { t, locale } = useLocale();
   const overrides = getHomeCopy(locale).featured;
   return (key: string, fallback: string) => {
     const v = t(key);
