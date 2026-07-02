@@ -9,7 +9,8 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix, stripLocalePrefix } from "@/lib/i18n/utils";
-import logo from "@/assets/logo.webp";
+import logoAsset from "@/assets/upsy-logo.png.asset.json";
+const logo = logoAsset.url;
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
@@ -121,16 +122,12 @@ const Header = () => {
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-ring rounded-md">
+          <Link to="/" className="flex items-center focus:outline-none focus:ring-2 focus:ring-ring rounded-md">
             <img
               src={logo}
-              alt="U.Psy Logo"
-              className="h-12 w-auto transition-all duration-200 dark:brightness-110"
-              style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}
+              alt="U.Psy"
+              className="h-10 md:h-12 w-auto transition-all duration-200 dark:brightness-110"
             />
-            <span className="hidden sm:inline font-display text-2xl font-medium tracking-tight text-foreground leading-none">
-              U.<span className="italic accent-italic text-primary">Psy</span>
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
