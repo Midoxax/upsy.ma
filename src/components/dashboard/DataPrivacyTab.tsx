@@ -67,14 +67,29 @@ const DataPrivacyTab = () => {
     if (!user) return;
     setDeleting(true);
     try {
-      // Create a support ticket for deletion request
-      await supabase.from("support_tickets").insert({
-        user_id: user.id,
-        subject: "GDPR - Demande de suppression de données",
-        description: `L'utilisateur ${user.email} demande la suppression complète de ses données personnelles conformément à la loi 09-08.`,
-        priority: "high",
-        category: "privacy",
-      });
+      // Create a support ticket for deletion request (ticket + first message,
+      // matching the canonical pattern in useSupportTickets)
+      const { data: ticket, error: ticketError } = await supabase
+        .from("support_tickets")
+        .insert({
+          user_id: user.id,
+          subject: "GDPR - Demande de suppression de données",
+          priority: "high",
+          category: "privacy",
+        })
+        .select()
+        .single();
+      if (ticketError) throw ticketError;
+
+      const { error: msgError } = await supabase
+        .from("support_ticket_messages")
+        .insert({
+          ticket_id: ticket.id,
+          author_id: user.id,
+          author_role: "user",
+          body: `L'utilisateur ${user.email} demande la suppression complète de ses données personnelles conformément à la loi 09-08.`,
+        });
+      if (msgError) throw msgError;
 
       toast({
         title: "Demande envoyée",

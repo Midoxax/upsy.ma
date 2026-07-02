@@ -72,7 +72,11 @@ export const useRespondToInvitation = () => {
       action: "accept" | "decline";
       reason?: string;
     }) => {
-      const updates: Record<string, unknown> = {
+      const updates: {
+        status: string;
+        updated_at: string;
+        decline_reason?: string;
+      } = {
         status: action === "accept" ? "confirmed" : "cancelled",
         updated_at: new Date().toISOString(),
       };

@@ -4,13 +4,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "predev": "bunx tsx scripts/generate-sitemap.ts",
-    "prebuild": "bunx tsx scripts/generate-sitemap.ts",
+    "predev": "npx tsx scripts/generate-sitemap.ts",
+    "prebuild": "npx tsx scripts/generate-sitemap.ts",
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "sitemap": "bunx tsx scripts/generate-sitemap.ts",
-    "test:visual": "bunx tsx tests/visual/run.ts",
+    "sitemap": "npx tsx scripts/generate-sitemap.ts",
+    "test:visual": "npx tsx tests/visual/run.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },
