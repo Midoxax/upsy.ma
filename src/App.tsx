@@ -93,6 +93,8 @@ const BookingResponse = lazy(() => import("./pages/BookingResponse"));
 const BookRedirect = lazy(() => import("./pages/BookRedirect"));
 const Install = lazy(() => import("./pages/Install"));
 const IntakeForm = lazy(() => import("./pages/IntakeForm"));
+const CampaignFirstSession = lazy(() => import("./pages/campaigns/CampaignFirstSession"));
+const CampaignJoinSpecialist = lazy(() => import("./pages/campaigns/CampaignJoinSpecialist"));
 
 const LazyFallback = () => (
   <div className="flex-1 flex items-center justify-center py-20">
@@ -189,6 +191,8 @@ const AppRoutes = () => (
     <Route path="book-a-call" element={<PageTransition><Contact /></PageTransition>} />
     <Route path="intake" element={<ProtectedRoute><PageTransition><IntakeForm /></PageTransition></ProtectedRoute>} />
     <Route path="intake/:bookingId" element={<ProtectedRoute><PageTransition><IntakeForm /></PageTransition></ProtectedRoute>} />
+    <Route path="campaigns/first-session" element={<PageTransition><CampaignFirstSession /></PageTransition>} />
+    <Route path="campaigns/join-specialist" element={<PageTransition><CampaignJoinSpecialist /></PageTransition>} />
   </>
 );
 
