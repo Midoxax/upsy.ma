@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { MagneticButton } from "@/lib/motion";
+import { useLocale } from "@/contexts/LocaleContext";
+import { getHomeCopy } from "@/lib/i18n/homeCopy";
 
 const HeroScene = lazy(() => import("@/components/three/HeroScene"));
 
@@ -13,6 +15,8 @@ const prefersReducedMotion =
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const HeroSection = () => {
+  const { locale } = useLocale();
+  const c = getHomeCopy(locale).hero;
   return (
     <section className="relative min-h-[100vh] flex items-center overflow-hidden bg-[#0D0406] text-[#FAFAFA] font-body selection:bg-[hsl(var(--gold-accent))] selection:text-[#0D0406]">
       {/* --- Layer 1: existing 3D orb + starfield backdrop --- */}
