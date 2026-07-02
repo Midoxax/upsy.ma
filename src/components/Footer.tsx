@@ -54,8 +54,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Brand */}
           <div className="lg:col-span-4">
-            <div className="mb-5 flex items-center gap-3">
-              <img src={logoAsset.url} alt="U.Psy logo" className="h-10 w-auto dark:brightness-110" />
+            <div className="mb-4 lg:mb-6 flex items-center gap-2 lg:gap-3">
+              <img src={logoAsset.url} alt="U.Psy logo" className="h-10 lg:h-12 w-auto max-w-[40px] lg:max-w-[48px] object-contain dark:brightness-110" />
               <span className="text-muted-foreground text-xs font-sans">by Mehdi Felji</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm font-sans">

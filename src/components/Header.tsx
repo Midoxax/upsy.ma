@@ -120,17 +120,17 @@ const Header = () => {
       }`}
     >
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link
             to="/"
             aria-label="U.Psy — Go to homepage"
-            className="flex items-center focus:outline-none focus:ring-2 focus:ring-ring rounded-md"
+            className="flex items-center min-w-0 focus:outline-none focus:ring-2 focus:ring-ring rounded-md"
           >
             <img
               src={logo}
               alt="U.Psy logo"
-              className="h-10 md:h-12 w-auto transition-all duration-200 dark:brightness-110"
+              className="h-10 md:h-12 lg:h-16 w-auto max-w-[40px] md:max-w-[48px] lg:max-w-[64px] object-contain transition-all duration-200 dark:brightness-110"
             />
           </Link>
 
