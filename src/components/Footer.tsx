@@ -3,6 +3,7 @@ import { Youtube, Linkedin, Instagram, Heart } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { addLocalePrefix } from "@/lib/i18n/utils";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import logoAsset from "@/assets/upsy-logo.png.asset.json";
 
 const Footer = () => {
   const { locale, t } = useLocale();
@@ -53,9 +54,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Brand */}
           <div className="lg:col-span-4">
-            <div className="mb-5">
-              <span className="text-foreground font-display font-normal text-3xl tracking-tight">U.<span className="accent-italic text-primary">Psy</span></span>
-              <span className="text-muted-foreground text-xs ml-2 font-sans">by Mehdi Felji</span>
+            <div className="mb-5 flex items-center gap-3">
+              <img src={logoAsset.url} alt="U.Psy" className="h-10 w-auto dark:brightness-110" />
+              <span className="text-muted-foreground text-xs font-sans">by Mehdi Felji</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm font-sans">
               {t('footer.strapline') || 'A modern mental-health platform combining psychological care, education, and performance support.'}
