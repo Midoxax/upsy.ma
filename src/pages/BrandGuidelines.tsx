@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
+import logoAsset from "@/assets/upsy-logo.png.asset.json";
 
 const colors = [
   { name: "Primary Burgundy", var: "--burgundy", hex: "#7A0C20", usage: "Brand identity, headers, accents" },
@@ -87,22 +88,13 @@ const BrandGuidelines = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               { label: "Primary Lockup", desc: "Website header, presentations, documents", content: (
-                <div className="flex items-center gap-3">
-                  <img src="/favicon.png" alt="U.Psy icon" className="w-10 h-10" />
-                  <div>
-                    <span className="text-xl font-semibold text-foreground">U.Psy</span>
-                    <span className="block text-xs text-muted-foreground">Your Personal Psychologist</span>
-                  </div>
-                </div>
+                <img src={logoAsset.url} alt="U.Psy logo" className="h-12 w-auto object-contain" />
               )},
               { label: "Compact Logo", desc: "Mobile nav, social banners", content: (
-                <div className="flex items-center gap-2">
-                  <img src="/favicon.png" alt="U.Psy icon" className="w-8 h-8" />
-                  <span className="text-lg font-semibold text-foreground">U.Psy</span>
-                </div>
+                <img src={logoAsset.url} alt="U.Psy logo" className="h-9 w-auto object-contain" />
               )},
               { label: "Icon Mark", desc: "Favicon, app icon, avatars", content: (
-                <img src="/favicon.png" alt="U.Psy icon" className="w-16 h-16" />
+                <img src={logoAsset.url} alt="U.Psy logo" className="h-16 w-auto object-contain" />
               )},
             ].map((item) => (
               <div key={item.label} className="glass-card flex flex-col items-center text-center">
