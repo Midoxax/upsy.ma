@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { MagneticButton } from "@/lib/motion";
+import { useLocale } from "@/contexts/LocaleContext";
+import { getHomeCopy } from "@/lib/i18n/homeCopy";
 
 const HeroScene = lazy(() => import("@/components/three/HeroScene"));
 
@@ -13,6 +15,8 @@ const prefersReducedMotion =
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const HeroSection = () => {
+  const { locale } = useLocale();
+  const c = getHomeCopy(locale).hero;
   return (
     <section className="relative min-h-[100vh] flex items-center overflow-hidden bg-[#0D0406] text-[#FAFAFA] font-body selection:bg-[hsl(var(--gold-accent))] selection:text-[#0D0406]">
       {/* --- Layer 1: existing 3D orb + starfield backdrop --- */}
@@ -59,12 +63,7 @@ const HeroSection = () => {
       {/* --- Left vertical ticker (desktop) --- */}
       <div className="absolute left-4 top-0 bottom-0 w-8 hidden xl:flex flex-col overflow-hidden opacity-20 pointer-events-none border-x border-[hsl(var(--gold-accent))]/10 z-10">
         <div className="flex flex-col gap-8 py-4 animate-[ticker-vertical_22s_linear_infinite]">
-          {[
-            "Neural Status: Synchronized",
-            "System Load: 12.4%",
-            "Signal Latency: 0.02ms",
-            "Neural Status: Synchronized",
-          ].map((s, i) => (
+          {c.tickerItems.map((s, i) => (
             <span
               key={i}
               className="[writing-mode:vertical-rl] rotate-180 text-[9px] font-mono text-[hsl(var(--gold-accent))] tracking-widest uppercase"
@@ -87,7 +86,7 @@ const HeroSection = () => {
               className="flex items-center gap-4 uppercase tracking-[0.3em] text-[hsl(var(--gold-accent))] text-[10px] font-black"
             >
               <span className="w-12 h-[2px] bg-[hsl(var(--gold-accent))]" />
-              <span>The Architecture of Dominance</span>
+            <span>{c.eyebrow}</span>
             </motion.div>
 
             <motion.div
@@ -97,15 +96,15 @@ const HeroSection = () => {
               className="space-y-5"
             >
               <h1 className="font-display font-semibold leading-[0.9] tracking-tight text-[clamp(2.75rem,7.5vw,6rem)] text-[#FAFAFA]">
-                Are You Operating
+                {c.headlineLine1}
                 <br />
                 <span className="relative italic font-bold text-gold-gradient">
-                  At Your Ceiling?
+                  {c.headlineLine2}
                   <span className="absolute -bottom-2 left-0 w-full h-1 bg-[hsl(var(--gold-accent))]/20" />
                 </span>
               </h1>
               <p className="font-display italic text-xl md:text-2xl text-[#FAFAFA]/80">
-                The 2ms difference between good and elite.
+                {c.tagline}
               </p>
             </motion.div>
 
@@ -115,8 +114,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.35 }}
               className="max-w-lg text-lg text-[#FAFAFA]/70 leading-relaxed font-light"
             >
-              Why do the world's most capable leaders and athletes fail at the finish line?
-              U.Psy replaces clinical guesswork with neuro-performance infrastructure — designed for high-stakes decision cycles.
+              {c.body}
             </motion.p>
 
             <motion.div
@@ -132,7 +130,7 @@ const HeroSection = () => {
                   className="group h-14 px-8 text-[11px] tracking-[0.2em] font-bold bg-[hsl(var(--gold-accent))] text-[#0D0406] hover:bg-[hsl(var(--gold-accent))]/90 rounded-none shadow-[0_20px_50px_-15px_hsl(45_96%_60%/0.55)]"
                 >
                   <Link to="/free-score" className="inline-flex items-center gap-2">
-                    COMMENCE ASSESSMENT
+                    {c.ctaPrimary}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -143,7 +141,7 @@ const HeroSection = () => {
                 size="lg"
                 className="h-14 px-8 text-[11px] tracking-[0.2em] font-bold text-[#FAFAFA] border border-white/20 hover:bg-white/5 rounded-none"
               >
-                <Link to="/get-matched">MATCH WITH A SPECIALIST</Link>
+                <Link to="/get-matched">{c.ctaSecondary}</Link>
               </Button>
             </motion.div>
           </div>
@@ -167,7 +165,7 @@ const HeroSection = () => {
                   98.4
                 </span>
                 <span className="text-[10px] text-[hsl(var(--gold-accent))] font-black tracking-[0.3em] uppercase mt-1">
-                  Sync Index
+                  {c.syncIndex}
                 </span>
                 <div className="absolute -top-3 -left-3 text-[hsl(var(--gold-accent))] text-xs font-mono opacity-60">+</div>
                 <div className="absolute -bottom-3 -right-3 text-[hsl(var(--gold-accent))] text-xs font-mono opacity-60">+</div>
@@ -176,17 +174,17 @@ const HeroSection = () => {
               {/* Card — Adrenaline Buffer */}
               <MetricCard
                 className="absolute -top-4 left-1/2 -translate-x-1/2 w-52"
-                label="Adrenaline Buffer"
+                label={c.adrenalineBuffer}
                 delay={0.6}
                 anim="float-a"
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-[8px] font-mono text-[hsl(var(--gold-accent))] uppercase tracking-wider">
-                    Adrenaline Buffer
+                    {c.adrenalineBuffer}
                   </span>
                   <span className="w-2 h-2 rounded-full bg-[hsl(var(--gold-accent))] animate-ping" />
                 </div>
-                <div className="text-xl font-bold text-white font-mono">ACTIVE</div>
+                <div className="text-xl font-bold text-white font-mono">{c.adrenalineActive}</div>
                 <div className="w-full bg-white/10 h-1 mt-2 rounded-full overflow-hidden">
                   <div className="bg-[hsl(var(--gold-accent))] h-full w-[88%]" />
                 </div>
@@ -195,36 +193,36 @@ const HeroSection = () => {
               {/* Card — Decision Latency */}
               <MetricCard
                 className="absolute top-1/2 -right-16 -translate-y-1/2 w-44"
-                label="Decision Latency"
+                label={c.decisionLatency}
                 delay={0.75}
                 anim="float-b"
               >
                 <span className="text-[8px] font-mono text-[#FAFAFA]/50 uppercase tracking-wider block mb-1">
-                  Decision Latency
+                  {c.decisionLatency}
                 </span>
                 <div className="text-2xl font-bold text-white font-mono tabular-nums">
                   140<span className="text-xs text-[hsl(var(--gold-accent))] ml-0.5">ms</span>
                 </div>
                 <div className="text-[9px] text-emerald-400 font-bold mt-1 uppercase">
-                  -12% · Optimal Range
+                  {c.decisionDelta}
                 </div>
               </MetricCard>
 
               {/* Card — Cognitive Load */}
               <MetricCard
                 className="absolute bottom-0 -left-12 w-52"
-                label="Cognitive Load"
+                label={c.cognitiveLoad}
                 delay={0.9}
                 anim="float-c"
               >
                 <span className="text-[8px] font-mono text-[#FAFAFA]/50 uppercase tracking-wider block mb-1">
-                  Cognitive Load
+                  {c.cognitiveLoad}
                 </span>
                 <div className="flex items-end gap-1">
                   <div className="w-3 h-6 bg-[hsl(var(--gold-accent))]" />
                   <div className="w-3 h-4 bg-[hsl(var(--gold-accent))]/40" />
                   <div className="w-3 h-2 bg-[hsl(var(--gold-accent))]/20" />
-                  <span className="ml-3 text-xl font-bold text-white font-mono">LOW</span>
+                  <span className="ml-3 text-xl font-bold text-white font-mono">{c.cognitiveLow}</span>
                 </div>
               </MetricCard>
 
@@ -242,16 +240,14 @@ const HeroSection = () => {
       <div className="absolute bottom-0 left-0 w-full border-t border-white/5 py-6 bg-[#0D0406]/80 backdrop-blur-sm z-10">
         <div className="container-custom flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-[10px] text-[#FAFAFA]/40 uppercase tracking-[0.4em] font-black">
-            Performance Tiers
+            {c.performanceTiers}
           </div>
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
-            {["Series A Founders", "Special Ops Teams", "F1 Strategists", "Chess Grandmasters"].map(
-              (t) => (
-                <span key={t} className="font-display italic text-[#FAFAFA]/45 text-sm">
-                  {t}
-                </span>
-              ),
-            )}
+            {c.tiers.map((tier) => (
+              <span key={tier} className="font-display italic text-[#FAFAFA]/45 text-sm">
+                {tier}
+              </span>
+            ))}
           </div>
         </div>
       </div>

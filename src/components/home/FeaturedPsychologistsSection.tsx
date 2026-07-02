@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, MapPin, Star, Video, ShieldCheck, Clock } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getHomeCopy } from "@/lib/i18n/homeCopy";
 import ScrollReveal from "@/components/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/StaggerContainer";
 import { useQuery } from "@tanstack/react-query";
@@ -10,10 +11,12 @@ import { getFeaturedPsychologists } from "@/services/psychologistsService";
 // t() in this project returns the key when a translation is missing.
 // This helper falls back to the provided default in that case.
 const useSafeT = () => {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const overrides = getHomeCopy(locale).featured;
   return (key: string, fallback: string) => {
     const v = t(key);
-    return !v || v === key ? fallback : v;
+    if (v && v !== key) return v;
+    return overrides[key] ?? fallback;
   };
 };
 

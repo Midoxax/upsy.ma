@@ -1,71 +1,21 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
-
-const faqs = [
-  {
-    q: "How do I actually improve my mental performance?",
-    a: "Mental performance improves the same way physical performance does — measure a baseline, target the weakest link (focus, sleep, emotional regulation, or recovery), train it for 6–8 weeks with a psychologist, then re-measure. Our psychologists use validated protocols (CBT, ACT, EMDR, performance psychology) matched to your goal, not generic advice.",
-  },
-  {
-    q: "How do I build mental toughness and stop overthinking?",
-    a: "Mental toughness isn't willpower — it's trained tolerance for discomfort plus a clean decision framework. In 4–6 sessions you learn to separate signal from noise, run cognitive defusion on intrusive thoughts, and rehearse pressure situations. Athletes, founders, and executives use the same protocol.",
-  },
-  {
-    q: "Can a psychologist really help me focus and be more productive?",
-    a: "Yes — when the root cause is psychological (anxiety, ADHD traits, burnout, perfectionism) rather than tooling. We screen for it in session 1 using validated instruments (GAD-7, PHQ-9, adult ADHD), then build a focus protocol you can run daily. Most clients report measurable change within 3–4 weeks.",
-  },
-  {
-    q: "What causes brain fog and how do I clear it?",
-    a: "Brain fog is usually a stack: poor sleep architecture, chronic stress load, unregulated anxiety, post-viral inflammation, or nutrient gaps. A psychologist maps which drivers apply to you, treats the psychological load (CBT-I for sleep, stress protocols, rumination work), and refers out for medical drivers. Most people feel a clear lift in 2–4 weeks.",
-  },
-  {
-    q: "How do high performers train their mind — athletes, founders, executives?",
-    a: "Same three levers: (1) baseline measurement (attention, recovery, emotional regulation, decision quality), (2) targeted protocols — visualization, arousal control, cognitive defusion, pre-performance routines, (3) weekly reps under simulated pressure. Our performance psychologists work with pro athletes, C-suite operators, and founders on the same stack.",
-  },
-  {
-    q: "How is this different from meditation apps or self-help?",
-    a: "Apps give you generic exercises. A psychologist runs assessment → diagnosis → personalized protocol → weekly accountability → measurable outcomes. You're not guessing which technique to try — you're running the specific one that fits your profile, with someone tracking whether it's working.",
-  },
-  {
-    q: "What if I don't click with my psychologist?",
-    a: "You get a free rebook with a different psychologist — no questions asked. The first session is about finding the right person, not paying twice to try again.",
-  },
-  {
-    q: "How much does a session cost?",
-    a: "From MAD 600 / EUR 55 / USD 60 for a single 50-min session. Packs of 4 save ~8%. Ongoing monthly care from MAD 2,400. The exact price is on each psychologist's profile — displayed in your local currency.",
-  },
-  {
-    q: "Is it confidential? What about my employer or insurance?",
-    a: "Fully confidential. We follow Moroccan Law 09-08 on personal data. Nothing is shared with your employer, insurance, or family without your written consent. Sessions are encrypted end-to-end.",
-  },
-  {
-    q: "In what language are sessions held?",
-    a: "Arabic (Darija & Modern Standard), French, English — and Spanish, Portuguese, or Italian with select specialists. Filter by language when choosing your psychologist.",
-  },
-  {
-    q: "Video or in-person?",
-    a: "Both. Every psychologist offers secure video sessions worldwide (any timezone). In-person visits are available in select cities — filter by city on the directory.",
-  },
-  {
-    q: "Do you take insurance?",
-    a: "We issue a compliant invoice you can submit to your provider (CNSS/CNOPS in Morocco, private health plans internationally). Most private policies reimburse 40–70% of psychology sessions.",
-  },
-  {
-    q: "How fast can I book?",
-    a: "Most psychologists have slots within 48 hours. Some offer same-day sessions. Availability is shown live on each profile.",
-  },
-];
+import { useLocale } from "@/contexts/LocaleContext";
+import { getHomeCopy } from "@/lib/i18n/homeCopy";
 
 export default function HomeFAQSection() {
   const [open, setOpen] = useState<number | null>(0);
+  const { locale } = useLocale();
+  const c = getHomeCopy(locale).faq;
+  const faqs = c.items;
 
   return (
     <section className="py-24 md:py-32 bg-card/30">
       <div className="container-custom max-w-3xl">
         <div className="text-center mb-14">
-          <p className="text-xs font-sans font-medium tracking-[0.18em] uppercase text-primary mb-4">Straight answers</p>
-          <h2 className="font-display text-h2 mb-4">The things people <span className="accent-italic">actually</span> ask before booking</h2>
+          <p className="text-xs font-sans font-medium tracking-[0.18em] uppercase text-primary mb-4">{c.eyebrow}</p>
+          <h2 className="font-display text-h2 mb-4">{c.titleBefore}<span className="accent-italic">{c.titleItalic}</span>{c.titleAfter}</h2>
         </div>
 
         <div className="space-y-2">
