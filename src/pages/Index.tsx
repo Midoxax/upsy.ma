@@ -5,6 +5,8 @@ import HeroSection from "@/components/home/HeroSection";
 import { useIntentSignals } from "@/hooks/useIntentSignals";
 import SEOHead from "@/components/SEOHead";
 import { Chapter } from "@/lib/motion";
+import { useLocale } from "@/contexts/LocaleContext";
+import { getHomeCopy } from "@/lib/i18n/homeCopy";
 
 // Conversion-focused funnel: one path, no dynamic reordering.
 const TrustSection = lazy(() => import("@/components/home/TrustSection"));
@@ -53,6 +55,8 @@ const homeSequence = [
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { locale } = useLocale();
+  const seo = getHomeCopy(locale).seo;
 
   useEffect(() => {
     if (authLoading || !user) return;
@@ -73,8 +77,8 @@ const Index = () => {
     <main className="flex-1 marketing-night">
       <SEOHead
         path="/"
-        title="U.Psy — Book an accredited psychologist. Worldwide, in any timezone."
-        description="Book a 50-min session with an accredited psychologist — video anywhere in the world, or in-person in select cities. Arabic, French, English, Spanish or Portuguese. Free rebook if not the right fit."
+        title={seo.title}
+        description={seo.description}
         jsonLd={[
           {
             "@context": "https://schema.org",
