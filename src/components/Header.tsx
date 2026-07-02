@@ -125,12 +125,12 @@ const Header = () => {
           <Link
             to="/"
             aria-label="U.Psy — Go to homepage"
-            className="flex items-center focus:outline-none focus:ring-2 focus:ring-ring rounded-md"
+            className="flex items-center min-w-0 focus:outline-none focus:ring-2 focus:ring-ring rounded-md"
           >
             <img
               src={logo}
               alt="U.Psy logo"
-              className="h-10 md:h-12 w-auto transition-all duration-200 dark:brightness-110"
+              className="h-9 md:h-11 lg:h-12 w-auto max-w-[140px] md:max-w-[180px] lg:max-w-[220px] object-contain transition-all duration-200 dark:brightness-110"
             />
           </Link>
 
