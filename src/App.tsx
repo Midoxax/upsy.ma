@@ -18,6 +18,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { stripLocalePrefix } from "@/lib/i18n/utils";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SkipToContent from "@/components/SkipToContent";
 import { BreadcrumbWrapper } from "@/components/BreadcrumbWrapper";
 import SEOHead from "@/components/SEOHead";
 import { AuroraBackground, SmoothScrollProvider } from "@/lib/motion";
@@ -246,11 +247,14 @@ const AppShell = () => {
   }
   return (
     <div className="min-h-screen flex flex-col bg-background relative">
+      <SkipToContent />
       <AuroraBackground />
       <Header />
       <ScrollToTop />
       <BreadcrumbWrapper />
-      <AnimatedRoutes />
+      <div id="main-content" tabIndex={-1} className="flex-1 outline-none">
+        <AnimatedRoutes />
+      </div>
       <Footer />
     </div>
   );

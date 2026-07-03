@@ -94,6 +94,7 @@ export const translations = {
       viewProfile: "View Profile",
       browseAll: "Browse All Psychologists",
       noPreference: "No preference",
+      skipToContent: "Skip to content",
     },
     onboarding: {
       welcomeTitle: "Start Your Mental Health Journey",
@@ -1578,6 +1579,7 @@ export const translations = {
       viewProfile: "Voir le profil",
       browseAll: "Parcourir tous les psychologues",
       noPreference: "Pas de préférence",
+      skipToContent: "Passer au contenu",
     },
     onboarding: {
       welcomeTitle: "Commencez votre parcours vers le bien-être mental",
@@ -2929,6 +2931,7 @@ export const translations = {
       viewProfile: "عرض الملف الشخصي",
       browseAll: "تصفح جميع الأخصائيين",
       noPreference: "لا تفضيل",
+      skipToContent: "انتقال إلى المحتوى",
     },
     onboarding: {
       welcomeTitle: "ابدأ رحلتك نحو الصحة النفسية",
