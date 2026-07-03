@@ -43,9 +43,9 @@ const Footer = () => {
   ];
 
   const socials = [
-    { icon: Youtube, href: "https://www.youtube.com/@UPsy-psychology", label: "YouTube" },
-    { icon: Linkedin, href: "https://www.linkedin.com/company/upsy-psychology", label: "LinkedIn" },
-    { icon: Instagram, href: "https://www.instagram.com/upsy.psychology", label: "Instagram" },
+    { icon: Youtube, href: "https://www.youtube.com/@UPsy-psychology", label: "U.Psy on YouTube" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/upsy-psychology", label: "U.Psy on LinkedIn" },
+    { icon: Instagram, href: "https://www.instagram.com/upsy.psychology", label: "U.Psy on Instagram" },
   ];
 
   return (
