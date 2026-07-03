@@ -189,7 +189,7 @@ const Header = () => {
           <div className="hidden lg:flex items-center gap-2">
             <ThemeToggle />
             <LanguageSwitcher className="mr-1" />
-            <InstallAppButton variant="ghost" size="sm" label="" className="hidden lg:inline-flex" />
+            <InstallAppButton variant="ghost" size="sm" label="" aria-label="Install U.Psy app" className="hidden lg:inline-flex" />
             {user && <ViewAsSwitcher compact />}
             {user && <NotificationBell />}
             {user ? (
