@@ -42,6 +42,7 @@ interface Props {
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   label?: string;
+  "aria-label"?: string;
 }
 
 const InstallAppButton = ({
@@ -49,6 +50,7 @@ const InstallAppButton = ({
   size = "default",
   className,
   label = "Install app",
+  "aria-label": ariaLabel,
 }: Props) => {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
@@ -128,10 +130,10 @@ const InstallAppButton = ({
         size={size}
         className={className}
         onClick={handleClick}
-        aria-label={label}
+        aria-label={ariaLabel || label || "Install app"}
       >
         <Download className="h-4 w-4" />
-        <span className="ml-2">{label}</span>
+        {label && <span className="ml-2">{label}</span>}
       </Button>
 
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
