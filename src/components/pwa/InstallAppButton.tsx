@@ -130,10 +130,10 @@ const InstallAppButton = ({
         size={size}
         className={className}
         onClick={handleClick}
-        aria-label={label}
+        aria-label={ariaLabel || label || "Install app"}
       >
         <Download className="h-4 w-4" />
-        <span className="ml-2">{label}</span>
+        {label && <span className="ml-2">{label}</span>}
       </Button>
 
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
