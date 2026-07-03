@@ -42,6 +42,7 @@ interface Props {
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   label?: string;
+  "aria-label"?: string;
 }
 
 const InstallAppButton = ({
@@ -49,6 +50,7 @@ const InstallAppButton = ({
   size = "default",
   className,
   label = "Install app",
+  "aria-label": ariaLabel,
 }: Props) => {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
