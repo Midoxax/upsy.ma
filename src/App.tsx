@@ -252,9 +252,9 @@ const AppShell = () => {
       <Header />
       <ScrollToTop />
       <BreadcrumbWrapper />
-      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+      <div id="main-content" tabIndex={-1} className="flex-1 outline-none">
         <AnimatedRoutes />
-      </main>
+      </div>
       <Footer />
     </div>
   );
