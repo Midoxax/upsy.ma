@@ -545,12 +545,28 @@ html.lenis body {
     transform-origin: left;
   }
 
-  /* ── Focus States ── */
-  *:focus-visible {
-    outline: 2px solid hsl(var(--gold-accent));
+  /* ── Focus States (WCAG 2.4.7 / 1.4.11 compliant) ── */
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 3px solid hsl(var(--ring));
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px hsl(var(--gold-accent) / 0.15);
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 5px hsl(var(--ring) / 0.5);
     border-radius: 6px;
+    transition: box-shadow 0.15s ease, outline-color 0.15s ease;
+  }
+  /* Keep intrinsic border-radius on shapes that already round themselves */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible {
+    border-radius: inherit;
   }
 
   /* ── Glassmorphism Utility ── */
@@ -573,7 +589,9 @@ html.lenis body {
   }
   .glass-input:focus {
     border-color: hsl(var(--primary) / 0.5);
-    outline: none;
+  }
+  .glass-input:focus-visible {
+    border-color: hsl(var(--ring));
   }
 
   /* ── Premium Card Float ── */
