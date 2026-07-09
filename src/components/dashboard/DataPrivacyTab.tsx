@@ -75,7 +75,7 @@ const DataPrivacyTab = () => {
           user_id: user.id,
           subject: "GDPR - Demande de suppression de données",
           priority: "high",
-          category: "privacy",
+          category: "account",
         })
         .select()
         .single();
