@@ -31,7 +31,7 @@ const FinalCTASection = () => {
           <p className="text-body text-muted-foreground mb-4 leading-relaxed">
             {t("finalCta.subtitle") || "Whether you need therapy, coaching, or education — we're here to help you find the right support."}
           </p>
-          <p className="text-sm text-muted-foreground/50 mb-10 italic">
+          <p className="text-sm text-muted-foreground mb-10 italic">
             {t("finalCta.reassurance") || "No commitment required. Start with a free 2-minute self-assessment."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

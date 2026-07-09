@@ -59,7 +59,7 @@ const SelfAssessmentSection = () => {
               "A quick, private check-in to understand your needs. Your answers guide us toward the right support for you."}
           </p>
 
-          <p className="text-sm text-muted-foreground/50 max-w-md mx-auto mb-8 italic">
+          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-8 italic">
             {t("selfAssessment.reassurance") || "Completely confidential. Never shared with anyone."}
           </p>
 
