@@ -1,35 +1,23 @@
-# Apply audit fixes from `UPsy_ma_perfected.zip`
+## Problem
 
-The uploaded archive contains a technical audit (`AUDIT_UPsy_ma.md`) with 7 targeted fixes. Each is small, isolated, and independently verified against the current codebase — none conflict with recent work.
+The published app shows a blank screen because the frontend can't reach the backend at runtime. The Supabase client reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` from `.env`, but `.env` is listed in `.gitignore`. That means the file exists locally in the sandbox but is excluded from the deployment build, so the published bundle boots with `undefined` credentials and crashes on first render. The Node 20 / service-worker noise is a side effect of the same broken deploy — not the real cause.
 
-## Changes
+## Fix
 
-1. **RGPD deletion bug (blocker)** — `src/components/dashboard/DataPrivacyTab.tsx`
-   The current code inserts into `support_tickets.description`, a column that does not exist. Every "Delete my data" request fails in production. Fix follows the canonical `useSupportTickets` pattern: create the ticket, then insert the message into `support_ticket_messages`.
+Remove the `.env` entry from `.gitignore` so the managed env file is included when the project is published.
 
-2. **Type error** — `src/hooks/useProposeSession.ts`
-   Replace the `Record<string, unknown>` update payload with an explicit shape compatible with the generated `bookings` `Update` type.
+### Change
 
-3. **GTM 404 on every page + CSP gap** — `index.html` + `vercel.json`
-   - Guard the GTM loader so it only fires when `{{GTM_ID}}` has actually been substituted; otherwise just init `dataLayer`.
-   - Add `www.googletagmanager.com` to `script-src` and `connect-src`, and `*.google-analytics.com` to `connect-src`.
+- **`.gitignore`** — delete the final `.env` line. Keep everything else untouched.
 
-4. **Bundle splitting** — `vite.config.ts`
-   Add `manualChunks` for react, router, supabase, framer-motion, radix, tanstack-query, gsap. Main bundle drops from ~353 kB gzip to ~151 kB gzip; vendors become independently cacheable.
+### After the edit
 
-5. **Open Graph / Twitter metadata** — `index.html`
-   Add `og:site_name`, `og:title`, `og:description`, `og:locale` (+ fr/ar alternates), `og:image:width/height`, `twitter:title`, `twitter:description`.
+- The next publish will include `.env`, so `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are available to the client bundle and the app renders normally.
+- The `.env` file is Lovable-managed and only contains the public Supabase URL + anon key (both safe to ship — they're already exposed to every browser client).
 
-6. **.env hygiene** — `.gitignore` + `.env.example`
-   Add `.env` to `.gitignore` and create an empty `.env.example`. (Not deleting the existing `.env` — Lovable manages it.)
+### Verification
 
-7. **Portability** — `package.json`
-   Swap `bunx` → `npx` in `predev`, `prebuild`, `sitemap`, `test:visual` so builds work in non-Bun CI environments.
+1. Reload the preview — app should render.
+2. Click Publish and confirm the live site at `upsy.lovable.app` loads without a blank screen.
 
-## Out of scope
-
-The audit's backlog (any-cast debt, exhaustive-deps warnings, HeroScene mobile fallback, `unsafe-eval` removal, Recharts v3, prerendering) is not applied — flagged for later.
-
-## Verification
-
-Automatic build check after edits. No DB migrations, no runtime behavior changes beyond fixing the RGPD insert.
+No code, dependency, or backend changes are needed.
