@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { enabled: false },
+      injectRegister: null,
       manifest: false, // we already have public/manifest.webmanifest
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/, /^\/api\//],
