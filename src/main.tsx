@@ -22,6 +22,14 @@ import "@fontsource/jetbrains-mono/500.css";
 
 import { initPostHog } from "./lib/analytics/posthog";
 import { initSentry } from "./lib/analytics/sentry";
+import { assertRequiredEnv, renderEnvErrorBanner } from "./lib/env-check";
+
+// Fail loudly if required Supabase env vars are missing at runtime
+const envError = assertRequiredEnv();
+if (envError) {
+  renderEnvErrorBanner("root", envError);
+  throw new Error(envError);
+}
 
 // Fire-and-forget — both silently no-op if env keys aren't set
 initSentry();
@@ -33,13 +41,28 @@ const isInIframe = (() => {
 })();
 const isPreviewHost =
   window.location.hostname.includes("id-preview--") ||
-  window.location.hostname.includes("lovableproject.com");
+  window.location.hostname.includes("lovableproject.com") ||
+  window.location.hostname.includes("preview--");
 
 if (isPreviewHost || isInIframe) {
   // Unregister any stale service workers in preview/iframe
   navigator.serviceWorker?.getRegistrations().then((regs) =>
     regs.forEach((r) => r.unregister())
   );
+} else if ("serviceWorker" in navigator) {
+  // Production: only register if /sw.js actually exists (avoids 404 registration errors)
+  fetch("/sw.js", { method: "HEAD" })
+    .then((res) => {
+      if (!res.ok) {
+        // No SW shipped on this host — clean up any stale registrations
+        return navigator.serviceWorker
+          .getRegistrations()
+          .then((regs) => regs.forEach((r) => r.unregister()));
+      }
+    })
+    .catch(() => {
+      /* network noise — ignore */
+    });
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
