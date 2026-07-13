@@ -120,6 +120,63 @@ Deno.serve(async (req) => {
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+  // Per-template proof-of-completion / anti-abuse checks.
+  // Public callers (anon JWT) can invoke this function; without these checks
+  // an attacker could use the trusted sender domain to spam or phish.
+  if (templateName === 'quiz-results') {
+    const score = Number(templateData?.score)
+    if (!Number.isFinite(score) || score < 0 || score > 100) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid score' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Require a matching growth_leads row (created when the quiz was submitted).
+    const { data: lead, error: leadErr } = await supabase
+      .from('growth_leads')
+      .select('id, score_total, created_at')
+      .eq('source', 'free_score')
+      .ilike('email', effectiveRecipient)
+      .eq('score_total', score)
+      .gte('created_at', new Date(Date.now() - 10 * 60 * 1000).toISOString())
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (leadErr || !lead) {
+      console.warn('quiz-results email rejected: no matching lead', {
+        recipient: effectiveRecipient,
+        hasError: !!leadErr,
+      })
+      return new Response(
+        JSON.stringify({ error: 'Quiz completion not verified' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Ignore caller-supplied URLs. Rebuild link targets server-side, restricted
+    // to the app's own domain, so this endpoint cannot be used to inject
+    // arbitrary phishing links into a branded email.
+    const APP_ORIGIN = `https://${FROM_DOMAIN}`
+    const allowedLangs = ['en', 'fr', 'ar']
+    const lang = allowedLangs.includes(templateData?.lang) ? templateData.lang : 'en'
+    const allowedPillars = ['focus', 'regulation', 'recovery', 'meaning']
+    const weakest = allowedPillars.includes(templateData?.weakestPillar)
+      ? templateData.weakestPillar
+      : 'focus'
+    templateData = {
+      name: typeof templateData?.name === 'string' ? templateData.name.slice(0, 80) : undefined,
+      score,
+      pillars: templateData?.pillars && typeof templateData.pillars === 'object' ? templateData.pillars : undefined,
+      weakestPillar: weakest,
+      lang,
+      bookingUrl: `${APP_ORIGIN}/get-matched?source=free-score`,
+      matchUrl: `${APP_ORIGIN}/psychologists?pillar=${weakest}&source=free-score-email`,
+      resultsUrl: `${APP_ORIGIN}/free-score`,
+    }
+  }
+
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')
